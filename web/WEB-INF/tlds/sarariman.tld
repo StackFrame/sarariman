@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd">
+    <tlib-version>1.0</tlib-version>
+    <short-name>sarariman</short-name>
+    <uri>/WEB-INF/tlds/sarariman</uri>
+    <function>
+        <name>isAdministrator</name>
+        <function-class>com.stackframe.sarariman.AccessControl</function-class>
+        <function-signature>boolean isAdministrator(com.stackframe.sarariman.Employee)</function-signature>
+    </function>
+    <function>
+        <name>containsHTML</name>
+        <function-class>com.stackframe.sarariman.HTMLUtils</function-class>
+        <function-signature>boolean containsHTML(java.lang.String)</function-signature>
+    </function>
+</taglib>

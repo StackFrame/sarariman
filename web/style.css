@@ -1,0 +1,11 @@
+root { 
+    display: block;
+}
+
+p.error {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+}
