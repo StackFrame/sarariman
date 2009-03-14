@@ -12,6 +12,7 @@
     <listener>
         <listener-class>com.stackframe.sarariman.DirectoryBinder</listener-class>
     </listener>
+    <listener><listener-class>com.stackframe.sarariman.SararimanContextListener</listener-class></listener>
     <servlet>
         <servlet-name>timesheets</servlet-name>
         <jsp-file>/timesheets.jsp</jsp-file>

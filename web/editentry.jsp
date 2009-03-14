@@ -122,5 +122,6 @@
             </c:forEach>
         </table>
 
+        <%@include file="footer.jsp" %>
     </body>
 </html>
