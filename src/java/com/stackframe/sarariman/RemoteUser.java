@@ -26,7 +26,8 @@ public class RemoteUser implements Filter {
             HttpServletRequest httpServletRequest = (HttpServletRequest)request;
             if (httpServletRequest.getRemoteUser() == null) {
                 final String username = System.getProperty("user.name");
-                System.err.println("No REMOTE_USER.  Setting it to " + username);
+                // FIXME: Make this a log entry.
+                System.out.println("No REMOTE_USER.  Setting it to " + username);
                 request = new HttpServletRequestWrapper(httpServletRequest) {
 
                     @Override

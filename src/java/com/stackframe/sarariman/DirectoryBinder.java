@@ -38,7 +38,6 @@ public class DirectoryBinder implements HttpSessionListener {
         try {
             Properties props = lookupDirectoryProperties();
             session.setAttribute("directory", new LDAPDirectory(new InitialDirContext(props)));
-            System.err.println("bound directory");
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
