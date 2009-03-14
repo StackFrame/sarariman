@@ -16,6 +16,8 @@
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
+        <p><a href="./">Home</a></p>
+
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>

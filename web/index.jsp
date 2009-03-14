@@ -12,17 +12,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Sarariman</title>
+        <title>Home</title>
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
-        <p>
-            <c:url var="timesheetsLink" value="timesheets">
-            </c:url>
-            <a href="${timesheetsLink}">Timesheet management</a>
-            <a href="changelog">Changelog</a>
-        </p>
+        <ul>
+            <li><a href="timesheet">Timesheet Reports</a></li>
+            <li><a href="timesheets">Timesheet Management</a></li>
+            <li><a href="changelog">Changelog</a></li>
+            <li><a href="help.xhtml">Help</a></li>
+        </ul>
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>

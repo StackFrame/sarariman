@@ -13,6 +13,7 @@
         <title>Changelog</title>
     </head>
     <body>
+        <p><a href="./">Home</a></p>
         <c:set var="start" value="${param.start}"/>
         <c:if test="${empty start}">
             <c:set var="start" value="${du:weekStart(du:now())}"/>
@@ -46,7 +47,7 @@
             <sql:param value="${maxRows}"/>
         </sql:query>
         <table>
-            <tr><th>Timestamp</th><th>Date</th><th>Task #</th><th>Duration</th><th>Employee</th><th>Remote Address</th><th>Remote User</th><th>Reason</th></tr>
+            <tr><th>Timestamp</th><th>Date</th><th>Task #</th><th>Duration</th><th>Employee</th><th>Remote Address</th><th>Remote User</th><th>Reason</th><th></th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>
                     <td>${entry.timestamp}</td>
@@ -57,6 +58,14 @@
                     <td>${entry.remote_address}</td>
                     <td>${directory.employeeMap[entry.remote_user].userName}</td>
                     <td>${entry.reason}</td>
+                    <td>
+                        <c:url var="entryLink" value="editentry">
+                            <c:param name="task" value="${entry.task}"/>
+                            <c:param name="date" value="${entry.date}"/>
+                            <c:param name="employee" value="${entry.employee}"/>
+                        </c:url>
+                        <a href="${fn:escapeXml(entryLink)}">Entry</a>
+                    </td>
                 </tr>
             </c:forEach>
         </table>
