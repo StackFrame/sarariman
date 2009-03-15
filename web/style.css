@@ -1,6 +1,8 @@
 body {
     margin: 0px auto;
     padding: 15px;
+    background: white;
+    color: black;
 }
 
 p.error {
