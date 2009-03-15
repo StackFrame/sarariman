@@ -17,12 +17,15 @@
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
-        <ul>
-            <li><a href="timesheet">Timesheet Reports</a></li>
-            <li><a href="timesheets">Timesheet Management</a></li>
-            <li><a href="changelog">Changelog</a></li>
-            <li><a href="help.xhtml">Help</a></li>
-        </ul>
+        <div id="navigation">
+            <ul>
+                <li><a href="timesheet">Timesheet Reports</a></li>
+                <li><a href="timesheets">Timesheet Management</a></li>
+                <li><a href="changelog">Changelog</a></li>
+                <li><a href="help.xhtml">Help</a></li>
+            </ul>
+        </div>
+
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
@@ -117,90 +120,96 @@
             </c:if>
         </c:if>
 
-        <h2>Enter time worked</h2>
-        <form action="${request.requestURI}" method="post">
-            <label for="date">Date:</label>
-            <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
-            <input size="10" type="text" name="date" id="date" value="${now}"/>
-            <label for="task">Task:</label>
-            <select name="task" id="task">
-                <sql:query dataSource="${db}" var="tasks" sql="SELECT * from tasks"/>
-                <c:forEach var="task" items="${tasks.rows}">
-                    <c:if test="${task.active}">
-                        <option value="${task.id}">${fn:escapeXml(task.name)}</option>
-                    </c:if>
+        <div id="recordTime">
+            <h2>Record time worked</h2>
+            <form action="${request.requestURI}" method="post">
+                <label for="date">Date:</label>
+                <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
+                <input size="10" type="text" name="date" id="date" value="${now}"/>
+                <label for="task">Task:</label>
+                <select name="task" id="task">
+                    <sql:query dataSource="${db}" var="tasks" sql="SELECT * from tasks"/>
+                    <c:forEach var="task" items="${tasks.rows}">
+                        <c:if test="${task.active}">
+                            <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})</option>
+                        </c:if>
+                    </c:forEach>
+                </select>
+                <label for="duration">Duration:</label>
+                <input size="5" type="text" name="duration" id="duration"/>
+                <br/>
+                <label for="description">Description:</label>
+                <textarea cols="40" rows="10" name="description" id="description" />
+                <input type="submit" name="recordTime" value="Record"/>
+            </form>
+        </div>
+
+        <div id="weekNavigation">
+            <h2>Navigate to another week</h2>
+            <form action="${request.requestURI}" method="post">
+                <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+                <input type="submit" name="week" value="${prevWeekString}"/>
+                <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+                <input type="submit" name="week" value="${nextWeekString}"/>
+            </form>
+        </div>
+
+        <div id="sheetView">
+            <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
+
+            <h2>Timesheet for the week of ${thisWeekStart}</h2>
+
+            <form action="${request.requestURI}" method="post">
+                <label for="submitted">Submitted: </label>
+                <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
+                <c:set var="approved" value="${!empty timecard && timecard.rows[0].approved}"/>
+                <label for="approved">Approved: </label>
+                <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
+                <c:if test="${!submitted}">
+                    <input type="hidden" value="true" name="submit"/>
+                    <input type="submit" value="Submit"/>
+                </c:if>
+            </form>
+
+            <!-- FIXME: Can I do the nextWeek part in SQL? -->
+            <sql:query dataSource="${db}" var="entries">
+                SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name FROM hours INNER JOIN tasks ON hours.task=tasks.id WHERE employee=? AND hours.date >= ? AND hours.date < ? ORDER BY hours.date DESC, hours.task ASC
+                <sql:param value="${employeeNumber}"/>
+                <sql:param value="${week}"/>
+                <sql:param value="${du:nextWeek(week)}"/>
+            </sql:query>
+            <c:set var="totalHoursWorked" value="0.0"/>
+            <table>
+                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
+                <c:forEach var="entry" items="${entries.rows}">
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${fn:escapeXml(entry.name)}</td>
+                        <td>${entry.task}</td>
+                        <td>${entry.duration}</td>
+                        <c:set var="entryDescription" value="${entry.description}"/>
+                        <c:if test="${sarariman:containsHTML(entryDescription)}">
+                            <c:set var="entryDescription" value="${fn:escapeXml(entryDescription)}"/>
+                        </c:if>
+                        <td>${entryDescription}</td>
+                        <td>
+                            <c:url var="editLink" value="editentry">
+                                <c:param name="task" value="${entry.task}"/>
+                                <c:param name="date" value="${entry.date}"/>
+                                <c:param name="employee" value="${employeeNumber}"/>
+                            </c:url>
+                            <a href="${fn:escapeXml(editLink)}">Entry</a>
+                        </td>
+                        <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
+                    </tr>
                 </c:forEach>
-            </select>
-            <label for="duration">Duration:</label>
-            <input size="5" type="text" name="duration" id="duration"/>
-            <br/>
-            <label for="description">Description:</label>
-            <textarea cols="40" rows="10" name="description" id="description" />
-            <input type="submit" name="recordTime" value="Record"/>
-        </form>
-
-        <h2>Navigate to another week</h2>
-        <form action="${request.requestURI}" method="post">
-            <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
-            <input type="submit" name="week" value="${prevWeekString}"/>
-            <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
-            <input type="submit" name="week" value="${nextWeekString}"/>
-        </form>
-
-        <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
-
-        <h2>Timesheet for the week of ${thisWeekStart}</h2>
-
-        <form action="${request.requestURI}" method="post">
-            <label for="submitted">Submitted: </label>
-            <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-            <c:set var="approved" value="${!empty timecard && timecard.rows[0].approved}"/>
-            <label for="approved">Approved: </label>
-            <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-            <c:if test="${!submitted}">
-                <input type="hidden" value="true" name="submit"/>
-                <input type="submit" value="Submit"/>
-            </c:if>
-        </form>
-
-        <!-- FIXME: Can I do the nextWeek part in SQL? -->
-        <sql:query dataSource="${db}" var="entries">
-            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name FROM hours INNER JOIN tasks ON hours.task=tasks.id WHERE employee=? AND hours.date >= ? AND hours.date < ? ORDER BY hours.date DESC, hours.task ASC
-            <sql:param value="${employeeNumber}"/>
-            <sql:param value="${week}"/>
-            <sql:param value="${du:nextWeek(week)}"/>
-        </sql:query>
-        <c:set var="totalHoursWorked" value="0.0"/>
-        <table>
-            <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
-            <c:forEach var="entry" items="${entries.rows}">
                 <tr>
-                    <td>${entry.date}</td>
-                    <td>${fn:escapeXml(entry.name)}</td>
-                    <td>${entry.task}</td>
-                    <td>${entry.duration}</td>
-                    <c:set var="entryDescription" value="${entry.description}"/>
-                    <c:if test="${sarariman:containsHTML(entryDescription)}">
-                        <c:set var="entryDescription" value="${fn:escapeXml(entryDescription)}"/>
-                    </c:if>
-                    <td>${entryDescription}</td>
-                    <td>
-                        <c:url var="editLink" value="editentry">
-                            <c:param name="task" value="${entry.task}"/>
-                            <c:param name="date" value="${entry.date}"/>
-                            <c:param name="employee" value="${employeeNumber}"/>
-                        </c:url>
-                        <a href="${fn:escapeXml(editLink)}">Entry</a>
-                    </td>
-                    <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
+                    <td colspan="3">Total</td>
+                    <td>${totalHoursWorked}</td>
                 </tr>
-            </c:forEach>
-            <tr>
-                <td colspan="3">Total</td>
-                <td>${totalHoursWorked}</td>
-            </tr>
-        </table>
-
+            </table>
+        </div>
+        
         <%@include file="footer.jsp" %>
     </body>
 </html>
