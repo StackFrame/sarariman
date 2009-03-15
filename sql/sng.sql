@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS hours (employee INT UNSIGNED NOT NULL,
                                   task INT UNSIGNED NOT NULL,
                                   date DATE NOT NULL,
 		                  PRIMARY KEY (employee, task, date),
-		                  FOREIGN KEY (task) REFERENCES tasks(id),
+		                  FOREIGN KEY (task) REFERENCES tasks(id)
+				  ON UPDATE RESTRICT ON DELETE RESTRICT,
 		                  description TEXT CHARACTER SET utf8,
                                   duration DECIMAL (4,2) UNSIGNED NOT NULL) ENGINE=INNODB;
 
