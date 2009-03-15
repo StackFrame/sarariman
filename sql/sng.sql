@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS hours (employee INT UNSIGNED NOT NULL,
 		                  PRIMARY KEY (employee, task, date),
 		                  FOREIGN KEY (task) REFERENCES tasks(id)
 				  ON UPDATE RESTRICT ON DELETE RESTRICT,
+                                  recorded_timestamp TIMESTAMP NOT NULL,
 		                  description TEXT CHARACTER SET utf8,
                                   duration DECIMAL (4,2) UNSIGNED NOT NULL) ENGINE=INNODB;
 
@@ -29,4 +30,5 @@ CREATE TABLE IF NOT EXISTS hours_changelog (employee INT UNSIGNED NOT NULL,
 CREATE TABLE IF NOT EXISTS timecards (employee INT UNSIGNED NOT NULL,
                                       date DATE NOT NULL,
 				      PRIMARY KEY (date, employee),
+                                      submitted_timestamp TIMESTAMP NOT NULL,
 			              approved BOOLEAN NOT NULL) ENGINE=INNODB;
