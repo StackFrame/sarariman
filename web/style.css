@@ -1,5 +1,6 @@
-root { 
-    display: block;
+body {
+    margin: 0px auto;
+    padding: 15px;
 }
 
 p.error {
