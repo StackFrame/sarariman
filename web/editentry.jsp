@@ -84,7 +84,7 @@
         <c:set var="entry" value="${entries.rows[0]}"/>
         Employee: ${directory.employeeMap[param.employee].fullName}<br/>
         Date: ${entry.date}<br/>
-        Task: ${entry.name} (${entry.task})<br/>
+        Task: ${fn:escapeXml(entry.name)} (${entry.task})<br/>
         <form action="${request.requestURI}" method="post">
             <input type="hidden" name="date" value="${entry.date}"/>
             <input type="hidden" name="employee" value="${param.employee}"/>
