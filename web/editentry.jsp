@@ -101,7 +101,7 @@
             <input size="5" type="text" name="duration" id="duration" value="${entry.duration}"/>
             <br/>
             <label for="description">Description: </label>
-            <textarea cols="40" rows="10" name="description" id="description">${entry.description}</textarea><br/>
+            <textarea cols="40" rows="10" name="description" id="description">${fn:escapeXml(entry.description)}</textarea><br/>
             <label for="reason">Reason: </label>
             <input size="40" type="text" name="reason" id="reason"/>
             <input type="submit" enabled="${canModify}" name="modifyEntry" value="Modify"/>
