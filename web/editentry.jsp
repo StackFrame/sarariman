@@ -30,8 +30,16 @@
 
             <c:set var="updateReason" value="${fn:trim(param.reason)}"/>
             <c:if test="${empty updateReason}">
-                <p class="error">Must have a reason for the modification.</p>
-                <c:set var="updateError" value="true"/>
+                <fmt:formatDate var="today" value="${du:now()}" type="date" pattern="yyyy-MM-dd"/>
+                <c:choose>
+                    <c:when test="${today == param.date}">
+                        <c:set var="updateReason" value="Modification on same day.  No reason required."/>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="error">Must have a reason for the modification.</p>
+                        <c:set var="updateError" value="true"/>
+                    </c:otherwise>
+                </c:choose>
             </c:if>
 
             <c:set var="updateDuration" value="${fn:trim(param.duration)}"/>
