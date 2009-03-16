@@ -188,8 +188,9 @@
                         <td>${fn:escapeXml(entry.name)}</td>
                         <td>${entry.task}</td>
                         <td>${entry.duration}</td>
-                        <c:set var="entryDescription" value="${entry.description}"/>
+                        <c:set var="entryDescription" value="${fn:escapeXml(entry.description)}"/>
                         <c:if test="${sarariman:containsHTML(entryDescription)}">
+                            <!-- FIXME: I really only want to escape XML entities in the above fixup. -->
                             <c:set var="entryDescription" value="${fn:escapeXml(entryDescription)}"/>
                         </c:if>
                         <td>${entryDescription}</td>
