@@ -45,6 +45,14 @@
         <servlet-name>editentry</servlet-name>
         <url-pattern>/editentry</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>tasks</servlet-name>
+        <jsp-file>/tasks.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>tasks</servlet-name>
+        <url-pattern>/tasks</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

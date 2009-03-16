@@ -21,6 +21,7 @@
             <ul>
                 <li><a href="timesheet">Timesheet Reports</a></li>
                 <li><a href="timesheets">Timesheet Management</a></li>
+                <li><a href="tasks">Task Management</a></li>
                 <li><a href="changelog">Changelog</a></li>
                 <li><a href="help.xhtml">Help</a></li>
             </ul>
