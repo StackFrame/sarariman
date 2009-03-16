@@ -63,9 +63,9 @@
                     <td>${entry.duration}</td>
                     <c:set var="entryDescription" value="${entry.description}"/>
                     <c:if test="${sarariman:containsHTML(entryDescription)}">
-                        <c:set var="entryDescription" value="${fn:escapeXml(entryDescription)}"/>
+                        <c:set var="entryDescription" value="${entryDescription}"/>
                     </c:if>
-                    <td>${entryDescription}</td>
+                    <td>${fn:escapeXml(entryDescription)}</td>
                     <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
                 </tr>
             </c:forEach>
