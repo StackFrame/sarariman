@@ -23,6 +23,7 @@
                 <li><a href="timesheets">Timesheet Management</a></li>
                 <li><a href="tasks">Task Management</a></li>
                 <li><a href="changelog">Changelog</a></li>
+                <li><a href="day">Daily Activity</a></li>
                 <li><a href="help.xhtml">Help</a></li>
             </ul>
         </div>

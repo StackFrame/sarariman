@@ -53,6 +53,14 @@
         <servlet-name>tasks</servlet-name>
         <url-pattern>/tasks</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>day</servlet-name>
+        <jsp-file>/day.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>day</servlet-name>
+        <url-pattern>/day</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
