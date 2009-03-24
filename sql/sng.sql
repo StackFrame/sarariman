@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS hours (employee INT UNSIGNED NOT NULL,
 		                  PRIMARY KEY (employee, task, date),
 		                  FOREIGN KEY (task) REFERENCES tasks(id)
 				  ON UPDATE RESTRICT ON DELETE RESTRICT,
-                                  recorded_timestamp TIMESTAMP NOT NULL,
 		                  description TEXT CHARACTER SET utf8,
                                   duration DECIMAL (4,2) UNSIGNED NOT NULL) ENGINE=INNODB;
 
