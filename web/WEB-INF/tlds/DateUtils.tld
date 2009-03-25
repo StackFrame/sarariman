@@ -14,6 +14,11 @@
         <function-signature>java.util.Date weekStart(java.util.Date)</function-signature>
     </function>
     <function>
+        <name>addDays</name>
+        <function-class>com.stackframe.sarariman.DateUtils</function-class>
+        <function-signature>java.util.Date addDays(java.util.Date, int)</function-signature>
+    </function>
+    <function>
         <name>nextWeek</name>
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
         <function-signature>java.util.Date nextWeek(java.util.Date)</function-signature>

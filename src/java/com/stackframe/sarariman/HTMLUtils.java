@@ -11,7 +11,7 @@ public class HTMLUtils {
 
     public static boolean containsHTML(String s) {
         // FIXME: Make this handle other elements.
-        return s.matches("<p>");
+        return s.contains("<p>") || s.contains("<li>") || s.contains("<br/>");
     }
 
 }

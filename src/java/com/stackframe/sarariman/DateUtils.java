@@ -29,6 +29,13 @@ public class DateUtils {
         return startDate.getTime();
     }
 
+    public static Date addDays(Date date, int days) {
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(date);
+        startDate.add(Calendar.DATE, days);
+        return startDate.getTime();
+    }
+
     public static Date nextWeek(Date date) {
         Calendar startDate = Calendar.getInstance();
         startDate.setTime(date);

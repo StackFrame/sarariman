@@ -12,3 +12,7 @@ p.error {
 #footer {
     text-align: center;
 }
+
+.duration {
+    text-align: right;
+}
