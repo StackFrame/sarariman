@@ -6,13 +6,11 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
-<c:set var="employeeNumber" value="${user.number}"/>
 <sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Timesheet</title>
+        <title>${directory.employeeMap[param.employee].fullName}</title>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
