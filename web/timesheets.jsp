@@ -14,6 +14,7 @@
         <title>Timesheets</title>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
+    <!-- FIXME: Need to make PTO stand out for easier payroll processing. -->
     <body>
         <p><a href="./">Home</a></p>
         <c:choose>
@@ -61,22 +62,32 @@
 
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
-        <sql:query dataSource="${db}" var="timesheets">
-            SELECT * from timecards WHERE date=?
-            <sql:param value="${week}"/>
-        </sql:query>
         <table>
             <tr><th>Employee</th><th>Approved</th></tr>
-            <c:forEach var="timesheet" items="${timesheets.rows}">
+            <c:forEach var="employee" items="${directory.employees}">
                 <tr>
                     <td>
                         <c:url var="timesheetLink" value="timesheet">
-                            <c:param name="employee" value="${timesheet.employee}"/>
+                            <c:param name="employee" value="${employee.number}"/>
                             <c:param name="week" value="${thisWeekStart}"/>
                         </c:url>
-                        <a href="${fn:escapeXml(timesheetLink)}">${directory.employeeMap[timesheet.employee].fullName}</a>
+                        <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
                     </td>
-                    <c:set var="approved" value="${timesheet.approved}"/>
+                    <sql:query dataSource="${db}" var="timesheets">
+                        SELECT * from timecards WHERE date=? and employee=?
+                        <sql:param value="${week}"/>
+                        <sql:param value="${employee.number}"/>
+                    </sql:query>
+                    <c:choose>
+                        <c:when test="${timesheets.rowCount == 0}">
+                            <c:set var="approved" value="false"/>
+                            <c:set var="submitted" value="false"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="approved" value="${timesheets.rows[0].approved}"/>
+                            <c:set var="submitted" value="true"/>
+                        </c:otherwise>
+                    </c:choose>
                     <td>
                         <form>
                             <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
@@ -85,10 +96,10 @@
                     <td>
                         <form method="post">
                             <input type="hidden" value="${thisWeekStart}" name="actionWeek"/>
-                            <input type="hidden" value="${timesheet.employee}" name="actionEmployee"/>
+                            <input type="hidden" value="${employee.number}" name="actionEmployee"/>
                             <c:if test="${!approved && sarariman:isAdministrator(user)}">
-                                <input type="submit" name="action" value="Approve"/>
-                                <input type="submit" name="action" value="Reject"/>
+                                <input type="submit" name="action" value="Approve" <c:if test="${!submitted}">disabled="disabled"</c:if>/>
+                                <input type="submit" name="action" value="Reject"  <c:if test="${!submitted}">disabled="disabled"</c:if>/>
                             </c:if>
                         </form>
                     </td>
