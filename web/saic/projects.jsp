@@ -15,13 +15,30 @@
         <sql:param value="1"/>
     </sql:query>
 
+    <c:choose>
+        <c:when test="${!empty param.week}">
+            <c:set var="week" value="${param.week}"/>
+        </c:when>
+        <c:otherwise>
+            <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
+        </c:otherwise>
+    </c:choose>
+    
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
-        <title>${customer.rows[0].name} - ${param.week}</title>
+        <title>${customer.rows[0].name} - ${week}</title>
     </head>
 
     <body>
-        <h1>${customer.rows[0].name} - ${param.week}</h1>
+        <h1>${customer.rows[0].name} - ${week}</h1>
+
+        <form action="${request.requestURI}" method="get">
+            <fmt:parseDate var="weekValue" value="${week}" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="prevWeekString" value="${du:prevWeek(weekValue)}" type="date" pattern="yyyy-MM-dd"/>
+            <input type="submit" name="week" value="${prevWeekString}"/>
+            <fmt:formatDate var="nextWeekString" value="${du:nextWeek(weekValue)}" type="date" pattern="yyyy-MM-dd"/>
+            <input type="submit" name="week" value="${nextWeekString}"/>
+        </form>
 
         <sql:query dataSource="${db}" var="result">
             SELECT DISTINCT p.name, p.id
@@ -32,14 +49,14 @@
             WHERE c.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY)
             ORDER BY p.id ASC
             <sql:param value="${customer.rows[0].id}"/>
-            <sql:param value="${param.week}"/>
-            <sql:param value="${param.week}"/>
+            <sql:param value="${week}"/>
+            <sql:param value="${week}"/>
         </sql:query>
         <ul>
             <c:forEach var="row" items="${result.rows}">
                 <c:url var="target" value="project.jsp">
                     <c:param name="project" value="${row.id}"/>
-                    <c:param name="week" value="${param.week}"/>
+                    <c:param name="week" value="${week}"/>
                 </c:url>
                 <li><a href="${fn:escapeXml(target)}">${fn:escapeXml(row.name)}</a></li>
             </c:forEach>

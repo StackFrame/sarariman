@@ -15,6 +15,7 @@
             <li><a href="changelog">Changelog</a></li>
             <li><a href="day">Daily Activity</a></li>
             <li><a href="help.xhtml">Help</a></li>
+            <li><a href="saic/projects.jsp">SAIC projects</a></li>
         </ul>
 
         <%@include file="footer.jsp" %>
