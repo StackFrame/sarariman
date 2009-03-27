@@ -17,17 +17,8 @@
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
-        <div id="navigation">
-            <ul>
-                <li><a href="timesheet">Timesheet Reports</a></li>
-                <li><a href="timesheets">Timesheet Management</a></li>
-                <li><a href="tasks">Task Management</a></li>
-                <li><a href="changelog">Changelog</a></li>
-                <li><a href="day">Daily Activity</a></li>
-                <li><a href="help.xhtml">Help</a></li>
-            </ul>
-        </div>
-
+        <a href="tools">Tools</a>
+        
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
@@ -212,7 +203,7 @@
                 </tr>
             </table>
         </div>
-        
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
