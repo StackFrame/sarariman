@@ -142,7 +142,7 @@
         </table>
 
         <sql:query dataSource="${db}" var="detail">
-            SELECT h.task, h.date, t.name, h.description
+            SELECT h.task, h.date, t.name, h.description, h.employee
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
@@ -164,7 +164,7 @@
                     <c:otherwise>
                         <c:choose>
                             <c:when test='${fn:contains(entry.description, "<p>")}'>
-                                ${entry.description}
+                            ${entry.description}
                             </c:when>
                             <c:otherwise>
                                 <p>${entry.description}</p>
@@ -172,6 +172,12 @@
                         </c:choose>
                     </c:otherwise>
                 </c:choose>
+                <c:url var="editLink" value="../editentry">
+                    <c:param name="employee" value="${entry.employee}"/>
+                    <c:param name="date" value="${entry.date}"/>
+                    <c:param name="task" value="${entry.task}"/>
+                </c:url>
+                <a class="edit" href="${fn:escapeXml(editLink)}">Edit</a>
             </div>
         </c:forEach>
 
