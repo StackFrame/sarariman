@@ -23,7 +23,57 @@
         <sql:param value="${param.project}"/>
     </sql:query>
     <head>
-        <link href="../style.css" rel="stylesheet" type="text/css"/>
+        <style type="text/css">
+        @media screen, print{
+            body {
+                    margin: 0px auto;
+                    padding: 15px;
+                    background: white;
+                    color: black;
+            }
+
+            p.error {
+                    color: red;
+            }
+
+            #footer {
+                    text-align: center;
+            }
+
+            .duration {
+                    text-align: right;
+            }
+
+            #timereport table {
+                    border-width: 1px;
+                    border-style: outset;
+            }
+
+            #timereport table td, #timereport table th {
+                    border-width: 1px;
+                    border-style: inset;
+            }
+         }
+
+         @media print{
+            .dates {
+                    white-space: nowrap;
+            }
+
+            .edit {
+                    display: none;
+            }
+
+            #timereport table {
+                    font-size: 12px;
+                    text-align: center;
+            }
+
+            #timereport table td, #timereport table th {
+                    padding: 5px;
+            }
+         }
+        </style>
         <title>${directory.employeeMap[param.employee].fullName} - ${fn:escapeXml(project.rows[0].name)} - ${param.week}</title>
     </head>
 
@@ -51,6 +101,7 @@
             <sql:param value="${param.week}"/>
             <sql:param value="${param.week}"/>
         </sql:query>
+        <div id="timereport">
         <table>
             <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
             <tr>
@@ -61,7 +112,7 @@
                 <th>Line Item</th>
                 <c:forEach var="day" begin="0" end="6">
                     <fmt:formatDate var="fmtDay" value="${du:addDays(startDay, day)}" pattern="MM-dd"/>
-                    <th>${fmtDay}</th>
+                    <th class="dates">${fmtDay}</th>
                 </c:forEach>
                 <th>Total</th>
             </tr>
@@ -140,7 +191,7 @@
                 <th class="duration">${total.rows[0].total}</th>
             </tr>
         </table>
-
+        </div>
         <sql:query dataSource="${db}" var="detail">
             SELECT h.task, h.date, t.name, h.description, h.employee
             FROM hours as h
