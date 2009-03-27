@@ -24,55 +24,55 @@
     </sql:query>
     <head>
         <style type="text/css">
-        @media screen, print{
-            body {
+            @media screen, print{
+                body {
                     margin: 0px auto;
                     padding: 15px;
                     background: white;
                     color: black;
-            }
+                }
 
-            p.error {
+                p.error {
                     color: red;
-            }
+                }
 
-            #footer {
+                #footer {
                     text-align: center;
-            }
+                }
 
-            .duration {
+                .duration {
                     text-align: right;
-            }
+                }
 
-            #timereport table {
+                table.timereport {
                     border-width: 1px;
                     border-style: outset;
-            }
+                }
 
-            #timereport table td, #timereport table th {
+                table.timereport td, table.timereport th {
                     border-width: 1px;
                     border-style: inset;
+                }
             }
-         }
 
-         @media print{
-            .dates {
+            @media print{
+                .dates {
                     white-space: nowrap;
-            }
+                }
 
-            .edit {
+                .edit {
                     display: none;
-            }
+                }
 
-            #timereport table {
+                table.timereport {
                     font-size: 12px;
                     text-align: center;
-            }
+                }
 
-            #timereport table td, #timereport table th {
+                table.timereport  td, table.timereport th {
                     padding: 5px;
+                }
             }
-         }
         </style>
         <title>${directory.employeeMap[param.employee].fullName} - ${fn:escapeXml(project.rows[0].name)} - ${param.week}</title>
     </head>
@@ -101,8 +101,7 @@
             <sql:param value="${param.week}"/>
             <sql:param value="${param.week}"/>
         </sql:query>
-        <div id="timereport">
-        <table>
+        <table class="timereport">
             <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
             <tr>
                 <th>Task</th>
@@ -191,7 +190,6 @@
                 <th class="duration">${total.rows[0].total}</th>
             </tr>
         </table>
-        </div>
         <sql:query dataSource="${db}" var="detail">
             SELECT h.task, h.date, t.name, h.description, h.employee
             FROM hours as h
