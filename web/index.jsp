@@ -161,6 +161,8 @@
                 <c:if test="${!submitted}">
                     <input type="hidden" value="true" name="submit"/>
                     <input type="submit" value="Submit"/>
+                    <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+                    <input type="hidden" name="week" value="${weekString}"/>
                 </c:if>
             </form>
 
