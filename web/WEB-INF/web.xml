@@ -69,6 +69,14 @@
         <servlet-name>tools</servlet-name>
         <url-pattern>/tools</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>timereport</servlet-name>
+        <jsp-file>/timereport.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>timereport</servlet-name>
+        <url-pattern>/timereport</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
