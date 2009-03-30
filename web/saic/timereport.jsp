@@ -44,6 +44,10 @@
                     text-align: right;
                 }
 
+                .chargeNum, .dates {
+                    white-space: nowrap;
+                }
+
                 table.timereport {
                     border-width: 1px;
                     border-style: outset;
@@ -56,10 +60,6 @@
             }
 
             @media print{
-                .dates {
-                    white-space: nowrap;
-                }
-
                 .edit {
                     display: none;
                 }
@@ -119,7 +119,7 @@
                 <tr>
                     <td>${task.task}</td>
                     <td>${fn:escapeXml(task.name)}</td>
-                    <td>${task.charge_number}</td>
+                    <td class="chargeNum">${task.charge_number}</td>
                     <td>${task.wbs}</td>
                     <td>${task.po_line_item}</td>
                     <c:forEach var="day" begin="0" end="6">
@@ -195,7 +195,7 @@
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
-            WHERE h.employee=? AND h.date >= ? AND h.date < ? AND p.id = ?
+            WHERE h.employee=? AND h.date >= ? AND h.date < ? AND p.id = ? AND h.duration > 0
             ORDER BY h.date ASC
             <sql:param value="${param.employee}"/>
             <sql:param value="${startDay}"/>
