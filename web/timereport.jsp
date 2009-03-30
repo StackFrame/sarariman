@@ -188,7 +188,7 @@
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
-            WHERE h.employee=? AND h.date >= ? AND h.date < ? AND p.id = ?
+            WHERE h.employee=? AND h.date >= ? AND h.date < ? AND p.id = ? AND h.duration > 0
             ORDER BY h.date ASC
             <sql:param value="${param.employee}"/>
             <sql:param value="${startDay}"/>
