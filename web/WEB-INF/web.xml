@@ -77,6 +77,22 @@
         <servlet-name>timereport</servlet-name>
         <url-pattern>/timereport</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>projects</servlet-name>
+        <jsp-file>/projects.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>projects</servlet-name>
+        <url-pattern>/projects</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>project</servlet-name>
+        <jsp-file>/project.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>project</servlet-name>
+        <url-pattern>/project</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
