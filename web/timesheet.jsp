@@ -68,6 +68,7 @@
             <sql:param value="${week}"/>
         </sql:query>
         <c:set var="totalHoursWorked" value="0.0"/>
+        <c:set var="totalPTO" value="0.0"/>
         <table>
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
@@ -75,6 +76,12 @@
                     <td>${entry.date}</td>
                     <td>${fn:escapeXml(entry.name)}</td>
                     <td>${entry.task}</td>
+                    
+                    <!-- FIXME: This needs to look this up somewhere. -->
+                    <c:if test="${entry.task == 5}">
+                        <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
+                    </c:if>
+                    
                     <td>${entry.duration}</td>
                     <c:set var="entryDescription" value="${entry.description}"/>
                     <c:if test="${sarariman:containsHTML(entryDescription)}">
@@ -87,6 +94,10 @@
             <tr>
                 <td colspan="3">Total</td>
                 <td>${totalHoursWorked}</td>
+            </tr>
+            <tr>
+                <td colspan="3">Total PTO</td>
+                <td>${totalPTO}</td>
             </tr>
         </table>
 
