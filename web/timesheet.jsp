@@ -8,9 +8,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
+    <c:choose>
+        <c:when test="${!empty param.employee}">
+            <c:set var="employee" value="${param.employee}"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="employee" value="${directory.employeeMap[pageContext.request.remoteUser].number}"/>
+        </c:otherwise>
+    </c:choose>
+
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>${directory.employeeMap[param.employee].fullName}</title>
+        <title>${directory.employeeMap[employee].fullName}</title>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
@@ -30,25 +39,33 @@
             <input type="submit" name="week" value="${prevWeekString}"/>
             <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
+            <input type="hidden" name="employee" value="${employee}"/>
+        </form>
+        <form>
             <label for="employee">Employee: </label>
             <select name="employee" id="employee">
                 <c:forEach var="e" items="${directory.employees}">
-                    <option value="${e.number}">${e.fullName}</option>
+                    <option value="${e.number}" <c:if test="${e.number == employee}">selected="selected"</c:if>>${e.fullName}</option>
                 </c:forEach>
             </select>
+            <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+            <input type="hidden" name="week" value="${weekString}"/>
             <input type="submit" value="Retrieve"/>
         </form>
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
-        <h2>Timesheet for ${directory.employeeMap[param.employee].fullName} for the week of ${thisWeekStart}</h2>
+        <h2>Timesheet for ${directory.employeeMap[employee].fullName} for the week of ${thisWeekStart}</h2>
 
-        <!-- FIXME: Can I do the nextWeek part in SQL? -->
         <sql:query dataSource="${db}" var="entries">
-            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name FROM hours INNER JOIN tasks ON hours.task=tasks.id WHERE employee=? AND hours.date >= ? AND hours.date < ? ORDER BY hours.date DESC, hours.task ASC
-            <sql:param value="${param.employee}"/>
+            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
+            FROM hours
+            INNER JOIN tasks ON hours.task=tasks.id
+            WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
+            ORDER BY hours.date DESC, hours.task ASC
+            <sql:param value="${employee}"/>
             <sql:param value="${week}"/>
-            <sql:param value="${du:nextWeek(week)}"/>
+            <sql:param value="${week}"/>
         </sql:query>
         <c:set var="totalHoursWorked" value="0.0"/>
         <table>
