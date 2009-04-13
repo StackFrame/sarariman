@@ -18,7 +18,7 @@
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
         <a href="tools">Tools</a>
-        
+
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
@@ -36,11 +36,14 @@
         <c:set var="submitted" value="${!empty timecard.rows}"/>
 
         <c:if test="${!submitted && param.submit}">
-            <sql:update dataSource="${db}">
+            <sql:update dataSource="${db}" var="rowsInserted">
                 INSERT INTO timecards (employee, date, approved) values(?, ?, false)
                 <sql:param value="${employeeNumber}"/>
                 <sql:param value="${week}"/>
             </sql:update>
+            <c:if test="${rowsInserted == 1}">
+                <c:set var="submitted" value="true"/>
+            </c:if>
         </c:if>
 
         <c:if test="${!empty param.recordTime}">
