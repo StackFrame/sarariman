@@ -136,6 +136,8 @@
                 <br/>
                 <label for="description">Description:</label>
                 <textarea cols="40" rows="10" name="description" id="description" />
+                <fmt:formatDate var="weekString" value="${week}" type="date" pattern="yyyy-MM-dd" />
+                <input type="hidden" name="week" value="${weekString}"/>
                 <input type="submit" name="recordTime" value="Record"/>
             </form>
         </div>
