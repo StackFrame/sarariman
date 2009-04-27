@@ -63,7 +63,7 @@
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
         <table>
-            <tr><th>Employee</th><th>Approved</th></tr>
+            <tr><th>Employee</th><th>Approved</th><th>Submitted</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <tr>
                     <td>
@@ -91,6 +91,11 @@
                     <td>
                         <form>
                             <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
+                        </form>
+                    </td>
+                    <td>
+                        <form>
+                            <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
                         </form>
                     </td>
                     <td>
