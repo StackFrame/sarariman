@@ -6,16 +6,15 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <!-- Grrr.  FIXME: I would like to do a single join here with column name aliases, but some bug in JDBC prevents it. -->
-    <sql:query dataSource="${db}" var="project" >
+    <sql:query dataSource="jdbc/sarariman" var="project" >
         SELECT name
         FROM projects
         WHERE id=?
         <sql:param value="${param.project}"/>
     </sql:query>
-    <sql:query dataSource="${db}" var="customer" >
+    <sql:query dataSource="jdbc/sarariman" var="customer" >
         SELECT c.name
         FROM customers AS c
         JOIN projects AS p ON p.customer = c.id
@@ -30,7 +29,7 @@
     <body>
         <h1>${customer.rows[0].name} - ${fn:escapeXml(project.rows[0].name)} - ${param.week}</h1>
 
-        <sql:query dataSource="${db}" var="result">
+        <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT DISTINCT h.employee
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id

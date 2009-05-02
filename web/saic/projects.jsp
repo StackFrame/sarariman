@@ -6,11 +6,10 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <!-- FIXME: Get customer id out of config or look it up or something. -->
-    <sql:query dataSource="${db}" var="customer" >
+    <sql:query dataSource="jdbc/sarariman" var="customer" >
         SELECT id, name FROM customers WHERE id=?
         <sql:param value="1"/>
     </sql:query>
@@ -40,7 +39,7 @@
             <input type="submit" name="week" value="${nextWeekString}"/>
         </form>
 
-        <sql:query dataSource="${db}" var="result">
+        <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT DISTINCT p.name, p.id
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id

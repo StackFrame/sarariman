@@ -3,7 +3,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -14,7 +13,7 @@
         <p><a href="./">Home</a></p>
         <h1>Uninvoiced Projects</h1>
 
-        <sql:query dataSource="${db}" var="result">
+        <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT DISTINCT p.id, p.name
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id

@@ -6,7 +6,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -32,7 +31,7 @@
         <table>
             <tr><th>Employee</th><th>Hours</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
-                <sql:query dataSource="${db}" var="data">
+                <sql:query dataSource="jdbc/sarariman" var="data">
                     SELECT * FROM hours WHERE date=? AND employee=?
                     <sql:param value="${day}"/>
                     <sql:param value="${employee.number}"/>

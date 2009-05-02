@@ -6,7 +6,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -40,7 +39,7 @@
             <input type="submit" value="Search"/>
         </form>
 
-        <sql:query dataSource="${db}" var="entries">
+        <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT * FROM hours_changelog WHERE timestamp >= ? AND timestamp <= ? ORDER BY timestamp DESC LIMIT ?
             <sql:param value="${start}"/>
             <sql:param value="${end}"/>

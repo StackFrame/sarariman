@@ -6,16 +6,15 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <!-- Grrr.  FIXME: I would like to do a single join here with column name aliases, but some bug in JDBC prevents it. -->
-    <sql:query dataSource="${db}" var="project" >
+    <sql:query dataSource="jdbc/sarariman" var="project" >
         SELECT name
         FROM projects
         WHERE id=?
         <sql:param value="${param.project}"/>
     </sql:query>
-    <sql:query dataSource="${db}" var="customer" >
+    <sql:query dataSource="jdbc/sarariman" var="customer" >
         SELECT c.name
         FROM customers AS c
         JOIN projects AS p ON p.customer = c.id
@@ -88,7 +87,7 @@
             Customer: ${fn:escapeXml(customer.rows[0].name)}
         </p>
 
-        <sql:query dataSource="${db}" var="tasks">
+        <sql:query dataSource="jdbc/sarariman" var="tasks">
             SELECT DISTINCT h.task, t.name, s.charge_number, s.po_line_item, s.wbs
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
@@ -124,7 +123,7 @@
                     <td>${task.po_line_item}</td>
                     <c:forEach var="day" begin="0" end="6">
                         <c:set var="date" value="${du:addDays(startDay, day)}"/>
-                        <sql:query dataSource="${db}" var="duration">
+                        <sql:query dataSource="jdbc/sarariman" var="duration">
                             SELECT h.duration
                             FROM hours as h
                             WHERE h.employee=? AND h.date = ? AND h.task = ?
@@ -141,7 +140,7 @@
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
-                    <sql:query dataSource="${db}" var="total">
+                    <sql:query dataSource="jdbc/sarariman" var="total">
                         SELECT SUM(h.duration) AS total
                         FROM hours as h
                         WHERE h.employee=? AND h.task = ? AND h.date >= ? AND h.date < ?
@@ -157,7 +156,7 @@
                 <th colspan="5">Total</th>
                 <c:forEach var="day" begin="0" end="6">
                     <c:set var="date" value="${du:addDays(startDay, day)}"/>
-                    <sql:query dataSource="${db}" var="total">
+                    <sql:query dataSource="jdbc/sarariman" var="total">
                         SELECT SUM(h.duration) AS total
                         FROM hours as h
                         JOIN tasks AS t ON h.task = t.id
@@ -176,7 +175,7 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <sql:query dataSource="${db}" var="total">
+                <sql:query dataSource="jdbc/sarariman" var="total">
                     SELECT SUM(h.duration) AS total
                     FROM hours as h
                     JOIN tasks AS t ON h.task = t.id
@@ -190,7 +189,7 @@
                 <th class="duration">${total.rows[0].total}</th>
             </tr>
         </table>
-        <sql:query dataSource="${db}" var="detail">
+        <sql:query dataSource="jdbc/sarariman" var="detail">
             SELECT h.task, h.date, t.name, h.description, h.employee
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id

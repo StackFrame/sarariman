@@ -2,7 +2,6 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -13,7 +12,7 @@
         <p><a href="./">Home</a></p>
         <h1>Invoices</h1>
         <ul>
-            <sql:query dataSource="${db}" var="invoices">
+            <sql:query dataSource="jdbc/sarariman" var="invoices">
                 SELECT DISTINCT id from invoices ORDER BY id DESC
             </sql:query>
             <c:forEach var="invoice" items="${invoices.rows}">

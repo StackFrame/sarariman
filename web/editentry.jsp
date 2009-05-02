@@ -8,7 +8,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <c:set var="employeeNumber" value="${user.number}"/>
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -50,7 +49,7 @@
             <!-- FIXME: Need to also check the duration is a valid number. -->
 
             <c:if test="${empty updateError}">
-                <sql:update dataSource="${db}" var="rowsUpdated">
+                <sql:update dataSource="jdbc/sarariman" var="rowsUpdated">
                     UPDATE hours SET duration=?,description=? WHERE date=? AND employee=? and task=?
                     <sql:param value="${updateDuration}"/>
                     <sql:param value="${updateDescription}"/>
@@ -60,7 +59,7 @@
                 </sql:update>
                 <c:choose>
                     <c:when test="${rowsUpdated == 1}">
-                        <sql:update dataSource="${db}" var="rowsInserted">
+                        <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
                             INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration) values(?, ?, ?, ?, ?, ?, ?)
                             <sql:param value="${param.employee}"/>
                             <sql:param value="${param.task}"/>
@@ -82,7 +81,7 @@
         </c:if>
 
         <p><a href="./">Home</a></p>
-        <sql:query dataSource="${db}" var="entries">
+        <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name FROM hours INNER JOIN tasks ON hours.task=tasks.id WHERE employee=? AND hours.date=? AND hours.task=?
             <sql:param value="${param.employee}"/>
             <sql:param value="${param.date}"/>
@@ -108,7 +107,7 @@
         </form>
 
         <h2>Audit log for this entry</h2>
-        <sql:query dataSource="${db}" var="entries">
+        <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT * FROM hours_changelog WHERE task=? and employee=? and date=? ORDER BY timestamp DESC
             <sql:param value="${param.task}"/>
             <sql:param value="${param.employee}"/>

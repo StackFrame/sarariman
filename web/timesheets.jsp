@@ -6,7 +6,6 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -38,7 +37,7 @@
         <c:if test="${sarariman:isAdministrator(user) && !empty param.action}">
             <c:choose>
                 <c:when test="${param.action == 'Approve'}">
-                    <sql:update dataSource="${db}">
+                    <sql:update dataSource="jdbc/sarariman">
                         UPDATE timecards SET approved=true WHERE date=? AND employee=?
                         <sql:param value="${param.actionWeek}"/>
                         <sql:param value="${param.actionEmployee}"/>
@@ -46,7 +45,7 @@
                     <p>Approved timesheet for ${param.actionEmployee} for ${param.actionWeek}.</p>
                 </c:when>
                 <c:when test="${param.action == 'Reject'}">
-                    <sql:update dataSource="${db}">
+                    <sql:update dataSource="jdbc/sarariman">
                         DELETE FROM timecards WHERE date=? AND employee=?
                         <sql:param value="${param.actionWeek}"/>
                         <sql:param value="${param.actionEmployee}"/>
@@ -73,7 +72,7 @@
                         </c:url>
                         <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
                     </td>
-                    <sql:query dataSource="${db}" var="timesheets">
+                    <sql:query dataSource="jdbc/sarariman" var="timesheets">
                         SELECT * from timecards WHERE date=? and employee=?
                         <sql:param value="${week}"/>
                         <sql:param value="${employee.number}"/>

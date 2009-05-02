@@ -2,7 +2,6 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<sql:setDataSource dataSource="jdbc/sarariman" var="db"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -11,7 +10,7 @@
     <body>
         <p><a href="./">Home</a></p>
         <h1>Invoice ${param.invoice}</h1>
-        <sql:query dataSource="${db}" var="result">
+        <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT i.employee, i.task, i.date, h.duration
             FROM invoices AS i
             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
@@ -34,7 +33,7 @@
                     <td>${row.duration}</td>
                 </tr>
             </c:forEach>
-            <sql:query dataSource="${db}" var="sum">
+            <sql:query dataSource="jdbc/sarariman" var="sum">
                 SELECT SUM(h.duration) AS total
                 FROM invoices AS i
                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
