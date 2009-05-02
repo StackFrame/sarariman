@@ -9,6 +9,8 @@
     <body>
         <ul>
             <li><a href="./">Home</a></li>
+            <li><a href="invoices">Invoices</a></li>
+            <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
             <li><a href="timesheet">Timesheet Reports</a></li>
             <li><a href="timesheets">Timesheet Management</a></li>
             <li><a href="tasks">Task Management</a></li>

@@ -93,6 +93,38 @@
         <servlet-name>project</servlet-name>
         <url-pattern>/project</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>invoice</servlet-name>
+        <jsp-file>/invoice.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>invoice</servlet-name>
+        <url-pattern>/invoice</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>invoices</servlet-name>
+        <jsp-file>/invoices.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>invoices</servlet-name>
+        <url-pattern>/invoices</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>uninvoiced</servlet-name>
+        <jsp-file>/uninvoiced.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>uninvoiced</servlet-name>
+        <url-pattern>/uninvoiced</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>uninvoicedprojects</servlet-name>
+        <jsp-file>/uninvoicedprojects.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>uninvoicedprojects</servlet-name>
+        <url-pattern>/uninvoicedprojects</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
