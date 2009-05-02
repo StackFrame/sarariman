@@ -15,13 +15,31 @@
         <p><a href="./">Home</a></p>
 
         <sql:query dataSource="jdbc/sarariman" var="tasks">
-            SELECT * from tasks
+            SELECT t.id, t.name, t.project
+            FROM tasks AS t
         </sql:query>
 
         <table>
-            <tr><th>ID</th><th>Name</th></tr>
+            <tr><th>ID</th><th>Name</th><th>Project</th></tr>
             <c:forEach var="task" items="${tasks.rows}">
-                <tr><td>${task.id}</td><td>${fn:escapeXml(task.name)}</td></tr>
+                <tr>
+                    <a href="task?task_id=${task.id}">
+                        <td>${task.id}</td>
+                        <td>${fn:escapeXml(task.name)}</td>
+                        <!-- FIXME: This should be done with a JOIN in SELECT above, but JSTL sql:query does not let us alias column
+                    names -->
+                        <c:if test="${!empty task.project}">
+                            <sql:query dataSource="jdbc/sarariman" var="result" >
+                                SELECT name
+                                FROM projects
+                                WHERE id=?
+                                <sql:param value="${task.project}"/>
+                            </sql:query>
+                            <c:set var="project_name" value="${fn:escapeXml(result.rows[0].name)}"/>
+                        </c:if>
+                        <td>${project_name}</td>
+                    </a>
+                </tr>
             </c:forEach>
         </table>
         <%@include file="footer.jsp" %>

@@ -54,6 +54,14 @@
         <url-pattern>/tasks</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>task</servlet-name>
+        <jsp-file>/task.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>task</servlet-name>
+        <url-pattern>/task</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>day</servlet-name>
         <jsp-file>/day.jsp</jsp-file>
     </servlet>
