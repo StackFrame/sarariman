@@ -16,12 +16,13 @@
         <c:if test="${sarariman:isAdministrator(user) && !empty param.update}">
             <sql:update dataSource="jdbc/sarariman">
                 UPDATE tasks
-                SET name=?, billable=?, active=?, description=?
+                SET name=?, billable=?, active=?, description=?, project=?
                 WHERE id=?
                 <sql:param value="${param.task_name}"/>
                 <sql:param value="${param.billable == 'on' ? 1 : 0}"/>
                 <sql:param value="${param.active == 'on' ? 1 : 0}"/>
                 <sql:param value="${param.task_description}"/>
+                <sql:param value="${empty param.task_project ? null : param.task_project}"/>
                 <sql:param value="${param.task_id}"/>
             </sql:update>
         </c:if>
@@ -38,6 +39,16 @@
         <form method="POST">
             <label for="task_name">Name: </label>
             <input type="text" id="task_name" name="task_name" value="${task.name}"/><br/>
+            <label for="task_project">Project: </label>
+            <select id="task_project" name="task_project">
+                <option value="" <c:if test="${empty task.project}">selected="selected"</c:if>></option>
+                <sql:query dataSource="jdbc/sarariman" var="projects">
+                    SELECT * FROM projects
+                </sql:query>
+                <c:forEach var="project" items="${projects.rows}">
+                    <option value="${project.id}" <c:if test="${task.project == project.id}">selected="selected"</c:if>>${fn:escapeXml(project.name)}</option>
+                </c:forEach>
+            </select><br/>
             <label for="billable">Billable: </label>
             <input type="checkbox" name="billable" id="billable" <c:if test="${task.billable}">checked="true"</c:if>
                    <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
