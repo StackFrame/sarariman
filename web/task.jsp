@@ -16,11 +16,12 @@
         <c:if test="${sarariman:isAdministrator(user) && !empty param.update}">
             <sql:update dataSource="jdbc/sarariman">
                 UPDATE tasks
-                SET name=?, billable=?, active=?
+                SET name=?, billable=?, active=?, description=?
                 WHERE id=?
                 <sql:param value="${param.task_name}"/>
                 <sql:param value="${param.billable == 'on' ? 1 : 0}"/>
                 <sql:param value="${param.active == 'on' ? 1 : 0}"/>
+                <sql:param value="${param.task_description}"/>
                 <sql:param value="${param.task_id}"/>
             </sql:update>
         </c:if>
@@ -44,6 +45,8 @@
             <input type="checkbox" name="active" id="active" <c:if test="${task.active}">checked="true"</c:if>
                    <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
             <br/>
+            <label for="task_description">Description: </label>
+            <input type="text" size="80" id="task_description" name="task_description" value="${task.description}"/><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
         </form>
         <%@include file="footer.jsp" %>
