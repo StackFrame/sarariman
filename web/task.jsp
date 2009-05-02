@@ -38,7 +38,7 @@
         <h1>Task ${param.task_id}</h1>
         <form method="POST">
             <label for="task_name">Name: </label>
-            <input type="text" id="task_name" name="task_name" value="${task.name}"/><br/>
+            <input type="text" id="task_name" name="task_name" value="${fn:escapeXml(task.name)}"/><br/>
             <label for="task_project">Project: </label>
             <select id="task_project" name="task_project">
                 <option value="" <c:if test="${empty task.project}">selected="selected"</c:if>></option>
@@ -57,7 +57,7 @@
                    <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
             <br/>
             <label for="task_description">Description: </label>
-            <input type="text" size="80" id="task_description" name="task_description" value="${task.description}"/><br/>
+            <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
         </form>
         <%@include file="footer.jsp" %>
