@@ -14,13 +14,13 @@
         <p><a href="./">Home</a></p>
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.update}">
-            <p>Updating!</p>
             <sql:update dataSource="jdbc/sarariman">
                 UPDATE tasks
-                SET name=?, billable=?
+                SET name=?, billable=?, active=?
                 WHERE id=?
                 <sql:param value="${param.task_name}"/>
                 <sql:param value="${param.billable == 'on' ? 1 : 0}"/>
+                <sql:param value="${param.active == 'on' ? 1 : 0}"/>
                 <sql:param value="${param.task_id}"/>
             </sql:update>
         </c:if>
@@ -39,6 +39,9 @@
             <input type="text" id="task_name" name="task_name" value="${task.name}"/><br/>
             <label for="billable">Billable: </label>
             <input type="checkbox" name="billable" id="billable" <c:if test="${task.billable}">checked="true"</c:if>
+                   <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
+            <label for="active">Active: </label>
+            <input type="checkbox" name="active" id="active" <c:if test="${task.active}">checked="true"</c:if>
                    <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
             <br/>
             <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
