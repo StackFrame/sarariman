@@ -32,7 +32,7 @@
                 <c:forEach var="row" items="${result.rows}">
                     <tr>
                         <td>${directory.employeeMap[row.employee].fullName}</td>
-                        <td>${row.task}</td>
+                        <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
                         <td class="duration">${row.duration}</td>
                     </tr>
