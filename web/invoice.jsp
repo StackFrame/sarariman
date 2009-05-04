@@ -9,7 +9,9 @@
     </head>
     <body>
         <p><a href="./">Home</a></p>
+
         <h1>Invoice ${param.invoice}</h1>
+
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT i.employee, i.task, i.date, h.duration
             FROM invoices AS i
@@ -19,29 +21,61 @@
             <sql:param value="${param.invoice}"/>
         </sql:query>
         <table>
-            <tr>
-                <th>Employee</th>
-                <th>Task</th>
-                <th>Date</th>
-                <th>Duration</th>
-            </tr>
-            <c:forEach var="row" items="${result.rows}">
+            <caption>Entries</caption>
+            <tbody>
                 <tr>
-                    <td>${directory.employeeMap[row.employee].fullName}</td>
-                    <td>${row.task}</td>
-                    <td>${row.date}</td>
-                    <td>${row.duration}</td>
+                    <th>Employee</th>
+                    <th>Task</th>
+                    <th>Date</th>
+                    <th>Duration</th>
                 </tr>
-            </c:forEach>
-            <sql:query dataSource="jdbc/sarariman" var="sum">
-                SELECT SUM(h.duration) AS total
-                FROM invoices AS i
-                JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                WHERE i.id = ?
-                <sql:param value="${param.invoice}"/>
-            </sql:query>
-            <tr><td>Total</td><td></td><td></td><td>${sum.rows[0].total}</td></tr>
+                <c:forEach var="row" items="${result.rows}">
+                    <tr>
+                        <td>${directory.employeeMap[row.employee].fullName}</td>
+                        <td>${row.task}</td>
+                        <td>${row.date}</td>
+                        <td>${row.duration}</td>
+                    </tr>
+                </c:forEach>
+                <sql:query dataSource="jdbc/sarariman" var="sum">
+                    SELECT SUM(h.duration) AS total
+                    FROM invoices AS i
+                    JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                    WHERE i.id = ?
+                    <sql:param value="${param.invoice}"/>
+                </sql:query>
+                <tr><td>Total</td><td></td><td></td><td>${sum.rows[0].total}</td></tr>
+            </tbody>
         </table>
+
+        <sql:query dataSource="jdbc/sarariman" var="employees">
+            SELECT DISTINCT h.employee
+            FROM invoices AS i
+            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+            WHERE i.id = ?
+            <sql:param value="${param.invoice}"/>
+        </sql:query>
+        <table>
+            <caption>Total by Employee</caption>
+            <tbody>
+                <tr><th>Employee</th><th>Total</th></tr>
+                <c:forEach var="employeeRows" items="${employees.rows}">
+                    <tr>
+                        <td>${directory.employeeMap[employeeRows.employee].fullName}</td>
+                        <sql:query dataSource="jdbc/sarariman" var="totals">
+                            SELECT SUM(h.duration) AS total
+                            FROM invoices AS i
+                            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                            WHERE i.id = ? AND h.employee = ?
+                            <sql:param value="${param.invoice}"/>
+                            <sql:param value="${employeeRows.employee}"/>
+                        </sql:query>
+                        <td>${totals.rows[0].total}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
