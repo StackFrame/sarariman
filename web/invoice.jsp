@@ -34,7 +34,7 @@
                         <td>${directory.employeeMap[row.employee].fullName}</td>
                         <td>${row.task}</td>
                         <td>${row.date}</td>
-                        <td>${row.duration}</td>
+                        <td class="duration">${row.duration}</td>
                     </tr>
                 </c:forEach>
                 <sql:query dataSource="jdbc/sarariman" var="sum">
@@ -44,7 +44,7 @@
                     WHERE i.id = ?
                     <sql:param value="${param.invoice}"/>
                 </sql:query>
-                <tr><td>Total</td><td></td><td></td><td>${sum.rows[0].total}</td></tr>
+                <tr><td>Total</td><td></td><td></td><td class="duration">${sum.rows[0].total}</td></tr>
             </tbody>
         </table>
 
@@ -70,7 +70,7 @@
                             <sql:param value="${param.invoice}"/>
                             <sql:param value="${employeeRows.employee}"/>
                         </sql:query>
-                        <td>${totals.rows[0].total}</td>
+                        <td class="duration">${totals.rows[0].total}</td>
                     </tr>
                 </c:forEach>
             </tbody>
