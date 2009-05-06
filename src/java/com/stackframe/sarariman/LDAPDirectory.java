@@ -2,7 +2,10 @@ package com.stackframe.sarariman;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingEnumeration;
@@ -50,7 +53,7 @@ public class LDAPDirectory implements Directory {
 
     }
     private final Map<Object, Employee> employees = new HashMap<Object, Employee>();
-    private final Collection<Employee> allEmployees = new ArrayList<Employee>();
+    private final List<Employee> allEmployees = new ArrayList<Employee>();
 
     public LDAPDirectory(DirContext context) {
         try {
@@ -69,6 +72,13 @@ public class LDAPDirectory implements Directory {
                 allEmployees.add(employee);
             }
 
+            Collections.sort(allEmployees, new Comparator<Employee>() {
+
+                public int compare(Employee e1, Employee e2) {
+                    return e1.getFullName().compareTo(e2.getFullName());
+                }
+
+            });
             context.close();
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
