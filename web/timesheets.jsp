@@ -42,7 +42,7 @@
                         <sql:param value="${param.actionWeek}"/>
                         <sql:param value="${param.actionEmployee}"/>
                     </sql:update>
-                    <p>Approved timesheet for ${param.actionEmployee} for ${param.actionWeek}.</p>
+                    <p>Approved timesheet for ${directory.employeeMap[param.actionEmployee].fullName} for ${param.actionWeek}.</p>
                 </c:when>
                 <c:when test="${param.action == 'Reject'}">
                     <sql:update dataSource="jdbc/sarariman">
