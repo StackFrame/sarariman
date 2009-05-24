@@ -25,6 +25,10 @@
         <servlet-name>changelog</servlet-name>
         <jsp-file>/changelog.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>createtask</servlet-name>
+        <jsp-file>/createtask.jsp</jsp-file>
+    </servlet>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
         <url-pattern>/timesheets</url-pattern>
@@ -66,6 +70,9 @@
         <jsp-file>/day.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
+        <servlet-name>day</servlet-name>
+        <url-pattern>/day</url-pattern>
+    </servlet-mapping><servlet-mapping>
         <servlet-name>day</servlet-name>
         <url-pattern>/day</url-pattern>
     </servlet-mapping>
@@ -133,6 +140,10 @@
         <servlet-name>uninvoicedprojects</servlet-name>
         <url-pattern>/uninvoicedprojects</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createtask</servlet-name>
+        <url-pattern>/createtask</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
@@ -171,5 +182,4 @@
         <res-ref-name>jdbc/sarariman</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
-    </resource-ref>
-</web-app>
+    </resource-ref></web-app>
