@@ -86,20 +86,20 @@
         <url-pattern>/timereport</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>projects</servlet-name>
-        <jsp-file>/projects.jsp</jsp-file>
+        <servlet-name>timereportsbyproject</servlet-name>
+        <jsp-file>/timereportsbyproject.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>projects</servlet-name>
-        <url-pattern>/projects</url-pattern>
+        <servlet-name>timereportsbyproject</servlet-name>
+        <url-pattern>/timereportsbyproject</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>project</servlet-name>
-        <jsp-file>/project.jsp</jsp-file>
+        <servlet-name>projecttimereports</servlet-name>
+        <jsp-file>/projecttimereports.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>project</servlet-name>
-        <url-pattern>/project</url-pattern>
+        <servlet-name>projecttimereports</servlet-name>
+        <url-pattern>/projecttimereports</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>invoice</servlet-name>

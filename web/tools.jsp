@@ -17,7 +17,7 @@
             <li><a href="changelog">Changelog</a></li>
             <li><a href="day">Daily Activity</a></li>
             <li><a href="help.xhtml">Help</a></li>
-            <li><a href="projects">Projects</a></li>
+            <li><a href="timereportsbyproject">Time reports by project</a></li>
             <li><a href="saic/">SAIC Tools</a></li>
         </ul>
 
