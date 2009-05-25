@@ -123,7 +123,8 @@
                 <input size="10" type="text" name="date" id="date" value="${now}"/>
                 <label for="task">Task:</label>
                 <select name="task" id="task">
-                    <c:forEach var="task" items="${sarariman:tasks()}">
+                    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
+                    <c:forEach var="task" items="${sarariman:tasks(db)}">
                         <c:if test="${task.active}">
                             <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
                                 <c:if test="${!empty task.project}">

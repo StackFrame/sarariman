@@ -45,7 +45,8 @@
         <table>
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
 
-            <c:forEach var="task" items="${sarariman:tasks()}">
+            <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
+            <c:forEach var="task" items="${sarariman:tasks(db)}">
                 <tr>
                     <td><a href="task?task_id=${task.id}">${task.id}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>

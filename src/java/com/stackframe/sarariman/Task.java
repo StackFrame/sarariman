@@ -1,11 +1,10 @@
 package com.stackframe.sarariman;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,38 +20,43 @@ public class Task {
     private final boolean active;
     private final Project project;
 
-    public static Collection<Task> getTasks() throws Exception {
-        Context context = new InitialContext();
-        DataSource dataSource = (DataSource)context.lookup("java:comp/env/jdbc/sarariman");
+    public static Collection<Task> getTasks(DataSource dataSource) throws SQLException {
         Connection connection = dataSource.getConnection();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
-                "p.id AS project_id, p.name AS project_name, " +
-                "c.id AS customer_id, c.name AS customer_name " +
-                "FROM tasks AS t " +
-                "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
-                "LEFT OUTER JOIN customers AS c ON c.id = p.customer");
-        ResultSet resultSet = ps.executeQuery();
-        Collection<Task> list = new ArrayList<Task>();
-        while (resultSet.next()) {
-            int id = resultSet.getInt("task_id");
-            String task_name = resultSet.getString("task_name");
-            boolean billable = resultSet.getBoolean("billable");
-            boolean active = resultSet.getBoolean("active");
-            int project_id = resultSet.getInt("project_id");
-            Project project = null;
-            if (project_id != 0) {
-                String project_name = resultSet.getString("project_name");
-                int customer_id = resultSet.getInt("customer_id");
-                String customer_name = resultSet.getString("customer_name");
-                project = new Project(project_id, project_name, new Customer(customer_id, customer_name));
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
+                    "p.id AS project_id, p.name AS project_name, " +
+                    "c.id AS customer_id, c.name AS customer_name " +
+                    "FROM tasks AS t " +
+                    "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
+                    "LEFT OUTER JOIN customers AS c ON c.id = p.customer");
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                Collection<Task> list = new ArrayList<Task>();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("task_id");
+                    String task_name = resultSet.getString("task_name");
+                    boolean billable = resultSet.getBoolean("billable");
+                    boolean active = resultSet.getBoolean("active");
+                    int project_id = resultSet.getInt("project_id");
+                    Project project = null;
+                    if (project_id != 0) {
+                        String project_name = resultSet.getString("project_name");
+                        int customer_id = resultSet.getInt("customer_id");
+                        String customer_name = resultSet.getString("customer_name");
+                        project = new Project(project_id, project_name, new Customer(customer_id, customer_name));
+                    }
+
+                    list.add(new Task(id, task_name, billable, active, project));
+                }
+
+                return list;
+            } finally {
+                resultSet.close();
             }
-
-            list.add(new Task(id, task_name, billable, active, project));
+        } finally {
+            connection.close();
         }
-
-        resultSet.close();
-        return list;
     }
 
     private Task(int id, String name, boolean billable, boolean active, Project project) {

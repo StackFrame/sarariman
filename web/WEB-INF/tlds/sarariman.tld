@@ -16,6 +16,6 @@
     <function>
         <name>tasks</name>
         <function-class>com.stackframe.sarariman.Task</function-class>
-        <function-signature>java.util.Collection getTasks()</function-signature>
+        <function-signature>java.util.Collection getTasks(javax.sql.DataSource)</function-signature>
     </function>
 </taglib>
