@@ -18,4 +18,9 @@
         <function-class>com.stackframe.sarariman.Task</function-class>
         <function-signature>java.util.Collection getTasks(javax.sql.DataSource)</function-signature>
     </function>
+    <function>
+        <name>project</name>
+        <function-class>com.stackframe.sarariman.Project</function-class>
+        <function-signature>com.stackframe.sarariman.Project lookup(javax.sql.DataSource, int)</function-signature>
+    </function>
 </taglib>

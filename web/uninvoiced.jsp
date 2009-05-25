@@ -6,28 +6,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <!-- Grrr.  FIXME: I would like to do a single join here with column name aliases, but some bug in JDBC prevents it. -->
-    <sql:query dataSource="jdbc/sarariman" var="project" >
-        SELECT name
-        FROM projects
-        WHERE id=?
-        <sql:param value="${param.project}"/>
-    </sql:query>
-    <sql:query dataSource="jdbc/sarariman" var="customer" >
-        SELECT c.name
-        FROM customers AS c
-        JOIN projects AS p ON p.customer = c.id
-        WHERE p.id=?
-        <sql:param value="${param.project}"/>
-    </sql:query>
+    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
+    <c:set var="project" value="${sarariman:project(db, param.project)}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Uninvoiced time for ${customer.rows[0].name} - ${fn:escapeXml(project.rows[0].name)}</title>
+        <title>Uninvoiced time for ${project.customer.name} - ${fn:escapeXml(project.name)}</title>
     </head>
 
     <body>
         <p><a href="./">Home</a></p>
-        <h1>Uninvoiced time for ${customer.rows[0].name} - ${fn:escapeXml(project.rows[0].name)}</h1>
+        <h1>Uninvoiced time for ${project.customer.name} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.create}">
             <c:forEach items="${paramValues.addToInvoiceEmployee}" varStatus="varStatus">

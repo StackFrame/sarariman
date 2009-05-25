@@ -7,20 +7,8 @@
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <!-- Grrr.  FIXME: I would like to do a single join here with column name aliases, but some bug in JDBC prevents it. -->
-    <sql:query dataSource="jdbc/sarariman" var="project" >
-        SELECT name
-        FROM projects
-        WHERE id=?
-        <sql:param value="${param.project}"/>
-    </sql:query>
-    <sql:query dataSource="jdbc/sarariman" var="customer" >
-        SELECT c.name
-        FROM customers AS c
-        JOIN projects AS p ON p.customer = c.id
-        WHERE p.id=?
-        <sql:param value="${param.project}"/>
-    </sql:query>
+    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
+    <c:set var="project" value="${sarariman:project(db, param.project)}"/>
     <head>
         <style type="text/css">
             @media screen, print{
@@ -73,7 +61,7 @@
                 }
             }
         </style>
-        <title>${directory.employeeMap[param.employee].fullName} - ${fn:escapeXml(project.rows[0].name)} - ${param.week}</title>
+        <title>${directory.employeeMap[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${param.week}</title>
     </head>
 
     <body>
@@ -83,8 +71,8 @@
         <p>
             Employee: ${directory.employeeMap[param.employee].fullName}<br/>
             Week: ${param.week}<br/>
-            Project: ${fn:escapeXml(project.rows[0].name)}<br/>
-            Customer: ${fn:escapeXml(customer.rows[0].name)}
+            Project: ${fn:escapeXml(project.name)}<br/>
+            Customer: ${fn:escapeXml(project.customer.name)}
         </p>
 
         <sql:query dataSource="jdbc/sarariman" var="tasks">
@@ -205,7 +193,7 @@
                     <c:otherwise>
                         <c:choose>
                             <c:when test='${fn:contains(entry.description, "<p>")}'>
-                            ${entry.description}
+                                ${entry.description}
                             </c:when>
                             <c:otherwise>
                                 <p>${entry.description}</p>
