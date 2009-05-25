@@ -26,10 +26,6 @@
         <jsp-file>/changelog.jsp</jsp-file>
     </servlet>
     <servlet>
-        <servlet-name>createtask</servlet-name>
-        <jsp-file>/createtask.jsp</jsp-file>
-    </servlet>
-    <servlet>
         <servlet-name>projects</servlet-name>
         <jsp-file>/projects.jsp</jsp-file>
     </servlet>
@@ -147,10 +143,6 @@
     <servlet-mapping>
         <servlet-name>uninvoicedprojects</servlet-name>
         <url-pattern>/uninvoicedprojects</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>createtask</servlet-name>
-        <url-pattern>/createtask</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>projects</servlet-name>
