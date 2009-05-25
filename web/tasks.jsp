@@ -45,32 +45,11 @@
         <table>
             <tr><th>ID</th><th>Name</th><th>Project</th></tr>
 
-            <sql:query dataSource="jdbc/sarariman" var="tasks">
-                SELECT t.id, t.name, t.project
-                FROM tasks AS t
-            </sql:query>
-
-            <c:forEach var="task" items="${tasks.rows}">
+            <c:forEach var="task" items="${sarariman:tasks()}">
                 <tr>
                     <td><a href="task?task_id=${task.id}">${task.id}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
-                    <!-- FIXME: This should be done with a JOIN in SELECT above, but JSTL sql:query does not let us alias column
-                    names -->
-                    <c:choose>
-                        <c:when test="${!empty task.project}">
-                            <sql:query dataSource="jdbc/sarariman" var="result" >
-                                SELECT name
-                                FROM projects
-                                WHERE id=?
-                                <sql:param value="${task.project}"/>
-                            </sql:query>
-                            <c:set var="project_name" value="${fn:escapeXml(result.rows[0].name)}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="project_name" value="${null}"/>
-                        </c:otherwise>
-                    </c:choose>
-                    <td><a href="task?task_id=${task.id}">${project_name}</a></td>
+                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.name)}</a></td>
                 </tr>
             </c:forEach>
         </table>

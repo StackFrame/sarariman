@@ -13,4 +13,9 @@
         <function-class>com.stackframe.sarariman.HTMLUtils</function-class>
         <function-signature>boolean containsHTML(java.lang.String)</function-signature>
     </function>
+    <function>
+        <name>tasks</name>
+        <function-class>com.stackframe.sarariman.Task</function-class>
+        <function-signature>java.util.Collection getTasks()</function-signature>
+    </function>
 </taglib>
