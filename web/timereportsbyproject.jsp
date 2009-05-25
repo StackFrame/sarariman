@@ -8,10 +8,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-    <sql:query dataSource="jdbc/sarariman" var="customer" >
-        SELECT id, name FROM customers
-    </sql:query>
-
     <c:choose>
         <c:when test="${!empty param.week}">
             <c:set var="week" value="${param.week}"/>
