@@ -24,7 +24,7 @@ public class SararimanContextListener implements ServletContextListener {
     }
 
     public static String version() {
-        return "1.0.8r" + getRevision();
+        return "1.0.9r" + getRevision();
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
