@@ -29,6 +29,14 @@
         <servlet-name>createtask</servlet-name>
         <jsp-file>/createtask.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>projects</servlet-name>
+        <jsp-file>/projects.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>project</servlet-name>
+        <jsp-file>/project.jsp</jsp-file>
+    </servlet>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
         <url-pattern>/timesheets</url-pattern>
@@ -143,6 +151,14 @@
     <servlet-mapping>
         <servlet-name>createtask</servlet-name>
         <url-pattern>/createtask</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>projects</servlet-name>
+        <url-pattern>/projects</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>project</servlet-name>
+        <url-pattern>/project</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
