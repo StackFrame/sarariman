@@ -23,7 +23,7 @@ public class Task {
 
     public static Collection<Task> getTasks() throws Exception {
         Context context = new InitialContext();
-        DataSource dataSource = (DataSource)context.lookup("jdbc/sarariman");
+        DataSource dataSource = (DataSource)context.lookup("java:comp/env/jdbc/sarariman");
         Connection connection = dataSource.getConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
