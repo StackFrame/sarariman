@@ -33,7 +33,7 @@
                         SELECT LAST_INSERT_ID()
                     </sql:query>
                 </sql:transaction>
-                <c:set var="project_id" value="${insertResult.rows[0]['LAST_INSERT_ID()']}"/>
+                <c:set var="project_id" value="${insertResult.rowsByIndex[0][0]}"/>
             </c:when>
         </c:choose>
     </c:if>
