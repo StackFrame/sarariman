@@ -19,7 +19,7 @@
                     color: black;
                 }
 
-                p.error {
+                .error {
                     color: red;
                 }
 
@@ -80,7 +80,7 @@
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
-            JOIN saic_tasks AS s ON s.task = t.id
+            LEFT OUTER JOIN saic_tasks AS s ON s.task = t.id
             WHERE h.employee=? AND p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY)
             ORDER BY t.id ASC
             <sql:param value="${param.employee}"/>
@@ -103,7 +103,7 @@
                 <th>Total</th>
             </tr>
             <c:forEach var="task" items="${tasks.rows}">
-                <tr>
+                <tr <c:if test="${empty task.charge_number}">class="error"</c:if>>
                     <td>${task.task}</td>
                     <td>${fn:escapeXml(task.name)}</td>
                     <td class="chargeNum">${task.charge_number}</td>
