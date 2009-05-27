@@ -45,6 +45,7 @@
                     <p>Approved timesheet for ${directory.employeeMap[param.actionEmployee].fullName} for ${param.actionWeek}.</p>
                 </c:when>
                 <c:when test="${param.action == 'Reject'}">
+                    <!-- FIXME: Only allow this if the time has not been invoiced. -->
                     <sql:update dataSource="jdbc/sarariman">
                         DELETE FROM timecards WHERE date=? AND employee=?
                         <sql:param value="${param.actionWeek}"/>
@@ -101,8 +102,11 @@
                         <form method="post">
                             <input type="hidden" value="${thisWeekStart}" name="actionWeek"/>
                             <input type="hidden" value="${employee.number}" name="actionEmployee"/>
-                            <c:if test="${!approved && sarariman:isAdministrator(user)}">
-                                <input type="submit" name="action" value="Approve" <c:if test="${!submitted}">disabled="disabled"</c:if>/>
+                            <c:if test="${sarariman:isAdministrator(user)}">
+                                <c:if test="${!approved}">
+                                    <input type="submit" name="action" value="Approve" <c:if test="${!submitted}">disabled="disabled"</c:if>/>
+                                </c:if>
+                                <!-- FIXME: Only allow this if the time has not been invoiced. -->
                                 <input type="submit" name="action" value="Reject"  <c:if test="${!submitted}">disabled="disabled"</c:if>/>
                             </c:if>
                         </form>
