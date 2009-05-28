@@ -99,39 +99,42 @@
                 <th>Total</th>
             </tr>
             <c:forEach var="task" items="${tasks.rows}">
-                <tr>
-                    <td>${task.task}</td>
-                    <td>${fn:escapeXml(task.name)}</td>
-                    <c:forEach var="day" begin="0" end="6">
-                        <c:set var="date" value="${du:addDays(startDay, day)}"/>
-                        <sql:query dataSource="jdbc/sarariman" var="duration">
-                            SELECT h.duration
-                            FROM hours as h
-                            WHERE h.employee=? AND h.date = ? AND h.task = ?
-                            <sql:param value="${param.employee}"/>
-                            <sql:param value="${date}"/>
-                            <sql:param value="${task.task}"/>
-                        </sql:query>
-                        <c:choose>
-                            <c:when test="${duration.rowCount == 0}">
-                                <td class="duration">0.00</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td class="duration">${duration.rows[0].duration}</td>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
-                    <sql:query dataSource="jdbc/sarariman" var="total">
-                        SELECT SUM(h.duration) AS total
-                        FROM hours as h
-                        WHERE h.employee=? AND h.task = ? AND h.date >= ? AND h.date < ?
-                        <sql:param value="${param.employee}"/>
-                        <sql:param value="${task.task}"/>
-                        <sql:param value="${startDay}"/>
-                        <sql:param value="${du:addDays(startDay, 7)}"/>
-                    </sql:query>
-                    <th class="duration">${total.rows[0].total}</th>
-                </tr>
+                <sql:query dataSource="jdbc/sarariman" var="total">
+                    SELECT SUM(h.duration) AS total
+                    FROM hours as h
+                    WHERE h.employee=? AND h.task = ? AND h.date >= ? AND h.date < ?
+                    <sql:param value="${param.employee}"/>
+                    <sql:param value="${task.task}"/>
+                    <sql:param value="${startDay}"/>
+                    <sql:param value="${du:addDays(startDay, 7)}"/>
+                </sql:query>
+                <c:set var="rowTotal" value="${total.rows[0].total}"/>
+                <c:if test="${rowTotal > 0}">
+                    <tr>
+                        <td>${task.task}</td>
+                        <td>${fn:escapeXml(task.name)}</td>
+                        <c:forEach var="day" begin="0" end="6">
+                            <c:set var="date" value="${du:addDays(startDay, day)}"/>
+                            <sql:query dataSource="jdbc/sarariman" var="duration">
+                                SELECT h.duration
+                                FROM hours as h
+                                WHERE h.employee=? AND h.date = ? AND h.task = ?
+                                <sql:param value="${param.employee}"/>
+                                <sql:param value="${date}"/>
+                                <sql:param value="${task.task}"/>
+                            </sql:query>
+                            <c:choose>
+                                <c:when test="${duration.rowCount == 0}">
+                                    <td class="duration">0.00</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="duration">${duration.rows[0].duration}</td>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                        <th class="duration">${rowTotal}</th>
+                    </tr>
+                </c:if>
             </c:forEach>
             <tr>
                 <th colspan="2">Total</th>
