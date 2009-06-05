@@ -55,7 +55,7 @@
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <h2>Timesheet for ${directory.employeeMap[employee].fullName} for the week of ${thisWeekStart}</h2>
-        
+
         <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
             FROM hours
@@ -72,15 +72,16 @@
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>
-                    <td>${entry.date}</td>
+                    <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
+                    <td>${entryDate}</td>
                     <td>${fn:escapeXml(entry.name)}</td>
                     <td>${entry.task}</td>
-                    
+
                     <!-- FIXME: This needs to look this up somewhere. -->
                     <c:if test="${entry.task == 5}">
                         <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                     </c:if>
-                    
+
                     <td>${entry.duration}</td>
                     <c:set var="entryDescription" value="${entry.description}"/>
                     <c:if test="${sarariman:containsHTML(entryDescription)}">

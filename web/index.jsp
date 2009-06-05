@@ -189,7 +189,8 @@
                 <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
                 <c:forEach var="entry" items="${entries.rows}">
                     <tr>
-                        <td>${entry.date}</td>
+                        <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
+                        <td>${entryDate}</td>
                         <td>${fn:escapeXml(entry.name)}</td>
                         <td>${entry.task}</td>
                         <td>${entry.duration}</td>
