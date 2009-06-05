@@ -28,6 +28,8 @@
             <li>Remove the underline in the hyperlink at the bottom of print CSS for timereport.jsp and SAIC version.</li>
             <li>When Robert Munyer joined, he got NullPointerException because Sarariman had not been restarted to see new LDAP entry.
                 Make accessor that captures NPE and reloads LDAP.</li>
+            <li>Handle the case of an employee that starts after Sarariman is deployed (e.g. Robert Munyer).  It should look at hire
+                date in LDAP.</li>
         </ul>
 
     </body>
