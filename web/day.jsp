@@ -32,7 +32,7 @@
             <tr><th>Employee</th><th>Hours</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <sql:query dataSource="jdbc/sarariman" var="data">
-                    SELECT * FROM hours WHERE date=? AND employee=?
+                    SELECT * FROM hours WHERE date=? AND employee=? AND duration>0
                     <sql:param value="${day}"/>
                     <sql:param value="${employee.number}"/>
                 </sql:query>
