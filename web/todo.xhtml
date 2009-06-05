@@ -15,7 +15,7 @@
             <li>Make printable PDF reports for customers.</li>
             <li>Make it possible to send email to customers directly.</li>
             <li>Need a table that keeps track of tasks that can be worked by a particular employee so that that employee can be
-            presented with a more manageable list of tasks to choose from.</li>
+                presented with a more manageable list of tasks to choose from.</li>
             <li>Disallow recording entries in the future unless they are for paid time off.</li>
             <li>Do sanitization of HTML description entries.</li>
             <li>Do date format checking before it hits the database.</li>
@@ -23,6 +23,11 @@
             <li>Suggestion from George Streeper: Allow the user to maintain a list of preferred tasks.</li>
             <li>Would it make sense to sort according to activity?</li>
             <li>Break out the SAIC code into a separate project which references this one.</li>
+            <li>There is some bug in timesheets.jsp.  I think it is getting the start date wrong.  If you submit a timesheet in the
+                middle of the week and go to timesheets.jsp directly, it doesn't enable the "Approve" and "Reject" buttons.</li>
+            <li>Remove the underline in the hyperlink at the bottom of print CSS for timereport.jsp and SAIC version.</li>
+            <li>When Robert Munyer joined, he got NullPointerException because Sarariman had not been restarted to see new LDAP entry.
+                Make accessor that captures NPE and reloads LDAP.</li>
         </ul>
 
     </body>
