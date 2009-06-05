@@ -55,7 +55,7 @@
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <h2>Timesheet for ${directory.employeeMap[employee].fullName} for the week of ${thisWeekStart}</h2>
-
+        
         <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
             FROM hours
@@ -63,8 +63,8 @@
             WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
             ORDER BY hours.date DESC, hours.task ASC
             <sql:param value="${employee}"/>
-            <sql:param value="${week}"/>
-            <sql:param value="${week}"/>
+            <sql:param value="${thisWeekStart}"/>
+            <sql:param value="${thisWeekStart}"/>
         </sql:query>
         <c:set var="totalHoursWorked" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>

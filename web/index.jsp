@@ -176,10 +176,13 @@
 
             <!-- FIXME: Can I do the nextWeek part in SQL? -->
             <sql:query dataSource="jdbc/sarariman" var="entries">
-                SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name FROM hours INNER JOIN tasks ON hours.task=tasks.id WHERE employee=? AND hours.date >= ? AND hours.date < ? ORDER BY hours.date DESC, hours.task ASC
+                SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
+                FROM hours INNER JOIN tasks ON hours.task=tasks.id
+                WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
+                ORDER BY hours.date DESC, hours.task ASC
                 <sql:param value="${employeeNumber}"/>
-                <sql:param value="${week}"/>
-                <sql:param value="${du:nextWeek(week)}"/>
+                <sql:param value="${thisWeekStart}"/>
+                <sql:param value="${thisWeekStart}"/>
             </sql:query>
             <c:set var="totalHoursWorked" value="0.0"/>
             <table>
