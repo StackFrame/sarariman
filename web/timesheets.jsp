@@ -75,7 +75,7 @@
                     </td>
                     <sql:query dataSource="jdbc/sarariman" var="timesheets">
                         SELECT * from timecards WHERE date=? and employee=?
-                        <sql:param value="${week}"/>
+                        <sql:param value="${thisWeekStart}"/>
                         <sql:param value="${employee.number}"/>
                     </sql:query>
                     <c:choose>
