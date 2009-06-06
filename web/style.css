@@ -13,6 +13,14 @@ p.error {
     text-align: center;
 }
 
-.duration {
+.duration, .task {
     text-align: right;
+}
+
+.date {
+    white-space: nowrap;
+}
+
+th {
+    white-space: nowrap;
 }

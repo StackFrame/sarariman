@@ -73,16 +73,16 @@
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>
                     <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
-                    <td>${entryDate}</td>
+                    <td class="date">${entryDate}</td>
                     <td>${fn:escapeXml(entry.name)}</td>
-                    <td>${entry.task}</td>
+                    <td class="task">${entry.task}</td>
 
                     <!-- FIXME: This needs to look this up somewhere. -->
                     <c:if test="${entry.task == 5}">
                         <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                     </c:if>
 
-                    <td>${entry.duration}</td>
+                    <td class="duration">${entry.duration}</td>
                     <c:set var="entryDescription" value="${entry.description}"/>
                     <c:if test="${sarariman:containsHTML(entryDescription)}">
                         <c:set var="entryDescription" value="${entryDescription}"/>
@@ -93,11 +93,11 @@
             </c:forEach>
             <tr>
                 <td colspan="3">Total</td>
-                <td>${totalHoursWorked}</td>
+                <td class="duration">${totalHoursWorked}</td>
             </tr>
             <tr>
                 <td colspan="3">Total PTO</td>
-                <td>${totalPTO}</td>
+                <td class="duration">${totalPTO}</td>
             </tr>
         </table>
 

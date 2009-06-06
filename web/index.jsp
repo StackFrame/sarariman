@@ -190,10 +190,10 @@
                 <c:forEach var="entry" items="${entries.rows}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
-                        <td>${entryDate}</td>
+                        <td class="date">${entryDate}</td>
                         <td>${fn:escapeXml(entry.name)}</td>
-                        <td>${entry.task}</td>
-                        <td>${entry.duration}</td>
+                        <td class="task">${entry.task}</td>
+                        <td class="duration">${entry.duration}</td>
                         <c:set var="entryDescription" value="${fn:escapeXml(entry.description)}"/>
                         <c:if test="${sarariman:containsHTML(entryDescription)}">
                             <!-- FIXME: I really only want to escape XML entities in the above fixup. -->
@@ -213,7 +213,7 @@
                 </c:forEach>
                 <tr>
                     <td colspan="3">Total</td>
-                    <td>${totalHoursWorked}</td>
+                    <td class="duration">${totalHoursWorked}</td>
                 </tr>
             </table>
         </div>
