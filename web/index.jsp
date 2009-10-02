@@ -216,6 +216,9 @@
                     <td class="duration">${totalHoursWorked}</td>
                 </tr>
             </table>
+            <c:if test="${user.fulltime && totalHoursWorked < 40}">
+                <p>Salaried hours remaining in week: ${40 - totalHoursWorked}</p>
+            </c:if>
         </div>
 
         <%@include file="footer.jsp" %>
