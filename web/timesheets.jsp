@@ -63,7 +63,7 @@
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
         <table>
-            <tr><th>Employee</th><th>Approved</th><th>Submitted</th></tr>
+            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <tr>
                     <td>
@@ -73,6 +73,43 @@
                         </c:url>
                         <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
                     </td>
+                    <!-- FIXME: need global config parameters for holiday and PTO number instead of 4 and 5. -->
+                    <sql:query dataSource="jdbc/sarariman" var="regular">
+                        SELECT SUM(hours.duration) AS total
+                        FROM hours
+                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != 4 AND hours.task != 5
+                        <sql:param value="${employee.number}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                    </sql:query>
+                    <td>${regular.rows[0].total}</td>
+                    <sql:query dataSource="jdbc/sarariman" var="pto">
+                        SELECT SUM(hours.duration) AS total
+                        FROM hours
+                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = 5
+                        <sql:param value="${employee.number}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                    </sql:query>
+                    <td>${pto.rows[0].total}</td>
+                    <sql:query dataSource="jdbc/sarariman" var="holiday">
+                        SELECT SUM(hours.duration) AS total
+                        FROM hours
+                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = 4
+                        <sql:param value="${employee.number}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                    </sql:query>
+                    <td>${holiday.rows[0].total}</td>
+                    <sql:query dataSource="jdbc/sarariman" var="total">
+                        SELECT SUM(hours.duration) AS total
+                        FROM hours
+                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
+                        <sql:param value="${employee.number}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                        <sql:param value="${thisWeekStart}"/>
+                    </sql:query>
+                    <td>${total.rows[0].total}</td>
                     <sql:query dataSource="jdbc/sarariman" var="timesheets">
                         SELECT * from timecards WHERE date=? and employee=?
                         <sql:param value="${thisWeekStart}"/>
