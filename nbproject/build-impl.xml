@@ -216,9 +216,11 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <attribute default="${includes}" name="includes"/>
             <attribute default="${excludes}" name="excludes"/>
             <attribute default="${javac.debug}" name="debug"/>
-            <attribute default="/does/not/exist" name="gensrcdir"/>
+            <attribute default="${empty.dir}" name="gensrcdir"/>
             <element name="customize" optional="true"/>
             <sequential>
+                <property location="${build.dir}/empty" name="empty.dir"/>
+                <mkdir dir="${empty.dir}"/>
                 <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" includeantruntime="false" includes="@{includes}" source="${javac.source}" srcdir="@{srcdir}" target="${javac.target}">
                     <src>
                         <dirset dir="@{gensrcdir}" erroronmissingdir="false">
