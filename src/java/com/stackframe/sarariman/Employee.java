@@ -12,4 +12,6 @@ public interface Employee {
 
     int getNumber();
 
+    boolean isFulltime();
+
 }

@@ -27,11 +27,13 @@ public class LDAPDirectory implements Directory {
         private final String fullName;
         private final String userName;
         private final int number;
+        private final boolean fulltime;
 
-        public EmployeeImpl(String fullName, String userName, int number) {
+        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime) {
             this.fullName = fullName;
             this.userName = userName;
             this.number = number;
+            this.fulltime = fulltime;
         }
 
         public String getFullName() {
@@ -46,9 +48,13 @@ public class LDAPDirectory implements Directory {
             return number;
         }
 
+        public boolean isFulltime() {
+            return fulltime;
+        }
+
         @Override
         public String toString() {
-            return "{" + fullName + "," + userName + "," + number + "}";
+            return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + "}";
         }
 
     }
@@ -58,13 +64,14 @@ public class LDAPDirectory implements Directory {
     public LDAPDirectory(DirContext context) {
         try {
             NamingEnumeration<SearchResult> answer = context.search("ou=People", new BasicAttributes("active", "TRUE"),
-                    new String[]{"uid", "sn", "givenName", "employeeNumber"});
+                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
                 String uid = attributes.get("uid").getAll().next().toString();
+                boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
-                Employee employee = new EmployeeImpl(name, uid, employeeNumber);
+                Employee employee = new EmployeeImpl(name, uid, employeeNumber, fulltime);
                 employees.put(employeeNumber, employee);
                 employees.put(Integer.toString(employeeNumber), employee);
                 employees.put(new Long(employeeNumber), employee);
