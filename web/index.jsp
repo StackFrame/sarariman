@@ -160,20 +160,6 @@
 
             <h2>Timesheet for the week of ${thisWeekStart}</h2>
 
-            <form action="${request.requestURI}" method="post">
-                <label for="submitted">Submitted: </label>
-                <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                <c:set var="approved" value="${!empty timecard && timecard.rows[0].approved}"/>
-                <label for="approved">Approved: </label>
-                <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                <c:if test="${!submitted}">
-                    <input type="hidden" value="true" name="submit"/>
-                    <input type="submit" value="Submit"/>
-                    <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
-                    <input type="hidden" name="week" value="${weekString}"/>
-                </c:if>
-            </form>
-
             <!-- FIXME: Can I do the nextWeek part in SQL? -->
             <sql:query dataSource="jdbc/sarariman" var="entries">
                 SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
@@ -216,9 +202,26 @@
                     <td class="duration">${totalHoursWorked}</td>
                 </tr>
             </table>
+            <c:set var="salariedHoursRemaining" value="0"/>
             <c:if test="${user.fulltime && totalHoursWorked < 40}">
-                <p>Salaried hours remaining in week: ${40 - totalHoursWorked}</p>
+                <c:set var="salariedHoursRemaining" value="${40 - totalHoursWorked}"/>
+                <p>Salaried hours remaining in week: ${salariedHoursRemaining}</p>
             </c:if>
+
+            <form action="${request.requestURI}" method="post">
+                <label for="submitted">Submitted: </label>
+                <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
+                <c:set var="approved" value="${!empty timecard && timecard.rows[0].approved}"/>
+                <label for="approved">Approved: </label>
+                <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
+                <c:if test="${!submitted && salariedHoursRemaining == 0}">
+                    <input type="hidden" value="true" name="submit"/>
+                    <input type="submit" value="Submit"/>
+                    <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+                    <input type="hidden" name="week" value="${weekString}"/>
+                </c:if>
+            </form>
+
         </div>
 
         <%@include file="footer.jsp" %>
