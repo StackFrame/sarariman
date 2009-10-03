@@ -202,8 +202,8 @@
                     <td class="duration">${totalHoursWorked}</td>
                 </tr>
             </table>
-            <c:set var="salariedHoursRemaining" value="0"/>
-            <c:if test="${user.fulltime && totalHoursWorked < 40}">
+            <c:set var="salariedHoursRemaining" value="0.0" />
+            <c:if test="${user.fulltime && totalHoursWorked < 40.0}">
                 <c:set var="salariedHoursRemaining" value="${40 - totalHoursWorked}"/>
                 <p>Salaried hours remaining in week: ${salariedHoursRemaining}</p>
             </c:if>
