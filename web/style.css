@@ -18,6 +18,10 @@ p.error {
     font-family: monospace;
 }
 
+.checkbox {
+    text-align: center;
+}
+
 .date {
     white-space: nowrap;
 }
@@ -26,7 +30,7 @@ th {
     white-space: nowrap;
 }
 
-table.altrowstable {
+table.altrows {
     font-family: verdana,arial,sans-serif;
     font-size:11px;
     color:#333333;
@@ -35,24 +39,24 @@ table.altrowstable {
     border-collapse: collapse;
 }
 
-table.altrowstable th {
+table.altrows th {
     border-width: 1px;
     padding: 8px;
     border-style: solid;
     border-color: #a9c6c9;
 }
 
-table.altrowstable td {
+table.altrows td {
     border-width: 1px;
     padding: 8px;
     border-style: solid;
     border-color: #a9c6c9;
 }
 
-.oddrowcolor{
+.oddrow {
     background-color:#d4e3e5;
 }
 
-.evenrowcolor{
+.evenrow {
     background-color:#c3dde0;
 }

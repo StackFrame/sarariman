@@ -14,10 +14,11 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Home</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body>
+    <body onload="altRows('hours')">
         <a href="tools">Tools</a>
 
         <c:choose>
@@ -167,8 +168,8 @@
                 <sql:param value="${thisWeekStart}"/>
             </sql:query>
             <c:set var="totalHoursWorked" value="0.0"/>
-            <table>
-                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
+            <table class="altrows" id="hours">
+                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th><th></th></tr>
                 <c:forEach var="entry" items="${entries.rows}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
@@ -188,14 +189,15 @@
                                 <c:param name="date" value="${entry.date}"/>
                                 <c:param name="employee" value="${employeeNumber}"/>
                             </c:url>
-                            <a href="${fn:escapeXml(editLink)}">Entry</a>
+                            <a href="${fn:escapeXml(editLink)}">Edit</a>
                         </td>
                         <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
                     </tr>
                 </c:forEach>
                 <tr>
-                    <td colspan="3">Total</td>
-                    <td class="duration">${totalHoursWorked}</td>
+                    <td colspan="3"><b>Total</b></td>
+                    <td class="duration"><b>${totalHoursWorked}</b></td>
+                    <td colspan="2"></td>
                 </tr>
             </table>
 

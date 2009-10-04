@@ -70,7 +70,7 @@
 
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
-        <table class="altrowstable" id="timesheets">
+        <table class="altrows" id="timesheets">
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th colspan="2">Actions</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <tr>
@@ -99,12 +99,12 @@
                             <c:set var="submitted" value="true"/>
                         </c:otherwise>
                     </c:choose>
-                    <td>
+                    <td class="checkbox">
                         <form>
                             <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
                         </form>
                     </td>
-                    <td>
+                    <td class="checkbox">
                         <form>
                             <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
                         </form>
