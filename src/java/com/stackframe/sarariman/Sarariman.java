@@ -58,6 +58,10 @@ public class Sarariman {
         return Customer.getCustomers(this);
     }
 
+    public Map<Integer, Project> getProjects() throws SQLException {
+        return Project.getProjects(this);
+    }
+
     @Override
     protected void finalize() throws Exception {
         connection.close();

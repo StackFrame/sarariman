@@ -10,13 +10,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
+    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>${project.customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</title>
+        <title>${customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</title>
     </head>
 
     <body>
-        <h1>${project.customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
+        <h1>${customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT DISTINCT h.employee

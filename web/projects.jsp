@@ -1,5 +1,4 @@
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -15,9 +14,10 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('projects')">
-        <p><a href="./">Home</a></p>
-
+        <p><a href="./">Home</a> <a href="tools">Tools</a></p>
         <h1>Projects</h1>
+
+        <c:set var="customers" value="${sarariman.customers}"/>
 
         <h2>Create a new project</h2>
         <form method="POST" action="project">
@@ -25,7 +25,7 @@
             <input type="text" id="project_name" name="project_name" value="${fn:escapeXml(project.name)}"/><br/>
             <label for="project_customer">Customer: </label>
             <select id="project_customer" name="project_customer">
-                <c:forEach var="entry" items="${sarariman.customers}">
+                <c:forEach var="entry" items="${customers}">
                     <option value="${entry.key}">${fn:escapeXml(entry.value.name)}</option>
                 </c:forEach>
             </select><br/>
@@ -35,25 +35,12 @@
 
         <table class="altrows" id="projects">
             <tr><th>ID</th><th>Name</th><th>Customer</th></tr>
-
-            <sql:query dataSource="jdbc/sarariman" var="projects">
-                SELECT p.id, p.name, p.customer
-                FROM projects AS p
-            </sql:query>
-            <c:forEach var="project" items="${projects.rows}">
+            <c:forEach var="projectEntry" items="${sarariman.projects}">
                 <tr>
-                    <td><a href="project?id=${project.id}">${project.id}</a></td>
-                    <td><a href="project?id=${project.id}">${fn:escapeXml(project.name)}</a></td>
-                    <!-- FIXME: This should be done with a JOIN in SELECT above, but JSTL sql:query does not let us alias column
-                    names -->
-                    <sql:query dataSource="jdbc/sarariman" var="result" >
-                        SELECT name
-                        FROM customers
-                        WHERE id=?
-                        <sql:param value="${project.customer}"/>
-                    </sql:query>
-                    <c:set var="customer_name" value="${fn:escapeXml(result.rows[0].name)}"/>
-                    <td><a href="project?id=${project.id}">${customer_name}</a></td>
+                    <td><a href="project?id=${projectEntry.key}">${projectEntry.key}</a></td>
+                    <td><a href="project?id=${projectEntry.key}">${fn:escapeXml(projectEntry.value.name)}</a></td>
+                    <c:set var="customer_name" value="${fn:escapeXml(sarariman.customers[projectEntry.value.customer].name)}"/>
+                    <td><a href="project?id=${projectEntry.key}">${customer_name}</a></td>
                 </tr>
             </c:forEach>
         </table>

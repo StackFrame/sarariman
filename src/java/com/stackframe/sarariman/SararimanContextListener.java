@@ -48,8 +48,7 @@ public class SararimanContextListener implements ServletContextListener {
         Context initContext = new InitialContext();
         Context envContext = (Context)initContext.lookup("java:comp/env");
         String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
-            Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS
-        };
+            Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
 
         for (String s : propNames) {
             props.put(s, envContext.lookup(s));

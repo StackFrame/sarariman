@@ -10,6 +10,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
+    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <style type="text/css">
             @media screen, print{
@@ -73,7 +74,7 @@
             Employee: ${directory.byNumber[param.employee].fullName}<br/>
             Week: ${param.week}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
-            Customer: ${fn:escapeXml(project.customer.name)}
+            Customer: ${fn:escapeXml(customer.name)}
         </p>
 
         <sql:query dataSource="jdbc/sarariman" var="tasks">

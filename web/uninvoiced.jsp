@@ -9,14 +9,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
+    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Uninvoiced time for ${project.customer.name} - ${fn:escapeXml(project.name)}</title>
+        <title>Uninvoiced time for ${customer.name} - ${fn:escapeXml(project.name)}</title>
     </head>
 
     <body>
         <p><a href="./">Home</a></p>
-        <h1>Uninvoiced time for ${project.customer.name} - ${fn:escapeXml(project.name)}</h1>
+        <h1>Uninvoiced time for ${customer.name} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.create}">
             <c:forEach items="${paramValues.addToInvoiceEmployee}" varStatus="varStatus">

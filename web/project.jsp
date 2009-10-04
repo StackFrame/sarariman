@@ -1,5 +1,6 @@
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
@@ -8,7 +9,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-    <c:set var="project_id" value="${param.id}"/>
+    <c:set var="project" value="${sarariman:project(sarariman, param.id)}"/>
     <c:if test="${sarariman:isAdministrator(user)}">
         <c:choose>
             <c:when test="${!empty param.update}">
@@ -18,7 +19,7 @@
                     WHERE id=?
                     <sql:param value="${param.project_name}"/>
                     <sql:param value="${param.project_customer}"/>
-                    <sql:param value="${project_id}"/>
+                    <sql:param value="${project.id}"/>
                 </sql:update>
             </c:when>
             <c:when test="${!empty param.create}">
@@ -41,18 +42,10 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Task ${project_id}</title>
+        <title>Task ${project.id}</title>
     </head>
     <body>
         <p><a href="./">Home</a></p>
-
-        <sql:query dataSource="jdbc/sarariman" var="projectLookup">
-            SELECT *
-            FROM projects
-            WHERE id=?
-            <sql:param value="${project_id}"/>
-        </sql:query>
-        <c:set var="project" value="${projectLookup.rows[0]}"/>
 
         <h1>Task ${project_id}</h1>
         <form method="POST">

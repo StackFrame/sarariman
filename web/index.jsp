@@ -121,7 +121,7 @@
                             <c:if test="${task.active}">
                                 <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
                                     <c:if test="${!empty task.project}">
-                                        - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(task.project.customer.name)}
+                                        - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
                                     </c:if>
                                 </option>
                             </c:if>
