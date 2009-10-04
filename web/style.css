@@ -15,6 +15,7 @@ p.error {
 
 .duration, .task {
     text-align: right;
+    font-family: monospace;
 }
 
 .date {

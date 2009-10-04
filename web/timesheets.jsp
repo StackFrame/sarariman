@@ -7,7 +7,9 @@
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
+    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Timesheets</title>
@@ -35,24 +37,29 @@
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.action}">
+            <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, param.actionEmployee, week)}"/>
+            <c:set var="fullName" value="${directory.employeeMap[param.actionEmployee].fullName}"/>
             <c:choose>
                 <c:when test="${param.action == 'Approve'}">
-                    <sql:update dataSource="jdbc/sarariman">
-                        UPDATE timecards SET approved=true WHERE date=? AND employee=?
-                        <sql:param value="${param.actionWeek}"/>
-                        <sql:param value="${param.actionEmployee}"/>
-                    </sql:update>
-                    <p>Approved timesheet for ${directory.employeeMap[param.actionEmployee].fullName} for ${param.actionWeek}.</p>
+                    <c:choose>
+                        <c:when test="${sarariman:approveTimesheet(timesheet)}">
+                            <p>Approved timesheet for ${fullName} for ${week}.</p>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="error">Failed to approve timesheet for ${fullName} for ${week}.</p>
+                        </c:otherwise>
+                    </c:choose>
                 </c:when>
                 <c:when test="${param.action == 'Reject'}">
                     <!-- FIXME: Only allow this if the time has not been invoiced. -->
-                    <sql:update dataSource="jdbc/sarariman">
-                        DELETE FROM timecards WHERE date=? AND employee=?
-                        <sql:param value="${param.actionWeek}"/>
-                        <sql:param value="${param.actionEmployee}"/>
-                    </sql:update>
-                    <p>Rejected timesheet for ${param.actionEmployee} for ${param.actionWeek}.</p>
-                    <!-- FIXME: Make this send the employee an email. -->
+                    <c:choose>
+                        <c:when test="${sarariman:rejectTimesheet(timesheet)}">
+                            <p>Rejected timesheet for ${fullName} for ${week}.</p>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="error">Failed to reject timesheet for ${fullName} for ${week}.</p>
+                        </c:otherwise>
+                    </c:choose>
                 </c:when>
                 <c:otherwise>
                     <p class="error">Impossible action!</p>
@@ -66,6 +73,10 @@
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <tr>
+                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employee.number, week)}"/>
+                    <c:set var="PTO" value="${timesheet.PTOHours}"/>
+                    <c:set var="holiday" value="${timesheet.holidayHours}"/>
+                    <c:set var="hours" value="${timesheet.totalHours}"/>
                     <td>
                         <c:url var="timesheetLink" value="timesheet">
                             <c:param name="employee" value="${employee.number}"/>
@@ -73,55 +84,17 @@
                         </c:url>
                         <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
                     </td>
-                    <!-- FIXME: need global config parameters for holiday and PTO number instead of 4 and 5. -->
-                    <sql:query dataSource="jdbc/sarariman" var="regular">
-                        SELECT SUM(hours.duration) AS total
-                        FROM hours
-                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != 4 AND hours.task != 5
-                        <sql:param value="${employee.number}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                    </sql:query>
-                    <td>${regular.rows[0].total}</td>
-                    <sql:query dataSource="jdbc/sarariman" var="pto">
-                        SELECT SUM(hours.duration) AS total
-                        FROM hours
-                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = 5
-                        <sql:param value="${employee.number}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                    </sql:query>
-                    <td>${pto.rows[0].total}</td>
-                    <sql:query dataSource="jdbc/sarariman" var="holiday">
-                        SELECT SUM(hours.duration) AS total
-                        FROM hours
-                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = 4
-                        <sql:param value="${employee.number}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                    </sql:query>
-                    <td>${holiday.rows[0].total}</td>
-                    <sql:query dataSource="jdbc/sarariman" var="total">
-                        SELECT SUM(hours.duration) AS total
-                        FROM hours
-                        WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
-                        <sql:param value="${employee.number}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                        <sql:param value="${thisWeekStart}"/>
-                    </sql:query>
-                    <td>${total.rows[0].total}</td>
-                    <sql:query dataSource="jdbc/sarariman" var="timesheets">
-                        SELECT * from timecards WHERE date=? and employee=?
-                        <sql:param value="${thisWeekStart}"/>
-                        <sql:param value="${employee.number}"/>
-                    </sql:query>
+                    <td class="duration"><fmt:formatNumber value="${hours - (PTO + holiday)}" minFractionDigits="2"/></td>
+                    <td class="duration"><fmt:formatNumber value="${PTO}" minFractionDigits="2"/></td>
+                    <td class="duration"><fmt:formatNumber value="${holiday}" minFractionDigits="2"/></td>
+                    <td class="duration"><fmt:formatNumber value="${hours}" minFractionDigits="2"/></td>
                     <c:choose>
-                        <c:when test="${timesheets.rowCount == 0}">
+                        <c:when test="${!timesheet.submitted}">
                             <c:set var="approved" value="false"/>
                             <c:set var="submitted" value="false"/>
                         </c:when>
                         <c:otherwise>
-                            <c:set var="approved" value="${timesheets.rows[0].approved}"/>
+                            <c:set var="approved" value="${timesheet.approved}"/>
                             <c:set var="submitted" value="true"/>
                         </c:otherwise>
                     </c:choose>

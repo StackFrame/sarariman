@@ -8,7 +8,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <c:set var="employeeNumber" value="${user.number}"/>
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
+    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Home</title>
@@ -32,23 +34,18 @@
             <sql:param value="${employeeNumber}"/>
         </sql:query>
 
-        <c:set var="submitted" value="${!empty timecard.rows}"/>
+        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employeeNumber, week)}"/>
+        <c:set var="submitted" value="${timesheet.submitted}"/>
+        <p>submitted=${submitted}</p>
 
         <c:if test="${!submitted && param.submit}">
-            <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
-                INSERT INTO timecards (employee, date, approved) values(?, ?, false)
-                <sql:param value="${employeeNumber}"/>
-                <sql:param value="${week}"/>
-            </sql:update>
-            <c:if test="${rowsInserted == 1}">
-                <c:set var="submitted" value="true"/>
-            </c:if>
+            <c:set var="submitted" value="${sarariman:submitTimesheet(timesheet)}"/>
         </c:if>
 
         <c:if test="${!empty param.recordTime}">
             <!-- FIXME: Check that the time is not already in a submitted sheet. -->
             <!-- FIXME: Check that the day is not more than 24 hours on timesheet submit. -->
-            <!-- FIXME: Enfore that entry has a comment. -->
+            <!-- FIXME: Enforce that entry has a comment. -->
             <sql:query dataSource="jdbc/sarariman" var="existing" sql="SELECT * FROM hours WHERE task=? AND date=? AND employee=?">
                 <sql:param value="${param.task}"/>
                 <sql:param value="${param.date}"/>
@@ -202,11 +199,18 @@
                     <td class="duration">${totalHoursWorked}</td>
                 </tr>
             </table>
-            <c:set var="salariedHoursRemaining" value="0.0" />
-            <c:if test="${user.fulltime && totalHoursWorked < 40.0}">
-                <c:set var="salariedHoursRemaining" value="${40 - totalHoursWorked}"/>
-                <p>Salaried hours remaining in week: ${salariedHoursRemaining}</p>
+
+            <c:set var="hoursNeeded" value="0.0" />
+            <c:if test="${user.fulltime}">
+                <c:set var="hoursNeeded" value="40.0" />
             </c:if>
+            <c:set var="hoursNeeded" value="${hoursNeeded - totalHoursWorked}"/>
+            <c:if test="${hoursNeeded > 0}">
+                <p>Salaried hours remaining in week: <span class="duration">${salariedHoursRemaining}</span></p>
+            </c:if>
+
+            <p>submitted=${submitted}</p>
+            <p>hoursNeeded=${hoursNeeded}</p>
 
             <form action="${request.requestURI}" method="post">
                 <label for="submitted">Submitted: </label>
@@ -214,7 +218,7 @@
                 <c:set var="approved" value="${!empty timecard && timecard.rows[0].approved}"/>
                 <label for="approved">Approved: </label>
                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                <c:if test="${!submitted && salariedHoursRemaining == 0}">
+                <c:if test="${!submitted && hoursNeeded <= 0}">
                     <input type="hidden" value="true" name="submit"/>
                     <input type="submit" value="Submit"/>
                     <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>

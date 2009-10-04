@@ -23,4 +23,24 @@
         <function-class>com.stackframe.sarariman.Project</function-class>
         <function-signature>com.stackframe.sarariman.Project lookup(javax.sql.DataSource, int)</function-signature>
     </function>
+    <function>
+        <name>timesheet</name>
+        <function-class>com.stackframe.sarariman.Timesheet</function-class>
+        <function-signature>com.stackframe.sarariman.Timesheet lookup(com.stackframe.sarariman.Sarariman, javax.sql.DataSource, int, java.util.Date)</function-signature>
+    </function>
+    <function>
+        <name>approveTimesheet</name>
+        <function-class>com.stackframe.sarariman.Timesheet</function-class>
+        <function-signature>boolean approve(com.stackframe.sarariman.Timesheet)</function-signature>
+    </function>
+    <function>
+        <name>rejectTimesheet</name>
+        <function-class>com.stackframe.sarariman.Timesheet</function-class>
+        <function-signature>boolean reject(com.stackframe.sarariman.Timesheet)</function-signature>
+    </function>
+    <function>
+        <name>submitTimesheet</name>
+        <function-class>com.stackframe.sarariman.Timesheet</function-class>
+        <function-signature>boolean submit(com.stackframe.sarariman.Timesheet)</function-signature>
+    </function>
 </taglib>

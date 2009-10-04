@@ -1,6 +1,12 @@
 package com.stackframe.sarariman;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -49,14 +55,43 @@ public class SararimanContextListener implements ServletContextListener {
         return props;
     }
 
+    private void scheduleNightlyTask(EmailDispatcher emailDispatcher) {
+        Timer timer = new Timer();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date date = calendar.getTime();
+        final long ONE_SECOND = 1000;
+        final long ONE_MINUTE = 60 * ONE_SECOND;
+        final long ONE_HOUR = 60 * ONE_MINUTE;
+        final long ONE_DAY = 24 * ONE_HOUR;
+        final TimerTask weeknightTask = new WeeknightTask(emailDispatcher);
+        timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         sce.getServletContext().setAttribute("sararimanVersion", version());
+        Directory directory;
         try {
             Properties props = lookupDirectoryProperties();
-            sce.getServletContext().setAttribute("directory", new LDAPDirectory(new InitialDirContext(props)));
+            directory = new LDAPDirectory(new InitialDirContext(props));
+            sce.getServletContext().setAttribute("directory", directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
+
+        EmailDispatcher emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
+        Sarariman sarariman = new Sarariman(directory, emailDispatcher);
+        sce.getServletContext().setAttribute("sarariman", sarariman);
+        scheduleNightlyTask(emailDispatcher);
+        /*
+        try {
+        emailDispatcher.send(new InternetAddress("mcculley@stackframe.com", true), "Sarariman started", "Sarariman has been started.");
+        } catch (AddressException ae) {
+        throw new RuntimeException(ae);
+        }
+         */
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
