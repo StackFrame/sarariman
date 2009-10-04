@@ -26,10 +26,8 @@ public class Customer {
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
-                    System.err.println("got name=" + name);
                     map.put(id, new Customer(id, name));
                 }
-                System.err.println("map=" + map);
                 return map;
             } finally {
                 resultSet.close();
