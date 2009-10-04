@@ -1,6 +1,8 @@
 package com.stackframe.sarariman;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
 import java.util.Timer;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
@@ -50,6 +52,10 @@ public class Sarariman {
 
     public Timer getTimer() {
         return timer;
+    }
+
+    public Map<Integer, Customer> getCustomers() throws SQLException {
+        return Customer.getCustomers(this);
     }
 
     @Override

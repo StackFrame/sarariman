@@ -4,6 +4,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <c:set var="user" value="${directory.byUserName[pageContext.request.remoteUser]}"/>
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -59,11 +60,8 @@
             <input type="text" id="project_name" name="project_name" value="${fn:escapeXml(project.name)}"/><br/>
             <label for="project_customer">Customer: </label>
             <select id="project_customer" name="project_customer">
-                <sql:query dataSource="jdbc/sarariman" var="customers">
-                    SELECT * FROM customers
-                </sql:query>
-                <c:forEach var="customer" items="${customers.rows}">
-                    <option value="${customer.id}" <c:if test="${customer.id == project.customer}">selected="selected"</c:if>>${fn:escapeXml(customer.name)}</option>
+                <c:forEach var="customerEntry" items="${sarariman.customers}">
+                    <option value="${customerEntry.key}" <c:if test="${customerEntry.key == project.customer}">selected="selected"</c:if>>${fn:escapeXml(customerEntry.value.name)}</option>
                 </c:forEach>
             </select><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />

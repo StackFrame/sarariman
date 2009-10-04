@@ -6,6 +6,7 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <c:set var="user" value="${directory.byUserName[pageContext.request.remoteUser]}"/>
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -24,11 +25,8 @@
             <input type="text" id="project_name" name="project_name" value="${fn:escapeXml(project.name)}"/><br/>
             <label for="project_customer">Customer: </label>
             <select id="project_customer" name="project_customer">
-                <sql:query dataSource="jdbc/sarariman" var="customers">
-                    SELECT * FROM customers
-                </sql:query>
-                <c:forEach var="customer" items="${customers.rows}">
-                    <option value="${customer.id}" <c:if test="${customer.id == project.customer}">selected="selected"</c:if>>${fn:escapeXml(customer.name)}</option>
+                <c:forEach var="entry" items="${sarariman.customers}">
+                    <option value="${entry.key}">${fn:escapeXml(entry.value.name)}</option>
                 </c:forEach>
             </select><br/>
             <input type="submit" name="create" value="Create" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
