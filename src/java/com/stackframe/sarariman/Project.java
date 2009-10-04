@@ -17,16 +17,12 @@ public class Project {
 
     public static Project lookup(Sarariman sarariman, int id) throws SQLException {
         Connection connection = sarariman.getConnection();
-        long start = System.nanoTime();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT p.id AS project_id, p.name AS project_name, " +
                 "c.id AS customer_id, c.name AS customer_name " +
                 "FROM projects AS p " +
                 "JOIN customers AS c ON c.id = p.customer " +
                 "WHERE p.id = ?");
-        long stop = System.nanoTime();
-        long took = stop - start;
-        System.err.println("prepareStatement took " + took);
         try {
             ps.setInt(1, id);
             ResultSet resultSet = ps.executeQuery();
