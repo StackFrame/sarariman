@@ -1,6 +1,5 @@
 package com.stackframe.sarariman;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,16 +19,16 @@ public class Task {
     private final boolean active;
     private final Project project;
 
-    public static Collection<Task> getTasks(DataSource dataSource) throws SQLException {
-        Connection connection = dataSource.getConnection();
+    public static Collection<Task> getTasks(Sarariman sarariman) throws SQLException {
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
+                "p.id AS project_id, p.name AS project_name, " +
+                "c.id AS customer_id, c.name AS customer_name " +
+                "FROM tasks AS t " +
+                "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
+                "LEFT OUTER JOIN customers AS c ON c.id = p.customer");
         try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
-                    "p.id AS project_id, p.name AS project_name, " +
-                    "c.id AS customer_id, c.name AS customer_name " +
-                    "FROM tasks AS t " +
-                    "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
-                    "LEFT OUTER JOIN customers AS c ON c.id = p.customer");
             ResultSet resultSet = ps.executeQuery();
             try {
                 Collection<Task> list = new ArrayList<Task>();
@@ -55,7 +54,7 @@ public class Task {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 

@@ -7,6 +7,7 @@
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -46,8 +47,7 @@
         <table class="altrows" id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
 
-            <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-            <c:forEach var="task" items="${sarariman:tasks(db)}">
+            <c:forEach var="task" items="${sarariman:tasks(sarariman)}">
                 <tr>
                     <td><a href="task?task_id=${task.id}">${task.id}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
