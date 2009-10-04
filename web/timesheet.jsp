@@ -19,9 +19,10 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>${directory.employeeMap[employee].fullName}</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body>
+    <body onload="altRows('timesheet')">
         <p><a href="./">Home</a></p>
 
         <c:choose>
@@ -68,7 +69,7 @@
         </sql:query>
         <c:set var="totalHoursWorked" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
-        <table>
+        <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>
@@ -94,10 +95,12 @@
             <tr>
                 <td colspan="3">Total</td>
                 <td class="duration">${totalHoursWorked}</td>
+                <td></td>
             </tr>
             <tr>
                 <td colspan="3">Total PTO</td>
                 <td class="duration">${totalPTO}</td>
+                <td></td>
             </tr>
         </table>
 

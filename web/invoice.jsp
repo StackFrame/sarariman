@@ -6,8 +6,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Invoice ${param.invoice}</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body>
+    <body onload="altRows('hours')">
         <p><a href="./">Home</a></p>
 
         <h1>Invoice ${param.invoice}</h1>
@@ -20,7 +21,7 @@
             ORDER BY h.date ASC, h.employee ASC, h.task ASC
             <sql:param value="${param.invoice}"/>
         </sql:query>
-        <table>
+        <table class="altrows" id="hours">
             <caption>Entries</caption>
             <tbody>
                 <tr>

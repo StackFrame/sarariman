@@ -11,8 +11,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Task Management</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body>
+    <body onload="altRows('tasks')">
         <p><a href="./">Home</a></p>
         <h1>Task Management</h1>
 
@@ -42,7 +43,7 @@
         <br/>
 
         <h2>Tasks</h2>
-        <table>
+        <table class="altrows" id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
 
             <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>

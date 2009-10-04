@@ -10,8 +10,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>View Day</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body>
+    <body onload="altRows('days')">
         <p><a href="./">Home</a></p>
         <c:choose>
             <c:when test="${!empty param.day}">
@@ -28,7 +29,7 @@
             <input type="text" value="${day}" id="day" name="day"/>
             <input type="submit" value="View"/>
         </form>
-        <table>
+        <table class="altrows" id="days">
             <tr><th>Employee</th><th>Hours</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <sql:query dataSource="jdbc/sarariman" var="data">

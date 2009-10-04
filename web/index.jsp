@@ -30,11 +30,6 @@
             </c:otherwise>
         </c:choose>
 
-        <sql:query dataSource="jdbc/sarariman" var="timecard" sql="SELECT * FROM timecards WHERE date=? AND employee=?">
-            <sql:param value="${week}"/>
-            <sql:param value="${employeeNumber}"/>
-        </sql:query>
-
         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employeeNumber, week)}"/>
         <c:set var="submitted" value="${timesheet.submitted}"/>
 
@@ -213,7 +208,7 @@
             <form action="${request.requestURI}" method="post">
                 <label for="submitted">Submitted: </label>
                 <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                <c:set var="approved" value="${!empty timecard && timecard.rows[0].approved}"/>
+                <c:set var="approved" value="${timesheet.approved}"/>
                 <label for="approved">Approved: </label>
                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
                 <c:if test="${!submitted && hoursNeeded <= 0}">

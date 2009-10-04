@@ -11,8 +11,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Projects</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body>
+    <body onload="altRows('projects')">
         <p><a href="./">Home</a></p>
 
         <h1>Projects</h1>
@@ -34,7 +35,7 @@
         </form>
         <br/>
 
-        <table>
+        <table class="altrows" id="projects">
             <tr><th>ID</th><th>Name</th><th>Customer</th></tr>
 
             <sql:query dataSource="jdbc/sarariman" var="projects">
