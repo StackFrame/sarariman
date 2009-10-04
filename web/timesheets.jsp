@@ -13,10 +13,11 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Timesheets</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <!-- FIXME: Need to make PTO stand out for easier payroll processing. -->
-    <body>
+    <body onload ="altRows('timesheets')">
         <p><a href="./">Home</a></p>
         <c:choose>
             <c:when test="${!empty param.week}">
@@ -69,8 +70,8 @@
 
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
-        <table>
-            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th></tr>
+        <table class="altrowstable" id="timesheets">
+            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th colspan="2">Actions</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <tr>
                     <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employee.number, week)}"/>

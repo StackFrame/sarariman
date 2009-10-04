@@ -205,7 +205,7 @@
             </c:if>
             <c:set var="hoursNeeded" value="${hoursNeeded - totalHoursWorked}"/>
             <c:if test="${hoursNeeded > 0}">
-                <p>Salaried hours remaining in week: <span class="duration">${salariedHoursRemaining}</span></p>
+                <p>Salaried hours remaining in week: <span class="duration">${hoursNeeded}</span></p>
             </c:if>
 
             <form action="${request.requestURI}" method="post">
