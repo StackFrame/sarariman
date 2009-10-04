@@ -107,35 +107,37 @@
             </c:if>
         </c:if>
 
-        <div id="recordTime">
-            <h2>Record time worked</h2>
-            <form action="${request.requestURI}" method="post">
-                <label for="date">Date:</label>
-                <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
-                <input size="10" type="text" name="date" id="date" value="${now}"/>
-                <label for="task">Task:</label>
-                <select name="task" id="task">
-                    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-                    <c:forEach var="task" items="${sarariman:tasks(db)}">
-                        <c:if test="${task.active}">
-                            <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
-                                <c:if test="${!empty task.project}">
-                                    - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(task.project.customer.name)}
-                                </c:if>
-                            </option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-                <label for="duration">Duration:</label>
-                <input size="5" type="text" name="duration" id="duration"/>
-                <br/>
-                <label for="description">Description:</label>
-                <textarea cols="40" rows="10" name="description" id="description"></textarea>
-                <fmt:formatDate var="weekString" value="${week}" type="date" pattern="yyyy-MM-dd" />
-                <input type="hidden" name="week" value="${weekString}"/>
-                <input type="submit" name="recordTime" value="Record"/>
-            </form>
-        </div>
+        <c:if test="${!timesheet.submitted}">
+            <div id="recordTime">
+                <h2>Record time worked</h2>
+                <form action="${request.requestURI}" method="post">
+                    <label for="date">Date:</label>
+                    <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
+                    <input size="10" type="text" name="date" id="date" value="${now}"/>
+                    <label for="task">Task:</label>
+                    <select name="task" id="task">
+                        <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
+                        <c:forEach var="task" items="${sarariman:tasks(db)}">
+                            <c:if test="${task.active}">
+                                <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
+                                    <c:if test="${!empty task.project}">
+                                        - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(task.project.customer.name)}
+                                    </c:if>
+                                </option>
+                            </c:if>
+                        </c:forEach>
+                    </select>
+                    <label for="duration">Duration:</label>
+                    <input size="5" type="text" name="duration" id="duration"/>
+                    <br/>
+                    <label for="description">Description:</label>
+                    <textarea cols="40" rows="10" name="description" id="description"></textarea>
+                    <fmt:formatDate var="weekString" value="${week}" type="date" pattern="yyyy-MM-dd" />
+                    <input type="hidden" name="week" value="${weekString}"/>
+                    <input type="submit" name="recordTime" value="Record"/>
+                </form>
+            </div>
+        </c:if>
 
         <div id="weekNavigation">
             <h2>Navigate to another week</h2>
@@ -164,7 +166,11 @@
             </sql:query>
             <c:set var="totalHoursWorked" value="0.0"/>
             <table class="altrows" id="hours">
-                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th><th></th></tr>
+                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th>
+                    <c:if test="${!timesheet.submitted}">
+                        <th></th>
+                    </c:if>
+                </tr>
                 <c:forEach var="entry" items="${entries.rows}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
@@ -178,14 +184,16 @@
                             <c:set var="entryDescription" value="${fn:escapeXml(entryDescription)}"/>
                         </c:if>
                         <td>${entryDescription}</td>
-                        <td>
-                            <c:url var="editLink" value="editentry">
-                                <c:param name="task" value="${entry.task}"/>
-                                <c:param name="date" value="${entry.date}"/>
-                                <c:param name="employee" value="${employeeNumber}"/>
-                            </c:url>
-                            <a href="${fn:escapeXml(editLink)}">Edit</a>
-                        </td>
+                        <c:if test="${!timesheet.submitted}">
+                            <td>
+                                <c:url var="editLink" value="editentry">
+                                    <c:param name="task" value="${entry.task}"/>
+                                    <c:param name="date" value="${entry.date}"/>
+                                    <c:param name="employee" value="${employeeNumber}"/>
+                                </c:url>
+                                <a href="${fn:escapeXml(editLink)}">Edit</a>
+                            </td>
+                        </c:if>
                         <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
                     </tr>
                 </c:forEach>
