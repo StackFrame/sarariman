@@ -55,7 +55,7 @@ public class SararimanContextListener implements ServletContextListener {
         return props;
     }
 
-    private void scheduleNightlyTask(EmailDispatcher emailDispatcher) {
+    private void scheduleNightlyTask(EmailDispatcher emailDispatcher, Directory directory) {
         Timer timer = new Timer();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -66,7 +66,7 @@ public class SararimanContextListener implements ServletContextListener {
         final long ONE_MINUTE = 60 * ONE_SECOND;
         final long ONE_HOUR = 60 * ONE_MINUTE;
         final long ONE_DAY = 24 * ONE_HOUR;
-        final TimerTask weeknightTask = new WeeknightTask(emailDispatcher);
+        final TimerTask weeknightTask = new WeeknightTask(directory, emailDispatcher);
         timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
     }
 
@@ -84,7 +84,7 @@ public class SararimanContextListener implements ServletContextListener {
         EmailDispatcher emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
         Sarariman sarariman = new Sarariman(directory, emailDispatcher);
         sce.getServletContext().setAttribute("sarariman", sarariman);
-        scheduleNightlyTask(emailDispatcher);
+        scheduleNightlyTask(emailDispatcher, directory);
         /*
         try {
         emailDispatcher.send(new InternetAddress("mcculley@stackframe.com", true), "Sarariman started", "Sarariman has been started.");

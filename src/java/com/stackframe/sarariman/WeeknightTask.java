@@ -10,9 +10,11 @@ import javax.mail.internet.InternetAddress;
  */
 public class WeeknightTask extends TimerTask {
 
+    private final Directory directory;
     private final EmailDispatcher emailDispatcher;
 
-    public WeeknightTask(EmailDispatcher emailDispatcher) {
+    public WeeknightTask(Directory directory, EmailDispatcher emailDispatcher) {
+        this.directory = directory;
         this.emailDispatcher = emailDispatcher;
     }
 
@@ -23,6 +25,9 @@ public class WeeknightTask extends TimerTask {
                     "Sarariman is running the nightly task.");
         } catch (AddressException ae) {
             throw new RuntimeException(ae);
+        }
+
+        for (Employee employee : directory.getEmployees()) {
         }
     }
 

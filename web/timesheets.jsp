@@ -9,7 +9,6 @@
 <c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
 <jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Timesheets</title>
@@ -38,7 +37,7 @@
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.action}">
-            <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, param.actionEmployee, week)}"/>
+            <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.actionEmployee, week)}"/>
             <c:set var="fullName" value="${directory.employeeMap[param.actionEmployee].fullName}"/>
             <c:choose>
                 <c:when test="${param.action == 'Approve'}">
@@ -74,7 +73,7 @@
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th colspan="2">Actions</th></tr>
             <c:forEach var="employee" items="${directory.employees}">
                 <tr>
-                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employee.number, week)}"/>
+                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
                     <c:set var="PTO" value="${timesheet.PTOHours}"/>
                     <c:set var="holiday" value="${timesheet.holidayHours}"/>
                     <c:set var="hours" value="${timesheet.totalHours}"/>

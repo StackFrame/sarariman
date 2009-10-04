@@ -30,7 +30,7 @@
             </c:otherwise>
         </c:choose>
 
-        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employeeNumber, week)}"/>
+        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employeeNumber, week)}"/>
         <c:set var="submitted" value="${timesheet.submitted}"/>
 
         <c:if test="${!submitted && param.submit}">

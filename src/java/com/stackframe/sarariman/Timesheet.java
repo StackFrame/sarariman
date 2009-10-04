@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.sql.DataSource;
 
 /**
@@ -21,29 +19,27 @@ public class Timesheet {
     private static final int holidayTask = 4;
     private static final int PTOTask = 5;
     private final Sarariman sarariman;
-    private final DataSource dataSource;
     private final int employeeNumber;
     private final Date week;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public Timesheet(Sarariman sarariman, DataSource dataSource, int employeeNumber, Date week) {
+    public Timesheet(Sarariman sarariman, int employeeNumber, Date week) {
         this.sarariman = sarariman;
-        this.dataSource = dataSource;
         this.employeeNumber = employeeNumber;
         this.week = week;
     }
 
-    public static Timesheet lookup(Sarariman sarariman, DataSource dataSource, int employeeNumber, java.util.Date week) {
-        return new Timesheet(sarariman, dataSource, employeeNumber, new Date(week.getTime()));
+    public static Timesheet lookup(Sarariman sarariman, int employeeNumber, java.util.Date week) {
+        return new Timesheet(sarariman, employeeNumber, new Date(week.getTime()));
     }
 
     public double getRegularHours() throws SQLException {
-        Connection connection = dataSource.getConnection();
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT SUM(hours.duration) AS total " +
+                "FROM hours " +
+                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
         try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT SUM(hours.duration) AS total " +
-                    "FROM hours " +
-                    "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
             ps.setDate(3, week);
@@ -61,17 +57,17 @@ public class Timesheet {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 
     public double getTotalHours() throws SQLException {
-        Connection connection = dataSource.getConnection();
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT SUM(hours.duration) AS total " +
+                "FROM hours " +
+                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT SUM(hours.duration) AS total " +
-                    "FROM hours " +
-                    "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
             ps.setDate(3, week);
@@ -87,17 +83,17 @@ public class Timesheet {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 
     private double getHours(int task) throws SQLException {
-        Connection connection = dataSource.getConnection();
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT SUM(hours.duration) AS total " +
+                "FROM hours " +
+                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
         try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT SUM(hours.duration) AS total " +
-                    "FROM hours " +
-                    "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
             ps.setDate(3, week);
@@ -114,7 +110,7 @@ public class Timesheet {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 
@@ -127,9 +123,9 @@ public class Timesheet {
     }
 
     public boolean isSubmitted() throws SQLException {
-        Connection connection = dataSource.getConnection();
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
             ps.setDate(1, week);
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
@@ -139,14 +135,14 @@ public class Timesheet {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 
     public boolean isApproved() throws SQLException {
-        Connection connection = dataSource.getConnection();
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
             ps.setDate(1, week);
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
@@ -160,15 +156,15 @@ public class Timesheet {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 
     public boolean approve() {
         try {
-            Connection connection = dataSource.getConnection();
+            Connection connection = sarariman.getConnection();
+            PreparedStatement ps = connection.prepareStatement("UPDATE timecards SET approved=true WHERE date=? AND employee=?");
             try {
-                PreparedStatement ps = connection.prepareStatement("UPDATE timecards SET approved=true WHERE date=? AND employee=?");
                 ps.setDate(1, week);
                 ps.setInt(2, employeeNumber);
                 int rowCount = ps.executeUpdate();
@@ -182,7 +178,7 @@ public class Timesheet {
                     return true;
                 }
             } finally {
-                connection.close();
+                ps.close();
             }
         } catch (SQLException se) {
             logger.log(Level.SEVERE, "caught exception approving timesheet", se);
@@ -196,9 +192,9 @@ public class Timesheet {
 
     public boolean reject() {
         try {
-            Connection connection = dataSource.getConnection();
+            Connection connection = sarariman.getConnection();
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM timecards WHERE date=? AND employee=?");
             try {
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM timecards WHERE date=? AND employee=?");
                 ps.setDate(1, week);
                 ps.setInt(2, employeeNumber);
                 int rowCount = ps.executeUpdate();
@@ -212,7 +208,7 @@ public class Timesheet {
                     return true;
                 }
             } finally {
-                connection.close();
+                ps.close();
             }
         } catch (SQLException se) {
             logger.log(Level.SEVERE, "caught exception rejecting timesheet", se);
@@ -226,9 +222,9 @@ public class Timesheet {
 
     public boolean submit() {
         try {
-            Connection connection = dataSource.getConnection();
+            Connection connection = sarariman.getConnection();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
             try {
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
                 ps.setInt(1, employeeNumber);
                 ps.setDate(2, week);
                 int rowCount = ps.executeUpdate();
@@ -242,7 +238,7 @@ public class Timesheet {
                     return true;
                 }
             } finally {
-                connection.close();
+                ps.close();
             }
         } catch (SQLException se) {
             logger.log(Level.SEVERE, "caught exception submitting timesheet", se);
