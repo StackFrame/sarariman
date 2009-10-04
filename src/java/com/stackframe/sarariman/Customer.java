@@ -18,10 +18,8 @@ public class Customer {
     private final int id;
     private final String name;
 
-    public static Map<Integer, Customer> getCustomers() throws Exception {
-        Context context = new InitialContext();
-        DataSource dataSource = (DataSource)context.lookup("jdbc/sarariman");
-        Connection connection = dataSource.getConnection();
+    public static Map<Integer, Customer> getCustomers(Sarariman sarariman) throws Exception {
+        Connection connection = sarariman.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects");
         ResultSet resultSet = ps.executeQuery();
         Map<Integer, Customer> map = new HashMap<Integer, Customer>();

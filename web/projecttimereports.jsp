@@ -6,9 +6,10 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-    <c:set var="project" value="${sarariman:project(db, param.project)}"/>
+    <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>${project.customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</title>

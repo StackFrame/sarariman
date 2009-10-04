@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 
 /**
  *
@@ -16,15 +15,19 @@ public class Project {
     private final String name;
     private final Customer customer;
 
-    public static Project lookup(DataSource dataSource, int id) throws SQLException {
-        Connection connection = dataSource.getConnection();
+    public static Project lookup(Sarariman sarariman, int id) throws SQLException {
+        Connection connection = sarariman.getConnection();
+        long start = System.nanoTime();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT p.id AS project_id, p.name AS project_name, " +
+                "c.id AS customer_id, c.name AS customer_name " +
+                "FROM projects AS p " +
+                "JOIN customers AS c ON c.id = p.customer " +
+                "WHERE p.id = ?");
+        long stop = System.nanoTime();
+        long took = stop - start;
+        System.err.println("prepareStatement took " + took);
         try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT p.id AS project_id, p.name AS project_name, " +
-                    "c.id AS customer_id, c.name AS customer_name " +
-                    "FROM projects AS p " +
-                    "JOIN customers AS c ON c.id = p.customer " +
-                    "WHERE p.id = ?");
             ps.setInt(1, id);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -40,7 +43,7 @@ public class Project {
                 resultSet.close();
             }
         } finally {
-            connection.close();
+            ps.close();
         }
     }
 

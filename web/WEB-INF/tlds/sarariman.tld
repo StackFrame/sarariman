@@ -21,7 +21,7 @@
     <function>
         <name>project</name>
         <function-class>com.stackframe.sarariman.Project</function-class>
-        <function-signature>com.stackframe.sarariman.Project lookup(javax.sql.DataSource, int)</function-signature>
+        <function-signature>com.stackframe.sarariman.Project lookup(com.stackframe.sarariman.Sarariman, int)</function-signature>
     </function>
     <function>
         <name>timesheet</name>

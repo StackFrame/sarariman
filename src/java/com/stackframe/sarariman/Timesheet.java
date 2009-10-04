@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
