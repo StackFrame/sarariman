@@ -12,9 +12,9 @@
             <li><a href="invoices">Invoices</a></li>
             <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
             <li><a href="timesheet">Timesheet Reports</a></li>
-            <li><a href="timesheets">Timesheet Management</a></li>
-            <li><a href="tasks">Task Management</a></li>
-            <li><a href="projects">Project Management</a></li>
+            <li><a href="timesheets">Timesheets</a></li>
+            <li><a href="tasks">Tasks</a></li>
+            <li><a href="projects">Projects</a></li>
             <li><a href="changelog">Changelog</a></li>
             <li><a href="day">Daily Activity</a></li>
             <li><a href="help.xhtml">Help</a></li>
