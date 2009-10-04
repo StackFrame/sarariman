@@ -1,10 +1,9 @@
 package com.stackframe.sarariman;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,10 @@ import javax.naming.directory.SearchResult;
  * @author mcculley
  */
 public class LDAPDirectory implements Directory {
+
+    private final DirContext context;
+    private final Map<Object, Employee> byNumber = new LinkedHashMap<Object, Employee>();
+    private final Map<String, Employee> byUserName = new LinkedHashMap<String, Employee>();
 
     public static class EmployeeImpl implements Employee {
 
@@ -66,15 +69,27 @@ public class LDAPDirectory implements Directory {
 
         @Override
         public String toString() {
-            return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + "}";
+            return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
         }
 
     }
-    private final Map<Object, Employee> employees = new HashMap<Object, Employee>();
-    private final List<Employee> allEmployees = new ArrayList<Employee>();
 
     public LDAPDirectory(DirContext context) {
+        this.context = context;
+        load();
+    }
+
+    /*
+    FIXME: It would be nice to intercept lookups on the maps and try a reload when a lookup fails.  This would require doing
+    something different with the defensive copies.
+     */
+
+    /**
+     * Load the directory from LDAP.
+     */
+    private void load() {
         try {
+            List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", new BasicAttributes("active", "TRUE"),
                     new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "mail"});
             while (answer.hasMore()) {
@@ -84,33 +99,44 @@ public class LDAPDirectory implements Directory {
                 String mail = attributes.get("mail").getAll().next().toString();
                 boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
-                Employee employee = new EmployeeImpl(name, uid, employeeNumber, fulltime, mail);
-                employees.put(employeeNumber, employee);
-                employees.put(Integer.toString(employeeNumber), employee);
-                employees.put(new Long(employeeNumber), employee);
-                employees.put(uid, employee);
-                allEmployees.add(employee);
+                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, mail));
             }
 
-            Collections.sort(allEmployees, new Comparator<Employee>() {
+            Collections.sort(tmp, new Comparator<Employee>() {
 
                 public int compare(Employee e1, Employee e2) {
                     return e1.getFullName().compareTo(e2.getFullName());
                 }
 
             });
-            context.close();
+
+            for (Employee employee : tmp) {
+                byNumber.put(employee.getNumber(), employee);
+                byNumber.put(new Long(employee.getNumber()), employee);
+                byNumber.put(Integer.toString(employee.getNumber()), employee);
+                byUserName.put(employee.getUserName(), employee);
+            }
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
         }
     }
 
-    public Map<Object, Employee> getEmployeeMap() {
-        return employees;
+    private static <K, V> Map<K, V> copy(Map<K, V> map) {
+        return Collections.unmodifiableMap(new LinkedHashMap<K, V>(map));
     }
 
-    public Collection<Employee> getEmployees() {
-        return allEmployees;
+    public synchronized Map<String, Employee> getByUserName() {
+        return copy(byUserName);
+    }
+
+    public synchronized Map<Object, Employee> getByNumber() {
+        return copy(byNumber);
+    }
+
+    public synchronized void reload() {
+        byNumber.clear();
+        byUserName.clear();
+        load();
     }
 
 }

@@ -1,6 +1,5 @@
 package com.stackframe.sarariman;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -9,8 +8,19 @@ import java.util.Map;
  */
 public interface Directory {
 
-    Map<Object, Employee> getEmployeeMap();
+    /**
+     * Retrieves a Map of Employees with employee numbers as the keys in the form of Integer, Long, and String.  Note that there are
+     * multiple entries for each employee in the returned Map.
+     *
+     * @return a Map of Employees with various forms of the employee number as the key
+     */
+    Map<Object, Employee> getByNumber();
 
-    Collection<Employee> getEmployees();
+    /**
+     * Retrieves a Map of Employees with usernamees as the keys.
+     *
+     * @return a Map of Employees with the username as the key
+     */
+    Map<String, Employee> getByUserName();
 
 }

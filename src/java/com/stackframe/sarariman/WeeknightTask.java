@@ -27,7 +27,7 @@ public class WeeknightTask extends TimerTask {
             throw new RuntimeException(ae);
         }
 
-        for (Employee employee : directory.getEmployees()) {
+        for (Employee employee : directory.getByUserName().values()) {
         }
     }
 

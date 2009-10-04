@@ -32,7 +32,7 @@
                 </tr>
                 <c:forEach var="row" items="${result.rows}">
                     <tr>
-                        <td>${directory.employeeMap[row.employee].fullName}</td>
+                        <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
                         <td class="duration">${row.duration}</td>
@@ -62,7 +62,7 @@
                 <tr><th>Employee</th><th>Total</th></tr>
                 <c:forEach var="employeeRows" items="${employees.rows}">
                     <tr>
-                        <td>${directory.employeeMap[employeeRows.employee].fullName}</td>
+                        <td>${directory.byNumber[employeeRows.employee].fullName}</td>
                         <sql:query dataSource="jdbc/sarariman" var="totals">
                             SELECT SUM(h.duration) AS total
                             FROM invoices AS i

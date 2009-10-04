@@ -25,10 +25,6 @@
             <li>There is some bug in timesheets.jsp.  I think it is getting the start date wrong.  If you submit a timesheet in the
                 middle of the week and go to timesheets.jsp directly, it doesn't enable the "Approve" and "Reject" buttons.</li>
             <li>Remove the underline in the hyperlink at the bottom of print CSS for timereport.jsp and SAIC version.</li>
-            <li>When Robert Munyer joined, he got NullPointerException because Sarariman had not been restarted to see new LDAP entry.
-                Make accessor that captures NPE and reloads LDAP.</li>
-            <li>Handle the case of an employee that starts after Sarariman is deployed.  It should look at hire
-                date in LDAP.</li>
             <li>Use the fullTime bit in LDAP for pings and for enabling the "Submit" button.</li>
             <li>Check for more than 40 hours registered and non-zero PTO.</li>
             <li>Need a report for billable hours not tracked by a project.</li>

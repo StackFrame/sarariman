@@ -6,7 +6,7 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
+<c:set var="user" value="${directory.byUserName[pageContext.request.remoteUser]}"/>
 <jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -38,7 +38,7 @@
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.action}">
             <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.actionEmployee, week)}"/>
-            <c:set var="fullName" value="${directory.employeeMap[param.actionEmployee].fullName}"/>
+            <c:set var="fullName" value="${directory.byNumber[param.actionEmployee].fullName}"/>
             <c:choose>
                 <c:when test="${param.action == 'Approve'}">
                     <c:choose>
@@ -71,7 +71,8 @@
 
         <table class="altrows" id="timesheets">
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th colspan="2">Actions</th></tr>
-            <c:forEach var="employee" items="${directory.employees}">
+            <c:forEach var="employeeEntry" items="${directory.byUserName}">
+                <c:set var="employee" value="${employeeEntry.value}"/>
                 <tr>
                     <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
                     <c:set var="PTO" value="${timesheet.PTOHours}"/>

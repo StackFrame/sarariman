@@ -6,19 +6,20 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<c:set var="user" value="${directory.byUserName[pageContext.request.remoteUser]}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <c:choose>
         <c:when test="${!empty param.employee}">
-            <c:set var="employee" value="${param.employee}"/>
+            <c:set var="employee" value="${directory.byNumber[param.employee]}"/>
         </c:when>
         <c:otherwise>
-            <c:set var="employee" value="${directory.employeeMap[pageContext.request.remoteUser].number}"/>
+            <c:set var="employee" value="${user}"/>
         </c:otherwise>
     </c:choose>
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>${directory.employeeMap[employee].fullName}</title>
+        <title>${employee.fullName}</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
@@ -39,13 +40,13 @@
             <input type="submit" name="week" value="${prevWeekString}"/>
             <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
-            <input type="hidden" name="employee" value="${employee}"/>
+            <input type="hidden" name="employee" value="${employee.number}"/>
         </form>
         <form>
             <label for="employee">Employee: </label>
             <select name="employee" id="employee">
-                <c:forEach var="e" items="${directory.employees}">
-                    <option value="${e.number}" <c:if test="${e.number == employee}">selected="selected"</c:if>>${e.fullName}</option>
+                <c:forEach var="e" items="${directory.byUserName}">
+                    <option value="${e.value.number}" <c:if test="${e.value.number == employee.number}">selected="selected"</c:if>>${e.value.fullName}</option>
                 </c:forEach>
             </select>
             <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
@@ -55,7 +56,7 @@
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
-        <h2>Timesheet for ${directory.employeeMap[employee].fullName} for the week of ${thisWeekStart}</h2>
+        <h2>Timesheet for ${employee.fullName} for the week of ${thisWeekStart}</h2>
 
         <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
@@ -63,7 +64,7 @@
             INNER JOIN tasks ON hours.task=tasks.id
             WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
             ORDER BY hours.date DESC, hours.task ASC
-            <sql:param value="${employee}"/>
+            <sql:param value="${employee.number}"/>
             <sql:param value="${thisWeekStart}"/>
             <sql:param value="${thisWeekStart}"/>
         </sql:query>

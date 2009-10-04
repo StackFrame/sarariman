@@ -31,17 +31,17 @@
         </form>
         <table class="altrows" id="days">
             <tr><th>Employee</th><th>Hours</th></tr>
-            <c:forEach var="employee" items="${directory.employees}">
+            <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <sql:query dataSource="jdbc/sarariman" var="data">
                     SELECT * FROM hours WHERE date=? AND employee=? AND duration>0
                     <sql:param value="${day}"/>
-                    <sql:param value="${employee.number}"/>
+                    <sql:param value="${employeeEntry.value.number}"/>
                 </sql:query>
                 <c:set var="totalHours" value="0"/>
                 <c:forEach var="row" items="${data.rows}">
                     <c:set var="totalHours" value="${totalHours + row.duration}"/>
                 </c:forEach>
-                <tr><td>${employee.fullName}</td><td>${totalHours}</td></tr>
+                <tr><td>${employeeEntry.value.fullName}</td><td>${totalHours}</td></tr>
             </c:forEach>
         </table>
     </body>

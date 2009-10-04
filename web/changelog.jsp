@@ -54,9 +54,9 @@
                     <td>${entry.date}</td>
                     <td>${entry.task}</td>
                     <td>${entry.duration}</td>
-                    <td>${directory.employeeMap[entry.employee].userName}</td>
+                    <td>${directory.byNumber[entry.employee].userName}</td>
                     <td>${entry.remote_address}</td>
-                    <td>${directory.employeeMap[entry.remote_user].userName}</td>
+                    <td>${directory.byNumber[entry.remote_user].userName}</td>
                     <td>${entry.reason}</td>
                     <td>
                         <c:url var="entryLink" value="editentry">

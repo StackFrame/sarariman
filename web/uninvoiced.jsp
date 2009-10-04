@@ -4,10 +4,11 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
+<c:set var="user" value="${directory.byUserName[pageContext.request.remoteUser]}"/>
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-    <c:set var="project" value="${sarariman:project(db, param.project)}"/>
+    <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced time for ${project.customer.name} - ${fn:escapeXml(project.name)}</title>
@@ -53,7 +54,7 @@
                 <tr><th>Employee</th><th>Task</th><th>Date</th><th>Duration</th><th>Invoice</th></tr>
                 <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                     <tr>
-                        <td>${directory.employeeMap[row.employee].fullName}</td>
+                        <td>${directory.byNumber[row.employee].fullName}</td>
                         <td>${row.task}</td>
                         <td>${row.date}</td>
                         <td>${row.duration}</td>

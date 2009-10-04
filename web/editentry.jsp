@@ -6,7 +6,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<c:set var="user" value="${directory.employeeMap[pageContext.request.remoteUser]}"/>
+<c:set var="user" value="${directory.byUserName[pageContext.request.remoteUser]}"/>
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -90,7 +90,7 @@
         </sql:query>
         <c:if test="${entries.rowCount != 1}">Did not get the expected row.  rowCount=${rowCount}</c:if>
         <c:set var="entry" value="${entries.rows[0]}"/>
-        Employee: ${directory.employeeMap[param.employee].fullName}<br/>
+        Employee: ${directory.byNumber[param.employee].fullName}<br/>
         Date: ${entry.date}<br/>
         Task: ${fn:escapeXml(entry.name)} (${entry.task})<br/>
         <form action="${request.requestURI}" method="post">
@@ -122,9 +122,9 @@
                     <td>${entry.date}</td>
                     <td>${entry.task}</td>
                     <td>${entry.duration}</td>
-                    <td>${directory.employeeMap[entry.employee].userName}</td>
+                    <td>${directory.byNumber[entry.employee].userName}</td>
                     <td>${entry.remote_address}</td>
-                    <td>${directory.employeeMap[entry.remote_user].userName}</td>
+                    <td>${directory.byNumber[entry.remote_user].userName}</td>
                     <td>${entry.reason}</td>
                 </tr>
             </c:forEach>

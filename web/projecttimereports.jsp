@@ -36,7 +36,7 @@
                     <c:param name="week" value="${param.week}"/>
                     <c:param name="employee" value="${row.employee}"/>
                 </c:url>
-                <li><a href="${fn:escapeXml(target)}">${directory.employeeMap[row.employee].fullName}</a></li>
+                <li><a href="${fn:escapeXml(target)}">${directory.byNumber[row.employee].fullName}</a></li>
             </c:forEach>
         </ul>
         <%@include file="footer.jsp" %>

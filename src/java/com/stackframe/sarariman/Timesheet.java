@@ -171,7 +171,7 @@ public class Timesheet {
                     logger.severe("update for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    Employee employee = sarariman.getDirectory().getEmployeeMap().get(employeeNumber);
+                    Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(employee.getEmail(), "timesheet approved",
                             "Timesheet approved for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
@@ -201,7 +201,7 @@ public class Timesheet {
                     logger.severe("reject for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    Employee employee = sarariman.getDirectory().getEmployeeMap().get(employeeNumber);
+                    Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(employee.getEmail(), "timesheet rejected",
                             "Timesheet rejected for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
@@ -231,7 +231,7 @@ public class Timesheet {
                     logger.severe("submit for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    Employee employee = sarariman.getDirectory().getEmployeeMap().get(employeeNumber);
+                    Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(sarariman.getApprover().getEmail(), "timesheet submitted",
                             "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
                     return true;

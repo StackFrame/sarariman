@@ -61,7 +61,7 @@
                 }
             }
         </style>
-        <title>${directory.employeeMap[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${param.week}</title>
+        <title>${directory.byNumber[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${param.week}</title>
     </head>
 
     <body>
@@ -69,7 +69,7 @@
         <h1>Timesheet</h1>
 
         <p>
-            Employee: ${directory.employeeMap[param.employee].fullName}<br/>
+            Employee: ${directory.byNumber[param.employee].fullName}<br/>
             Week: ${param.week}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Customer: ${fn:escapeXml(project.customer.name)}

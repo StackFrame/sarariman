@@ -1,12 +1,13 @@
 package com.stackframe.sarariman;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -23,6 +24,8 @@ public class SararimanContextListener implements ServletContextListener {
 
     /** Do not edit this.  It is set by Subversion. */
     private final static String revision = "$Revision$";
+    private final Logger logger = Logger.getLogger(getClass().getName());
+    private Sarariman sarariman;
 
     private static String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -55,8 +58,7 @@ public class SararimanContextListener implements ServletContextListener {
         return props;
     }
 
-    private void scheduleNightlyTask(EmailDispatcher emailDispatcher, Directory directory) {
-        Timer timer = new Timer();
+    private void scheduleTasks(EmailDispatcher emailDispatcher, final LDAPDirectory directory, Timer timer) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 0);
@@ -66,13 +68,23 @@ public class SararimanContextListener implements ServletContextListener {
         final long ONE_MINUTE = 60 * ONE_SECOND;
         final long ONE_HOUR = 60 * ONE_MINUTE;
         final long ONE_DAY = 24 * ONE_HOUR;
+
         final TimerTask weeknightTask = new WeeknightTask(directory, emailDispatcher);
         timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
+
+        final TimerTask reloadLDAP = new TimerTask() {
+
+            public void run() {
+                directory.reload();
+            }
+
+        };
+        timer.schedule(reloadLDAP, ONE_HOUR, ONE_HOUR);
     }
 
     public void contextInitialized(ServletContextEvent sce) {
         sce.getServletContext().setAttribute("sararimanVersion", version());
-        Directory directory;
+        LDAPDirectory directory;
         try {
             Properties props = lookupDirectoryProperties();
             directory = new LDAPDirectory(new InitialDirContext(props));
@@ -82,9 +94,9 @@ public class SararimanContextListener implements ServletContextListener {
         }
 
         EmailDispatcher emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
-        Sarariman sarariman = new Sarariman(directory, emailDispatcher);
+        sarariman = new Sarariman(directory, emailDispatcher);
         sce.getServletContext().setAttribute("sarariman", sarariman);
-        scheduleNightlyTask(emailDispatcher, directory);
+        scheduleTasks(emailDispatcher, directory, sarariman.getTimer());
         /*
         try {
         emailDispatcher.send(new InternetAddress("mcculley@stackframe.com", true), "Sarariman started", "Sarariman has been started.");
@@ -95,6 +107,14 @@ public class SararimanContextListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
+        try {
+            if (sarariman != null) {
+                sarariman.getConnection().close();
+            }
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, "exception while closing connection", e);
+        }
+        sarariman.getTimer().cancel();
     }
 
 }

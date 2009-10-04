@@ -5,10 +5,11 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<jsp:useBean beanName="sarariman" id="sarariman" scope="application" type="com.stackframe.sarariman.Sarariman" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-    <c:set var="project" value="${sarariman:project(db, param.project)}"/>
+    <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
     <head>
         <style type="text/css">
             @media screen, print{
@@ -61,7 +62,7 @@
                 }
             }
         </style>
-        <title>${directory.employeeMap[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${param.week}</title>
+        <title>${directory.byNumber[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${param.week}</title>
     </head>
 
     <body>
@@ -69,7 +70,7 @@
         <h1>Timesheet</h1>
 
         <p>
-            Employee: ${directory.employeeMap[param.employee].fullName}<br/>
+            Employee: ${directory.byNumber[param.employee].fullName}<br/>
             Week: ${param.week}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Customer: ${fn:escapeXml(project.customer.name)}
