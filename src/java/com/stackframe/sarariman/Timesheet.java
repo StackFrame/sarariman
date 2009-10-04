@@ -176,14 +176,10 @@ public class Timesheet {
                     logger.severe("update for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    try {
-                        String employeeName = sarariman.getDirectory().getEmployeeMap().get(employeeNumber).getFullName();
-                        sarariman.getEmailDispatcher().send(new InternetAddress("mcculley@stackframe.com", true), "timesheet approved",
-                                "Timesheet approved for " + employeeName + " for week of " + week + ".");
-                        return true;
-                    } catch (AddressException ae) {
-                        throw new RuntimeException(ae);
-                    }
+                    Employee employee = sarariman.getDirectory().getEmployeeMap().get(employeeNumber);
+                    sarariman.getEmailDispatcher().send(employee.getEmail(), "timesheet approved",
+                            "Timesheet approved for " + employee.getFullName() + " for week of " + week + ".");
+                    return true;
                 }
             } finally {
                 connection.close();
@@ -210,14 +206,10 @@ public class Timesheet {
                     logger.severe("reject for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    try {
-                        String employeeName = sarariman.getDirectory().getEmployeeMap().get(employeeNumber).getFullName();
-                        sarariman.getEmailDispatcher().send(new InternetAddress("mcculley@stackframe.com", true), "timesheet rejected",
-                                "Timesheet rejected for " + employeeName + " for week of " + week + ".");
-                        return true;
-                    } catch (AddressException ae) {
-                        throw new RuntimeException(ae);
-                    }
+                    Employee employee = sarariman.getDirectory().getEmployeeMap().get(employeeNumber);
+                    sarariman.getEmailDispatcher().send(employee.getEmail(), "timesheet rejected",
+                            "Timesheet rejected for " + employee.getFullName() + " for week of " + week + ".");
+                    return true;
                 }
             } finally {
                 connection.close();
@@ -244,14 +236,10 @@ public class Timesheet {
                     logger.severe("submit for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    try {
-                        String employeeName = sarariman.getDirectory().getEmployeeMap().get(employeeNumber).getFullName();
-                        sarariman.getEmailDispatcher().send(new InternetAddress("mcculley@stackframe.com", true), "timesheet submitted",
-                                "Timesheet submitted for " + employeeName + " for week of " + week + ".");
-                        return true;
-                    } catch (AddressException ae) {
-                        throw new RuntimeException(ae);
-                    }
+                    Employee employee = sarariman.getDirectory().getEmployeeMap().get(employeeNumber);
+                    sarariman.getEmailDispatcher().send(sarariman.getApprover().getEmail(), "timesheet submitted",
+                            "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
+                    return true;
                 }
             } finally {
                 connection.close();

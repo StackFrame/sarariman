@@ -36,7 +36,6 @@
 
         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, db, employeeNumber, week)}"/>
         <c:set var="submitted" value="${timesheet.submitted}"/>
-        <p>submitted=${submitted}</p>
 
         <c:if test="${!submitted && param.submit}">
             <c:set var="submitted" value="${sarariman:submitTimesheet(timesheet)}"/>
@@ -208,9 +207,6 @@
             <c:if test="${hoursNeeded > 0}">
                 <p>Salaried hours remaining in week: <span class="duration">${salariedHoursRemaining}</span></p>
             </c:if>
-
-            <p>submitted=${submitted}</p>
-            <p>hoursNeeded=${hoursNeeded}</p>
 
             <form action="${request.requestURI}" method="post">
                 <label for="submitted">Submitted: </label>

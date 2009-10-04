@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
@@ -28,12 +30,14 @@ public class LDAPDirectory implements Directory {
         private final String userName;
         private final int number;
         private final boolean fulltime;
+        private final String email;
 
-        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime) {
+        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, String email) {
             this.fullName = fullName;
             this.userName = userName;
             this.number = number;
             this.fulltime = fulltime;
+            this.email = email;
         }
 
         public String getFullName() {
@@ -52,6 +56,14 @@ public class LDAPDirectory implements Directory {
             return fulltime;
         }
 
+        public InternetAddress getEmail() {
+            try {
+                return new InternetAddress(email, true);
+            } catch (AddressException ae) {
+                throw new RuntimeException("could not construct an email address", ae);
+            }
+        }
+
         @Override
         public String toString() {
             return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + "}";
@@ -64,14 +76,15 @@ public class LDAPDirectory implements Directory {
     public LDAPDirectory(DirContext context) {
         try {
             NamingEnumeration<SearchResult> answer = context.search("ou=People", new BasicAttributes("active", "TRUE"),
-                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime"});
+                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "mail"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
                 String uid = attributes.get("uid").getAll().next().toString();
+                String mail = attributes.get("mail").getAll().next().toString();
                 boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
-                Employee employee = new EmployeeImpl(name, uid, employeeNumber, fulltime);
+                Employee employee = new EmployeeImpl(name, uid, employeeNumber, fulltime, mail);
                 employees.put(employeeNumber, employee);
                 employees.put(Integer.toString(employeeNumber), employee);
                 employees.put(new Long(employeeNumber), employee);
