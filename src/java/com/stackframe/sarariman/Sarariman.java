@@ -19,6 +19,7 @@ public class Sarariman {
     private final Directory directory;
     private final EmailDispatcher emailDispatcher;
     private final List<Employee> approvers = new ArrayList<Employee>();
+    private final List<Employee> invoiceManagers = new ArrayList<Employee>();
     private final Timer timer = new Timer();
 
     public Sarariman(Directory directory, EmailDispatcher emailDispatcher) {
@@ -27,6 +28,9 @@ public class Sarariman {
 
         // FIXME: This should come from configuration
         approvers.add(directory.getByUserName().get("mcculley"));
+        invoiceManagers.add(directory.getByUserName().get("mcculley"));
+        invoiceManagers.add(directory.getByUserName().get("awetteland"));
+
         try {
             DataSource source = (DataSource)new InitialContext().lookup("jdbc/sarariman");
             connection = source.getConnection();
@@ -45,6 +49,10 @@ public class Sarariman {
 
     public List<Employee> getApprovers() {
         return approvers;
+    }
+
+    public List<Employee> getInvoiceManagers() {
+        return invoiceManagers;
     }
 
     public Connection getConnection() {
