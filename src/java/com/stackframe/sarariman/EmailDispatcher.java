@@ -38,7 +38,7 @@ public class EmailDispatcher {
         session = Session.getDefaultInstance(props, null);
     }
 
-    private void submit(final InternetAddress to, final String subject, final String body) {
+    private void submit(final InternetAddress to, final Iterable<InternetAddress> cc, final String subject, final String body) {
         executor.execute(new Runnable() {
 
             public void run() {
@@ -46,6 +46,14 @@ public class EmailDispatcher {
                     Message msg = new MimeMessage(session);
                     msg.setFrom(from);
                     msg.setRecipient(Message.RecipientType.TO, to);
+                    if (cc != null) {
+                        for (InternetAddress dest : cc) {
+                            if (!dest.getAddress().equals(to.getAddress())) {
+                                msg.addRecipient(Message.RecipientType.CC, dest);
+                            }
+                        }
+                    }
+
                     msg.setSubject(subject);
                     msg.setText(body);
                     msg.setHeader("X-Mailer", "Sarariman");
@@ -59,8 +67,8 @@ public class EmailDispatcher {
         });
     }
 
-    public void send(InternetAddress to, String subject, String body) {
-        submit(to, subject, body);
+    public void send(InternetAddress to, Iterable<InternetAddress> cc, String subject, String body) {
+        submit(to, cc, subject, body);
     }
 
 }

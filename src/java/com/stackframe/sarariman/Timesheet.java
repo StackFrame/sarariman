@@ -113,6 +113,28 @@ public class Timesheet {
         }
     }
 
+    public double getHours(Date day) throws SQLException {
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT SUM(duration) AS total FROM hours WHERE employee=? AND date=?");
+        try {
+            ps.setInt(1, employeeNumber);
+            ps.setDate(2, day);
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                if (!resultSet.first()) {
+                    return 0;
+                } else {
+                    String total = resultSet.getString("total");
+                    return total == null ? 0 : Double.parseDouble(total);
+                }
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+        }
+    }
+
     public double getPTOHours() throws SQLException {
         return getHours(PTOTask);
     }
@@ -172,7 +194,7 @@ public class Timesheet {
                     return false;
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
-                    sarariman.getEmailDispatcher().send(employee.getEmail(), "timesheet approved",
+                    sarariman.getEmailDispatcher().send(employee.getEmail(), null, "timesheet approved",
                             "Timesheet approved for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
@@ -202,7 +224,7 @@ public class Timesheet {
                     return false;
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
-                    sarariman.getEmailDispatcher().send(employee.getEmail(), "timesheet rejected",
+                    sarariman.getEmailDispatcher().send(employee.getEmail(), null, "timesheet rejected",
                             "Timesheet rejected for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
@@ -232,7 +254,7 @@ public class Timesheet {
                     return false;
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
-                    sarariman.getEmailDispatcher().send(sarariman.getApprover().getEmail(), "timesheet submitted",
+                    sarariman.getEmailDispatcher().send(sarariman.getApprover().getEmail(), null, "timesheet submitted",
                             "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
