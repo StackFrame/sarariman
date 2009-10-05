@@ -33,16 +33,14 @@ public class WeeknightTask extends TimerTask {
             try {
                 Date week = new Date(DateUtils.weekStart(todayDate).getTime());
                 for (Employee employee : directory.getByUserName().values()) {
-                    if (employee.isFulltime()) {
-                        Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
+                    Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
+                    if (!timesheet.isSubmitted()) {
                         if (dayOfWeek == Calendar.FRIDAY) {
-                            if (!timesheet.isSubmitted()) {
-                                emailDispatcher.send(employee.getEmail(), Collections.singleton(sarariman.getApprover().getEmail()),
-                                        "timesheet", "Please submit your timesheet for the week of " + week + ".");
-                            }
+                            emailDispatcher.send(employee.getEmail(), Collections.singleton(sarariman.getApprover().getEmail()),
+                                    "timesheet", "Please submit your timesheet for the week of " + week + ".");
                         } else {
                             double hoursRecorded = timesheet.getHours(new Date(todayDate.getTime()));
-                            if (hoursRecorded == 0.0) {
+                            if (hoursRecorded == 0.0 && employee.isFulltime()) {
                                 emailDispatcher.send(employee.getEmail(), Collections.singleton(sarariman.getApprover().getEmail()),
                                         "timesheet", "Please record your time if you worked today.");
                             }
