@@ -43,4 +43,9 @@
         <function-class>com.stackframe.sarariman.Timesheet</function-class>
         <function-signature>boolean submit(com.stackframe.sarariman.Timesheet)</function-signature>
     </function>
+    <function>
+        <name>createInvoice</name>
+        <function-class>com.stackframe.sarariman.Invoice</function-class>
+        <function-signature>Invoice create(com.stackframe.sarariman.Sarariman, java.lang.String, java.util.Map, java.lang.String[], java.lang.String[], java.lang.String[])</function-signature>
+    </function>
 </taglib>

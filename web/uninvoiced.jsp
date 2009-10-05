@@ -19,20 +19,8 @@
         <h1>Uninvoiced time for ${customer.name} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${sarariman:isAdministrator(user) && !empty param.create}">
-            <c:forEach items="${paramValues.addToInvoiceEmployee}" varStatus="varStatus">
-                <c:set var="index" value="addToInvoice${varStatus.index}"/>
-                <c:if test="${param[index]}">
-                    <sql:transaction dataSource="jdbc/sarariman">
-                        <sql:update>
-                            INSERT INTO invoices (id, employee, task, date) VALUES(?, ?, ?, ?)
-                            <sql:param value="${param.invoiceName}"/>
-                            <sql:param value="${paramValues.addToInvoiceEmployee[varStatus.index]}"/>
-                            <sql:param value="${paramValues.addToInvoiceTask[varStatus.index]}"/>
-                            <sql:param value="${paramValues.addToInvoiceDate[varStatus.index]}"/>
-                        </sql:update>
-                    </sql:transaction>
-                </c:if>
-            </c:forEach>
+            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, param.invoiceName, pageContext.request.parameterMap,
+                                                 paramValues.addToInvoiceEmployee, paramValues.addToInvoiceTask, paramValues.addToInvoiceDate)}"/>
             <p>Created <a href="invoice?invoice=${param.invoiceName}">invoice ${param.invoiceName}</a> with selected entries.</p>
         </c:if>
 
@@ -59,9 +47,9 @@
                         <td>${row.date}</td>
                         <td>${row.duration}</td>
                         <td><input type="checkbox" name="addToInvoice${varStatus.index}" value="true" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/></td>
-                        <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
-                        <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
-                        <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
+                    <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
+                    <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
+                    <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
                     </tr>
                 </c:forEach>
             </table>
