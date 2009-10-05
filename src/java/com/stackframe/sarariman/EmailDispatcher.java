@@ -1,7 +1,13 @@
 package com.stackframe.sarariman;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -38,17 +44,22 @@ public class EmailDispatcher {
         session = Session.getDefaultInstance(props, null);
     }
 
-    private void submit(final InternetAddress to, final Iterable<InternetAddress> cc, final String subject, final String body) {
+    private void submit(final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject, final String body) {
         executor.execute(new Runnable() {
 
             public void run() {
                 try {
                     Message msg = new MimeMessage(session);
                     msg.setFrom(from);
-                    msg.setRecipient(Message.RecipientType.TO, to);
+                    Set<String> toAddresses = new HashSet<String>();
+                    for (InternetAddress dest : to) {
+                        msg.addRecipient(Message.RecipientType.TO, dest);
+                        toAddresses.add(dest.getAddress());
+                    }
+
                     if (cc != null) {
                         for (InternetAddress dest : cc) {
-                            if (!dest.getAddress().equals(to.getAddress())) {
+                            if (!toAddresses.contains(dest.getAddress())) {
                                 msg.addRecipient(Message.RecipientType.CC, dest);
                             }
                         }
@@ -67,8 +78,21 @@ public class EmailDispatcher {
         });
     }
 
-    public void send(InternetAddress to, Iterable<InternetAddress> cc, String subject, String body) {
+    public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
         submit(to, cc, subject, body);
+    }
+
+    public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
+        submit(Collections.singleton(to), cc, subject, body);
+    }
+
+    public static Collection<InternetAddress> addresses(Collection<Employee> employees) {
+        List<InternetAddress> addresses = new ArrayList<InternetAddress>();
+        for (Employee employee : employees) {
+            addresses.add(employee.getEmail());
+        }
+
+        return addresses;
     }
 
 }

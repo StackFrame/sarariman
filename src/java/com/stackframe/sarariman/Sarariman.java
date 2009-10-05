@@ -2,6 +2,8 @@ package com.stackframe.sarariman;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import javax.naming.InitialContext;
@@ -16,7 +18,7 @@ public class Sarariman {
     private final Connection connection;
     private final Directory directory;
     private final EmailDispatcher emailDispatcher;
-    private final Employee approver;
+    private final List<Employee> approvers = new ArrayList<Employee>();
     private final Timer timer = new Timer();
 
     public Sarariman(Directory directory, EmailDispatcher emailDispatcher) {
@@ -24,7 +26,7 @@ public class Sarariman {
         this.emailDispatcher = emailDispatcher;
 
         // FIXME: This should come from configuration
-        approver = directory.getByNumber().get(1);
+        approvers.add(directory.getByUserName().get("mcculley"));
         try {
             DataSource source = (DataSource)new InitialContext().lookup("jdbc/sarariman");
             connection = source.getConnection();
@@ -41,8 +43,8 @@ public class Sarariman {
         return emailDispatcher;
     }
 
-    public Employee getApprover() {
-        return approver;
+    public List<Employee> getApprovers() {
+        return approvers;
     }
 
     public Connection getConnection() {

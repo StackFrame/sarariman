@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -254,7 +255,8 @@ public class Timesheet {
                     return false;
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
-                    sarariman.getEmailDispatcher().send(sarariman.getApprover().getEmail(), null, "timesheet submitted",
+                    sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getApprovers()), null,
+                            "timesheet submitted",
                             "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
