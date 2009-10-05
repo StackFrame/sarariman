@@ -32,7 +32,7 @@ public class Sarariman {
         invoiceManagers.add(directory.getByUserName().get("awetteland"));
 
         try {
-            DataSource source = (DataSource)new InitialContext().lookup("jdbc/sarariman");
+            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
             connection = source.getConnection();
         } catch (Exception e) {
             throw new RuntimeException(e);
