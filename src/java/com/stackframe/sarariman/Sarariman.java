@@ -28,7 +28,6 @@ public class Sarariman {
         try {
             DataSource source = (DataSource)new InitialContext().lookup("jdbc/sarariman");
             connection = source.getConnection();
-            // use connection
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
