@@ -1,3 +1,8 @@
+<%--
+  Copyright (C) 2009 StackFrame, LLC
+  This code is licensed under GPLv2.
+--%>
+
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>

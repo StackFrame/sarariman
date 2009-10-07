@@ -1,3 +1,9 @@
+
+/*
+ * Copyright (C) 2009 StackFrame, LLC
+ * This code is licensed under GPLv2
+ */
+
 function altRows(id){
     if (document.getElementsByTagName) {
 
