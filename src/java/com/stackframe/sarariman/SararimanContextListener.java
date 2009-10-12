@@ -44,7 +44,7 @@ public class SararimanContextListener implements ServletContextListener {
     }
 
     public static String version() {
-        return "1.0.13r" + getRevision();
+        return "1.0.14r" + getRevision();
     }
 
     private static Properties lookupDirectoryProperties() throws NamingException {
