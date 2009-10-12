@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  */
 public class Sarariman {
 
-    private final Connection connection;
+    private Connection connection;
     private final Directory directory;
     private final EmailDispatcher emailDispatcher;
     private final List<Employee> approvers = new ArrayList<Employee>();
@@ -35,9 +35,13 @@ public class Sarariman {
         invoiceManagers.add(directory.getByUserName().get("mcculley"));
         invoiceManagers.add(directory.getByUserName().get("awetteland"));
 
+        connection = openConnection();
+    }
+
+    private Connection openConnection() {
         try {
             DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            connection = source.getConnection();
+            return source.getConnection();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -60,6 +64,14 @@ public class Sarariman {
     }
 
     public Connection getConnection() {
+        try {
+            if (connection.isClosed()) {
+                connection = openConnection();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+
         return connection;
     }
 
