@@ -51,7 +51,7 @@
         <table class="altrows" id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
             <c:set var="customers" value="${sarariman.customers}"/>
-            <c:forEach var="task" items="${sarariman:tasks(sarariman)}">
+            <c:forEach var="task" items="${sarariman.tasks}">
                 <tr>
                     <td><a href="task?task_id=${task.id}">${task.id}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>

@@ -14,11 +14,6 @@
         <function-signature>boolean containsHTML(java.lang.String)</function-signature>
     </function>
     <function>
-        <name>tasks</name>
-        <function-class>com.stackframe.sarariman.Task</function-class>
-        <function-signature>java.util.Collection getTasks(com.stackframe.sarariman.Sarariman)</function-signature>
-    </function>
-    <function>
         <name>timesheet</name>
         <function-class>com.stackframe.sarariman.Timesheet</function-class>
         <function-signature>com.stackframe.sarariman.Timesheet lookup(com.stackframe.sarariman.Sarariman, int, java.util.Date)</function-signature>

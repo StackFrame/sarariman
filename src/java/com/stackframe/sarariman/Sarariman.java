@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -85,6 +86,10 @@ public class Sarariman {
 
     public Map<Long, Project> getProjects() throws SQLException {
         return Project.getProjects(this);
+    }
+
+    public Collection<Task> getTasks() throws SQLException {
+        return Task.getTasks(this);
     }
 
     @Override
