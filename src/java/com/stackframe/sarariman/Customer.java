@@ -17,18 +17,18 @@ import java.util.Map;
  */
 public class Customer {
 
-    private final int id;
+    private final long id;
     private final String name;
 
-    public static Map<Integer, Customer> getCustomers(Sarariman sarariman) throws SQLException {
+    public static Map<Long, Customer> getCustomers(Sarariman sarariman) throws SQLException {
         Connection connection = sarariman.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM customers");
         try {
             ResultSet resultSet = ps.executeQuery();
             try {
-                Map<Integer, Customer> map = new HashMap<Integer, Customer>();
+                Map<Long, Customer> map = new HashMap<Long, Customer>();
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
+                    long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
                     map.put(id, new Customer(id, name));
                 }
@@ -41,12 +41,12 @@ public class Customer {
         }
     }
 
-    Customer(int id, String name) {
+    Customer(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

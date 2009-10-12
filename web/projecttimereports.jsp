@@ -13,7 +13,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-    <c:set var="project" value="${sarariman:project(sarariman, param.project)}"/>
+    <fmt:parseNumber var="project_id" value="${param.project}"/>
+    <c:set var="project" value="${sarariman.projects[project_id]}"/>
     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>

@@ -17,21 +17,21 @@ import java.util.Map;
  */
 public class Project {
 
-    private final int id;
+    private final long id;
     private final String name;
-    private final int customer;
+    private final long customer;
 
-    public static Map<Integer, Project> getProjects(Sarariman sarariman) throws SQLException {
+    public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
         Connection connection = sarariman.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects");
         try {
             ResultSet resultSet = ps.executeQuery();
             try {
-                Map<Integer, Project> map = new HashMap<Integer, Project>();
+                Map<Long, Project> map = new HashMap<Long, Project>();
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
+                    long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
-                    int customer = resultSet.getInt("customer");
+                    long customer = resultSet.getLong("customer");
                     map.put(id, new Project(id, name, customer));
                 }
                 return map;
@@ -43,17 +43,13 @@ public class Project {
         }
     }
 
-    public static Project lookup(Sarariman sarariman, int id) throws SQLException {
-        return sarariman.getProjects().get(id);
-    }
-
-    Project(int id, String name, int customer) {
+    Project(long id, String name, long customer) {
         this.id = id;
         this.name = name;
         this.customer = customer;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -61,7 +57,7 @@ public class Project {
         return name;
     }
 
-    public int getCustomer() {
+    public long getCustomer() {
         return customer;
     }
 

@@ -52,7 +52,7 @@
                     <tr>
                         <td><a href="task.jsp?task_id=${task.id}">${task.id}</a></td>
                         <td><a href="task.jsp?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
-                        <td><a href="task.jsp?task_id=${task.id}">${fn:escapeXml(sarariman:project(sarariman, task.project).name)}</a></td>
+                        <td><a href="task.jsp?task_id=${task.id}">${fn:escapeXml(sarariman.projects[task.project].name)}</a></td>
                         <td><a href="task.jsp?task_id=${task.id}">${task.charge_number}</a></td>
                     </tr>
                 </c:if>

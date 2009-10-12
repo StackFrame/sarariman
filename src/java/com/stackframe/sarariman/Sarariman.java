@@ -79,11 +79,11 @@ public class Sarariman {
         return timer;
     }
 
-    public Map<Integer, Customer> getCustomers() throws SQLException {
+    public Map<Long, Customer> getCustomers() throws SQLException {
         return Customer.getCustomers(this);
     }
 
-    public Map<Integer, Project> getProjects() throws SQLException {
+    public Map<Long, Project> getProjects() throws SQLException {
         return Project.getProjects(this);
     }
 

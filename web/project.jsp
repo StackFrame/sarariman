@@ -13,7 +13,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-    <c:set var="project" value="${sarariman:project(sarariman, param.id)}"/>
+    <fmt:parseNumber var="project_id" value="${param.id}"/>
+    <c:set var="project" value="${sarariman.projects[project_id]}"/>
     <c:if test="${sarariman:isAdministrator(user)}">
         <c:choose>
             <c:when test="${!empty param.update}">
