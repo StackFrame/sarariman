@@ -47,12 +47,12 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Task ${project.id}</title>
+        <title>Project ${project.id}</title>
     </head>
     <body>
         <p><a href="./">Home</a></p>
 
-        <h1>Task ${project_id}</h1>
+        <h1>Project ${project_id}</h1>
         <form method="POST">
             <label for="project_name">Name: </label>
             <input type="text" id="project_name" name="project_name" value="${fn:escapeXml(project.name)}"/><br/>
