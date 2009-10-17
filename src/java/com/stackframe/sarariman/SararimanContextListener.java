@@ -4,11 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.naming.directory.InitialDirContext;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -19,32 +15,12 @@ import javax.servlet.ServletContextListener;
  */
 public class SararimanContextListener implements ServletContextListener {
 
-    private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
-        Properties props = new Properties();
-        String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
-            Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
-
-        for (String s : propNames) {
-            props.put(s, envContext.lookup(s));
-        }
-
-        return props;
-    }
-
     public void contextInitialized(ServletContextEvent sce) {
-        LDAPDirectory directory;
-        try {
-            Context initContext = new InitialContext();
-            Context envContext = (Context)initContext.lookup("java:comp/env");
-            Properties props = lookupDirectoryProperties(envContext);
-            directory = new LDAPDirectory(new InitialDirContext(props));
-            sce.getServletContext().setAttribute("directory", directory);
-        } catch (NamingException ne) {
-            throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
-        }
-
         EmailDispatcher emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
-        sce.getServletContext().setAttribute("sarariman", new Sarariman(directory, emailDispatcher));
+        Sarariman sarariman = new Sarariman(emailDispatcher);
+        ServletContext servletContext = sce.getServletContext();
+        servletContext.setAttribute("sarariman", sarariman);
+        servletContext.setAttribute("directory", sarariman.getDirectory());
     }
 
     public void contextDestroyed(ServletContextEvent sce) {

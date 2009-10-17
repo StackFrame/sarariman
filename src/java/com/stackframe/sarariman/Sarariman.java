@@ -12,11 +12,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.directory.InitialDirContext;
 import javax.sql.DataSource;
 
 /**
@@ -51,9 +55,17 @@ public class Sarariman {
         return "1.0.14r" + getRevision();
     }
 
-    public Sarariman(LDAPDirectory directory, EmailDispatcher emailDispatcher) {
-        this.directory = directory;
+    public Sarariman(EmailDispatcher emailDispatcher) {
         this.emailDispatcher = emailDispatcher;
+
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context)initContext.lookup("java:comp/env");
+            Properties props = lookupDirectoryProperties(envContext);
+            directory = new LDAPDirectory(new InitialDirContext(props));
+        } catch (NamingException ne) {
+            throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
+        }
 
         // FIXME: This should come from configuration
         approvers.add(directory.getByUserName().get("mcculley"));
@@ -61,7 +73,19 @@ public class Sarariman {
         invoiceManagers.add(directory.getByUserName().get("awetteland"));
 
         connection = openConnection();
-        scheduleTasks(emailDispatcher, directory);
+        scheduleTasks(emailDispatcher, (LDAPDirectory)directory);
+    }
+
+     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
+        Properties props = new Properties();
+        String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
+            Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
+
+        for (String s : propNames) {
+            props.put(s, envContext.lookup(s));
+        }
+
+        return props;
     }
 
     private void scheduleTasks(EmailDispatcher emailDispatcher, final LDAPDirectory directory) {
