@@ -7,10 +7,13 @@ package com.stackframe.sarariman;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -48,7 +51,7 @@ public class Sarariman {
         return "1.0.14r" + getRevision();
     }
 
-    public Sarariman(Directory directory, EmailDispatcher emailDispatcher) {
+    public Sarariman(LDAPDirectory directory, EmailDispatcher emailDispatcher) {
         this.directory = directory;
         this.emailDispatcher = emailDispatcher;
 
@@ -58,6 +61,31 @@ public class Sarariman {
         invoiceManagers.add(directory.getByUserName().get("awetteland"));
 
         connection = openConnection();
+        scheduleTasks(emailDispatcher, directory);
+    }
+
+    private void scheduleTasks(EmailDispatcher emailDispatcher, final LDAPDirectory directory) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date date = calendar.getTime();
+        final long ONE_SECOND = 1000;
+        final long ONE_MINUTE = 60 * ONE_SECOND;
+        final long ONE_HOUR = 60 * ONE_MINUTE;
+        final long ONE_DAY = 24 * ONE_HOUR;
+
+        final TimerTask weeknightTask = new WeeknightTask(this, directory, emailDispatcher);
+        timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
+
+        final TimerTask reloadLDAP = new TimerTask() {
+
+            public void run() {
+                directory.reload();
+            }
+
+        };
+        timer.schedule(reloadLDAP, ONE_HOUR, ONE_HOUR);
     }
 
     private Connection openConnection() {

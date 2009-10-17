@@ -4,11 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -22,8 +18,6 @@ import javax.servlet.ServletContextListener;
  * @author mcculley
  */
 public class SararimanContextListener implements ServletContextListener {
-
-    private Sarariman sarariman;
 
     private static Properties lookupDirectoryProperties() throws NamingException {
         Properties props = new Properties();
@@ -39,30 +33,6 @@ public class SararimanContextListener implements ServletContextListener {
         return props;
     }
 
-    private void scheduleTasks(Sarariman sarariman, EmailDispatcher emailDispatcher, final LDAPDirectory directory, Timer timer) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date date = calendar.getTime();
-        final long ONE_SECOND = 1000;
-        final long ONE_MINUTE = 60 * ONE_SECOND;
-        final long ONE_HOUR = 60 * ONE_MINUTE;
-        final long ONE_DAY = 24 * ONE_HOUR;
-
-        final TimerTask weeknightTask = new WeeknightTask(sarariman, directory, emailDispatcher);
-        timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
-
-        final TimerTask reloadLDAP = new TimerTask() {
-
-            public void run() {
-                directory.reload();
-            }
-
-        };
-        timer.schedule(reloadLDAP, ONE_HOUR, ONE_HOUR);
-    }
-
     public void contextInitialized(ServletContextEvent sce) {
         LDAPDirectory directory;
         try {
@@ -74,13 +44,14 @@ public class SararimanContextListener implements ServletContextListener {
         }
 
         EmailDispatcher emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
-        sarariman = new Sarariman(directory, emailDispatcher);
-        sce.getServletContext().setAttribute("sarariman", sarariman);
-        scheduleTasks(sarariman, emailDispatcher, directory, sarariman.getTimer());
+        sce.getServletContext().setAttribute("sarariman", new Sarariman(directory, emailDispatcher));
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
-        sarariman.shutdown();
+        Sarariman sarariman = (Sarariman)sce.getServletContext().getAttribute("sarariman");
+        if (sarariman != null) {
+            sarariman.shutdown();
+        }
     }
 
 }
