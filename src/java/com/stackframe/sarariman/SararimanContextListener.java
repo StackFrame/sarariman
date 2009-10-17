@@ -19,10 +19,8 @@ import javax.servlet.ServletContextListener;
  */
 public class SararimanContextListener implements ServletContextListener {
 
-    private static Properties lookupDirectoryProperties() throws NamingException {
+    private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
         Properties props = new Properties();
-        Context initContext = new InitialContext();
-        Context envContext = (Context)initContext.lookup("java:comp/env");
         String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
             Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
 
@@ -36,7 +34,9 @@ public class SararimanContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         LDAPDirectory directory;
         try {
-            Properties props = lookupDirectoryProperties();
+            Context initContext = new InitialContext();
+            Context envContext = (Context)initContext.lookup("java:comp/env");
+            Properties props = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(props));
             sce.getServletContext().setAttribute("directory", directory);
         } catch (NamingException ne) {
