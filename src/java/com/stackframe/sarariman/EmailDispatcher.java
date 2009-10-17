@@ -35,17 +35,14 @@ public class EmailDispatcher {
     private final InternetAddress from;
     private final Session session;
 
-    public EmailDispatcher(String server, int port, String from) {
+    public EmailDispatcher(Properties properties) {
         try {
-            this.from = new InternetAddress(from, true);
+            this.from = new InternetAddress((String)properties.get("mail.from"), true);
         } catch (AddressException ae) {
             throw new AssertionError(ae);
         }
 
-        Properties props = new Properties();
-        props.put("mail.smtp.host", server);
-        props.put("mail.smtp.port", Integer.toString(port));
-        session = Session.getDefaultInstance(props, null);
+        session = Session.getDefaultInstance(properties, null);
     }
 
     private void submit(final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject, final String body) {

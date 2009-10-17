@@ -35,7 +35,7 @@ public class Sarariman implements ServletContextListener {
     private final Logger logger = Logger.getLogger(getClass().getName());
     private Connection connection;
     private LDAPDirectory directory;
-    private final EmailDispatcher emailDispatcher;
+    private EmailDispatcher emailDispatcher;
     private final List<Employee> approvers = new ArrayList<Employee>();
     private final List<Employee> invoiceManagers = new ArrayList<Employee>();
     private final Timer timer = new Timer("Sarariman");
@@ -58,13 +58,23 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Sarariman() {
-        emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
     }
 
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
         Properties props = new Properties();
         String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
             Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
+
+        for (String s : propNames) {
+            props.put(s, envContext.lookup(s));
+        }
+
+        return props;
+    }
+
+    private static Properties lookupMailProperties(Context envContext) throws NamingException {
+        Properties props = new Properties();
+        String[] propNames = new String[]{"mail.from", "mail.smtp.host", "mail.smtp.port"};
 
         for (String s : propNames) {
             props.put(s, envContext.lookup(s));
@@ -156,8 +166,9 @@ public class Sarariman implements ServletContextListener {
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context)initContext.lookup("java:comp/env");
-            Properties props = lookupDirectoryProperties(envContext);
-            directory = new LDAPDirectory(new InitialDirContext(props));
+            Properties directoryProperties = lookupDirectoryProperties(envContext);
+            directory = new LDAPDirectory(new InitialDirContext(directoryProperties));
+            emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext));
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
@@ -172,6 +183,7 @@ public class Sarariman implements ServletContextListener {
         servletContext.setAttribute("directory", directory);
 
         scheduleTasks();
+        //emailDispatcher.send(directory.getByUserName().get("mcculley").getEmail(), null, "sarariman started", "Sarariman has been started");
     }
 
     public void contextDestroyed(ServletContextEvent sce) {

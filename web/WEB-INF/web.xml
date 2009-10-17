@@ -194,6 +194,21 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>67qwnm</env-entry-value>
     </env-entry>
+    <env-entry>
+        <env-entry-name>mail.smtp.host</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>mail.stackframe.com</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>mail.smtp.port</env-entry-name>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+        <env-entry-value>587</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>mail.from</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>sarariman@stackframe.com</env-entry-value>
+    </env-entry>
     <resource-ref>
         <description>DB Connection</description>
         <res-ref-name>jdbc/sarariman</res-ref-name>
