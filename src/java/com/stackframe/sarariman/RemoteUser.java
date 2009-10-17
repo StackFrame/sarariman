@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import java.io.IOException;
 
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * A simple filter for overriding REMOTE_USER.
@@ -22,25 +22,25 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class RemoteUser implements Filter {
 
+    private final Logger logger = Logger.getLogger(getClass().getName());
+    private Directory directory;
+
     public void init(FilterConfig filterConfig) throws ServletException {
+        Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
+        directory = sarariman.getDirectory();
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-            if (httpServletRequest.getRemoteUser() == null) {
-                final String username = System.getProperty("user.name");
-                // FIXME: Make this a log entry.
-                System.out.println("No REMOTE_USER.  Setting it to " + username);
-                request = new HttpServletRequestWrapper(httpServletRequest) {
-
-                    @Override
-                    public String getRemoteUser() {
-                        return username;
-                    }
-
-                };
+            String username = httpServletRequest.getRemoteUser();
+            if (username == null) {
+                username = System.getProperty("user.name");
+                logger.info("No REMOTE_USER.  Using " + username);
             }
+
+            Employee user = directory.getByUserName().get(username);
+            request.setAttribute("user", user);
         }
 
         chain.doFilter(request, response);
