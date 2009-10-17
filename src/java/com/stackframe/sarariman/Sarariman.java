@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
@@ -20,6 +22,7 @@ import javax.sql.DataSource;
  */
 public class Sarariman {
 
+    private final Logger logger = Logger.getLogger(getClass().getName());
     private Connection connection;
     private final Directory directory;
     private final EmailDispatcher emailDispatcher;
@@ -108,6 +111,16 @@ public class Sarariman {
 
     public Collection<Task> getTasks() throws SQLException {
         return Task.getTasks(this);
+    }
+
+    void shutdown() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, "exception while closing connection", e);
+        }
+
+        timer.cancel();
     }
 
     @Override

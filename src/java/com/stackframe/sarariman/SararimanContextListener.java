@@ -4,14 +4,11 @@
  */
 package com.stackframe.sarariman;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -26,7 +23,6 @@ import javax.servlet.ServletContextListener;
  */
 public class SararimanContextListener implements ServletContextListener {
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
     private Sarariman sarariman;
 
     private static Properties lookupDirectoryProperties() throws NamingException {
@@ -84,14 +80,7 @@ public class SararimanContextListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
-        try {
-            if (sarariman != null) {
-                sarariman.getConnection().close();
-            }
-        } catch (SQLException e) {
-            logger.log(Level.WARNING, "exception while closing connection", e);
-        }
-        sarariman.getTimer().cancel();
+        sarariman.shutdown();
     }
 
 }
