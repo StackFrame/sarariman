@@ -55,8 +55,8 @@ public class Sarariman {
         return "1.0.14r" + getRevision();
     }
 
-    public Sarariman(EmailDispatcher emailDispatcher) {
-        this.emailDispatcher = emailDispatcher;
+    public Sarariman() {
+        emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
 
         try {
             Context initContext = new InitialContext();
@@ -76,7 +76,7 @@ public class Sarariman {
         scheduleTasks(emailDispatcher, (LDAPDirectory)directory);
     }
 
-     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
+    private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
         Properties props = new Properties();
         String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
             Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};

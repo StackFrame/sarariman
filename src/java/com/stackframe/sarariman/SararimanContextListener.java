@@ -16,8 +16,7 @@ import javax.servlet.ServletContextListener;
 public class SararimanContextListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
-        EmailDispatcher emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
-        Sarariman sarariman = new Sarariman(emailDispatcher);
+        Sarariman sarariman = new Sarariman();
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", sarariman);
         servletContext.setAttribute("directory", sarariman.getDirectory());
