@@ -34,7 +34,7 @@ public class Sarariman implements ServletContextListener {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
     private Connection connection;
-    private final Directory directory;
+    private Directory directory;
     private final EmailDispatcher emailDispatcher;
     private final List<Employee> approvers = new ArrayList<Employee>();
     private final List<Employee> invoiceManagers = new ArrayList<Employee>();
@@ -60,23 +60,6 @@ public class Sarariman implements ServletContextListener {
 
     public Sarariman() {
         emailDispatcher = new EmailDispatcher("mail.stackframe.com", 587, "sarariman@stackframe.com");
-
-        try {
-            Context initContext = new InitialContext();
-            Context envContext = (Context)initContext.lookup("java:comp/env");
-            Properties props = lookupDirectoryProperties(envContext);
-            directory = new LDAPDirectory(new InitialDirContext(props));
-        } catch (NamingException ne) {
-            throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
-        }
-
-        // FIXME: This should come from configuration
-        approvers.add(directory.getByUserName().get("mcculley"));
-        invoiceManagers.add(directory.getByUserName().get("mcculley"));
-        invoiceManagers.add(directory.getByUserName().get("awetteland"));
-
-        connection = openConnection();
-        scheduleTasks(emailDispatcher, (LDAPDirectory)directory);
     }
 
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
@@ -169,9 +152,27 @@ public class Sarariman implements ServletContextListener {
     }
 
     public void contextInitialized(ServletContextEvent sce) {
+        connection = openConnection();
+
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context)initContext.lookup("java:comp/env");
+            Properties props = lookupDirectoryProperties(envContext);
+            directory = new LDAPDirectory(new InitialDirContext(props));
+        } catch (NamingException ne) {
+            throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
+        }
+
+        // FIXME: This should come from configuration
+        approvers.add(directory.getByUserName().get("mcculley"));
+        invoiceManagers.add(directory.getByUserName().get("mcculley"));
+        invoiceManagers.add(directory.getByUserName().get("awetteland"));
+
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", this);
         servletContext.setAttribute("directory", directory);
+
+        scheduleTasks(emailDispatcher, (LDAPDirectory)directory);
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
