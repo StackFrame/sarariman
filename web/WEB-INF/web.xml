@@ -209,6 +209,11 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>sarariman@stackframe.com</env-entry-value>
     </env-entry>
+    <env-entry>
+        <env-entry-name>logoURL</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>http://www.stackframe.com/logo/logo.gif</env-entry-value>
+    </env-entry>
     <resource-ref>
         <description>DB Connection</description>
         <res-ref-name>jdbc/sarariman</res-ref-name>

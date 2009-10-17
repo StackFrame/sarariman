@@ -40,6 +40,7 @@ public class Sarariman implements ServletContextListener {
     private final List<Employee> invoiceManagers = new ArrayList<Employee>();
     private final Timer timer = new Timer("Sarariman");
     private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
+    private String logoURL;
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -169,6 +170,7 @@ public class Sarariman implements ServletContextListener {
             Properties directoryProperties = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(directoryProperties));
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext));
+            logoURL = (String)envContext.lookup("logoURL");
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
@@ -184,6 +186,10 @@ public class Sarariman implements ServletContextListener {
 
         scheduleTasks();
         //emailDispatcher.send(directory.getByUserName().get("mcculley").getEmail(), null, "sarariman started", "Sarariman has been started");
+    }
+
+    public String getLogoURL() {
+        return logoURL;
     }
 
     public void contextDestroyed(ServletContextEvent sce) {

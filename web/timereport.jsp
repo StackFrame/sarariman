@@ -72,7 +72,7 @@
     </head>
 
     <body>
-        <img style="float:right" src="http://www.stackframe.com/logo/logo.gif"/>
+        <img style="float:right" src="${sarariman.logoURL}"/>
         <h1>Timesheet</h1>
 
         <p>
