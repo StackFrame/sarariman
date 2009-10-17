@@ -30,6 +30,11 @@
         <servlet-name>project</servlet-name>
         <jsp-file>/project.jsp</jsp-file>
     </servlet>
+    <servlet><servlet-name>customers</servlet-name><jsp-file>/customers.jsp</jsp-file></servlet>
+    <servlet>
+        <servlet-name>customer</servlet-name>
+        <jsp-file>/customer.jsp</jsp-file>
+    </servlet>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
         <url-pattern>/timesheets</url-pattern>
@@ -56,8 +61,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>tasks</servlet-name>
-        <url-pattern>/tasks</url-pattern>
-    </servlet-mapping>
+        <url-pattern>/tasks</url-pattern></servlet-mapping>
     <servlet>
         <servlet-name>task</servlet-name>
         <jsp-file>/task.jsp</jsp-file>
@@ -148,6 +152,14 @@
     <servlet-mapping>
         <servlet-name>project</servlet-name>
         <url-pattern>/project</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>customers</servlet-name>
+        <url-pattern>/customers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>customer</servlet-name>
+        <url-pattern>/customer</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
