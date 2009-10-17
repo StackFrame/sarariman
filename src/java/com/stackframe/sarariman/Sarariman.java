@@ -34,13 +34,12 @@ public class Sarariman implements ServletContextListener {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
     private Connection connection;
-    private Directory directory;
+    private LDAPDirectory directory;
     private final EmailDispatcher emailDispatcher;
     private final List<Employee> approvers = new ArrayList<Employee>();
     private final List<Employee> invoiceManagers = new ArrayList<Employee>();
-    private final Timer timer = new Timer();
-    /** Do not edit this.  It is set by Subversion. */
-    private final String revision = "$Revision$";
+    private final Timer timer = new Timer("Sarariman");
+    private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -74,7 +73,7 @@ public class Sarariman implements ServletContextListener {
         return props;
     }
 
-    private void scheduleTasks(EmailDispatcher emailDispatcher, final LDAPDirectory directory) {
+    private void scheduleTasks() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 0);
@@ -172,10 +171,12 @@ public class Sarariman implements ServletContextListener {
         servletContext.setAttribute("sarariman", this);
         servletContext.setAttribute("directory", directory);
 
-        scheduleTasks(emailDispatcher, (LDAPDirectory)directory);
+        scheduleTasks();
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
+        // FIXME: Should we worry about email that has been queued but not yet sent?
+
         try {
             connection.close();
         } catch (SQLException e) {
