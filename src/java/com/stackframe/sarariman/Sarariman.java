@@ -26,6 +26,24 @@ public class Sarariman {
     private final List<Employee> approvers = new ArrayList<Employee>();
     private final List<Employee> invoiceManagers = new ArrayList<Employee>();
     private final Timer timer = new Timer();
+    /** Do not edit this.  It is set by Subversion. */
+    private final String revision = "$Revision$";
+
+    private String getRevision() {
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < revision.length(); i++) {
+            char c = revision.charAt(i);
+            if (Character.isDigit(c)) {
+                buf.append(c);
+            }
+        }
+
+        return buf.toString();
+    }
+
+    public String getVersion() {
+        return "1.0.14r" + getRevision();
+    }
 
     public Sarariman(Directory directory, EmailDispatcher emailDispatcher) {
         this.directory = directory;

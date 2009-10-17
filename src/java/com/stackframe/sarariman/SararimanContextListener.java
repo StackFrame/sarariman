@@ -26,26 +26,8 @@ import javax.servlet.ServletContextListener;
  */
 public class SararimanContextListener implements ServletContextListener {
 
-    /** Do not edit this.  It is set by Subversion. */
-    private final static String revision = "$Revision$";
     private final Logger logger = Logger.getLogger(getClass().getName());
     private Sarariman sarariman;
-
-    private static String getRevision() {
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < revision.length(); i++) {
-            char c = revision.charAt(i);
-            if (Character.isDigit(c)) {
-                buf.append(c);
-            }
-        }
-
-        return buf.toString();
-    }
-
-    public static String version() {
-        return "1.0.14r" + getRevision();
-    }
 
     private static Properties lookupDirectoryProperties() throws NamingException {
         Properties props = new Properties();
@@ -86,7 +68,6 @@ public class SararimanContextListener implements ServletContextListener {
     }
 
     public void contextInitialized(ServletContextEvent sce) {
-        sce.getServletContext().setAttribute("sararimanVersion", version());
         LDAPDirectory directory;
         try {
             Properties props = lookupDirectoryProperties();
@@ -100,13 +81,6 @@ public class SararimanContextListener implements ServletContextListener {
         sarariman = new Sarariman(directory, emailDispatcher);
         sce.getServletContext().setAttribute("sarariman", sarariman);
         scheduleTasks(sarariman, emailDispatcher, directory, sarariman.getTimer());
-        /*
-        try {
-        emailDispatcher.send(new InternetAddress("mcculley@stackframe.com", true), "Sarariman started", "Sarariman has been started.");
-        } catch (AddressException ae) {
-        throw new RuntimeException(ae);
-        }
-         */
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
