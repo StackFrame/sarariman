@@ -21,13 +21,16 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.sql.DataSource;
 
 /**
  *
  * @author mcculley
  */
-public class Sarariman {
+public class Sarariman implements ServletContextListener {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
     private Connection connection;
@@ -165,7 +168,13 @@ public class Sarariman {
         return Task.getTasks(this);
     }
 
-    void shutdown() {
+    public void contextInitialized(ServletContextEvent sce) {
+        ServletContext servletContext = sce.getServletContext();
+        servletContext.setAttribute("sarariman", this);
+        servletContext.setAttribute("directory", directory);
+    }
+
+    public void contextDestroyed(ServletContextEvent sce) {
         try {
             connection.close();
         } catch (SQLException e) {
