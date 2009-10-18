@@ -76,6 +76,29 @@ public class LDAPDirectory implements Directory {
             return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final EmployeeImpl other = (EmployeeImpl)obj;
+            if (this.number != other.number) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 59 * hash + this.number;
+            return hash;
+        }
+
+
     }
 
     public LDAPDirectory(DirContext context) {

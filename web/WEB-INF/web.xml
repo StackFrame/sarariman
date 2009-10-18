@@ -27,6 +27,10 @@
         <jsp-file>/projects.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>administrators</servlet-name>
+        <jsp-file>/administrators.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>project</servlet-name>
         <jsp-file>/project.jsp</jsp-file>
     </servlet>
@@ -38,6 +42,10 @@
     <servlet>
         <servlet-name>CustomerController</servlet-name>
         <servlet-class>com.stackframe.sarariman.CustomerController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdministratorController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.AdministratorController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProjectController</servlet-name>
@@ -158,6 +166,10 @@
         <url-pattern>/projects</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>administrators</servlet-name>
+        <url-pattern>/administrators</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>project</servlet-name>
         <url-pattern>/project</url-pattern>
     </servlet-mapping>
@@ -172,6 +184,10 @@
     <servlet-mapping>
         <servlet-name>CustomerController</servlet-name>
         <url-pattern>/customerController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdministratorController</servlet-name>
+        <url-pattern>/administratorController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProjectController</servlet-name>

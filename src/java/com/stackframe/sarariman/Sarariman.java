@@ -41,6 +41,7 @@ public class Sarariman implements ServletContextListener {
     private final Timer timer = new Timer("Sarariman");
     private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
     private String logoURL;
+    private final Administrators administrators = new Administrators(this);
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -161,6 +162,14 @@ public class Sarariman implements ServletContextListener {
         return Task.getTasks(this);
     }
 
+    public Administrators getAdministrators() {
+        return administrators;
+    }
+
+    public String getLogoURL() {
+        return logoURL;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         connection = openConnection();
 
@@ -186,10 +195,6 @@ public class Sarariman implements ServletContextListener {
 
         scheduleTasks();
         //emailDispatcher.send(directory.getByUserName().get("mcculley").getEmail(), null, "sarariman started", "Sarariman has been started");
-    }
-
-    public String getLogoURL() {
-        return logoURL;
     }
 
     public void contextDestroyed(ServletContextEvent sce) {

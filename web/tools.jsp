@@ -14,6 +14,7 @@
     <body>
         <ul>
             <li><a href="./">Home</a></li>
+            <li><a href="administrators">Administrators</a></li>
             <li><a href="invoices">Invoices</a></li>
             <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
             <li><a href="timesheet">Timesheet Reports</a></li>
