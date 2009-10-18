@@ -27,11 +27,12 @@ import javax.naming.directory.SearchResult;
  */
 public class LDAPDirectory implements Directory {
 
+    private final Sarariman sarariman;
     private final DirContext context;
     private final Map<Object, Employee> byNumber = new LinkedHashMap<Object, Employee>();
     private final Map<String, Employee> byUserName = new LinkedHashMap<String, Employee>();
 
-    public static class EmployeeImpl implements Employee {
+    public class EmployeeImpl implements Employee {
 
         private final String fullName;
         private final String userName;
@@ -71,6 +72,10 @@ public class LDAPDirectory implements Directory {
             }
         }
 
+        public boolean isAdministrator() {
+            return sarariman.getAdministrators().contains(this);
+        }
+
         @Override
         public String toString() {
             return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
@@ -98,11 +103,11 @@ public class LDAPDirectory implements Directory {
             return hash;
         }
 
-
     }
 
-    public LDAPDirectory(DirContext context) {
+    public LDAPDirectory(DirContext context, Sarariman sarariman) {
         this.context = context;
+        this.sarariman = sarariman;
         load();
     }
 
@@ -110,7 +115,6 @@ public class LDAPDirectory implements Directory {
     FIXME: It would be nice to intercept lookups on the maps and try a reload when a lookup fails.  This would require doing
     something different with the defensive copies.
      */
-
     /**
      * Load the directory from LDAP.
      */

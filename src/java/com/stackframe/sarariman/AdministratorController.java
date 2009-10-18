@@ -49,22 +49,18 @@ public class AdministratorController extends HttpServlet {
         Action action = Action.valueOf(request.getParameter("action"));
         long id = Long.parseLong(request.getParameter("employee"));
         Employee employee = sarariman.getDirectory().getByNumber().get(id);
-        try {
-            switch (action) {
-                case add:
-                    sarariman.getAdministrators().add(employee);
-                    break;
-                case remove:
-                    sarariman.getAdministrators().remove(employee);
-                    break;
-                default:
-                    response.sendError(500);
-                    return;
-            }
-            response.sendRedirect(response.encodeRedirectURL("administrators"));
-        } catch (SQLException se) {
-            throw new IOException(se);
+        switch (action) {
+            case add:
+                sarariman.getAdministrators().add(employee);
+                break;
+            case remove:
+                sarariman.getAdministrators().remove(employee);
+                break;
+            default:
+                response.sendError(500);
+                return;
         }
+        response.sendRedirect(response.encodeRedirectURL("administrators"));
     }
 
     /** 

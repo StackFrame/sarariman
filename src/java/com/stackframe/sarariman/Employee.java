@@ -22,4 +22,6 @@ public interface Employee {
 
     InternetAddress getEmail();
 
+    boolean isAdministrator();
+
 }

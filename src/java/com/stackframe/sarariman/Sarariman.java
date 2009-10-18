@@ -177,7 +177,7 @@ public class Sarariman implements ServletContextListener {
             Context initContext = new InitialContext();
             Context envContext = (Context)initContext.lookup("java:comp/env");
             Properties directoryProperties = lookupDirectoryProperties(envContext);
-            directory = new LDAPDirectory(new InitialDirContext(directoryProperties));
+            directory = new LDAPDirectory(new InitialDirContext(directoryProperties), this);
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext));
             logoURL = (String)envContext.lookup("logoURL");
         } catch (NamingException ne) {
