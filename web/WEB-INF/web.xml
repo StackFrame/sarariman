@@ -35,6 +35,10 @@
         <servlet-name>customer</servlet-name>
         <jsp-file>/customer.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>CustomerController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.CustomerController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
         <url-pattern>/timesheets</url-pattern>
@@ -160,6 +164,10 @@
     <servlet-mapping>
         <servlet-name>customer</servlet-name>
         <url-pattern>/customer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerController</servlet-name>
+        <url-pattern>/customerController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -19,6 +19,7 @@ public class Customer {
 
     private final long id;
     private final String name;
+    private final Sarariman sarariman;
 
     public static Map<Long, Customer> getCustomers(Sarariman sarariman) throws SQLException {
         Connection connection = sarariman.getConnection();
@@ -30,7 +31,7 @@ public class Customer {
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
-                    map.put(id, new Customer(id, name));
+                    map.put(id, new Customer(sarariman, id, name));
                 }
                 return map;
             } finally {
@@ -41,7 +42,8 @@ public class Customer {
         }
     }
 
-    Customer(long id, String name) {
+    private Customer(Sarariman sarariman, long id, String name) {
+        this.sarariman = sarariman;
         this.id = id;
         this.name = name;
     }
@@ -52,6 +54,28 @@ public class Customer {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE customers SET name=? WHERE id=?");
+        ps.setString(1, name);
+        ps.setLong(2, id);
+        ps.executeUpdate();
+    }
+
+    public static Customer create(Sarariman sarariman, String name) throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO customers (name) VALUES(?)");
+        ps.setString(1, name);
+        ps.executeUpdate();
+        ResultSet rs = ps.getGeneratedKeys();
+        rs.next();
+        return new Customer(sarariman, rs.getLong(1), name);
+    }
+
+    public void delete() throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM customers WHERE id=?");
+        ps.setLong(1, id);
+        ps.executeUpdate();
     }
 
     @Override
