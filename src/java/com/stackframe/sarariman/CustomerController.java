@@ -26,7 +26,12 @@ public class CustomerController extends HttpServlet {
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     }
 
-    /** 
+    private enum Action {
+
+        create, update, delete
+    }
+
+    /**
      * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
@@ -36,25 +41,32 @@ public class CustomerController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
         String name = request.getParameter("name");
+        Action a = Action.valueOf(request.getParameter("action"));
         try {
-            if (action.equals("create")) {
-                Customer newCustomer = Customer.create(sarariman, name);
-                long id = newCustomer.getId();
-                response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
-            } else if (action.equals("update")) {
-                long id = Long.parseLong(request.getParameter("id"));
-                Customer customer = sarariman.getCustomers().get(id);
-                customer.setName(name);
-                response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
-            } else if (action.equals("delete")) {
-                long id = Long.parseLong(request.getParameter("id"));
-                Customer customer = sarariman.getCustomers().get(id);
-                customer.delete();
-                response.sendRedirect(response.encodeRedirectURL("customers"));
-            } else {
-                response.sendError(500);
+            long id;
+            Customer customer;
+            switch (a) {
+                case create:
+                    customer = Customer.create(sarariman, name);
+                    id = customer.getId();
+                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
+                    return;
+                case update:
+                    id = Long.parseLong(request.getParameter("id"));
+                    customer = sarariman.getCustomers().get(id);
+                    customer.setName(name);
+                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
+                    return;
+                case delete:
+                    id = Long.parseLong(request.getParameter("id"));
+                    customer = sarariman.getCustomers().get(id);
+                    customer.delete();
+                    response.sendRedirect(response.encodeRedirectURL("customers"));
+                    return;
+                default:
+                    response.sendError(500);
+                    return;
             }
         } catch (SQLException se) {
             throw new IOException(se);
