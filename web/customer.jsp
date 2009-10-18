@@ -17,8 +17,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Customer ${customer.id}</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body>
+    <body onload="altRows('projects')">
         <p><a href="./">Home</a></p>
 
         <h1>Customer ${customer.id}</h1>
@@ -26,9 +27,23 @@
             <label for="name">Name: </label>
             <input type="hidden" name="action" value="update"/>
             <input type="hidden" name="id" value="${customer.id}"/>
-            <input type="text" id="name" name="name" value="${fn:escapeXml(customer.name)}"/><br/>
+            <input type="text" id="name" name="name" size="40" value="${fn:escapeXml(customer.name)}"/><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
         </form>
+
+        <h2>Projects</h2>
+        <table class="altrows" id="projects">
+            <tr><th>ID</th><th>Name</th></tr>
+            <c:forEach var="entry" items="${sarariman.projects}">
+                <c:if test="${entry.value.customer == customer.id}">
+                    <tr>
+                        <td><a href="project?id=${entry.key}">${entry.key}</a></td>
+                        <td><a href="project?id=${entry.key}">${fn:escapeXml(entry.value.name)}</a></td>
+                    </tr>
+                </c:if>
+            </c:forEach>
+        </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

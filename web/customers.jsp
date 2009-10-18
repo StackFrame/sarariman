@@ -21,7 +21,7 @@
         <h2>Create a new customer</h2>
         <form method="POST" action="customerController">
             <label for="name">Name: </label>
-            <input type="text" id="name" name="name" value=""/><br/>
+            <input type="text" size="40" id="name" name="name" value=""/><br/>
             <input type="hidden" name="action" value="create"/>
             <input type="submit" name="create" value="Create" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
         </form>

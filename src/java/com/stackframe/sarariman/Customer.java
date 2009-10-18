@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -23,11 +23,11 @@ public class Customer {
 
     public static Map<Long, Customer> getCustomers(Sarariman sarariman) throws SQLException {
         Connection connection = sarariman.getConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM customers");
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM customers ORDER BY name");
         try {
             ResultSet resultSet = ps.executeQuery();
             try {
-                Map<Long, Customer> map = new HashMap<Long, Customer>();
+                Map<Long, Customer> map = new LinkedHashMap<Long, Customer>();
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
