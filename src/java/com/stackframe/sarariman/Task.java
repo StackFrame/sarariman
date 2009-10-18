@@ -46,7 +46,7 @@ public class Task {
                     if (project_id != 0) {
                         String project_name = resultSet.getString("project_name");
                         int customer_id = resultSet.getInt("customer_id");
-                        project = new Project(project_id, project_name, customer_id);
+                        project = new Project(sarariman, project_id, project_name, customer_id);
                     }
 
                     list.add(new Task(id, task_name, billable, active, project));

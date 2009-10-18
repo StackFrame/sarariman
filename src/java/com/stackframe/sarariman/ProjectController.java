@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class CustomerController extends HttpServlet {
+public class ProjectController extends HttpServlet {
 
     private Sarariman sarariman;
 
@@ -51,24 +51,24 @@ public class CustomerController extends HttpServlet {
         Action action = Action.valueOf(request.getParameter("action"));
         try {
             long id;
-            Customer customer;
+            Project project;
             switch (action) {
                 case create:
-                    customer = Customer.create(sarariman, name);
-                    id = customer.getId();
-                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
+                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")));
+                    id = project.getId();
+                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case update:
                     id = Long.parseLong(request.getParameter("id"));
-                    customer = sarariman.getCustomers().get(id);
-                    customer.update(name);
-                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
+                    project = sarariman.getProjects().get(id);
+                    project.update(name, Long.parseLong(request.getParameter("customer")));
+                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:
                     id = Long.parseLong(request.getParameter("id"));
-                    customer = sarariman.getCustomers().get(id);
-                    customer.delete();
-                    response.sendRedirect(response.encodeRedirectURL("customers"));
+                    project = sarariman.getProjects().get(id);
+                    project.delete();
+                    response.sendRedirect(response.encodeRedirectURL("projects"));
                     return;
                 default:
                     response.sendError(500);
@@ -86,7 +86,7 @@ public class CustomerController extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "performs updates on customers";
+        return "performs updates on projects";
     }
 
 }

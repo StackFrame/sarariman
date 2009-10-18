@@ -56,7 +56,7 @@ public class Customer {
         return name;
     }
 
-    public void setName(String name) throws SQLException {
+    public void update(String name) throws SQLException {
         PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE customers SET name=? WHERE id=?");
         ps.setString(1, name);
         ps.setLong(2, id);

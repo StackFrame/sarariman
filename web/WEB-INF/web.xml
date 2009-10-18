@@ -39,6 +39,10 @@
         <servlet-name>CustomerController</servlet-name>
         <servlet-class>com.stackframe.sarariman.CustomerController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProjectController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.ProjectController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
         <url-pattern>/timesheets</url-pattern>
@@ -168,6 +172,10 @@
     <servlet-mapping>
         <servlet-name>CustomerController</servlet-name>
         <url-pattern>/customerController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProjectController</servlet-name>
+        <url-pattern>/projectController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

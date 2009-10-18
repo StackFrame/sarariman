@@ -4,7 +4,6 @@
 --%>
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -14,35 +13,6 @@
 
     <fmt:parseNumber var="project_id" value="${param.id}"/>
     <c:set var="project" value="${sarariman.projects[project_id]}"/>
-    <c:if test="${sarariman:isAdministrator(user)}">
-        <c:choose>
-            <c:when test="${!empty param.update}">
-                <sql:update dataSource="jdbc/sarariman">
-                    UPDATE projects
-                    SET name=?, customer=?
-                    WHERE id=?
-                    <sql:param value="${param.project_name}"/>
-                    <sql:param value="${param.project_customer}"/>
-                    <sql:param value="${project.id}"/>
-                </sql:update>
-            </c:when>
-            <c:when test="${!empty param.create}">
-                <sql:transaction dataSource="jdbc/sarariman">
-                    <sql:update>
-                        INSERT INTO projects
-                        (name, customer)
-                        VALUES(?, ?);
-                        <sql:param value="${param.project_name}"/>
-                        <sql:param value="${param.project_customer}"/>
-                    </sql:update>
-                    <sql:query var="insertResult">
-                        SELECT LAST_INSERT_ID()
-                    </sql:query>
-                </sql:transaction>
-                <c:set var="project_id" value="${insertResult.rowsByIndex[0][0]}"/>
-            </c:when>
-        </c:choose>
-    </c:if>
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -51,14 +21,16 @@
     <body>
         <p><a href="./">Home</a></p>
 
-        <h1>Project ${project_id}</h1>
-        <form method="POST">
-            <label for="project_name">Name: </label>
-            <input type="text" id="project_name" name="project_name" value="${fn:escapeXml(project.name)}"/><br/>
-            <label for="project_customer">Customer: </label>
-            <select id="project_customer" name="project_customer">
-                <c:forEach var="customerEntry" items="${sarariman.customers}">
-                    <option value="${customerEntry.key}" <c:if test="${customerEntry.key == project.customer}">selected="selected"</c:if>>${fn:escapeXml(customerEntry.value.name)}</option>
+        <h1>Project ${project.id}</h1>
+        <form method="POST" action="projectController">
+            <label for="name">Name: </label>
+            <input type="hidden" name="id" value="${project.id}"/>
+            <input type="hidden" name="action" value="update"/>
+            <input type="text" size="40" id="name" name="name" value="${fn:escapeXml(project.name)}"/><br/>
+            <label for="customer">Customer: </label>
+            <select id="customer" name="customer">
+                <c:forEach var="entry" items="${sarariman.customers}">
+                    <option value="${entry.key}" <c:if test="${entry.key == project.customer}">selected="selected"</c:if>>${fn:escapeXml(entry.value.name)}</option>
                 </c:forEach>
             </select><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
