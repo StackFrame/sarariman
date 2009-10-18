@@ -43,6 +43,12 @@ public class CustomerController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
         Action a = Action.valueOf(request.getParameter("action"));
+        Employee user = (Employee)request.getAttribute("user");
+        if (!AccessControl.isAdministrator(user)) {
+            response.sendError(401);
+            return;
+        }
+
         try {
             long id;
             Customer customer;
