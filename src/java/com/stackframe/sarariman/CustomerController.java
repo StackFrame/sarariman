@@ -18,6 +18,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CustomerController extends HttpServlet {
 
+    private Sarariman sarariman;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+    }
+
     /** 
      * Handles the HTTP <code>POST</code> method.
      *
@@ -28,7 +36,6 @@ public class CustomerController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         String action = request.getParameter("action");
         String name = request.getParameter("name");
         try {
