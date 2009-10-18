@@ -41,18 +41,18 @@ public class CustomerController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name");
-        Action a = Action.valueOf(request.getParameter("action"));
         Employee user = (Employee)request.getAttribute("user");
         if (!AccessControl.isAdministrator(user)) {
             response.sendError(401);
             return;
         }
 
+        String name = request.getParameter("name");
+        Action action = Action.valueOf(request.getParameter("action"));
         try {
             long id;
             Customer customer;
-            switch (a) {
+            switch (action) {
                 case create:
                     customer = Customer.create(sarariman, name);
                     id = customer.getId();
