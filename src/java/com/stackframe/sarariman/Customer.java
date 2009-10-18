@@ -61,21 +61,31 @@ public class Customer {
         ps.setString(1, name);
         ps.setLong(2, id);
         ps.executeUpdate();
+        ps.close();
     }
 
     public static Customer create(Sarariman sarariman, String name) throws SQLException {
         PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO customers (name) VALUES(?)");
-        ps.setString(1, name);
-        ps.executeUpdate();
-        ResultSet rs = ps.getGeneratedKeys();
-        rs.next();
-        return new Customer(sarariman, rs.getLong(1), name);
+        try {
+            ps.setString(1, name);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            try {
+                rs.next();
+                return new Customer(sarariman, rs.getLong(1), name);
+            } finally {
+                rs.close();
+            }
+        } finally {
+            ps.close();
+        }
     }
 
     public void delete() throws SQLException {
         PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM customers WHERE id=?");
         ps.setLong(1, id);
         ps.executeUpdate();
+        ps.close();
     }
 
     @Override

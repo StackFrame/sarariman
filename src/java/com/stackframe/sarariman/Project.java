@@ -65,12 +65,20 @@ public class Project {
 
     public static Project create(Sarariman sarariman, String name, Long customer) throws SQLException {
         PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO projects (name, customer) VALUES(?, ?)");
-        ps.setString(1, name);
-        ps.setLong(2, customer);
-        ps.executeUpdate();
-        ResultSet rs = ps.getGeneratedKeys();
-        rs.next();
-        return new Project(sarariman, rs.getLong(1), name, customer);
+        try {
+            ps.setString(1, name);
+            ps.setLong(2, customer);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            try {
+                rs.next();
+                return new Project(sarariman, rs.getLong(1), name, customer);
+            } finally {
+                rs.close();
+            }
+        } finally {
+            ps.close();
+        }
     }
 
     public void update(String name, Long customer) throws SQLException {
@@ -79,12 +87,14 @@ public class Project {
         ps.setLong(2, customer);
         ps.setLong(3, id);
         ps.executeUpdate();
+        ps.close();
     }
 
     public void delete() throws SQLException {
         PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM projects WHERE id=?");
         ps.setLong(1, id);
         ps.executeUpdate();
+        ps.close();
     }
 
     @Override
