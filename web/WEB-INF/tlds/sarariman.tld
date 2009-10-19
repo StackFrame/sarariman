@@ -16,7 +16,7 @@
     <function>
         <name>approveTimesheet</name>
         <function-class>com.stackframe.sarariman.Timesheet</function-class>
-        <function-signature>boolean approve(com.stackframe.sarariman.Timesheet)</function-signature>
+        <function-signature>boolean approve(com.stackframe.sarariman.Timesheet, com.stackframe.sarariman.Employee)</function-signature>
     </function>
     <function>
         <name>rejectTimesheet</name>

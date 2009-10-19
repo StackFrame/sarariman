@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -185,13 +186,15 @@ public class Timesheet {
         }
     }
 
-    public boolean approve() {
+    public boolean approve(Employee user) {
         try {
             Connection connection = sarariman.getConnection();
-            PreparedStatement ps = connection.prepareStatement("UPDATE timecards SET approved=true WHERE date=? AND employee=?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE timecards SET approved=true, approver=?, approved_timestamp=? WHERE date=? AND employee=?");
             try {
-                ps.setDate(1, week);
-                ps.setInt(2, employeeNumber);
+                ps.setInt(1, user.getNumber());
+                ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                ps.setDate(3, week);
+                ps.setInt(4, employeeNumber);
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
                     logger.severe("update for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
@@ -211,8 +214,8 @@ public class Timesheet {
         }
     }
 
-    public static boolean approve(Timesheet timesheet) {
-        return timesheet.approve();
+    public static boolean approve(Timesheet timesheet, Employee user) {
+        return timesheet.approve(user);
     }
 
     public boolean reject() {

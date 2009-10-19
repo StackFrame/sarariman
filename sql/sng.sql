@@ -23,7 +23,8 @@ DROP TABLE IF EXISTS `administrators`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `administrators` (
-  `employee` int(10) unsigned NOT NULL
+  `employee` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`employee`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
@@ -178,4 +179,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-10-18 20:36:07
+-- Dump completed on 2009-10-18 22:23:59

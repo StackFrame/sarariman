@@ -45,7 +45,7 @@
             <c:choose>
                 <c:when test="${param.action == 'Approve'}">
                     <c:choose>
-                        <c:when test="${sarariman:approveTimesheet(timesheet)}">
+                        <c:when test="${sarariman:approveTimesheet(timesheet, user)}">
                             <p>Approved timesheet for ${fullName} for ${week}.</p>
                         </c:when>
                         <c:otherwise>
