@@ -41,7 +41,7 @@ public class Sarariman implements ServletContextListener {
     private final Timer timer = new Timer("Sarariman");
     private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
     private String logoURL;
-    private final Administrators administrators = new Administrators(this);
+    private final EmployeeTable administrators = new EmployeeTable(this, "administrators");
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -162,7 +162,7 @@ public class Sarariman implements ServletContextListener {
         return Task.getTasks(this);
     }
 
-    public Administrators getAdministrators() {
+    public EmployeeTable getAdministrators() {
         return administrators;
     }
 

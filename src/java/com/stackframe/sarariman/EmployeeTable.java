@@ -18,18 +18,20 @@ import java.util.Map;
  *
  * @author mcculley
  */
-public class Administrators extends AbstractCollection<Employee> {
+public class EmployeeTable extends AbstractCollection<Employee> {
 
     private final Sarariman sarariman;
+    private final String tableName;
 
-    Administrators(Sarariman sarariman) {
+    EmployeeTable(Sarariman sarariman, String tableName) {
         this.sarariman = sarariman;
+        this.tableName = tableName;
     }
 
-    private Collection<Employee> getAdministrators() throws SQLException {
+    private Collection<Employee> getEmployees() throws SQLException {
         Connection connection = sarariman.getConnection();
         Map<Object, Employee> employees = sarariman.getDirectory().getByNumber();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM administrators");
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + tableName);
         try {
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -48,7 +50,7 @@ public class Administrators extends AbstractCollection<Employee> {
 
     public Iterator<Employee> iterator() {
         try {
-            final Iterator<Employee> administrators = getAdministrators().iterator();
+            final Iterator<Employee> administrators = getEmployees().iterator();
             return new Iterator<Employee>() {
 
                 Employee current;
@@ -63,7 +65,7 @@ public class Administrators extends AbstractCollection<Employee> {
                 }
 
                 public void remove() {
-                    Administrators.this.remove(current);
+                    EmployeeTable.this.remove(current);
                 }
 
             };
@@ -75,7 +77,7 @@ public class Administrators extends AbstractCollection<Employee> {
     public int size() {
         Connection connection = sarariman.getConnection();
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) as numrows FROM administrators");
+            PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) as numrows FROM " + tableName);
             try {
                 ResultSet resultSet = ps.executeQuery();
                 try {
@@ -95,7 +97,7 @@ public class Administrators extends AbstractCollection<Employee> {
     @Override
     public boolean add(Employee employee) {
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO administrators (employee) VALUES(?)");
+            PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO " + tableName + " (employee) VALUES(?)");
             ps.setLong(1, employee.getNumber());
             ps.executeUpdate();
             ps.close();
@@ -113,7 +115,7 @@ public class Administrators extends AbstractCollection<Employee> {
 
         Employee employee = (Employee)o;
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM administrators WHERE employee=?");
+            PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM " + tableName + " WHERE employee=?");
             ps.setLong(1, employee.getNumber());
             ps.executeUpdate();
             ps.close();
