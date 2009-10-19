@@ -126,11 +126,11 @@ public class Sarariman implements ServletContextListener {
         return emailDispatcher;
     }
 
-    public List<Employee> getApprovers() {
+    public Collection<Employee> getApprovers() {
         return approvers;
     }
 
-    public List<Employee> getInvoiceManagers() {
+    public Collection<Employee> getInvoiceManagers() {
         return invoiceManagers;
     }
 
