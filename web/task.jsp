@@ -7,12 +7,11 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <c:set var="task_id" value="${param.task_id}"/>
-    <c:if test="${sarariman:isAdministrator(user)}">
+    <c:if test="${user.administrator}">
         <c:choose>
             <c:when test="${!empty param.update}">
                 <sql:update dataSource="jdbc/sarariman">
@@ -79,14 +78,14 @@
             </select><br/>
             <label for="billable">Billable: </label>
             <input type="checkbox" name="billable" id="billable" <c:if test="${task.billable}">checked="true"</c:if>
-                   <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
+                   <c:if test="${!user.administrator}">disabled="true"</c:if>/>
             <label for="active">Active: </label>
             <input type="checkbox" name="active" id="active" <c:if test="${task.active}">checked="true"</c:if>
-                   <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
+                   <c:if test="${!user.administrator}">disabled="true"</c:if>/>
             <br/>
             <label for="task_description">Description: </label>
             <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
-            <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
+            <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
         <%@include file="footer.jsp" %>
     </body>

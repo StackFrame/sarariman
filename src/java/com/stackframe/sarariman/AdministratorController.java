@@ -5,7 +5,6 @@
 package com.stackframe.sarariman;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +40,7 @@ public class AdministratorController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Employee user = (Employee)request.getAttribute("user");
-        if (!AccessControl.isAdministrator(user)) {
+        if (!user.isAdministrator()) {
             response.sendError(401);
             return;
         }

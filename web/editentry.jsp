@@ -9,7 +9,6 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -19,7 +18,7 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('entries')">
-        <c:set var="canModify" value="${sarariman:isAdministrator(user) || user.number == param.employee}"/>
+        <c:set var="canModify" value="${user.administrator || user.number == param.employee}"/>
         <c:if test="${!empty param.modifyEntry}">
             <c:if test="${!canModify}">
                 <p class="error">Must be an administrator to change another employee's entries</p>

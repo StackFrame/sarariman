@@ -42,7 +42,7 @@ public class CustomerController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Employee user = (Employee)request.getAttribute("user");
-        if (!AccessControl.isAdministrator(user)) {
+        if (!user.isAdministrator()) {
             response.sendError(401);
             return;
         }

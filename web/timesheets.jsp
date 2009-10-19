@@ -39,7 +39,7 @@
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
-        <c:if test="${sarariman:isAdministrator(user) && !empty param.action}">
+        <c:if test="${user.administrator && !empty param.action}">
             <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.actionEmployee, week)}"/>
             <c:set var="fullName" value="${directory.byNumber[param.actionEmployee].fullName}"/>
             <c:choose>
@@ -116,7 +116,7 @@
                         <form method="post">
                             <input type="hidden" value="${thisWeekStart}" name="actionWeek"/>
                             <input type="hidden" value="${employee.number}" name="actionEmployee"/>
-                            <c:if test="${sarariman:isAdministrator(user)}">
+                            <c:if test="${user.administrator}">
                                 <c:if test="${!approved}">
                                     <input type="submit" name="action" value="Approve" <c:if test="${!submitted}">disabled="disabled"</c:if>/>
                                 </c:if>

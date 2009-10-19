@@ -6,7 +6,6 @@
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -31,13 +30,13 @@
                     <option value="${entry.key}">${fn:escapeXml(entry.value.name)}</option>
                 </c:forEach>
             </select><br/>
-            <input type="submit" name="create" value="Create" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
+            <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
         <br/>
 
         <table class="altrows" id="projects">
             <tr><th>ID</th><th>Name</th><th>Customer</th>
-                <c:if test="${sarariman:isAdministrator(user)}"><th>Action</th></c:if>
+                <c:if test="${user.administrator}"><th>Action</th></c:if>
             </tr>
             <c:forEach var="entry" items="${sarariman.projects}">
                 <tr>
@@ -45,7 +44,7 @@
                     <td><a href="project?id=${entry.key}">${fn:escapeXml(entry.value.name)}</a></td>
                     <c:set var="customer_name" value="${fn:escapeXml(sarariman.customers[entry.value.customer].name)}"/>
                     <td><a href="project?id=${entry.key}">${customer_name}</a></td>
-                    <c:if test="${sarariman:isAdministrator(user)}">
+                    <c:if test="${user.administrator}">
                         <td>
                             <form method="POST" action="projectController">
                                 <input type="hidden" name="action" value="delete"/>

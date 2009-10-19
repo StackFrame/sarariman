@@ -4,11 +4,6 @@
     <short-name>sarariman</short-name>
     <uri>/WEB-INF/tlds/sarariman</uri>
     <function>
-        <name>isAdministrator</name>
-        <function-class>com.stackframe.sarariman.AccessControl</function-class>
-        <function-signature>boolean isAdministrator(com.stackframe.sarariman.Employee)</function-signature>
-    </function>
-    <function>
         <name>containsHTML</name>
         <function-class>com.stackframe.sarariman.HTMLUtils</function-class>
         <function-signature>boolean containsHTML(java.lang.String)</function-signature>

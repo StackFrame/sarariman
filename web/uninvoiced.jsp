@@ -7,6 +7,7 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -23,7 +24,7 @@
         <p><a href="./">Home</a></p>
         <h1>Uninvoiced time for ${customer.name} - ${fn:escapeXml(project.name)}</h1>
 
-        <c:if test="${sarariman:isAdministrator(user) && !empty param.create}">
+        <c:if test="${user.administrator && !empty param.create}">
             <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, param.invoiceName, pageContext.request.parameterMap,
                                                  paramValues.addToInvoiceEmployee, paramValues.addToInvoiceTask, paramValues.addToInvoiceDate)}"/>
             <p>Created <a href="invoice?invoice=${param.invoiceName}">invoice ${param.invoiceName}</a> with selected entries.</p>
@@ -42,7 +43,7 @@
         <form method="POST">
             <label for="invoiceName">Create Invoice:</label>
             <input type="text" size="8" name="invoiceName" id="invoiceName"/>
-            <input type="submit" value="Create" name="create" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
+            <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
             <table>
                 <tr><th>Employee</th><th>Task</th><th>Date</th><th>Duration</th><th>Invoice</th></tr>
                 <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
@@ -51,7 +52,7 @@
                         <td>${row.task}</td>
                         <td>${row.date}</td>
                         <td>${row.duration}</td>
-                        <td><input type="checkbox" name="addToInvoice${varStatus.index}" value="true" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/></td>
+                        <td><input type="checkbox" name="addToInvoice${varStatus.index}" value="true" <c:if test="${!user.administrator}">disabled="true"</c:if>/></td>
                     <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
                     <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
                     <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>

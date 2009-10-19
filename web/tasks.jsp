@@ -9,7 +9,6 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -36,13 +35,13 @@
                 </c:forEach>
             </select><br/>
             <label for="billable">Billable: </label>
-            <input type="checkbox" name="billable" id="billable" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
+            <input type="checkbox" name="billable" id="billable" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
             <label for="active">Active: </label>
-            <input type="checkbox" name="active" id="active" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if>/>
+            <input type="checkbox" name="active" id="active" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
             <br/>
             <label for="task_description">Description: </label>
             <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
-            <input type="submit" name="create" value="Create" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
+            <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
         <br/>
 

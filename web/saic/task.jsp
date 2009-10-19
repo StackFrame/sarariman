@@ -7,7 +7,6 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -17,7 +16,7 @@
     <body>
         <p><a href="../">Home</a></p>
 
-        <c:if test="${sarariman:isAdministrator(user)}">
+        <c:if test="${user.administrator}">
             <c:if test="${!empty param.update}">
                 <sql:update dataSource="jdbc/sarariman">
                     UPDATE saic_tasks
@@ -77,10 +76,10 @@
             <c:choose>
                 <c:when test="${!empty param.create}">
                     <input type="hidden" name="task_id" value="${param.task_id}"/>
-                    <input type="submit" name="insert" value="Create" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
+                    <input type="submit" name="insert" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
                 </c:when>
                 <c:otherwise>
-                    <input type="submit" name="update" value="Update" <c:if test="${!sarariman:isAdministrator(user)}">disabled="true"</c:if> />
+                    <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
                 </c:otherwise>
             </c:choose>
         </form>
