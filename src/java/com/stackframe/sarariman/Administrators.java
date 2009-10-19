@@ -51,16 +51,19 @@ public class Administrators extends AbstractCollection<Employee> {
             final Iterator<Employee> administrators = getAdministrators().iterator();
             return new Iterator<Employee>() {
 
+                Employee current;
+
                 public boolean hasNext() {
                     return administrators.hasNext();
                 }
 
                 public Employee next() {
-                    return administrators.next();
+                    current = administrators.next();
+                    return current;
                 }
 
                 public void remove() {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    Administrators.this.remove(current);
                 }
 
             };
