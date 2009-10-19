@@ -29,8 +29,9 @@
         request.setAttribute("addableUsers", employees);
         %>
 
-        <form method="POST" action="administratorController">
+        <form method="POST" action="employeeTableController">
             <input type="hidden" name="action" value="add"/>
+            <input type="hidden" name="table" value="administrators"/>
             <select id="employee" name="employee">
                 <c:forEach var="employee" items="${addableUsers}">
                     <option value="${employee.number}">${fn:escapeXml(employee.fullName)}</option>
@@ -50,8 +51,9 @@
                     <td>${employee.fullName}</td>
                     <c:if test="${isAdministrator}">
                         <td>
-                            <form method="POST" action="administratorController">
+                            <form method="POST" action="employeeTableController">
                                 <input type="hidden" name="action" value="remove"/>
+                                <input type="hidden" name="table" value="administrators"/>
                                 <input type="hidden" name="employee" value="${employee.number}"/>
                                 <input type="submit" name="remove" value="Remove"/>
                             </form>

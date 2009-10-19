@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.io.IOException;
+import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class AdministratorController extends HttpServlet {
+public class EmployeeTableController extends HttpServlet {
 
     private Sarariman sarariman;
 
@@ -48,18 +49,28 @@ public class AdministratorController extends HttpServlet {
         Action action = Action.valueOf(request.getParameter("action"));
         long id = Long.parseLong(request.getParameter("employee"));
         Employee employee = sarariman.getDirectory().getByNumber().get(id);
+        Collection<Employee> employeeCollection;
+        String table = request.getParameter("table");
+        if (table.equals("administrators")) {
+            employeeCollection = sarariman.getAdministrators();
+        } else {
+            getServletContext().log("unknown table " + table);
+            response.sendError(500);
+            return;
+        }
+
         switch (action) {
             case add:
-                sarariman.getAdministrators().add(employee);
+                employeeCollection.add(employee);
                 break;
             case remove:
-                sarariman.getAdministrators().remove(employee);
+                employeeCollection.remove(employee);
                 break;
             default:
                 response.sendError(500);
                 return;
         }
-        response.sendRedirect(response.encodeRedirectURL("administrators"));
+        response.sendRedirect(request.getHeader("Referer"));
     }
 
     /** 
@@ -69,7 +80,7 @@ public class AdministratorController extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "performs updates on administrators";
+        return "performs updates on employee tables";
     }
 
 }

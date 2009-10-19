@@ -44,8 +44,8 @@
         <servlet-class>com.stackframe.sarariman.CustomerController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdministratorController</servlet-name>
-        <servlet-class>com.stackframe.sarariman.AdministratorController</servlet-class>
+        <servlet-name>EmployeeTableController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.EmployeeTableController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProjectController</servlet-name>
@@ -186,8 +186,8 @@
         <url-pattern>/customerController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdministratorController</servlet-name>
-        <url-pattern>/administratorController</url-pattern>
+        <servlet-name>EmployeeTableController</servlet-name>
+        <url-pattern>/employeeTableController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProjectController</servlet-name>
