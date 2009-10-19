@@ -36,12 +36,12 @@ public class Sarariman implements ServletContextListener {
     private Connection connection;
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
-    private final List<Employee> approvers = new ArrayList<Employee>();
-    private final List<Employee> invoiceManagers = new ArrayList<Employee>();
     private final Timer timer = new Timer("Sarariman");
     private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
     private String logoURL;
-    private final EmployeeTable administrators = new EmployeeTable(this, "administrators");
+    private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
+    private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
+    private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -162,7 +162,7 @@ public class Sarariman implements ServletContextListener {
         return Task.getTasks(this);
     }
 
-    public EmployeeTable getAdministrators() {
+    public Collection<Employee> getAdministrators() {
         return administrators;
     }
 
@@ -183,11 +183,6 @@ public class Sarariman implements ServletContextListener {
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
-
-        // FIXME: This should come from configuration
-        approvers.add(directory.getByUserName().get("mcculley"));
-        invoiceManagers.add(directory.getByUserName().get("mcculley"));
-        invoiceManagers.add(directory.getByUserName().get("awetteland"));
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", this);

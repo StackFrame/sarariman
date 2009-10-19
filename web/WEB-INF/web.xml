@@ -31,6 +31,14 @@
         <jsp-file>/administrators.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>approvers</servlet-name>
+        <jsp-file>/approvers.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>invoicemanagers</servlet-name>
+        <jsp-file>/invoicemanagers.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>project</servlet-name>
         <jsp-file>/project.jsp</jsp-file>
     </servlet>
@@ -168,6 +176,14 @@
     <servlet-mapping>
         <servlet-name>administrators</servlet-name>
         <url-pattern>/administrators</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>approvers</servlet-name>
+        <url-pattern>/approvers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>invoicemanagers</servlet-name>
+        <url-pattern>/invoicemanagers</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>project</servlet-name>

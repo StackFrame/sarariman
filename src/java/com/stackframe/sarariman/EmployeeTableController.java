@@ -53,6 +53,10 @@ public class EmployeeTableController extends HttpServlet {
         String table = request.getParameter("table");
         if (table.equals("administrators")) {
             employeeCollection = sarariman.getAdministrators();
+        } else if (table.equals("approvers")) {
+            employeeCollection = sarariman.getApprovers();
+        } else if (table.equals("invoiceManagers")) {
+            employeeCollection = sarariman.getInvoiceManagers();
         } else {
             getServletContext().log("unknown table " + table);
             response.sendError(500);
