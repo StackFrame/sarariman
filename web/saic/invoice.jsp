@@ -65,6 +65,8 @@
             </tbody>
         </table>
 
+        <p><a href="laborcosts?id=${param.invoice}">Download as CSV</a></p>
+
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT i.employee, i.task, i.date, h.duration, s.po_line_item, s.charge_number
             FROM invoices AS i
