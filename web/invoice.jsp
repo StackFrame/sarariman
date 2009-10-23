@@ -6,6 +6,7 @@
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -50,9 +51,9 @@
                         <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                         <td>${costData.laborCategory}</td>
                         <td>${row.date}</td>
-                        <td class="currency">$${costData.rate}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
                         <td class="duration">${row.duration}</td>
-                        <td class="currency">$${costData.cost}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                     </tr>
                 </c:forEach>
                 <sql:query dataSource="jdbc/sarariman" var="sum">
@@ -62,7 +63,7 @@
                     WHERE i.id = ?
                     <sql:param value="${param.invoice}"/>
                 </sql:query>
-                <tr><td>Total</td><td></td><td></td><td></td><td></td><td class="duration">${sum.rows[0].total}</td><td class="currency">$${totalCost}</td></tr>
+                <tr><td>Total</td><td></td><td></td><td></td><td></td><td class="duration">${sum.rows[0].total}</td><td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td></tr>
             </tbody>
         </table>
 
