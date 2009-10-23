@@ -4,10 +4,14 @@
  */
 package com.stackframe.sarariman;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -60,6 +64,32 @@ public class Invoice {
                 "Invoice " + id + " was created.");
 
         return invoice;
+    }
+
+    public static CostData cost(Sarariman sarariman, int project, int employee, Date date, double duration) {
+        Collection<LaborCategory> laborCategories = sarariman.getLaborCategories();
+        Map<Long, LaborCategory> categoriesById = new HashMap<Long, LaborCategory>();
+        for (LaborCategory category : laborCategories) {
+            categoriesById.put(category.getId(), category);
+        }
+
+        // FIXME: Need to look at date ranges of both the category and the assignment.
+        Collection<LaborCategoryAssignment> projectBillRates = sarariman.getProjectBillRates();
+        for (LaborCategoryAssignment projectBillRate : projectBillRates) {
+            LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
+            if (projectBillRate.getEmployee().getNumber() == employee && category.getProject() == project) {
+                java.util.Date start = projectBillRate.getPeriodOfPerformanceStart();
+                java.util.Date end = projectBillRate.getPeriodOfPerformanceEnd();
+                if (start.compareTo(date) <= 0 && end.compareTo(date) >= 0) {
+                    BigDecimal rate = category.getRate();
+                    BigDecimal cost = rate.multiply(new BigDecimal(duration));
+                    cost = cost.setScale(2, RoundingMode.UP);
+                    return new CostData(cost, category.getName(), rate);
+                }
+            }
+        }
+
+        return new CostData(new BigDecimal(0), "no category", new BigDecimal(0));
     }
 
 }

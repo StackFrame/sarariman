@@ -6,11 +6,9 @@ package com.stackframe.sarariman;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
@@ -42,6 +40,8 @@ public class Sarariman implements ServletContextListener {
     private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
+    private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
+    private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -168,6 +168,14 @@ public class Sarariman implements ServletContextListener {
 
     public String getLogoURL() {
         return logoURL;
+    }
+
+    public Collection<LaborCategoryAssignment> getProjectBillRates() {
+        return projectBillRates;
+    }
+
+    public Collection<LaborCategory> getLaborCategories() {
+        return laborCategories;
     }
 
     public void contextInitialized(ServletContextEvent sce) {
