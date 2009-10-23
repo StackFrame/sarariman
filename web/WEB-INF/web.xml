@@ -63,6 +63,10 @@
         <servlet-name>SAICLaborCosts</servlet-name>
         <servlet-class>com.stackframe.sarariman.saic.LaborCosts</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LaborCosts</servlet-name>
+        <servlet-class>com.stackframe.sarariman.LaborCosts</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
         <url-pattern>/timesheets</url-pattern>
@@ -216,6 +220,10 @@
     <servlet-mapping>
         <servlet-name>SAICLaborCosts</servlet-name>
         <url-pattern>/saic/laborcosts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LaborCosts</servlet-name>
+        <url-pattern>/laborcosts</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
