@@ -82,6 +82,12 @@
             Customer: ${fn:escapeXml(customer.name)}
         </p>
 
+        <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
+        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.employee, startDay)}"/>
+        <c:if test="${!timesheet.approved}">
+            <p class="error">This timesheet is not yet approved.</p>
+        </c:if>
+
         <sql:query dataSource="jdbc/sarariman" var="tasks">
             SELECT DISTINCT h.task, t.name
             FROM hours as h
@@ -95,7 +101,6 @@
             <sql:param value="${param.week}"/>
         </sql:query>
         <table class="timereport">
-            <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
             <tr>
                 <th>Task</th>
                 <th>Name</th>
@@ -219,6 +224,11 @@
                 <a class="edit" href="${fn:escapeXml(editLink)}">Edit</a>
             </div>
         </c:forEach>
+
+        <c:if test="${timesheet.approved}">
+            <p>Approved by ${timesheet.approver.fullName} at ${timesheet.approvedTimestamp}.</p>
+        </c:if>
+        <p>Submitted at ${timesheet.submittedTimestamp}.</p>
 
         <%@include file="footer.jsp" %>
     </body>

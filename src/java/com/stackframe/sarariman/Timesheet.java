@@ -165,6 +165,69 @@ public class Timesheet {
         }
     }
 
+    public Employee getApprover() throws SQLException {
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT approver FROM timecards WHERE date = ? AND employee = ?");
+        try {
+            ps.setDate(1, week);
+            ps.setInt(2, employeeNumber);
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                if (!resultSet.first()) {
+                    return null;
+                } else {
+                    int employee = resultSet.getInt("approver");
+                    return sarariman.getDirectory().getByNumber().get(employee);
+                }
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+        }
+    }
+
+    public Timestamp getApprovedTimestamp() throws SQLException {
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT approved_timestamp FROM timecards WHERE date = ? AND employee = ?");
+        try {
+            ps.setDate(1, week);
+            ps.setInt(2, employeeNumber);
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                if (!resultSet.first()) {
+                    return null;
+                } else {
+                    return resultSet.getTimestamp("approved_timestamp");
+                }
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+        }
+    }
+    public Timestamp getSubmittedTimestamp() throws SQLException {
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
+        try {
+            ps.setDate(1, week);
+            ps.setInt(2, employeeNumber);
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                if (!resultSet.first()) {
+                    return null;
+                } else {
+                    return resultSet.getTimestamp("submitted_timestamp");
+                }
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+        }
+    }
+
     public boolean isApproved() throws SQLException {
         Connection connection = sarariman.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");

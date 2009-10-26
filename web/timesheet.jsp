@@ -61,6 +61,10 @@
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <h2>Timesheet for ${employee.fullName} for the week of ${thisWeekStart}</h2>
+        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
+        <c:if test="${!timesheet.approved}">
+            <p class="error">This timesheet is not yet approved.</p>
+        </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
@@ -108,6 +112,11 @@
                 <td></td>
             </tr>
         </table>
+
+        <c:if test="${timesheet.approved}">
+            <p>Approved by ${timesheet.approver.fullName} at ${timesheet.approvedTimestamp}.</p>
+        </c:if>
+        <p>Submitted at ${timesheet.submittedTimestamp}.</p>
 
         <%@include file="footer.jsp" %>
     </body>
