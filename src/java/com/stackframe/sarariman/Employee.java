@@ -24,4 +24,8 @@ public interface Employee {
 
     boolean isAdministrator();
 
+    boolean isApprover();
+
+    boolean isInvoiceManager();
+
 }

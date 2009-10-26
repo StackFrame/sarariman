@@ -76,6 +76,14 @@ public class LDAPDirectory implements Directory {
             return sarariman.getAdministrators().contains(this);
         }
 
+        public boolean isApprover() {
+            return sarariman.getApprovers().contains(this);
+        }
+
+        public boolean isInvoiceManager() {
+            return sarariman.getInvoiceManagers().contains(this);
+        }
+
         @Override
         public String toString() {
             return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
