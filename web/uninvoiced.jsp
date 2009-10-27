@@ -17,12 +17,12 @@
     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Uninvoiced time for ${customer.name} - ${fn:escapeXml(project.name)}</title>
+        <title>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</title>
     </head>
 
     <body>
         <p><a href="./">Home</a></p>
-        <h1>Uninvoiced time for ${customer.name} - ${fn:escapeXml(project.name)}</h1>
+        <h1>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${user.administrator && !empty param.create}">
             <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, param.invoiceName, pageContext.request.parameterMap,
