@@ -56,7 +56,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public String getVersion() {
-        return "1.0.14r" + getRevision();
+        return "1.0.15r" + getRevision();
     }
 
     public Sarariman() {
