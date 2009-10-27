@@ -219,11 +219,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SAICLaborCosts</servlet-name>
-        <url-pattern>/saic/laborcosts</url-pattern>
+        <url-pattern>/saic/laborcosts.csv</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LaborCosts</servlet-name>
-        <url-pattern>/laborcosts</url-pattern>
+        <url-pattern>/laborcosts.csv</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

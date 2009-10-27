@@ -74,7 +74,7 @@
             </tbody>
         </table>
 
-        <p><a href="laborcosts?id=${param.invoice}">Download as CSV</a></p>
+        <p><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
 
         <sql:query dataSource="jdbc/sarariman" var="employees">
             SELECT DISTINCT h.employee
