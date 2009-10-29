@@ -18,7 +18,7 @@ p.error {
     text-align: center;
 }
 
-.duration, .task, .currency {
+.duration, .task, .currency, .line_item {
     text-align: right;
     font-family: monospace;
 }

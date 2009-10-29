@@ -62,7 +62,7 @@
                         </sql:query>
                         <c:if test="${!empty total.rows[0].total}">
                             <tr>
-                                <td>${line_item_row.po_line_item}</td>
+                                <td class="line_item">${line_item_row.po_line_item}</td>
                                 <td>${directory.byNumber[employee_row.employee].fullName}</td>
                                 <td class="duration">${total.rows[0].total}</td>
                             </tr>
@@ -99,7 +99,7 @@
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task.jsp?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
-                        <td>${row.po_line_item}</td>
+                        <td class="line_item">${row.po_line_item}</td>
                         <td>${row.charge_number}</td>
                         <td class="duration">${row.duration}</td>
                     </tr>
