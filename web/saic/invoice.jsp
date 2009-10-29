@@ -6,6 +6,8 @@
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <%
         Employee user = (Employee)request.getAttribute("user");
         if (!user.isInvoiceManager()) {
@@ -18,8 +20,9 @@
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
         <title>Invoice ${param.invoice}</title>
+        <script type="text/javascript" src="../utilities.js"/>
     </head>
-    <body>
+    <body  onload="altRows('entries')">
         <p><a href="../">Home</a></p>
 
         <h1>SAIC Invoice ${param.invoice}</h1>
@@ -75,33 +78,41 @@
         <p><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT i.employee, i.task, i.date, h.duration, s.po_line_item, s.charge_number
+            SELECT i.employee, i.task, t.project, i.date, h.duration, s.po_line_item, s.charge_number
             FROM invoices AS i
             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+            JOIN tasks AS t on t.id = i.task
             JOIN saic_tasks AS s ON i.task = s.task
             WHERE i.id = ?
-            ORDER BY h.date ASC, h.employee ASC, h.task ASC, s.charge_number ASC, s.po_line_item ASC
+            ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC
             <sql:param value="${param.invoice}"/>
         </sql:query>
-        <table>
+        <table class="altrows" id="entries">
             <caption>Entries</caption>
             <tbody>
                 <tr>
                     <th>Employee</th>
                     <th>Task</th>
                     <th>Date</th>
+                    <th>Rate</th>
                     <th>Line Item</th>
+                    <th>Labor Category</th>
                     <th>Charge Number</th>
                     <th>Duration</th>
+                    <th>Cost</th>
                 </tr>
                 <c:forEach var="row" items="${result.rows}">
+                    <c:set var="costData" value="${sarariman:cost(sarariman, row.project, row.employee, row.date, row.duration)}"/>
                     <tr>
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task.jsp?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
                         <td class="line_item">${row.po_line_item}</td>
+                        <td>${costData.laborCategory}</td>
                         <td>${row.charge_number}</td>
                         <td class="duration">${row.duration}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                     </tr>
                 </c:forEach>
             </tbody>
