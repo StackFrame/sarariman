@@ -18,11 +18,11 @@
     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>${customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</title>
+        <title>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</title>
     </head>
 
     <body>
-        <h1>${customer.name} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
+        <h1>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT DISTINCT h.employee
