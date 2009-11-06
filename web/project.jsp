@@ -15,9 +15,10 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="utilities.js"/>
         <title>Project ${project.id}</title>
     </head>
-    <body>
+    <body onload="altRows('tasks')">
         <p><a href="./">Home</a></p>
 
         <h1>Project ${project.id}</h1>
@@ -34,6 +35,16 @@
             </select><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
+        <table class="altrows" id="tasks">
+            <caption>Tasks</caption>
+            <tr><th>ID</th><th>Task</th></tr>
+            <c:forEach var="task" items="${project.tasks}">
+                <tr>
+                    <td><a href="task?task_id=${task.id}">${task.id}</a></td>
+                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
+                </tr>
+            </c:forEach>
+        </table>
         <%@include file="footer.jsp" %>
     </body>
 </html>

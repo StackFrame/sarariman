@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -61,6 +62,10 @@ public class Project {
 
     public long getCustomer() {
         return customer;
+    }
+
+    public Collection<Task> getTasks() throws SQLException {
+        return Task.getTasks(sarariman, this);
     }
 
     public static Project create(Sarariman sarariman, String name, Long customer) throws SQLException {
