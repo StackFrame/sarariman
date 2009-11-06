@@ -46,15 +46,15 @@ public class LaborCosts extends HttpServlet {
         Connection connection = sarariman.getConnection();
         PrintWriter out = response.getWriter();
         try {
-            out.println("Employee,Task,Line Item,Labor Category,Date,Rate,Duration,Cost");
-            PreparedStatement ps = connection.prepareStatement("SELECT i.employee, i.task, i.date, h.duration, t.project, s.po_line_item " +
+            out.println("Employee,Task,Line Item,Charge Number,Labor Category,Date,Rate,Duration,Cost");
+            PreparedStatement ps = connection.prepareStatement("SELECT i.employee, i.task, i.date, h.duration, t.project, s.po_line_item, s.charge_number " +
                     "FROM invoices AS i " +
                     "JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date " +
                     "JOIN tasks AS t on i.task = t.id " +
                     "JOIN projects AS p ON t.project = p.id " +
                     "JOIN saic_tasks AS s ON i.task = s.task " +
                     "WHERE i.id = ? " +
-                    "ORDER BY h.date ASC, h.employee ASC, h.task ASC");
+                    "ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC");
             ps.setString(1, invoice);
             try {
                 ResultSet resultSet = ps.executeQuery();
@@ -64,12 +64,13 @@ public class LaborCosts extends HttpServlet {
                         Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                         int task = resultSet.getInt("task");
                         int lineItem = resultSet.getInt("po_line_item");
+                        String chargeNumber = resultSet.getString("charge_number");
                         Date date = resultSet.getDate("date");
                         double duration = resultSet.getDouble("duration");
                         BigDecimal scaledDuration = new BigDecimal(duration).setScale(2);
                         int project = resultSet.getInt("project");
                         CostData costData = Invoice.cost(sarariman, project, employeeNumber, date, duration);
-                        out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + "," +
+                        out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + "," + chargeNumber + "," +
                                 costData.getLaborCategory() + "," + date + "," + costData.getRate() + "," + scaledDuration + "," +
                                 costData.getCost());
                     }
