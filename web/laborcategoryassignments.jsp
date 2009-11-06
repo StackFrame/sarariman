@@ -10,12 +10,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Project Bill Rates</title>
+        <title>Labor Category Assignments</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('rates')">
         <p><a href="./">Home</a> <a href="tools">Tools</a></p>
-        <h1>Project Bill Rates</h1>
+        <h1>Labor Category Assignments</h1>
 
         <table class="altrows" id="rates">
             <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th></tr>

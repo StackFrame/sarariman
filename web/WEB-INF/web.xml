@@ -39,6 +39,18 @@
         <jsp-file>/invoicemanagers.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>uninvoicedbillable</servlet-name>
+        <jsp-file>/uninvoicedbillable.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>laborcategories</servlet-name>
+        <jsp-file>/laborcategories.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>laborcategoryassignments</servlet-name>
+        <jsp-file>/laborcategoryassignments.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>project</servlet-name>
         <jsp-file>/project.jsp</jsp-file>
     </servlet>
@@ -192,6 +204,18 @@
     <servlet-mapping>
         <servlet-name>invoicemanagers</servlet-name>
         <url-pattern>/invoicemanagers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>laborcategories</servlet-name>
+        <url-pattern>/laborcategories</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>laborcategoryassignments</servlet-name>
+        <url-pattern>/laborcategoryassignments</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>uninvoicedbillable</servlet-name>
+        <url-pattern>/uninvoicedbillable</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>project</servlet-name>
