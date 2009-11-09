@@ -84,8 +84,11 @@
                 <tr>
                     <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                     <td class="date">${entryDate}</td>
-                    <td>${fn:escapeXml(entry.name)}</td>
-                    <td class="task">${entry.task}</td>
+                    <c:url var="taskLink" value="task">
+                        <c:param name="task_id" value="${entry.task}"/>
+                    </c:url>
+                    <td><a href="${fn:escapeXml(taskLink)}">${fn:escapeXml(entry.name)}</a></td>
+                    <td class="task"><a href="${fn:escapeXml(taskLink)}">${entry.task}</a></td>
                     <c:set var="project" value="${sarariman.projects[entry.project]}"/>
                     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
                     <td>${fn:escapeXml(project.name)}</td>
