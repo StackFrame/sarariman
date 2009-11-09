@@ -79,14 +79,17 @@
         <c:set var="totalHoursWorked" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
         <table class="altrows" id="timesheet">
-            <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Duration</th><th>Description</th></tr>
+            <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>
                     <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                     <td class="date">${entryDate}</td>
                     <td>${fn:escapeXml(entry.name)}</td>
                     <td class="task">${entry.task}</td>
-                    <td>${fn:escapeXml(sarariman.projects[entry.project].name)}</td>
+                    <c:set var="project" value="${sarariman.projects[entry.project]}"/>
+                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <td>${fn:escapeXml(project.name)}</td>
+                    <td>${fn:escapeXml(customer.name)}</td>
 
                     <!-- FIXME: This needs to look this up somewhere. -->
                     <c:if test="${entry.task == 5}">
