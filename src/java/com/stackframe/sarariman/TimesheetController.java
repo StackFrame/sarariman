@@ -55,7 +55,6 @@ public class TimesheetController extends HttpServlet {
         try {
             Date date = dateFormat.parse(request.getParameter("week"));
             Action action = Action.valueOf(request.getParameter("action"));
-            System.err.println("action=" + action);
             Timesheet timesheet = Timesheet.lookup(sarariman, employeeNumber, date);
             switch (action) {
                 case Approve:
