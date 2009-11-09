@@ -21,7 +21,7 @@
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body onload="altRows('hours')">
+    <body onload="altRows('hours');altRows('days')">
         <a href="tools">Tools</a>
 
         <c:choose>
@@ -156,6 +156,23 @@
             <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
             <h2>Timesheet for the week of ${thisWeekStart}</h2>
+
+            <table class="altrows" id="days">
+                <c:set var="dayTotals" value="${timesheet.hoursByDay}"/>
+                <tr>
+                    <c:forEach items="${dayTotals}" var="entry">
+                        <fmt:formatDate var="day" value="${entry.key.time}" pattern="E"/>
+                        <th>${day}</th>
+                    </c:forEach>
+                </tr>
+                <tr>
+                    <c:forEach items="${dayTotals}" var="entry">
+                        <td class="duration">${entry.value}</td>
+                    </c:forEach>
+                </tr>
+            </table>
+
+            <br/>
 
             <!-- FIXME: Can I do the nextWeek part in SQL? -->
             <sql:query dataSource="jdbc/sarariman" var="entries">

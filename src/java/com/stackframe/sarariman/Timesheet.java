@@ -4,12 +4,17 @@
  */
 package com.stackframe.sarariman;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,6 +94,50 @@ public class Timesheet {
         } finally {
             ps.close();
         }
+    }
+
+    public Map<Calendar, BigDecimal> getHoursByDay() throws SQLException {
+        Map<Calendar, BigDecimal> map = new LinkedHashMap<Calendar, BigDecimal>();
+        for (int i = 0; i < 7; i++) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.set(week.getYear() + 1900, week.getMonth(), week.getDate());
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.roll(Calendar.DATE, i);
+            map.put(calendar, new BigDecimal(0));
+        }
+
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT duration, date " +
+                "FROM hours " +
+                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+        try {
+            ps.setInt(1, employeeNumber);
+            ps.setDate(2, week);
+            ps.setDate(3, week);
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                while (resultSet.next()) {
+                    Date date = resultSet.getDate("date");
+                    Calendar calendar = new GregorianCalendar();
+                    calendar.set(date.getYear() + 1900, date.getMonth(), date.getDate());
+                    calendar.set(Calendar.HOUR, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    BigDecimal duration = resultSet.getBigDecimal("duration");
+                    map.put(calendar, map.get(calendar).add(duration));
+                }
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+        }
+        return map;
     }
 
     private double getHours(int task) throws SQLException {
