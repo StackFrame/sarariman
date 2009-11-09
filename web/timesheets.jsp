@@ -73,7 +73,7 @@
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
         <table class="altrows" id="timesheets">
-            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th colspan="2">Actions</th></tr>
+            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>Actions</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>
                 <tr>
