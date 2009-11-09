@@ -109,12 +109,12 @@
                 </tr>
             </c:forEach>
             <tr>
-                <td colspan="3">Total</td>
+                <td colspan="5">Total</td>
                 <td class="duration">${totalHoursWorked}</td>
                 <td></td>
             </tr>
             <tr>
-                <td colspan="3">Total PTO</td>
+                <td colspan="5">Total PTO</td>
                 <td class="duration">${totalPTO}</td>
                 <td></td>
             </tr>
@@ -123,7 +123,9 @@
         <c:if test="${timesheet.approved}">
             <p>Approved by ${timesheet.approver.fullName} at ${timesheet.approvedTimestamp}.</p>
         </c:if>
-        <p>Submitted at ${timesheet.submittedTimestamp}.</p>
+        <c:if test="${!empty timesheet.submittedTimestamp}">
+            <p>Submitted at ${timesheet.submittedTimestamp}.</p>
+        </c:if>
 
         <%@include file="footer.jsp" %>
     </body>
