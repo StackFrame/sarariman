@@ -39,41 +39,10 @@
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
-        <c:if test="${user.administrator && !empty param.action}">
-            <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.actionEmployee, week)}"/>
-            <c:set var="fullName" value="${directory.byNumber[param.actionEmployee].fullName}"/>
-            <c:choose>
-                <c:when test="${param.action == 'Approve'}">
-                    <c:choose>
-                        <c:when test="${sarariman:approveTimesheet(timesheet, user)}">
-                            <p>Approved timesheet for ${fullName} for ${week}.</p>
-                        </c:when>
-                        <c:otherwise>
-                            <p class="error">Failed to approve timesheet for ${fullName} for ${week}.</p>
-                        </c:otherwise>
-                    </c:choose>
-                </c:when>
-                <c:when test="${param.action == 'Reject'}">
-                    <!-- FIXME: Only allow this if the time has not been invoiced. -->
-                    <c:choose>
-                        <c:when test="${sarariman:rejectTimesheet(timesheet)}">
-                            <p>Rejected timesheet for ${fullName} for ${week}.</p>
-                        </c:when>
-                        <c:otherwise>
-                            <p class="error">Failed to reject timesheet for ${fullName} for ${week}.</p>
-                        </c:otherwise>
-                    </c:choose>
-                </c:when>
-                <c:otherwise>
-                    <p class="error">Impossible action!</p>
-                </c:otherwise>
-            </c:choose>
-        </c:if>
-
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
         <table class="altrows" id="timesheets">
-            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>Actions</th></tr>
+            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>
                 <tr>
@@ -110,19 +79,6 @@
                     <td class="checkbox">
                         <form>
                             <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post">
-                            <input type="hidden" value="${thisWeekStart}" name="actionWeek"/>
-                            <input type="hidden" value="${employee.number}" name="actionEmployee"/>
-                            <c:if test="${user.administrator}">
-                                <c:if test="${!approved}">
-                                    <input type="submit" name="action" value="Approve" <c:if test="${!submitted}">disabled="disabled"</c:if>/>
-                                </c:if>
-                                <!-- FIXME: Only allow this if the time has not been invoiced. -->
-                                <input type="submit" name="action" value="Reject"  <c:if test="${!submitted}">disabled="disabled"</c:if>/>
-                            </c:if>
                         </form>
                     </td>
                 </tr>

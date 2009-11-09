@@ -207,6 +207,7 @@ public class Timesheet {
             ps.close();
         }
     }
+
     public Timestamp getSubmittedTimestamp() throws SQLException {
         Connection connection = sarariman.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
@@ -340,6 +341,11 @@ public class Timesheet {
 
     public static boolean submit(Timesheet timesheet) {
         return timesheet.submit();
+    }
+
+    @Override
+    public String toString() {
+        return "{employee=" + employeeNumber + ",week=" + week + "}";
     }
 
 }

@@ -60,6 +60,10 @@
         <jsp-file>/customer.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>TimesheetController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.TimesheetController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>CustomerController</servlet-name>
         <servlet-class>com.stackframe.sarariman.CustomerController</servlet-class>
     </servlet>
@@ -228,6 +232,10 @@
     <servlet-mapping>
         <servlet-name>customer</servlet-name>
         <url-pattern>/customer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TimesheetController</servlet-name>
+        <url-pattern>/timesheetController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CustomerController</servlet-name>

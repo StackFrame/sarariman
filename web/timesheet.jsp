@@ -60,8 +60,20 @@
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
-        <h2>Timesheet for ${employee.fullName} for the week of ${thisWeekStart}</h2>
         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
+        <c:if test="${user.administrator}">
+            <form method="post" action="timesheetController">
+                <input type="hidden" value="${thisWeekStart}" name="week"/>
+                <input type="hidden" value="${employee.number}" name="employee"/>
+                <c:if test="${!timesheet.approved}">
+                    <input type="submit" name="action" value="Approve" <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+                </c:if>
+                <!-- FIXME: Only allow this if the time has not been invoiced. -->
+                <input type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+            </form>
+        </c:if>
+
+        <h2>Timesheet for ${employee.fullName} for the week of ${thisWeekStart}</h2>
         <c:if test="${!timesheet.approved}">
             <p class="error">This timesheet is not yet approved.</p>
         </c:if>
