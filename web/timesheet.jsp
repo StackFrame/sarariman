@@ -95,8 +95,19 @@
                     <c:url var="projectLink" value="project">
                         <c:param name="id" value="${entry.project}"/>
                     </c:url>
-                    <td><a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(project.name)}</a></td>
-                    <td>${fn:escapeXml(customer.name)}</td>
+                    <td>
+                        <c:if test="${!empty project}">
+                            <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(project.name)}</a>
+                        </c:if>
+                    </td>
+                    <c:url var="customerLink" value="customer">
+                        <c:param name="id" value="${project.customer}"/>
+                    </c:url>
+                    <td>
+                        <c:if test="${!empty customer}">
+                            <a href="${fn:escapeXml(customerLink)}">${fn:escapeXml(customer.name)}</a>
+                        </c:if>
+                    </td>
 
                     <c:choose>
                         <%-- FIXME: This needs to look this up somewhere. --%>
