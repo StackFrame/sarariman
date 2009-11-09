@@ -67,7 +67,7 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="entries">
-            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name, tasks.project
+            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name, tasks.project, tasks.billable
             FROM hours
             INNER JOIN tasks ON hours.task=tasks.id
             WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
@@ -77,6 +77,7 @@
             <sql:param value="${thisWeekStart}"/>
         </sql:query>
         <c:set var="totalHoursWorked" value="0.0"/>
+        <c:set var="totalUnbillable" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
@@ -94,10 +95,17 @@
                     <td>${fn:escapeXml(project.name)}</td>
                     <td>${fn:escapeXml(customer.name)}</td>
 
-                    <!-- FIXME: This needs to look this up somewhere. -->
-                    <c:if test="${entry.task == 5}">
-                        <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
-                    </c:if>
+                    <c:choose>
+                        <%-- FIXME: This needs to look this up somewhere. --%>
+                        <c:when test="${entry.task == 5}">
+                            <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:if test="${!entry.billable}">
+                                <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
+                            </c:if>
+                        </c:otherwise>
+                    </c:choose>
 
                     <td class="duration">${entry.duration}</td>
                     <c:set var="entryDescription" value="${entry.description}"/>
@@ -111,6 +119,11 @@
             <tr>
                 <td colspan="5">Total</td>
                 <td class="duration">${totalHoursWorked}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="5">Total Unbillable</td>
+                <td class="duration">${totalUnbillable}</td>
                 <td></td>
             </tr>
             <tr>
