@@ -67,7 +67,7 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="entries">
-            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
+            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name, tasks.project
             FROM hours
             INNER JOIN tasks ON hours.task=tasks.id
             WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
@@ -79,13 +79,14 @@
         <c:set var="totalHoursWorked" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
         <table class="altrows" id="timesheet">
-            <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th></tr>
+            <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>
                     <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                     <td class="date">${entryDate}</td>
                     <td>${fn:escapeXml(entry.name)}</td>
                     <td class="task">${entry.task}</td>
+                    <td>${fn:escapeXml(sarariman.projects[entry.project].name)}</td>
 
                     <!-- FIXME: This needs to look this up somewhere. -->
                     <c:if test="${entry.task == 5}">
