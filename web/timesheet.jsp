@@ -92,7 +92,10 @@
                     <td class="task"><a href="${fn:escapeXml(taskLink)}">${entry.task}</a></td>
                     <c:set var="project" value="${sarariman.projects[entry.project]}"/>
                     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <td>${fn:escapeXml(project.name)}</td>
+                    <c:url var="projectLink" value="project">
+                        <c:param name="id" value="${entry.project}"/>
+                    </c:url>
+                    <td><a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(project.name)}</a></td>
                     <td>${fn:escapeXml(customer.name)}</td>
 
                     <c:choose>
