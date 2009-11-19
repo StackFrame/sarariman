@@ -37,11 +37,16 @@
         </form>
         <table class="altrows" id="tasks">
             <caption>Tasks</caption>
-            <tr><th>ID</th><th>Task</th></tr>
+            <tr><th>ID</th><th>Task</th><th>Active</th></tr>
             <c:forEach var="task" items="${project.tasks}">
                 <tr>
                     <td><a href="task?task_id=${task.id}">${task.id}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
+                    <td>
+                        <form>
+                            <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
+                        </form>
+                    </td>
                 </tr>
             </c:forEach>
         </table>
