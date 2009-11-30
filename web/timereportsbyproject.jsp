@@ -44,7 +44,7 @@
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
             JOIN customers AS c ON c.id = p.customer
-            WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY)
+            WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
             ORDER BY p.id ASC
             <sql:param value="${week}"/>
             <sql:param value="${week}"/>
