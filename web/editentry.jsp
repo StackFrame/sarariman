@@ -16,6 +16,17 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Edit Entry</title>
         <script type="text/javascript" src="utilities.js"/>
+
+        <!-- TinyMCE -->
+        <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript">
+            tinyMCE.init({
+                mode : "textareas",
+                theme : "simple"
+            });
+        </script>
+        <!-- /TinyMCE -->
+
     </head>
     <body onload="altRows('entries')">
         <c:set var="canModify" value="${user.administrator || user.number == param.employee}"/>
@@ -86,7 +97,10 @@
 
         <p><a href="./">Home</a></p>
         <sql:query dataSource="jdbc/sarariman" var="entries">
-            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name FROM hours INNER JOIN tasks ON hours.task=tasks.id WHERE employee=? AND hours.date=? AND hours.task=?
+            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
+            FROM hours
+            INNER JOIN tasks ON hours.task=tasks.id
+            WHERE employee=? AND hours.date=? AND hours.task=?
             <sql:param value="${param.employee}"/>
             <sql:param value="${param.date}"/>
             <sql:param value="${param.task}"/>
@@ -103,8 +117,8 @@
             <label for="duration">Duration:</label>
             <input size="5" type="text" name="duration" id="duration" value="${entry.duration}"/>
             <br/>
-            <label for="description">Description: </label>
-            <textarea cols="40" rows="10" name="description" id="description">${fn:escapeXml(entry.description)}</textarea><br/>
+            <label for="description">Description: </label><br/>
+            <textarea cols="80" rows="10" name="description" id="description">${fn:escapeXml(entry.description)}</textarea><br/>
             <label for="reason">Reason: </label>
             <input size="40" type="text" name="reason" id="reason"/>
             <input type="submit" enabled="${canModify}" name="modifyEntry" value="Modify"/>

@@ -18,6 +18,17 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Home</title>
         <script type="text/javascript" src="utilities.js"/>
+
+        <!-- TinyMCE -->
+        <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript">
+            tinyMCE.init({
+                mode : "textareas",
+                theme : "simple"
+            });
+        </script>
+        <!-- /TinyMCE -->
+
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
@@ -129,14 +140,14 @@
                                 </option>
                             </c:if>
                         </c:forEach>
-                    </select>
+                    </select><br/>
                     <label for="duration">Duration:</label>
                     <input size="5" type="text" name="duration" id="duration"/>
                     <br/>
-                    <label for="description">Description:</label>
-                    <textarea cols="40" rows="10" name="description" id="description"></textarea>
+                    <label for="description">Description:</label><br/>
+                    <textarea cols="80" rows="10" name="description" id="description"></textarea>
                     <fmt:formatDate var="weekString" value="${week}" type="date" pattern="yyyy-MM-dd" />
-                    <input type="hidden" name="week" value="${weekString}"/>
+                    <input type="hidden" name="week" value="${weekString}"/><br/>
                     <input type="submit" name="recordTime" value="Record"/>
                 </form>
             </div>
@@ -198,10 +209,10 @@
                         <td>${fn:escapeXml(entry.name)}</td>
                         <td class="task">${entry.task}</td>
                         <td class="duration">${entry.duration}</td>
-                        <c:set var="entryDescription" value="${fn:escapeXml(entry.description)}"/>
+                        <c:set var="entryDescription" value="${entry.description}"/>
                         <c:if test="${sarariman:containsHTML(entryDescription)}">
                             <!-- FIXME: I really only want to escape XML entities in the above fixup. -->
-                            <c:set var="entryDescription" value="${fn:escapeXml(entryDescription)}"/>
+                            <c:set var="entryDescription" value="${entryDescription}"/>
                         </c:if>
                         <td>${entryDescription}</td>
                         <c:if test="${!timesheet.submitted}">

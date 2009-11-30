@@ -126,6 +126,9 @@
                         <c:when test="${entry.task == 5}">
                             <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                         </c:when>
+                        <c:when test="${entry.task == 4}">
+                            <%-- Don't do anything when it is holiday. --%>
+                        </c:when>
                         <c:otherwise>
                             <c:if test="${!entry.billable}">
                                 <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
@@ -134,11 +137,7 @@
                     </c:choose>
 
                     <td class="duration">${entry.duration}</td>
-                    <c:set var="entryDescription" value="${entry.description}"/>
-                    <c:if test="${sarariman:containsHTML(entryDescription)}">
-                        <c:set var="entryDescription" value="${entryDescription}"/>
-                    </c:if>
-                    <td>${fn:escapeXml(entryDescription)}</td>
+                    <td>${entry.description}</td>
                     <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
                 </tr>
             </c:forEach>
