@@ -34,6 +34,8 @@ public class EmailDispatcher {
     private final Logger logger = Logger.getLogger(getClass().getName());
     private final InternetAddress from;
     private final Session session;
+    private final String host;
+    private final int port;
 
     public EmailDispatcher(Properties properties) {
         try {
@@ -43,6 +45,11 @@ public class EmailDispatcher {
         }
 
         session = Session.getDefaultInstance(properties, null);
+        session.setDebug(true);
+        // FIXME: We shouldn't need to set these parameters individually instead of just letting the Session and Transport handle
+        // the Properties, but if we don't, it doesn't seem to respect mail.smtp.port.
+        host = (String)properties.get("mail.smtp.host");
+        port = (Integer)properties.get("mail.smtp.port");
     }
 
     private void submit(final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject, final String body) {
@@ -70,7 +77,11 @@ public class EmailDispatcher {
                     msg.setText(body);
                     msg.setHeader("X-Mailer", "Sarariman");
                     msg.setSentDate(new Date());
-                    Transport.send(msg);
+                    msg.saveChanges();
+                    Transport transport = session.getTransport("smtp");
+                    transport.connect(host, port, null, null);
+                    transport.sendMessage(msg, msg.getAllRecipients());
+                    transport.close();
                 } catch (MessagingException me) {
                     logger.log(Level.SEVERE, "caught exception trying to send email", me);
                 }
