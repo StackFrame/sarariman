@@ -45,7 +45,6 @@ public class EmailDispatcher {
         }
 
         session = Session.getDefaultInstance(properties, null);
-        session.setDebug(true);
         // FIXME: We shouldn't need to set these parameters individually instead of just letting the Session and Transport handle
         // the Properties, but if we don't, it doesn't seem to respect mail.smtp.port.
         host = (String)properties.get("mail.smtp.host");
