@@ -39,7 +39,7 @@
         </form>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT DISTINCT p.name, p.id
+            SELECT DISTINCT p.id
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
@@ -55,7 +55,11 @@
                     <c:param name="project" value="${row.id}"/>
                     <c:param name="week" value="${week}"/>
                 </c:url>
-                <li><a href="${fn:escapeXml(target)}">${fn:escapeXml(row.name)}</a></li>
+                <li>
+                    <c:set var="project" value="${sarariman.projects[row.id]}"/>
+                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <a href="${fn:escapeXml(target)}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                </li>
             </c:forEach>
         </ul>
         <%@include file="footer.jsp" %>
