@@ -20,7 +20,7 @@
         <h1>Uninvoiced Projects</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT DISTINCT p.id, p.name
+            SELECT DISTINCT p.id
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
