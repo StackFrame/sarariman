@@ -71,6 +71,12 @@
                 <c:set var="insertError" value="true"/>
             </c:if>
 
+            <fmt:parseDate var="parsedParamDate" value="${param.date}" type="date" pattern="yyyy-MM-dd"/>
+            <c:if test="${parsedParamDate.time > du:now().time && param.task != 4 && param.task != 5}">
+                <p class="error">Cannot record non-PTO time in the future.</p>
+                <c:set var="insertError" value="true"/>
+            </c:if>
+
             <c:choose>
                 <c:when test="${empty param.duration}">
                     <p class="error">You must have a duration.</p>
