@@ -171,7 +171,7 @@
             </tr>
         </table>
 
-        <c:if test="${totalHoursWorked > 40 && totalPTO > 0}">
+        <c:if test="${totalHoursWorked > 40.0 && totalPTO > 0.0}">
             <p class="error">PTO taken when sheet is above 40 hours!</p>
         </c:if>
 
