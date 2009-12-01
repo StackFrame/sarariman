@@ -88,9 +88,11 @@
             <sql:param value="${thisWeekStart}"/>
             <sql:param value="${thisWeekStart}"/>
         </sql:query>
+        <c:set var="totalRegular" value="0.0"/>
         <c:set var="totalHoursWorked" value="0.0"/>
         <c:set var="totalUnbillable" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
+        <c:set var="totalHoliday" value="0.0"/>
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
@@ -127,9 +129,10 @@
                             <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                         </c:when>
                         <c:when test="${entry.task == 4}">
-                            <%-- Don't do anything when it is holiday. --%>
+                            <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
                         </c:when>
                         <c:otherwise>
+                            <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
                             <c:if test="${!entry.billable}">
                                 <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
                             </c:if>
@@ -147,6 +150,11 @@
                 <td></td>
             </tr>
             <tr>
+                <td colspan="5">Total Regular</td>
+                <td class="duration">${totalRegular}</td>
+                <td></td>
+            </tr>
+            <tr>
                 <td colspan="5">Total Unbillable</td>
                 <td class="duration">${totalUnbillable}</td>
                 <td></td>
@@ -156,7 +164,16 @@
                 <td class="duration">${totalPTO}</td>
                 <td></td>
             </tr>
+            <tr>
+                <td colspan="5">Total Holiday</td>
+                <td class="duration">${totalHoliday}</td>
+                <td></td>
+            </tr>
         </table>
+
+        <c:if test="${totalHoursWorked > 40 && totalPTO > 0}">
+            <p class="error">PTO taken when sheet is above 40 hours!</p>
+        </c:if>
 
         <c:if test="${timesheet.approved}">
             <p>Approved by ${timesheet.approver.fullName} at ${timesheet.approvedTimestamp}.</p>
