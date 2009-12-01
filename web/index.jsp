@@ -195,7 +195,10 @@
                 <sql:param value="${thisWeekStart}"/>
                 <sql:param value="${thisWeekStart}"/>
             </sql:query>
-            <c:set var="totalHoursWorked" value="0.0"/>
+            <c:set var="totalHours" value="0.0"/>
+            <c:set var="totalRegular" value="0.0"/>
+            <c:set var="totalPTO" value="0.0"/>
+            <c:set var="totalHoliday" value="0.0"/>
             <table class="altrows" id="hours">
                 <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th>
                     <c:if test="${!timesheet.submitted}">
@@ -225,12 +228,39 @@
                                 <a href="${fn:escapeXml(editLink)}">Edit</a>
                             </td>
                         </c:if>
-                        <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
+                        <c:set var="totalHours" value="${totalHours + entry.duration}"/>
+                        <c:choose>
+                            <%-- FIXME: This needs to look this up somewhere. --%>
+                            <c:when test="${entry.task == 5}">
+                                <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
+                            </c:when>
+                            <c:when test="${entry.task == 4}">
+                                <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
+                            </c:otherwise>
+                        </c:choose>
                     </tr>
                 </c:forEach>
                 <tr>
                     <td colspan="3"><b>Total</b></td>
-                    <td class="duration"><b>${totalHoursWorked}</b></td>
+                    <td class="duration"><b>${totalHours}</b></td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><b>Total Regular</b></td>
+                    <td class="duration"><b>${totalRegular}</b></td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><b>Total Holiday</b></td>
+                    <td class="duration"><b>${totalHoliday}</b></td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><b>Total PTO</b></td>
+                    <td class="duration"><b>${totalPTO}</b></td>
                     <td colspan="2"></td>
                 </tr>
             </table>
@@ -239,9 +269,16 @@
             <c:if test="${user.fulltime}">
                 <c:set var="hoursNeeded" value="40.0" />
             </c:if>
-            <c:set var="hoursNeeded" value="${hoursNeeded - totalHoursWorked}"/>
+            <c:set var="hoursNeeded" value="${hoursNeeded - totalHours}"/>
+            <c:set var="canSubmit" value="true"/>
             <c:if test="${hoursNeeded > 0}">
                 <p>Salaried hours remaining in week: <span class="duration">${hoursNeeded}</span></p>
+                <c:set var="canSubmit" value="false"/>
+            </c:if>
+
+            <c:if test="${totalHours > 40 && totalPTO > 0}">
+                <p class="error">PTO taken when sheet is above 40 hours!</p>
+                <c:set var="canSubmit" value="false"/>
             </c:if>
 
             <form action="${request.requestURI}" method="post">
@@ -250,7 +287,7 @@
                 <c:set var="approved" value="${timesheet.approved}"/>
                 <label for="approved">Approved: </label>
                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                <c:if test="${!submitted && hoursNeeded <= 0}">
+                <c:if test="${!submitted && canSubmit}">
                     <input type="hidden" value="true" name="submit"/>
                     <input type="submit" value="Submit"/>
                     <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
