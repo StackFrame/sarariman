@@ -105,7 +105,7 @@ public class Timesheet {
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            calendar.roll(Calendar.DATE, i);
+            calendar.add(Calendar.DATE, i);
             map.put(calendar, new BigDecimal(0));
         }
 
