@@ -72,6 +72,13 @@
             </c:if>
 
             <fmt:parseDate var="parsedParamDate" value="${param.date}" type="date" pattern="yyyy-MM-dd"/>
+
+            <c:set var="timesheetOfSubmission" value="${sarariman:timesheet(sarariman, employeeNumber, du:weekStart(parsedParamDate))}"/>
+            <c:if test="${timesheetOfSubmission.submitted}">
+                <p class="error">Cannot modify a submitted timesheet.</p>
+                <c:set var="insertError" value="true"/>
+            </c:if>
+
             <c:if test="${parsedParamDate.time > du:now().time && param.task != 4 && param.task != 5}">
                 <p class="error">Cannot record non-PTO time in the future.</p>
                 <c:set var="insertError" value="true"/>
