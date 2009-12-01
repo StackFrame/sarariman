@@ -284,12 +284,12 @@
             </c:if>
             <c:set var="hoursNeeded" value="${hoursNeeded - totalHours}"/>
             <c:set var="canSubmit" value="true"/>
-            <c:if test="${hoursNeeded > 0}">
+            <c:if test="${hoursNeeded > 0.0}">
                 <p>Salaried hours remaining in week: <span class="duration">${hoursNeeded}</span></p>
                 <c:set var="canSubmit" value="false"/>
             </c:if>
 
-            <c:if test="${totalHours > 40 && totalPTO > 0}">
+            <c:if test="${totalHours > 40.0 && totalPTO > 0.0}">
                 <p class="error">PTO taken when sheet is above 40 hours!</p>
                 <c:set var="canSubmit" value="false"/>
             </c:if>
