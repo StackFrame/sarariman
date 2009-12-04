@@ -32,7 +32,7 @@
         <sql:query dataSource="jdbc/sarariman" var="line_items">
             SELECT DISTINCT s.po_line_item
             FROM invoices AS i
-            JOIN saic_tasks AS s ON i.task = s.task
+            LEFT JOIN saic_tasks AS s ON i.task = s.task
             WHERE i.id = ?
             <sql:param value="${param.invoice}"/>
         </sql:query>
@@ -57,7 +57,7 @@
                             SELECT SUM(h.duration) AS total
                             FROM invoices AS i
                             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                            JOIN saic_tasks AS s ON i.task = s.task
+                            LEFT JOIN saic_tasks AS s ON i.task = s.task
                             WHERE i.id = ? AND s.po_line_item = ? AND i.employee = ?
                             <sql:param value="${param.invoice}"/>
                             <sql:param value="${line_item_row.po_line_item}"/>
@@ -82,7 +82,7 @@
             FROM invoices AS i
             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
             JOIN tasks AS t on t.id = i.task
-            JOIN saic_tasks AS s ON i.task = s.task
+            LEFT JOIN saic_tasks AS s ON i.task = s.task
             WHERE i.id = ?
             ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC
             <sql:param value="${param.invoice}"/>
@@ -108,9 +108,23 @@
                         <td><a href="task.jsp?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
-                        <td class="line_item">${row.po_line_item}</td>
+                        <c:choose>
+                            <c:when test="${!empty row.po_line_item}">
+                                <td class="line_item">${row.po_line_item}</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="error">No line item!</td>
+                            </c:otherwise>
+                        </c:choose>
                         <td>${costData.laborCategory}</td>
-                        <td>${row.charge_number}</td>
+                        <c:choose>
+                            <c:when test="${!empty row.charge_number}">
+                                <td>${row.charge_number}</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="error">No charge number!</td>
+                            </c:otherwise>
+                        </c:choose>
                         <td class="duration">${row.duration}</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                     </tr>
