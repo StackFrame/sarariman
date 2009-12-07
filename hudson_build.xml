@@ -19,6 +19,7 @@
     <war destfile="sarariman.war" webxml="web/WEB-INF/web.xml">
       <classes dir="build/WEB-INF/classes" />
       <fileset dir="web" />
+      <lib dir="lib">
       <webinf dir="web/WEB-INF" />
     </war>
 
