@@ -20,6 +20,10 @@
       <fileset dir="web" />
     </copy>
 
+    <jar destfile="sarariman.jar">
+      <fileset dir="build" />
+    </jar>
+
   </target>
 
 </project>
