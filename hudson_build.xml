@@ -1,4 +1,4 @@
-<project name="sng" default="compile" basedir=".">
+<project name="sng" default="default" basedir=".">
 
   <property name="bin_dir" location="build/web/WEB-INF/classes"/>
   <path id="compile.class.path">
@@ -7,7 +7,7 @@
   </path>
 
 
-  <target name="compile" description="Compile all source code." >
+  <target name="default" description="Compile and build WAR." >
 
     <mkdir dir="${bin_dir}" />
 
@@ -20,9 +20,10 @@
       <fileset dir="web" />
     </copy>
 
-    <jar destfile="sarariman.jar">
-      <fileset dir="build" />
-    </jar>
+    <war destfile="sarariman.war" webxml="web/WEB-INF/web.xml">
+      <classes dir="build" />
+      <fileset dir="web" />
+    </war>
 
   </target>
 
