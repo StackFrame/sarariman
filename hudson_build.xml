@@ -10,10 +10,15 @@
   <target name="compile" description="Compile all source code." >
 
     <mkdir dir="${bin_dir}" />
+
     <javac srcdir="src/java" includes="com/**" destdir="${bin_dir}" source="1.5" debug="true">
       <classpath refid="compile.class.path" />
       <compilerarg value="-Xlint:all,-serial"/>
     </javac>
+
+    <copy todir="build" >
+      <fileset dir="web" />
+    </copy>
 
   </target>
 
