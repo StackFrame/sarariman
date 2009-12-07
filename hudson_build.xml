@@ -16,10 +16,6 @@
       <compilerarg value="-Xlint:all,-serial"/>
     </javac>
 
-    <copy todir="build" >
-      <fileset dir="web" />
-    </copy>
-
     <war destfile="sarariman.war" webxml="web/WEB-INF/web.xml">
       <classes dir="build" />
       <fileset dir="web" />
