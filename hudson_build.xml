@@ -1,15 +1,17 @@
 <project name="sng" default="compile" basedir=".">
 
   <property name="bin_dir" location="build/web/WEB-INF/classes"/>
+  <path id="compile.class.path">
+    <pathelement path="/usr/share/tomcat5.5/common/lib/servlet-api.jar" />
+  </path>
+
 
   <target name="compile" description="Compile all source code." >
 
     <mkdir dir="${bin_dir}" />
-
     <javac srcdir="src/java" includes="com/**" destdir="${bin_dir}" source="1.5" debug="true">
-
+      <classpath refid="compile.class.path" />
       <compilerarg value="-Xlint:all,-serial"/>
-
     </javac>
 
   </target>
