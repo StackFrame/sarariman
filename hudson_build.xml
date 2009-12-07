@@ -6,7 +6,7 @@
 
     <mkdir dir="${bin_dir}" />
 
-    <javac srcdir="src" includes="com/**" destdir="${bin_dir}" source="1.5" debug="true">
+    <javac srcdir="src/java" includes="com/**" destdir="${bin_dir}" source="1.5" debug="true">
 
       <compilerarg value="-Xlint:all,-serial"/>
 
