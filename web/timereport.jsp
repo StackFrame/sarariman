@@ -68,7 +68,7 @@
                 }
             }
         </style>
-        <title>${directory.byNumber[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${param.week}</title>
+        <title>${directory.byNumber[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)} - ${param.week}</title>
     </head>
 
     <body>
