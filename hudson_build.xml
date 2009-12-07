@@ -17,7 +17,7 @@
     </javac>
 
     <war destfile="sarariman.war" webxml="web/WEB-INF/web.xml">
-      <classes dir="build" />
+      <classes dir="build/WEB-INF/classes" />
       <fileset dir="web" />
       <webinf dir="web/WEB-INF" />
     </war>
