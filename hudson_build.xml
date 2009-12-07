@@ -1,8 +1,12 @@
 <project name="sng" default="compile" basedir=".">
 
+  <property name="bin_dir" location="build/web/WEB-INF/classes"/>
+
   <target name="compile" description="Compile all source code." >
 
-    <javac srcdir="src" includes="com/**" destdir="build/web/WEB-INF/classes" source="1.5" debug="true">
+    <mkdir dir="${bin_dir}" />
+
+    <javac srcdir="src" includes="com/**" destdir="${bin_dir}" source="1.5" debug="true">
 
       <compilerarg value="-Xlint:all,-serial"/>
 
