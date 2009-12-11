@@ -178,6 +178,14 @@
         <url-pattern>/invoices</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>hoursByTask</servlet-name>
+        <jsp-file>/hoursByTask.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>hoursByTask</servlet-name>
+        <url-pattern>/hoursByTask</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>uninvoiced</servlet-name>
         <jsp-file>/uninvoiced.jsp</jsp-file>
     </servlet>

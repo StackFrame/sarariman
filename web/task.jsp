@@ -87,6 +87,13 @@
             <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
+
+        <p>
+            <c:url var="hoursByTask" value="hoursByTask">
+                <c:param name="task" value="${param.task_id}"/>
+            </c:url>
+            <a href="${hoursByTask}">Hours billed to this task</a>.
+        </p>
         <%@include file="footer.jsp" %>
     </body>
 </html>
