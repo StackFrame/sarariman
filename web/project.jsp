@@ -50,6 +50,14 @@
                 </tr>
             </c:forEach>
         </table>
+
+        <p>
+            <c:url var="hoursByProject" value="hoursByProject">
+                <c:param name="project" value="${param.id}"/>
+            </c:url>
+            <a href="${hoursByProject}">Hours billed to this project</a>.
+        </p>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

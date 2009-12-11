@@ -186,6 +186,14 @@
         <url-pattern>/hoursByTask</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>hoursByProject</servlet-name>
+        <jsp-file>/hoursByProject.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>hoursByProject</servlet-name>
+        <url-pattern>/hoursByProject</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>uninvoiced</servlet-name>
         <jsp-file>/uninvoiced.jsp</jsp-file>
     </servlet>
