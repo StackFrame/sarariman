@@ -27,11 +27,13 @@
             <label for="task_project">Project: </label>
             <select id="task_project" name="task_project">
                 <option value=""></option>
-                <sql:query dataSource="jdbc/sarariman" var="projects">
+                <sql:query dataSource="jdbc/sarariman" var="project_rows">
                     SELECT * FROM projects
                 </sql:query>
-                <c:forEach var="project" items="${projects.rows}">
-                    <option value="${project.id}">${fn:escapeXml(project.name)}</option>
+                <c:forEach var="project_row" items="${project_rows.rows}">
+                    <c:set var="project" value="${sarariman.projects[project_row.id]}"/>
+                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <option value="${project_row.id}">${fn:escapeXml(project_row.name)} - ${fn:escapeXml(customer.name)}</option>
                 </c:forEach>
             </select><br/>
             <label for="billable">Billable: </label>
