@@ -66,6 +66,24 @@ public class Invoice {
         return invoice;
     }
 
+    public void delete() throws SQLException {
+        System.err.println("Deleting invoice='" + id + "'");
+        Connection connection = sarariman.getConnection();
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM invoices WHERE id = ?");
+        try {
+            ps.setString(1, id);
+            int rowCount = ps.executeUpdate();
+            if (rowCount != 1) {
+                System.err.println("could not delete invoice " + id);
+            }
+        } finally {
+            ps.close();
+        }
+
+        sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice deleted",
+                "Invoice " + id + " was deleted.");
+    }
+
     public static CostData cost(Sarariman sarariman, int project, int employee, Date date, double duration) {
         Collection<LaborCategory> laborCategories = sarariman.getLaborCategories();
         Map<Long, LaborCategory> categoriesById = new HashMap<Long, LaborCategory>();

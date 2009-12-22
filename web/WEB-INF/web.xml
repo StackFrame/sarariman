@@ -64,6 +64,10 @@
         <servlet-class>com.stackframe.sarariman.TimesheetController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>InvoiceController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.InvoiceController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>CustomerController</servlet-name>
         <servlet-class>com.stackframe.sarariman.CustomerController</servlet-class>
     </servlet>
@@ -256,6 +260,10 @@
     <servlet-mapping>
         <servlet-name>CustomerController</servlet-name>
         <url-pattern>/customerController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvoiceController</servlet-name>
+        <url-pattern>/invoiceController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmployeeTableController</servlet-name>

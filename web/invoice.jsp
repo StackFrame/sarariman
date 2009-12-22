@@ -27,6 +27,13 @@
 
         <h1>Invoice ${param.invoice}</h1>
 
+        <c:if test="${user.administrator}">
+            <form action="invoiceController" method="post">
+                <input type="hidden" name="id" value="${param.invoice}"/>
+                <input type="submit" name="action" value="delete"/>
+            </form>
+        </c:if>
+
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT i.employee, i.task, i.date, h.duration, t.project
             FROM invoices AS i
