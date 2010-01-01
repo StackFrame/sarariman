@@ -63,11 +63,32 @@
                     <tr>
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task?task_id=${row.task}">${row.task}</a></td>
-                        <td>${costData.laborCategory}</td>
+                        <c:choose>
+                            <c:when test="${empty costData.laborCategory}">
+                                <td class="error">no labor category</td>                                                        
+                            </c:when>
+                            <c:otherwise>
+                                <td>${costData.laborCategory}</td>                                                        
+                            </c:otherwise>
+                        </c:choose>
                         <td>${row.date}</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
+                        <c:choose>
+                            <c:when test="${empty costData.laborCategory}">
+                                <td class="error">no rate</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
+                            </c:otherwise>
+                        </c:choose>
                         <td class="duration">${row.duration}</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                        <c:choose>
+                            <c:when test="${empty costData.laborCategory}">
+                                <td class="error">no rate</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                            </c:otherwise>
+                        </c:choose>
                     </tr>
                 </c:forEach>
                 <sql:query dataSource="jdbc/sarariman" var="sum">

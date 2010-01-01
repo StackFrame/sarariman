@@ -107,7 +107,7 @@ public class Invoice {
             }
         }
 
-        return new CostData(new BigDecimal(0), "no category", new BigDecimal(0));
+        return new CostData(new BigDecimal(0), null, new BigDecimal(0));
     }
 
 }
