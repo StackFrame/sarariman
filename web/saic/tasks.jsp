@@ -20,7 +20,7 @@
 
         <!-- FIXME: Get customer id out of config or look it up or something. -->
         <sql:query dataSource="jdbc/sarariman" var="tasks">
-            SELECT t.id, t.name, t.project, t.billable, s.task, s.charge_number
+            SELECT t.id, t.name, t.project, t.billable, s.task, s.charge_number, s.po_line_item
             FROM tasks AS t
             LEFT OUTER JOIN projects AS p ON p.id = t.project
             LEFT OUTER JOIN customers AS c ON c.id = p.customer
@@ -46,7 +46,7 @@
 
         <h2>Tasks</h2>
         <table>
-            <tr><th>ID</th><th>Name</th><th>Project</th><th>Charge Number</th></tr>
+            <tr><th>ID</th><th>Name</th><th>Project</th><th>Charge Number</th><th>Line Item</th></tr>
             <c:forEach var="task" items="${tasks.rows}">
                 <c:if test="${task.task != null}">
                     <tr>
@@ -54,6 +54,7 @@
                         <td><a href="task.jsp?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
                         <td><a href="task.jsp?task_id=${task.id}">${fn:escapeXml(sarariman.projects[task.project].name)}</a></td>
                         <td><a href="task.jsp?task_id=${task.id}">${task.charge_number}</a></td>
+                        <td><a href="task.jsp?task_id=${task.id}">${task.po_line_item}</a></td>
                     </tr>
                 </c:if>
             </c:forEach>
