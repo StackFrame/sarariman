@@ -80,18 +80,32 @@ public class Invoice {
     }
 
     public void delete() throws SQLException {
-        System.err.println("Deleting invoice='" + id + "'");
         Connection connection = sarariman.getConnection();
-        PreparedStatement ps = connection.prepareStatement("DELETE FROM invoices WHERE id = ?");
+        connection.setAutoCommit(false);
+        PreparedStatement deleteHours = connection.prepareStatement("DELETE FROM invoices WHERE id = ?");
         try {
-            ps.setString(1, id);
-            int rowCount = ps.executeUpdate();
-            if (rowCount != 1) {
+            deleteHours.setString(1, id);
+            int rowCount = deleteHours.executeUpdate();
+            if (rowCount == 0) {
                 System.err.println("could not delete invoice " + id);
+            } else {
+                PreparedStatement deleteInfo = connection.prepareStatement("DELETE FROM invoice_info WHERE id = ?");
+                try {
+                    deleteInfo.setString(1, id);
+                    rowCount = deleteInfo.executeUpdate();
+                    if (rowCount != 1) {
+                        System.err.println("could not delete invoice " + id);
+                    }
+                } finally {
+                    deleteInfo.close();
+                }
             }
         } finally {
-            ps.close();
+            deleteHours.close();
         }
+
+        connection.commit();
+        connection.setAutoCommit(true);
 
         sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice deleted",
                 "Invoice " + id + " was deleted.");
