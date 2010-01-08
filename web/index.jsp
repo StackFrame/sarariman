@@ -13,7 +13,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Home</title>
@@ -143,7 +142,6 @@
                     <input size="10" type="text" name="date" id="date" value="${now}"/>
                     <label for="task">Task:</label>
                     <select name="task" id="task">
-                        <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
                         <c:forEach var="task" items="${sarariman.tasks}">
                             <c:if test="${task.active}">
                                 <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
