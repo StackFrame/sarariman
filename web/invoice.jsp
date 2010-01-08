@@ -7,6 +7,7 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <%
         Employee user = (Employee)request.getAttribute("user");
@@ -33,6 +34,25 @@
                 <input type="submit" name="action" value="delete"/>
             </form>
         </c:if>
+
+        <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
+            SELECT *
+            FROM invoice_info AS i
+            WHERE i.id = ?
+            <sql:param value="${param.invoice}"/>
+        </sql:query>
+        <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
+        <c:set var="project" value="${sarariman.projects[invoice_info.project]}"/>
+        <c:set var="customer" value="${sarariman.customers[invoice_info.customer]}"/>
+        <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
+        <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>
+
+        <p>Customer: ${fn:escapeXml(customer.name)}<br/>
+            Project: ${fn:escapeXml(project.name)}<br/>
+            Sent: ${sent}<br/>
+            Payment received: ${received}</p>
+        <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
+        <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT i.employee, i.task, i.date, h.duration, t.project
