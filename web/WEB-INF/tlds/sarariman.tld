@@ -31,7 +31,7 @@
     <function>
         <name>createInvoice</name>
         <function-class>com.stackframe.sarariman.Invoice</function-class>
-        <function-signature>Invoice create(com.stackframe.sarariman.Sarariman, java.lang.String, java.util.Map, java.lang.String[], java.lang.String[], java.lang.String[])</function-signature>
+        <function-signature>Invoice create(com.stackframe.sarariman.Sarariman, com.stackframe.sarariman.Customer, com.stackframe.sarariman.Project, java.util.Map, java.lang.String[], java.lang.String[], java.lang.String[])</function-signature>
     </function>
     <function>
         <name>cost</name>

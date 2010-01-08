@@ -9,7 +9,9 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +30,7 @@ public class Invoice {
         this.sarariman = sarariman;
     }
 
-    public static Invoice create(Sarariman sarariman, String id, Map parameterMap, String[] employees, String[] tasks, String[] dates) throws SQLException {
-        Invoice invoice = new Invoice(id, sarariman);
+    public static Invoice create(Sarariman sarariman, Customer customer, Project project, Map parameterMap, String[] employees, String[] tasks, String[] dates) throws SQLException {
         int numItems = employees.length;
         if (numItems != tasks.length || numItems != dates.length) {
             System.err.println("mismatched lengths");
@@ -37,6 +38,19 @@ public class Invoice {
 
         Connection connection = sarariman.getConnection();
         connection.setAutoCommit(false);
+
+        PreparedStatement createInvoice = connection.prepareStatement("INSERT INTO invoice_info (sent, customer, project, description) VALUES(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        createInvoice.setDate(1, new Date(new java.util.Date().getTime()));
+        createInvoice.setLong(2, customer.getId());
+        createInvoice.setLong(3, project.getId());
+        createInvoice.setString(4, "invoice for " + customer.getName() + " - " + project.getName());
+        int createdRowCount = createInvoice.executeUpdate();
+        assert createdRowCount == 1;
+        ResultSet keys = createInvoice.getGeneratedKeys();
+        keys.next();
+        int key = keys.getInt(1);
+        String id = Integer.toString(key);
+
         for (int i = 0; i < numItems; i++) {
             String toAdd = "addToInvoice" + i;
             if (parameterMap.containsKey(toAdd)) {
@@ -62,8 +76,7 @@ public class Invoice {
         connection.setAutoCommit(true);
         sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice created",
                 "Invoice " + id + " was created.");
-
-        return invoice;
+        return new Invoice(id, sarariman);
     }
 
     public void delete() throws SQLException {
@@ -108,6 +121,10 @@ public class Invoice {
         }
 
         return new CostData(new BigDecimal(0), null, new BigDecimal(0));
+    }
+
+    public String getId() {
+        return id;
     }
 
 }

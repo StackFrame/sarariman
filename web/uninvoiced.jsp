@@ -25,9 +25,9 @@
         <h1>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${user.administrator && !empty param.create}">
-            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, param.invoiceName, pageContext.request.parameterMap,
+            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, customer, project, pageContext.request.parameterMap,
                                                  paramValues.addToInvoiceEmployee, paramValues.addToInvoiceTask, paramValues.addToInvoiceDate)}"/>
-            <p>Created <a href="invoice?invoice=${param.invoiceName}">invoice ${param.invoiceName}</a> with selected entries.</p>
+            <p>Created <a href="invoice?invoice=${createdInvoice.id}">invoice ${createdInvoice.id}</a> with selected entries.</p>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -41,8 +41,7 @@
             <sql:param value="${param.project}"/>
         </sql:query>
         <form method="POST">
-            <label for="invoiceName">Create Invoice:</label>
-            <input type="text" size="8" name="invoiceName" id="invoiceName"/>
+            <label>Create Invoice:</label>
             <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
             <table>
                 <tr><th>Employee</th><th>Task</th><th>Date</th><th>Duration</th><th>Invoice</th></tr>
