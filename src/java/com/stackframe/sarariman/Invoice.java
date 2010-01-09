@@ -112,11 +112,7 @@ public class Invoice {
     }
 
     public static CostData cost(Sarariman sarariman, int project, int employee, Date date, double duration) {
-        Collection<LaborCategory> laborCategories = sarariman.getLaborCategories();
-        Map<Long, LaborCategory> categoriesById = new HashMap<Long, LaborCategory>();
-        for (LaborCategory category : laborCategories) {
-            categoriesById.put(category.getId(), category);
-        }
+        Map<Long, LaborCategory> categoriesById = sarariman.getLaborCategories();
 
         // FIXME: Need to look at date ranges of both the category and the assignment.
         Collection<LaborCategoryAssignment> projectBillRates = sarariman.getProjectBillRates();

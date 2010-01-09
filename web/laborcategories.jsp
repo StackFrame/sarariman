@@ -59,13 +59,13 @@
             <tr><th>Project</th><th>Customer</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.laborCategories}">
                 <tr>
-                    <td><a href="laborcategory?id=${entry.id}">${fn:escapeXml(sarariman.projects[entry.project].name)}</a></td>
-                    <c:set var="customer" value="${sarariman.customers[sarariman.projects[entry.project].customer]}"/>
-                    <td><a href="laborcategory?id=${entry.id}">${fn:escapeXml(customer.name)}</a></td>
-                    <td><a href="laborcategory?id=${entry.id}">${entry.name}</a></td>
-                    <td class="currency"><a href="laborcategory?id=${entry.id}">$${entry.rate}</a></td>
-                    <td><a href="laborcategory?id=${entry.id}">${entry.periodOfPerformanceStart}</a></td>
-                    <td><a href="laborcategory?id=${entry.id}">${entry.periodOfPerformanceEnd}</a></td>
+                    <td><a href="laborcategory?id=${entry.key}">${fn:escapeXml(sarariman.projects[entry.value.project].name)}</a></td>
+                    <c:set var="customer" value="${sarariman.customers[sarariman.projects[entry.value.project].customer]}"/>
+                    <td><a href="laborcategory?id=${entry.key}">${fn:escapeXml(customer.name)}</a></td>
+                    <td><a href="laborcategory?id=${entry.key}">${entry.value.name}</a></td>
+                    <td class="currency"><a href="laborcategory?id=${entry.key}">$${entry.value.rate}</a></td>
+                    <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceStart}</a></td>
+                    <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceEnd}</a></td>
                 </tr>
             </c:forEach>
         </table>

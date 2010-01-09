@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
@@ -174,8 +175,13 @@ public class Sarariman implements ServletContextListener {
         return projectBillRates;
     }
 
-    public Collection<LaborCategory> getLaborCategories() {
-        return laborCategories;
+    public Map<Long, LaborCategory> getLaborCategories() {
+        Map<Long, LaborCategory> result = new HashMap<Long, LaborCategory>();
+        for (LaborCategory lc : laborCategories) {
+            result.put(lc.getId(), lc);
+        }
+
+        return result;
     }
 
     public void contextInitialized(ServletContextEvent sce) {

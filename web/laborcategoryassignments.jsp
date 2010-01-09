@@ -18,11 +18,16 @@
         <h1>Labor Category Assignments</h1>
 
         <table class="altrows" id="rates">
-            <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th></tr>
+            <tr><th>Employee</th><th>Labor Category</th><th>Project</th><th>Customer</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.projectBillRates}">
                 <tr>
                     <td>${entry.employee.fullName}</td>
-                    <td>${entry.laborCategory}</td>
+                    <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
+                    <td>${laborCategory.name}</td>
+                    <c:set var="project" value="${sarariman.projects[laborCategory.project]}"/>
+                    <td>${fn:escapeXml(project.name)}</td>
+                    <c:set var="customer" value="${sarariman.customers[sarariman.projects[laborCategory.project].customer]}"/>
+                    <td>${fn:escapeXml(customer.name)}</td>
                     <td>${entry.periodOfPerformanceStart}</td>
                     <td>${entry.periodOfPerformanceEnd}</td>
                 </tr>
