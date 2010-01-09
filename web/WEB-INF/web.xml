@@ -47,6 +47,10 @@
         <jsp-file>/laborcategories.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>laborcategory</servlet-name>
+        <jsp-file>/laborcategory.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>laborcategoryassignments</servlet-name>
         <jsp-file>/laborcategoryassignments.jsp</jsp-file>
     </servlet>
@@ -232,6 +236,10 @@
     <servlet-mapping>
         <servlet-name>laborcategories</servlet-name>
         <url-pattern>/laborcategories</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>laborcategory</servlet-name>
+        <url-pattern>/laborcategory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>laborcategoryassignments</servlet-name>

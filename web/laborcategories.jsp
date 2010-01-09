@@ -5,6 +5,7 @@
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
         Employee user = (Employee)request.getAttribute("user");
@@ -21,18 +22,47 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('categories')">
-        <p><a href="./">Home</a> <a href="tools">Tools</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Labor Categories</h1>
+
+        <div>
+            <form method="POST" action="laborcategory">
+                <label for="name">Name: </label>
+                <input type="text" id="name" name="name"/><br/>
+
+                <label for="project">Project: </label>
+                <select id="project" name="project">
+                    <sql:query dataSource="jdbc/sarariman" var="projects">
+                        SELECT * FROM projects
+                    </sql:query>
+                    <c:forEach var="project" items="${projects.rows}">
+                        <option value="${project.id}">${fn:escapeXml(project.name)}</option>
+                    </c:forEach>
+                </select><br/>
+
+                <label for="rate">Rate: </label>
+                <input type="text" id="rate" name="rate"/><br/>
+
+                <label for="pop_start">Period of Performance Start: </label>
+                <input type="text" id="pop_start" name="pop_start"/>
+
+                <label for="pop_end">End: </label>
+                <input type="text" id="pop_end" name="pop_end"/><br/>
+
+                <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
+        </div>
 
         <table class="altrows" id="categories">
             <tr><th>Project</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.laborCategories}">
                 <tr>
-                    <td><a href="project?id=${entry.project}">${fn:escapeXml(sarariman.projects[entry.project].name)}</a></td>
-                    <td>${entry.name}</td>
-                    <td class="currency">$${entry.rate}</td>
-                    <td>${entry.periodOfPerformanceStart}</td>
-                    <td>${entry.periodOfPerformanceEnd}</td>
+                    <td><a href="laborcategory?id=${entry.id}">${fn:escapeXml(sarariman.projects[entry.project].name)}</a></td>
+                    <td><a href="laborcategory?id=${entry.id}">${entry.name}</a></td>
+                    <td class="currency"><a href="laborcategory?id=${entry.id}">$${entry.rate}</a></td>
+                    <td><a href="laborcategory?id=${entry.id}">${entry.periodOfPerformanceStart}</a></td>
+                    <td><a href="laborcategory?id=${entry.id}">${entry.periodOfPerformanceEnd}</a></td>
                 </tr>
             </c:forEach>
         </table>
