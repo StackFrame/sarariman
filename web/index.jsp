@@ -27,10 +27,17 @@
             });
         </script>
         <!-- /TinyMCE -->
+
         <script>
             function resetSelect(id) {
                 var selectElement = document.getElementById(id);
-                selectElement[0].selected ="1";
+                selectElement[0].selected = "1";
+            }
+
+            // FIXME: Replace this with a single function that validates the entire form and enables the submit button if valid.
+            function enable(id) {
+                var element = document.getElementById(id);
+                element.disabled = false;
             }
         </script>
     </head>
@@ -166,7 +173,7 @@
                     <br/>
 
                     <label for="billable_task">Billable Task:</label>
-                    <select name="billable_task" id="billable_task" onchange="resetSelect('unbillable_task')">
+                    <select name="billable_task" id="billable_task" onchange="resetSelect('unbillable_task');enable('submit');">
                         <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman.tasks}">
                             <c:if test="${task.active && task.billable}">
@@ -181,7 +188,7 @@
                     <br/>
 
                     <label for="unbillable_task">Unbillable Task:</label>
-                    <select name="unbillable_task" id="unbillable_task" onchange="resetSelect('billable_task')">
+                    <select name="unbillable_task" id="unbillable_task" onchange="resetSelect('billable_task');enable('submit');">
                         <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman.tasks}">
                             <c:if test="${task.active && !task.billable}">
@@ -202,7 +209,7 @@
                     <textarea cols="80" rows="10" name="description" id="description"></textarea>
                     <fmt:formatDate var="weekString" value="${week}" type="date" pattern="yyyy-MM-dd" />
                     <input type="hidden" name="week" value="${weekString}"/><br/>
-                    <input type="submit" name="recordTime" value="Record"/>
+                    <input type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
                 </form>
             </div>
         </c:if>
