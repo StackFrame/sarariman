@@ -37,7 +37,8 @@
                         SELECT * FROM projects
                     </sql:query>
                     <c:forEach var="project" items="${projects.rows}">
-                        <option value="${project.id}">${fn:escapeXml(project.name)}</option>
+                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <option value="${project.id}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</option>
                     </c:forEach>
                 </select><br/>
 
@@ -55,10 +56,12 @@
         </div>
 
         <table class="altrows" id="categories">
-            <tr><th>Project</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
+            <tr><th>Project</th><th>Customer</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.laborCategories}">
                 <tr>
                     <td><a href="laborcategory?id=${entry.id}">${fn:escapeXml(sarariman.projects[entry.project].name)}</a></td>
+                    <c:set var="customer" value="${sarariman.customers[sarariman.projects[entry.project].customer]}"/>
+                    <td><a href="laborcategory?id=${entry.id}">${fn:escapeXml(customer.name)}</a></td>
                     <td><a href="laborcategory?id=${entry.id}">${entry.name}</a></td>
                     <td class="currency"><a href="laborcategory?id=${entry.id}">$${entry.rate}</a></td>
                     <td><a href="laborcategory?id=${entry.id}">${entry.periodOfPerformanceStart}</a></td>
