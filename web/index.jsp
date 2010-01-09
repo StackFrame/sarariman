@@ -51,11 +51,29 @@
         </c:if>
 
         <c:if test="${!empty param.recordTime}">
+
+            <c:choose>
+                <c:when test="${!empty param.unbillable_task && !empty param.billable_task}">
+                    <p class="error">You must enter a task only from billable or unbillable.</p>
+                    <c:set var="insertError" value="true"/>
+                </c:when>
+                <c:when test="${!empty param.unbillable_task}">
+                    <c:set var="task" value="${param.unbillable_task}"/>
+                </c:when>
+                <c:when test="${!empty param.billable_task}">
+                    <c:set var="task" value="${param.billable_task}"/>
+                </c:when>
+                <c:otherwise>
+                    <p class="error">You must enter a task.</p>
+                    <c:set var="insertError" value="true"/>
+                </c:otherwise>
+            </c:choose>
+
             <!-- FIXME: Check that the time is not already in a submitted sheet. -->
             <!-- FIXME: Check that the day is not more than 24 hours on timesheet submit. -->
             <!-- FIXME: Enforce that entry has a comment. -->
             <sql:query dataSource="jdbc/sarariman" var="existing" sql="SELECT * FROM hours WHERE task=? AND date=? AND employee=?">
-                <sql:param value="${param.task}"/>
+                <sql:param value="${task}"/>
                 <sql:param value="${param.date}"/>
                 <sql:param value="${employeeNumber}"/>
             </sql:query>
@@ -78,7 +96,7 @@
                 <c:set var="insertError" value="true"/>
             </c:if>
 
-            <c:if test="${parsedParamDate.time > du:now().time && param.task != 4 && param.task != 5}">
+            <c:if test="${parsedParamDate.time > du:now().time && task != 4 && task != 5}">
                 <p class="error">Cannot record non-PTO time in the future.</p>
                 <c:set var="insertError" value="true"/>
             </c:if>
@@ -105,7 +123,7 @@
                 <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
                     INSERT INTO hours (employee, task, date, description, duration) values(?, ?, ?, ?, ?)
                     <sql:param value="${employeeNumber}"/>
-                    <sql:param value="${param.task}"/>
+                    <sql:param value="${task}"/>
                     <sql:param value="${param.date}"/>
                     <sql:param value="${entryDescription}"/>
                     <sql:param value="${param.duration}"/>
@@ -115,7 +133,7 @@
                         <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
                             INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration) values(?, ?, ?, ?, ?, ?, ?)
                             <sql:param value="${employeeNumber}"/>
-                            <sql:param value="${param.task}"/>
+                            <sql:param value="${task}"/>
                             <sql:param value="${param.date}"/>
                             <sql:param value="Entry created."/>
                             <sql:param value="${pageContext.request.remoteHost}"/>
@@ -140,10 +158,13 @@
                     <label for="date">Date:</label>
                     <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
                     <input size="10" type="text" name="date" id="date" value="${now}"/>
-                    <label for="task">Task:</label>
-                    <select name="task" id="task">
+                    <br/>
+
+                    <label for="billable_task">Billable Task:</label>
+                    <select name="billable_task" id="billable_task">
+                        <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman.tasks}">
-                            <c:if test="${task.active}">
+                            <c:if test="${task.active && task.billable}">
                                 <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
                                     <c:if test="${!empty task.project}">
                                         - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
@@ -151,7 +172,24 @@
                                 </option>
                             </c:if>
                         </c:forEach>
-                    </select><br/>
+                    </select>
+                    <br/>
+
+                    <label for="unbillable_task">Unbillable Task:</label>
+                    <select name="unbillable_task" id="unbillable_task">
+                        <option selected="true"></option>
+                        <c:forEach var="task" items="${sarariman.tasks}">
+                            <c:if test="${task.active && !task.billable}">
+                                <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
+                                    <c:if test="${!empty task.project}">
+                                        - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
+                                    </c:if>
+                                </option>
+                            </c:if>
+                        </c:forEach>
+                    </select>                    
+                    <br/>
+
                     <label for="duration">Duration:</label>
                     <input size="5" type="text" name="duration" id="duration"/>
                     <br/>
