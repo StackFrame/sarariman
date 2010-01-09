@@ -27,7 +27,12 @@
             });
         </script>
         <!-- /TinyMCE -->
-
+        <script>
+            function resetSelect(id) {
+                var selectElement = document.getElementById(id);
+                selectElement[0].selected ="1";
+            }
+        </script>
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
@@ -161,7 +166,7 @@
                     <br/>
 
                     <label for="billable_task">Billable Task:</label>
-                    <select name="billable_task" id="billable_task">
+                    <select name="billable_task" id="billable_task" onchange="resetSelect('unbillable_task')">
                         <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman.tasks}">
                             <c:if test="${task.active && task.billable}">
@@ -176,7 +181,7 @@
                     <br/>
 
                     <label for="unbillable_task">Unbillable Task:</label>
-                    <select name="unbillable_task" id="unbillable_task">
+                    <select name="unbillable_task" id="unbillable_task" onchange="resetSelect('billable_task')">
                         <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman.tasks}">
                             <c:if test="${task.active && !task.billable}">
