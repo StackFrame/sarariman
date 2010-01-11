@@ -3,12 +3,19 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<%
+        Employee user = (Employee)request.getAttribute("user");
+        if (!user.isInvoiceManager()) {
+            response.sendError(401);
+            return;
+        }
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -20,7 +27,7 @@
         <script type="text/javascript" src="utilities.js"/>
         <title>Project ${project.id}</title>
     </head>
-    <body onload="altRows('tasks')">
+    <body onload="altRows('tasks');altRows('categories');altRows('rates');">
         <p><a href="./">Home</a></p>
 
         <h1>Project ${project.id}</h1>
@@ -43,6 +50,7 @@
 
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
+
         <table class="altrows" id="tasks">
             <caption>Tasks</caption>
             <tr><th>ID</th><th>Task</th><th>Active</th></tr>
@@ -56,6 +64,37 @@
                         </form>
                     </td>
                 </tr>
+            </c:forEach>
+        </table>
+
+        <table class="altrows" id="categories">
+            <caption>Labor Categories</caption>
+            <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
+            <c:forEach var="entry" items="${sarariman.laborCategories}">
+                <c:if test="${entry.value.project == project.id}">
+                    <tr>
+                        <td><a href="laborcategory?id=${entry.key}">${entry.value.name}</a></td>
+                        <td class="currency"><a href="laborcategory?id=${entry.key}">$${entry.value.rate}</a></td>
+                        <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceStart}</a></td>
+                        <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceEnd}</a></td>
+                    </tr>
+                </c:if>
+            </c:forEach>
+        </table>
+
+        <table class="altrows" id="rates">
+            <caption>Labor Category Assignments</caption>
+            <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th></tr>
+            <c:forEach var="entry" items="${sarariman.projectBillRates}">
+                <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
+                <c:if test="${laborCategory.project == project.id}">
+                    <tr>
+                        <td>${entry.employee.fullName}</td>
+                        <td>${laborCategory.name}</td>
+                        <td>${entry.periodOfPerformanceStart}</td>
+                        <td>${entry.periodOfPerformanceEnd}</td>
+                    </tr>
+                </c:if>
             </c:forEach>
         </table>
 
