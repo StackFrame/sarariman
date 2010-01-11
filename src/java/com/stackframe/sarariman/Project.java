@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,7 @@ public class Project {
     private final long id;
     private final String name;
     private final long customer;
+    private final BigDecimal funded;
     private final Sarariman sarariman;
 
     public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
@@ -34,7 +36,8 @@ public class Project {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
                     long customer = resultSet.getLong("customer");
-                    map.put(id, new Project(sarariman, id, name, customer));
+                    BigDecimal funded = resultSet.getBigDecimal("funded");
+                    map.put(id, new Project(sarariman, id, name, customer, funded));
                 }
                 return map;
             } finally {
@@ -45,11 +48,12 @@ public class Project {
         }
     }
 
-    Project(Sarariman sarariman, long id, String name, long customer) {
+    Project(Sarariman sarariman, long id, String name, long customer, BigDecimal funded) {
         this.sarariman = sarariman;
         this.id = id;
         this.name = name;
         this.customer = customer;
+        this.funded = funded;
     }
 
     public long getId() {
@@ -64,20 +68,25 @@ public class Project {
         return customer;
     }
 
+    public BigDecimal getFunded() {
+        return funded;
+    }
+
     public Collection<Task> getTasks() throws SQLException {
         return Task.getTasks(sarariman, this);
     }
 
-    public static Project create(Sarariman sarariman, String name, Long customer) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO projects (name, customer) VALUES(?, ?)");
+    public static Project create(Sarariman sarariman, String name, Long customer, BigDecimal funded) throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO projects (name, customer, funded) VALUES(?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
+            ps.setBigDecimal(3, funded);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             try {
                 rs.next();
-                return new Project(sarariman, rs.getLong(1), name, customer);
+                return new Project(sarariman, rs.getLong(1), name, customer, funded);
             } finally {
                 rs.close();
             }
@@ -86,11 +95,12 @@ public class Project {
         }
     }
 
-    public void update(String name, Long customer) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE projects SET name=?, customer=? WHERE id=?");
+    public void update(String name, Long customer, BigDecimal funded) throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE projects SET name=?, customer=?, funded=? WHERE id=?");
         ps.setString(1, name);
         ps.setLong(2, customer);
-        ps.setLong(3, id);
+        ps.setBigDecimal(3, funded);
+        ps.setLong(4, id);
         ps.executeUpdate();
         ps.close();
     }
@@ -104,7 +114,7 @@ public class Project {
 
     @Override
     public String toString() {
-        return "{id=" + id + ",name=" + name + ",customer=" + customer + "}";
+        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",funded=" + funded + "}";
     }
 
 }

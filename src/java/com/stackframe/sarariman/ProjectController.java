@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import javax.servlet.ServletException;
@@ -54,14 +55,14 @@ public class ProjectController extends HttpServlet {
             Project project;
             switch (action) {
                 case create:
-                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")));
+                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), new BigDecimal(0));
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case update:
                     id = Long.parseLong(request.getParameter("id"));
                     project = sarariman.getProjects().get(id);
-                    project.update(name, Long.parseLong(request.getParameter("customer")));
+                    project.update(name, Long.parseLong(request.getParameter("customer")), new BigDecimal(request.getParameter("funded")));
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:

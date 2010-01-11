@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  *
@@ -24,6 +25,7 @@ public class Task {
     private final Project project;
 
     public static Collection<Task> getTasks(Sarariman sarariman) throws SQLException {
+        Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.getConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
@@ -41,12 +43,10 @@ public class Task {
                     String task_name = resultSet.getString("task_name");
                     boolean billable = resultSet.getBoolean("billable");
                     boolean active = resultSet.getBoolean("active");
-                    int project_id = resultSet.getInt("project_id");
+                    long project_id = resultSet.getInt("project_id");
                     Project project = null;
                     if (project_id != 0) {
-                        String project_name = resultSet.getString("project_name");
-                        int customer_id = resultSet.getInt("customer_id");
-                        project = new Project(sarariman, project_id, project_name, customer_id);
+                        project = projects.get(project_id);
                     }
 
                     list.add(new Task(id, task_name, billable, active, project));
