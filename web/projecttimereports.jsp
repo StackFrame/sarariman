@@ -29,7 +29,7 @@
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
-            WHERE p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY)
+            WHERE p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
             ORDER BY h.employee ASC
             <sql:param value="${param.project}"/>
             <sql:param value="${param.week}"/>
