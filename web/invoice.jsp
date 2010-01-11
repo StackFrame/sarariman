@@ -77,8 +77,10 @@
                     <th>Cost</th>
                 </tr>
                 <c:set var="totalCost" value="0"/>
+                <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+                <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
                 <c:forEach var="row" items="${result.rows}">
-                    <c:set var="costData" value="${sarariman:cost(sarariman, row.project, row.employee, row.date, row.duration)}"/>
+                    <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                     <c:set var="totalCost" value="${totalCost + costData.cost}"/>
                     <tr>
                         <td>${directory.byNumber[row.employee].fullName}</td>

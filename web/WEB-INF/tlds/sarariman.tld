@@ -36,6 +36,6 @@
     <function>
         <name>cost</name>
         <function-class>com.stackframe.sarariman.Invoice</function-class>
-        <function-signature>com.stackframe.sarariman.CostData cost(com.stackframe.sarariman.Sarariman, int, int, java.sql.Date, double)</function-signature>
+        <function-signature>com.stackframe.sarariman.CostData cost(com.stackframe.sarariman.Sarariman, java.util.Map, java.util.Collection, int, int, java.sql.Date, double)</function-signature>
     </function>
 </taglib>

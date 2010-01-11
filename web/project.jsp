@@ -67,16 +67,20 @@
             WHERE p.id = ?
             <sql:param value="${project.id}"/>
         </sql:query>
+        <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+        <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
         <c:set var="totalCost" value="0"/>
         <c:forEach var="row" items="${result.rows}">
-            <c:set var="costData" value="${sarariman:cost(sarariman, row.project, row.employee, row.date, row.duration)}"/>
+            <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
             <c:if test="${empty costData.laborCategory}">
                 <c:set var="missingLaborCategory" value="true"/>
+                <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName}!</p>
             </c:if>
             <c:set var="totalCost" value="${totalCost + costData.cost}"/>
         </c:forEach>
 
-        <p>Expended: <fmt:formatNumber type="currency" value="${totalCost}"/></p>
+        <p>Expended: <fmt:formatNumber type="currency" value="${totalCost}"/><br/>
+            Remaining: <fmt:formatNumber type="currency" value="${project.funded - totalCost}"/></p>
 
         <c:if test="${missingLaborCategory}">
             <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>

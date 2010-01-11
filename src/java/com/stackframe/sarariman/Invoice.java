@@ -113,9 +113,12 @@ public class Invoice {
 
     public static CostData cost(Sarariman sarariman, int project, int employee, Date date, double duration) {
         Map<Long, LaborCategory> categoriesById = sarariman.getLaborCategories();
-
-        // FIXME: Need to look at date ranges of both the category and the assignment.
         Collection<LaborCategoryAssignment> projectBillRates = sarariman.getProjectBillRates();
+        return cost(sarariman, categoriesById, projectBillRates, project, employee, date, duration);
+    }
+
+    public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, Date date, double duration) {
+        // FIXME: Need to look at date ranges of both the category and the assignment.
         for (LaborCategoryAssignment projectBillRate : projectBillRates) {
             LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
             if (projectBillRate.getEmployee().getNumber() == employee && category.getProject() == project) {

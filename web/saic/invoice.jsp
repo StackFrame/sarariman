@@ -101,8 +101,10 @@
                     <th>Duration</th>
                     <th>Cost</th>
                 </tr>
+                <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+                <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
                 <c:forEach var="row" items="${result.rows}">
-                    <c:set var="costData" value="${sarariman:cost(sarariman, row.project, row.employee, row.date, row.duration)}"/>
+                    <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                     <tr>
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task.jsp?task_id=${row.task}">${row.task}</a></td>
