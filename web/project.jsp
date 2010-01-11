@@ -103,7 +103,7 @@
             FROM hours AS h
             JOIN tasks AS t on h.task = t.id
             JOIN projects AS p ON t.project = p.id
-            WHERE p.id = ?
+            WHERE p.id = ? AND t.billable = TRUE
             <sql:param value="${project.id}"/>
         </sql:query>
         <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
