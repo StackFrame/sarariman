@@ -16,6 +16,7 @@
             <li><a href="./">Home</a></li>
             <li><a href="administrators">Administrators</a></li>
             <li><a href="approvers">Approvers</a></li>
+            <li><a href="employees">Employees</a></li>
             <li><a href="invoicemanagers">Invoice Managers</a></li>
             <li><a href="invoices">Invoices</a></li>
             <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
