@@ -38,4 +38,9 @@
         <function-class>com.stackframe.sarariman.Invoice</function-class>
         <function-signature>com.stackframe.sarariman.CostData cost(com.stackframe.sarariman.Sarariman, java.util.Map, java.util.Collection, int, int, java.sql.Date, double)</function-signature>
     </function>
+    <function>
+        <name>billableTasks</name>
+        <function-class>com.stackframe.sarariman.Task</function-class>
+        <function-signature>java.util.Collection getBillableTasks(com.stackframe.sarariman.Sarariman, com.stackframe.sarariman.Employee)</function-signature>
+    </function>
 </taglib>
