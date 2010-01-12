@@ -28,7 +28,7 @@
         <title>Project ${project.id}</title>
     </head>
     <body onload="altRows('tasks');altRows('categories');altRows('rates');">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
 
         <h1>Project ${project.id}</h1>
         <form method="POST" action="projectController">
