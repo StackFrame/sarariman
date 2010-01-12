@@ -9,13 +9,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
-<%
-        Employee user = (Employee)request.getAttribute("user");
-        if (!user.isInvoiceManager()) {
-            response.sendError(401);
-            return;
-        }
-%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -29,6 +22,13 @@
     </head>
     <body onload="altRows('tasks');altRows('categories');altRows('rates');">
         <%@include file="header.jsp" %>
+
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT project FROM project_managers WHERE employee=? AND project=?
+            <sql:param value="${user.number}"/>
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <c:set var="isManager" value="${resultSet.rowCount == 1}"/>
 
         <h1>Project ${project.id}</h1>
         <form method="POST" action="projectController">
@@ -83,65 +83,69 @@
             </c:forEach>
         </table>
 
-        <table class="altrows" id="categories">
-            <caption>Labor Categories</caption>
-            <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
-            <c:forEach var="entry" items="${sarariman.laborCategories}">
-                <c:if test="${entry.value.project == project.id}">
-                    <tr>
-                        <td><a href="laborcategory?id=${entry.key}">${entry.value.name}</a></td>
-                        <td class="currency"><a href="laborcategory?id=${entry.key}">$${entry.value.rate}</a></td>
-                        <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceStart}</a></td>
-                        <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceEnd}</a></td>
-                    </tr>
-                </c:if>
-            </c:forEach>
-        </table>
+        <c:if test="${isManager || user.administrator}">
 
-        <table class="altrows" id="rates">
-            <caption>Labor Category Assignments</caption>
-            <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th></tr>
-            <c:forEach var="entry" items="${sarariman.projectBillRates}">
-                <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
-                <c:if test="${laborCategory.project == project.id}">
-                    <tr>
-                        <c:url var="link" value="employee">
-                            <c:param name="id" value="${entry.employee.number}"/>
-                        </c:url>
-                        <td><a href="${link}">${entry.employee.fullName}</a></td>
-                        <td>${laborCategory.name}</td>
-                        <td>${entry.periodOfPerformanceStart}</td>
-                        <td>${entry.periodOfPerformanceEnd}</td>
-                    </tr>
-                </c:if>
-            </c:forEach>
-        </table>
+            <table class="altrows" id="categories">
+                <caption>Labor Categories</caption>
+                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
+                <c:forEach var="entry" items="${sarariman.laborCategories}">
+                    <c:if test="${entry.value.project == project.id}">
+                        <tr>
+                            <td><a href="laborcategory?id=${entry.key}">${entry.value.name}</a></td>
+                            <td class="currency"><a href="laborcategory?id=${entry.key}">$${entry.value.rate}</a></td>
+                            <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceStart}</a></td>
+                            <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceEnd}</a></td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+            </table>
 
-        <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT h.employee, h.date, h.duration, t.project
-            FROM hours AS h
-            JOIN tasks AS t on h.task = t.id
-            JOIN projects AS p ON t.project = p.id
-            WHERE p.id = ? AND t.billable = TRUE
-            <sql:param value="${project.id}"/>
-        </sql:query>
-        <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
-        <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
-        <c:set var="totalCost" value="0"/>
-        <c:forEach var="row" items="${result.rows}">
-            <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-            <c:if test="${empty costData.laborCategory}">
-                <c:set var="missingLaborCategory" value="true"/>
-                <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName}!</p>
+            <table class="altrows" id="rates">
+                <caption>Labor Category Assignments</caption>
+                <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th></tr>
+                <c:forEach var="entry" items="${sarariman.projectBillRates}">
+                    <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
+                    <c:if test="${laborCategory.project == project.id}">
+                        <tr>
+                            <c:url var="link" value="employee">
+                                <c:param name="id" value="${entry.employee.number}"/>
+                            </c:url>
+                            <td><a href="${link}">${entry.employee.fullName}</a></td>
+                            <td>${laborCategory.name}</td>
+                            <td>${entry.periodOfPerformanceStart}</td>
+                            <td>${entry.periodOfPerformanceEnd}</td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+            </table>
+
+            <sql:query dataSource="jdbc/sarariman" var="result">
+                SELECT h.employee, h.date, h.duration, t.project
+                FROM hours AS h
+                JOIN tasks AS t on h.task = t.id
+                JOIN projects AS p ON t.project = p.id
+                WHERE p.id = ? AND t.billable = TRUE
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+            <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+            <c:set var="totalCost" value="0"/>
+            <c:forEach var="row" items="${result.rows}">
+                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                <c:if test="${empty costData.laborCategory}">
+                    <c:set var="missingLaborCategory" value="true"/>
+                    <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName}!</p>
+                </c:if>
+                <c:set var="totalCost" value="${totalCost + costData.cost}"/>
+            </c:forEach>
+
+            <p>Expended: <fmt:formatNumber type="currency" value="${totalCost}"/><br/>
+                Remaining: <fmt:formatNumber type="currency" value="${project.funded - totalCost}"/></p>
+
+            <c:if test="${missingLaborCategory}">
+                <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
             </c:if>
-            <c:set var="totalCost" value="${totalCost + costData.cost}"/>
-        </c:forEach>
 
-        <p>Expended: <fmt:formatNumber type="currency" value="${totalCost}"/><br/>
-            Remaining: <fmt:formatNumber type="currency" value="${project.funded - totalCost}"/></p>
-
-        <c:if test="${missingLaborCategory}">
-            <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
         </c:if>
 
         <p>
