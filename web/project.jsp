@@ -51,6 +51,22 @@
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
 
+        <h2>Managers</h2>
+        <ul>
+            <sql:query dataSource="jdbc/sarariman" var="result">
+                SELECT employee
+                FROM project_managers
+                WHERE project=?
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:forEach var="row" items="${result.rows}">
+                <c:url var="link" value="employee">
+                    <c:param name="id" value="${row.employee}"/>
+                </c:url>
+                <li><a href="${link}">${directory.byNumber[row.employee].fullName}</a></li>
+            </c:forEach>
+        </ul>
+
         <table class="altrows" id="tasks">
             <caption>Tasks</caption>
             <tr><th>ID</th><th>Task</th><th>Active</th></tr>
@@ -89,7 +105,10 @@
                 <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
                 <c:if test="${laborCategory.project == project.id}">
                     <tr>
-                        <td>${entry.employee.fullName}</td>
+                        <c:url var="link" value="employee">
+                            <c:param name="id" value="${entry.employee.number}"/>
+                        </c:url>
+                        <td><a href="${link}">${entry.employee.fullName}</a></td>
                         <td>${laborCategory.name}</td>
                         <td>${entry.periodOfPerformanceStart}</td>
                         <td>${entry.periodOfPerformanceEnd}</td>
