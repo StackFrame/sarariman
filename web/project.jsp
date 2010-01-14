@@ -119,6 +119,26 @@
                 </c:forEach>
             </table>
 
+            <sql:query dataSource="jdbc/sarariman" var="invoices">
+                SELECT DISTINCT i.id
+                FROM invoices AS i
+                JOIN hours AS h ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
+                JOIN tasks AS t on t.id = h.task
+                JOIN projects AS p on p.id = t.project
+                WHERE p.id = ?
+                ORDER BY id DESC
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <h1>Invoices</h1>
+            <ul>
+                <c:forEach var="invoice" items="${invoices.rows}">
+                    <c:url var="link" value="invoice">
+                        <c:param name="invoice" value="${invoice.id}"/>
+                    </c:url>
+                    <li><a href="${link}">${invoice.id}</a></li>
+                </c:forEach>
+            </ul>
+
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
