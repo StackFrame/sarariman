@@ -16,7 +16,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('invoices')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+        
         <h1>Invoices</h1>
 
         <!-- FIXME: use invoice_info directly once we have fixed all of the entries. -->
@@ -29,7 +30,10 @@
             <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
             <c:forEach var="invoice" items="${invoices.rows}">
                 <tr>
-                    <td><a href="invoice?invoice=${invoice.id}">${invoice.id}</a></td>
+                    <c:url var="link" value="invoice">
+                        <c:param name="invoice" value="${invoice.id}"/>
+                    </c:url>
+                    <td><a href="${link}">${invoice.id}</a></td>
                     <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
                         SELECT *
                         FROM invoice_info AS i
@@ -54,6 +58,7 @@
                 </tr>
             </c:forEach>
         </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
