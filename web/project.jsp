@@ -20,7 +20,7 @@
         <script type="text/javascript" src="utilities.js"/>
         <title>Project ${project.id}</title>
     </head>
-    <body onload="altRows('tasks');altRows('categories');altRows('rates');">
+    <body onload="altRows('tasks');altRows('categories');altRows('rates');altRows('task_assignments');">
         <%@include file="header.jsp" %>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
@@ -72,13 +72,35 @@
             <tr><th>ID</th><th>Task</th><th>Active</th></tr>
             <c:forEach var="task" items="${project.tasks}">
                 <tr>
-                    <td><a href="task?task_id=${task.id}">${task.id}</a></td>
-                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
+                    <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
+                    <td><a href="${link}">${task.id}</a></td>
+                    <td><a href="${link}">${fn:escapeXml(task.name)}</a></td>
                     <td>
                         <form>
                             <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
                         </form>
                     </td>
+                </tr>
+            </c:forEach>
+        </table>
+
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT a.employee, t.id, t.name
+            FROM task_assignments as a
+            JOIN tasks AS t on t.id = a.task
+            JOIN projects AS p on p.id = t.project
+            WHERE p.id = ?
+            <sql:param value="${project.id}"/>
+        </sql:query>
+        <table class="altrows" id="task_assignments">
+            <caption>Task Assignments</caption>
+            <tr><th>Employee</th><th colspan="2">Task</th></tr>
+            <c:forEach var="row" items="${resultSet.rows}">
+                <tr>
+                    <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
+                    <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
+                    <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
+                    <td><a href="${link}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
                 </tr>
             </c:forEach>
         </table>
