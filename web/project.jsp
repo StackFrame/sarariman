@@ -119,6 +119,9 @@
                 </c:forEach>
             </table>
 
+            <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+            <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+
             <sql:query dataSource="jdbc/sarariman" var="result">
                 SELECT h.employee, h.date, h.duration, t.project
                 FROM hours AS h
@@ -127,20 +130,34 @@
                 WHERE p.id = ? AND t.billable = TRUE
                 <sql:param value="${project.id}"/>
             </sql:query>
-            <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
-            <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
-            <c:set var="totalCost" value="0"/>
+            <c:set var="expended" value="0"/>
             <c:forEach var="row" items="${result.rows}">
                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                 <c:if test="${empty costData.laborCategory}">
                     <c:set var="missingLaborCategory" value="true"/>
                     <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName}!</p>
                 </c:if>
-                <c:set var="totalCost" value="${totalCost + costData.cost}"/>
+                <c:set var="expended" value="${expended + costData.cost}"/>
             </c:forEach>
 
-            <p>Expended: <fmt:formatNumber type="currency" value="${totalCost}"/><br/>
-                Remaining: <fmt:formatNumber type="currency" value="${project.funded - totalCost}"/></p>
+            <sql:query dataSource="jdbc/sarariman" var="result">
+                SELECT h.employee, h.date, h.duration, t.project
+                FROM hours AS h
+                JOIN invoices AS i ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
+                JOIN tasks AS t on h.task = t.id
+                JOIN projects AS p ON t.project = p.id
+                WHERE p.id = ? AND t.billable = TRUE
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:set var="invoiced" value="0"/>
+            <c:forEach var="row" items="${result.rows}">
+                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                <c:set var="invoiced" value="${invoiced + costData.cost}"/>
+            </c:forEach>
+
+            <p>Invoiced: <fmt:formatNumber type="currency" value="${invoiced}"/><br/>
+                Expended: <fmt:formatNumber type="currency" value="${expended}"/><br/>
+                Remaining: <fmt:formatNumber type="currency" value="${project.funded - expended}"/></p>
 
             <c:if test="${missingLaborCategory}">
                 <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
