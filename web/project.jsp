@@ -248,10 +248,16 @@
             </c:forEach>
 
             <h2>Cumulative</h2>
-            <p>Invoiced: <fmt:formatNumber type="currency" value="${invoicedTotal}"/>
-                Remaining from invoiced:  <fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/> <br/>
-                Expended: <fmt:formatNumber type="currency" value="${expendedTotal}"/>
-                Remaining from expended: <fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></p>
+            <table>
+                <tr>
+                    <td>Invoiced:</td><td><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
+                    <td>Remaining from invoiced:</td><td><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>
+                </tr>
+                <tr>
+                    <td>Expended:</td><td><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
+                    <td>Remaining from expended:</td><td><fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></td>
+                </tr>
+            </table>
 
             <c:if test="${missingLaborCategory}">
                 <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
