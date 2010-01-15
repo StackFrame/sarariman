@@ -112,7 +112,8 @@
 
             <table class="altrows" id="categories">
                 <caption>Labor Categories</caption>
-                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th>Expended</th></tr>
+                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th colspan="2">Expended</th></tr>
+                <tr><th colspan="4"></th><th>Hours</th><th>Dollars</th></tr>
                 <c:forEach var="entry" items="${sarariman.laborCategories}">
                     <c:if test="${entry.value.project == project.id}">
                         <c:set var="category" value="${entry.value}"/>
@@ -131,15 +132,17 @@
                                 WHERE p.id = ? AND t.billable = TRUE
                                 <sql:param value="${project.id}"/>
                             </sql:query>
-                            <c:set var="expended" value="0"/>
+                            <c:set var="expendedCost" value="0"/>
+                            <c:set var="expendedDuration" value="0"/>
                             <c:forEach var="row" items="${result.rows}">
                                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                                 <c:if test="${costData.laborCategory.id == category.id}">
-                                    <c:set var="expended" value="${expended + costData.cost}"/>
+                                    <c:set var="expendedDuration" value="${expendedDuration + row.duration}"/>
+                                    <c:set var="expendedCost" value="${expendedCost + costData.cost}"/>
                                 </c:if>
                             </c:forEach>
-                            <td class="currency"><fmt:formatNumber type="currency" value="${expended}"/></td>
-
+                            <td class="duration">${expendedDuration}</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
                         </tr>
                     </c:if>
                 </c:forEach>
