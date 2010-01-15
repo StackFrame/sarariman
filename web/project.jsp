@@ -110,10 +110,13 @@
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
+            <c:set var="expendedTotal" value="0"/>
+            <c:set var="invoicedTotal" value="0"/>
+
             <table class="altrows" id="categories">
                 <caption>Labor Categories</caption>
-                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th colspan="2">Expended</th></tr>
-                <tr><th colspan="4"></th><th>Hours</th><th>Dollars</th></tr>
+                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th colspan="2">Expended</th><th colspan="2">Invoiced</th></tr>
+                <tr><th colspan="4"></th><th>Hours</th><th>Dollars</th><th>Hours</th><th>Dollars</th></tr>
                 <c:forEach var="entry" items="${sarariman.laborCategories}">
                     <c:if test="${entry.value.project == project.id}">
                         <c:set var="category" value="${entry.value}"/>
@@ -143,6 +146,30 @@
                             </c:forEach>
                             <td class="duration">${expendedDuration}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
+                            <c:set var="expendedTotal" value="${expendedTotal + expendedCost}"/>
+
+                            <sql:query dataSource="jdbc/sarariman" var="result">
+                                SELECT h.employee, h.date, h.duration, t.project
+                                FROM hours AS h
+                                JOIN invoices AS i ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
+                                JOIN tasks AS t on h.task = t.id
+                                JOIN projects AS p ON t.project = p.id
+                                WHERE p.id = ? AND t.billable = TRUE
+                                <sql:param value="${project.id}"/>
+                            </sql:query>
+                            <c:set var="invoicedCost" value="0"/>
+                            <c:set var="invoicedDuration" value="0"/>
+                            <c:forEach var="row" items="${result.rows}">
+                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                                <c:if test="${costData.laborCategory.id == category.id}">
+                                    <c:set var="invoicedDuration" value="${invoicedDuration + row.duration}"/>
+                                    <c:set var="invoicedCost" value="${invoicedCost + costData.cost}"/>
+                                </c:if>
+                            </c:forEach>
+                            <td class="duration">${invoicedDuration}</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${invoicedCost}"/></td>
+                            <c:set var="invoicedTotal" value="${invoicedTotal + invoicedCost}"/>
+
                         </tr>
                     </c:if>
                 </c:forEach>
@@ -220,9 +247,9 @@
                 <c:set var="invoiced" value="${invoiced + costData.cost}"/>
             </c:forEach>
 
-            <p>Invoiced: <fmt:formatNumber type="currency" value="${invoiced}"/><br/>
-                Expended: <fmt:formatNumber type="currency" value="${expended}"/><br/>
-                Remaining: <fmt:formatNumber type="currency" value="${project.funded - expended}"/></p>
+            <p>Invoiced: <fmt:formatNumber type="currency" value="${invoicedTotal}"/><br/>
+                Expended: <fmt:formatNumber type="currency" value="${expendedTotal}"/><br/>
+                Remaining: <fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></p>
 
             <c:if test="${missingLaborCategory}">
                 <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
