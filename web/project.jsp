@@ -204,7 +204,7 @@
                 ORDER BY id DESC
                 <sql:param value="${project.id}"/>
             </sql:query>
-            <h1>Invoices</h1>
+            <h2>Invoices</h2>
             <ul>
                 <c:forEach var="invoice" items="${invoices.rows}">
                     <c:url var="link" value="invoice">
@@ -247,9 +247,11 @@
                 <c:set var="invoiced" value="${invoiced + costData.cost}"/>
             </c:forEach>
 
-            <p>Invoiced: <fmt:formatNumber type="currency" value="${invoicedTotal}"/><br/>
-                Expended: <fmt:formatNumber type="currency" value="${expendedTotal}"/><br/>
-                Remaining: <fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></p>
+            <h2>Cumulative</h2>
+            <p>Invoiced: <fmt:formatNumber type="currency" value="${invoicedTotal}"/>
+                Remaining from invoiced:  <fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/> <br/>
+                Expended: <fmt:formatNumber type="currency" value="${expendedTotal}"/>
+                Remaining from expended: <fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></p>
 
             <c:if test="${missingLaborCategory}">
                 <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
