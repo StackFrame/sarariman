@@ -90,7 +90,7 @@
                                 <td class="error">no labor category</td>                                                        
                             </c:when>
                             <c:otherwise>
-                                <td>${costData.laborCategory}</td>                                                        
+                                <td>${costData.laborCategory.name}</td>
                             </c:otherwise>
                         </c:choose>
                         <td>${row.date}</td>

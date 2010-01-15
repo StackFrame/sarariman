@@ -107,16 +107,39 @@
 
         <c:if test="${isManager || user.administrator}">
 
+            <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+            <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+
             <table class="altrows" id="categories">
                 <caption>Labor Categories</caption>
-                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
+                <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th>Expended</th></tr>
                 <c:forEach var="entry" items="${sarariman.laborCategories}">
                     <c:if test="${entry.value.project == project.id}">
+                        <c:set var="category" value="${entry.value}"/>
+                        <c:url var="catLink" value="laborcategory"><c:param name="id" value="${entry.key}"/></c:url>
                         <tr>
-                            <td><a href="laborcategory?id=${entry.key}">${entry.value.name}</a></td>
-                            <td class="currency"><a href="laborcategory?id=${entry.key}">$${entry.value.rate}</a></td>
-                            <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceStart}</a></td>
-                            <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceEnd}</a></td>
+                            <td><a href="${catLink}">${category.name}</a></td>
+                            <td class="currency"><a href="${catLink}"><fmt:formatNumber type="currency" value="${category.rate}"/></a></td>
+                            <td><a href="${catLink}">${category.periodOfPerformanceStart}</a></td>
+                            <td><a href="${catLink}">${category.periodOfPerformanceEnd}</a></td>
+
+                            <sql:query dataSource="jdbc/sarariman" var="result">
+                                SELECT h.employee, h.date, h.duration, t.project
+                                FROM hours AS h
+                                JOIN tasks AS t on h.task = t.id
+                                JOIN projects AS p ON t.project = p.id
+                                WHERE p.id = ? AND t.billable = TRUE
+                                <sql:param value="${project.id}"/>
+                            </sql:query>
+                            <c:set var="expended" value="0"/>
+                            <c:forEach var="row" items="${result.rows}">
+                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                                <c:if test="${costData.laborCategory.id == category.id}">
+                                    <c:set var="expended" value="${expended + costData.cost}"/>
+                                </c:if>
+                            </c:forEach>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${expended}"/></td>
+
                         </tr>
                     </c:if>
                 </c:forEach>
@@ -160,9 +183,6 @@
                     <li><a href="${link}">${invoice.id}</a></li>
                 </c:forEach>
             </ul>
-
-            <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
-            <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
             <sql:query dataSource="jdbc/sarariman" var="result">
                 SELECT h.employee, h.date, h.duration, t.project

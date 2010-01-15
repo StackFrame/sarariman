@@ -127,7 +127,7 @@ public class Invoice {
                     BigDecimal rate = category.getRate().setScale(2);
                     BigDecimal cost = rate.multiply(new BigDecimal(duration));
                     cost = cost.setScale(2, RoundingMode.UP);
-                    return new CostData(cost, category.getName(), rate);
+                    return new CostData(cost, category, rate);
                 }
             }
         }

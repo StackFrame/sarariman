@@ -13,10 +13,10 @@ import java.math.BigDecimal;
 public class CostData {
 
     private final BigDecimal cost;
-    private final String laborCategory;
+    private final LaborCategory laborCategory;
     private final BigDecimal rate;
 
-    public CostData(BigDecimal cost, String laborCategory, BigDecimal rate) {
+    public CostData(BigDecimal cost, LaborCategory laborCategory, BigDecimal rate) {
         this.cost = cost;
         this.laborCategory = laborCategory;
         this.rate = rate;
@@ -26,7 +26,7 @@ public class CostData {
         return cost;
     }
 
-    public String getLaborCategory() {
+    public LaborCategory getLaborCategory() {
         return laborCategory;
     }
 

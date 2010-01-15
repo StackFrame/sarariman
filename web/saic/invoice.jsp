@@ -118,7 +118,7 @@
                                 <td class="error">No line item!</td>
                             </c:otherwise>
                         </c:choose>
-                        <td>${costData.laborCategory}</td>
+                        <td>${costData.laborCategory.name}</td>
                         <c:choose>
                             <c:when test="${!empty row.charge_number}">
                                 <td>${row.charge_number}</td>
