@@ -222,29 +222,12 @@
                 WHERE p.id = ? AND t.billable = TRUE
                 <sql:param value="${project.id}"/>
             </sql:query>
-            <c:set var="expended" value="0"/>
             <c:forEach var="row" items="${result.rows}">
                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                 <c:if test="${empty costData.laborCategory}">
                     <c:set var="missingLaborCategory" value="true"/>
-                    <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName}!</p>
+                    <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName} on ${row.date}!</p>
                 </c:if>
-                <c:set var="expended" value="${expended + costData.cost}"/>
-            </c:forEach>
-
-            <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT h.employee, h.date, h.duration, t.project
-                FROM hours AS h
-                JOIN invoices AS i ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
-                JOIN tasks AS t on h.task = t.id
-                JOIN projects AS p ON t.project = p.id
-                WHERE p.id = ? AND t.billable = TRUE
-                <sql:param value="${project.id}"/>
-            </sql:query>
-            <c:set var="invoiced" value="0"/>
-            <c:forEach var="row" items="${result.rows}">
-                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                <c:set var="invoiced" value="${invoiced + costData.cost}"/>
             </c:forEach>
 
             <h2>Cumulative</h2>
