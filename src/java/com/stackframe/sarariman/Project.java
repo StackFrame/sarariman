@@ -21,6 +21,8 @@ public class Project {
 
     private final long id;
     private final String name;
+    private final String contract;
+    private final String subcontract;
     private final long customer;
     private final BigDecimal funded;
     private final Sarariman sarariman;
@@ -36,8 +38,10 @@ public class Project {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
                     long customer = resultSet.getLong("customer");
+                    String contract = resultSet.getString("contract_number");
+                    String subcontract = resultSet.getString("subcontract_number");
                     BigDecimal funded = resultSet.getBigDecimal("funded");
-                    map.put(id, new Project(sarariman, id, name, customer, funded));
+                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded));
                 }
                 return map;
             } finally {
@@ -48,11 +52,13 @@ public class Project {
         }
     }
 
-    Project(Sarariman sarariman, long id, String name, long customer, BigDecimal funded) {
+    Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded) {
         this.sarariman = sarariman;
         this.id = id;
         this.name = name;
         this.customer = customer;
+        this.contract = contract;
+        this.subcontract = subcontract;
         this.funded = funded;
     }
 
@@ -62,6 +68,14 @@ public class Project {
 
     public String getName() {
         return name;
+    }
+
+    public String getContract() {
+        return contract;
+    }
+
+    public String getSubcontract() {
+        return subcontract;
     }
 
     public long getCustomer() {
@@ -76,17 +90,19 @@ public class Project {
         return Task.getTasks(sarariman, this);
     }
 
-    public static Project create(Sarariman sarariman, String name, Long customer, BigDecimal funded) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO projects (name, customer, funded) VALUES(?, ?, ?)");
+    public static Project create(Sarariman sarariman, String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO projects (name, customer, contract_number, subcontract_number, funded) VALUES(?, ?, ?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
-            ps.setBigDecimal(3, funded);
+            ps.setString(3, contract);
+            ps.setString(4, subcontract);
+            ps.setBigDecimal(5, funded);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             try {
                 rs.next();
-                return new Project(sarariman, rs.getLong(1), name, customer, funded);
+                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded);
             } finally {
                 rs.close();
             }
@@ -95,12 +111,14 @@ public class Project {
         }
     }
 
-    public void update(String name, Long customer, BigDecimal funded) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE projects SET name=?, customer=?, funded=? WHERE id=?");
+    public void update(String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {
+        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE projects SET name=?, customer=?, contract_number=?, subcontract_number=?, funded=? WHERE id=?");
         ps.setString(1, name);
         ps.setLong(2, customer);
-        ps.setBigDecimal(3, funded);
-        ps.setLong(4, id);
+        ps.setString(3, contract);
+        ps.setString(4, subcontract);
+        ps.setBigDecimal(5, funded);
+        ps.setLong(6, id);
         ps.executeUpdate();
         ps.close();
     }
@@ -114,7 +132,7 @@ public class Project {
 
     @Override
     public String toString() {
-        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",funded=" + funded + "}";
+        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",contract=" + contract + ",subcontract=" + subcontract + ",funded=" + funded + "}";
     }
 
 }

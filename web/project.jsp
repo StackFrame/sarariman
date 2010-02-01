@@ -45,6 +45,12 @@
                 </c:forEach>
             </select><br/>
 
+            <label for="contract">Contract: </label>
+            <input type="text" size="40" id="contract" name="contract" value="${fn:escapeXml(project.contract)}"/><br/>
+
+            <label for="subcontract">Subcontract: </label>
+            <input type="text" size="40" id="subcontract" name="subcontract" value="${fn:escapeXml(project.subcontract)}"/><br/>
+
             <label for="funded">Funded: </label>
             <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>
 
