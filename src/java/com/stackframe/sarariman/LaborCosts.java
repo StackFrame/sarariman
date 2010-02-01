@@ -66,8 +66,8 @@ public class LaborCosts extends HttpServlet {
                         BigDecimal scaledDuration = new BigDecimal(duration).setScale(2);
                         int project = resultSet.getInt("project");
                         CostData costData = Invoice.cost(sarariman, project, employeeNumber, date, duration);
-                        out.println("\"" + employee.getFullName() + "\"," + task + "," + costData.getLaborCategory() + "," + date +
-                                "," + costData.getRate() + "," + scaledDuration + "," + costData.getCost());
+                        out.println("\"" + employee.getFullName() + "\"," + task + "," + costData.getLaborCategory().getName() +
+                                "," + date + "," + costData.getRate() + "," + scaledDuration + "," + costData.getCost());
                     }
                 } finally {
                     resultSet.close();

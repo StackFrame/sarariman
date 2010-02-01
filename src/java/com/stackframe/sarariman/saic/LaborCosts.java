@@ -71,8 +71,8 @@ public class LaborCosts extends HttpServlet {
                         int project = resultSet.getInt("project");
                         CostData costData = Invoice.cost(sarariman, project, employeeNumber, date, duration);
                         out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + "," + chargeNumber + "," +
-                                costData.getLaborCategory() + "," + date + "," + costData.getRate() + "," + scaledDuration + "," +
-                                costData.getCost());
+                                costData.getLaborCategory().getName() + "," + date + "," + costData.getRate() + "," +
+                                scaledDuration + "," + costData.getCost());
                     }
                 } finally {
                     resultSet.close();
