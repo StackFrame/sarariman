@@ -127,45 +127,39 @@
                             <td><a href="${catLink}">${category.periodOfPerformanceStart}</a></td>
                             <td><a href="${catLink}">${category.periodOfPerformanceEnd}</a></td>
 
-                            <sql:query dataSource="jdbc/sarariman" var="result">
-                                SELECT h.employee, h.date, h.duration, t.project
+                            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                                SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
                                 FROM hours AS h
                                 JOIN tasks AS t on h.task = t.id
-                                JOIN projects AS p ON t.project = p.id
-                                WHERE p.id = ? AND t.billable = TRUE
-                                <sql:param value="${project.id}"/>
+                                JOIN projects AS p on p.id = t.project
+                                JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                                JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                                WHERE c.id=? AND t.billable=TRUE;
+                                <sql:param value="${category.id}"/>
                             </sql:query>
-                            <c:set var="expendedCost" value="0"/>
-                            <c:set var="expendedDuration" value="0"/>
-                            <c:forEach var="row" items="${result.rows}">
-                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                                <c:if test="${costData.laborCategory.id == category.id}">
-                                    <c:set var="expendedDuration" value="${expendedDuration + row.duration}"/>
-                                    <c:set var="expendedCost" value="${expendedCost + costData.cost}"/>
-                                </c:if>
-                            </c:forEach>
+
+                            <c:set var="expendedDuration" value="${resultSet.rows[0].durationTotal}"/>
+                            <c:set var="expendedCost" value="${resultSet.rows[0].costTotal}"/>
+
                             <td class="duration">${expendedDuration}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
                             <c:set var="expendedTotal" value="${expendedTotal + expendedCost}"/>
 
-                            <sql:query dataSource="jdbc/sarariman" var="result">
-                                SELECT h.employee, h.date, h.duration, t.project
+                            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                                SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
                                 FROM hours AS h
                                 JOIN invoices AS i ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
                                 JOIN tasks AS t on h.task = t.id
-                                JOIN projects AS p ON t.project = p.id
-                                WHERE p.id = ? AND t.billable = TRUE
-                                <sql:param value="${project.id}"/>
+                                JOIN projects AS p on p.id = t.project
+                                JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                                JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                                WHERE c.id=? AND t.billable=TRUE;
+                                <sql:param value="${category.id}"/>
                             </sql:query>
-                            <c:set var="invoicedCost" value="0"/>
-                            <c:set var="invoicedDuration" value="0"/>
-                            <c:forEach var="row" items="${result.rows}">
-                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                                <c:if test="${costData.laborCategory.id == category.id}">
-                                    <c:set var="invoicedDuration" value="${invoicedDuration + row.duration}"/>
-                                    <c:set var="invoicedCost" value="${invoicedCost + costData.cost}"/>
-                                </c:if>
-                            </c:forEach>
+
+                            <c:set var="invoicedDuration" value="${resultSet.rows[0].durationTotal}"/>
+                            <c:set var="invoicedCost" value="${resultSet.rows[0].costTotal}"/>
+
                             <td class="duration">${invoicedDuration}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${invoicedCost}"/></td>
                             <c:set var="invoicedTotal" value="${invoicedTotal + invoicedCost}"/>
