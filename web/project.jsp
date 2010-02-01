@@ -105,7 +105,7 @@
                 <tr>
                     <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
                     <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
-                    <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
+                    <c:url var="link" value="task"><c:param name="task_id" value="${row.id}"/></c:url>
                     <td><a href="${link}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
                 </tr>
             </c:forEach>
