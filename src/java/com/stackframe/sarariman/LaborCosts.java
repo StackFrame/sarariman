@@ -51,7 +51,7 @@ public class LaborCosts extends HttpServlet {
                     "JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date " +
                     "JOIN tasks AS t on i.task = t.id " +
                     "JOIN projects AS p ON t.project = p.id " +
-                    "WHERE i.id = ? " +
+                    "WHERE i.id = ? AND t.billable = TRUE " +
                     "ORDER BY h.date ASC, h.employee ASC, h.task ASC");
             ps.setString(1, invoice);
             try {
