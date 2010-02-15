@@ -72,6 +72,14 @@
         <jsp-file>/customer.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>employeeBilled</servlet-name>
+        <jsp-file>/employeeBilled.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>weekBilled</servlet-name>
+        <jsp-file>/weekBilled.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>TimesheetController</servlet-name>
         <servlet-class>com.stackframe.sarariman.TimesheetController</servlet-class>
     </servlet>
@@ -106,6 +114,14 @@
     <servlet-mapping>
         <servlet-name>employees</servlet-name>
         <url-pattern>/employees</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>employeeBilled</servlet-name>
+        <url-pattern>/employeeBilled</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>weekBilled</servlet-name>
+        <url-pattern>/weekBilled</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>
