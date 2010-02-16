@@ -26,7 +26,7 @@ public class LaborCategoryTable extends AbstractCollection<LaborCategory> {
     }
 
     private Collection<LaborCategory> getLaborCategories() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM labor_categories");
         try {
             ResultSet resultSet = ps.executeQuery();
@@ -43,6 +43,7 @@ public class LaborCategoryTable extends AbstractCollection<LaborCategory> {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
@@ -73,7 +74,7 @@ public class LaborCategoryTable extends AbstractCollection<LaborCategory> {
     }
 
     public int size() {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) as numrows FROM labor_categories");
             try {
@@ -86,6 +87,7 @@ public class LaborCategoryTable extends AbstractCollection<LaborCategory> {
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -95,11 +97,16 @@ public class LaborCategoryTable extends AbstractCollection<LaborCategory> {
     @Override
     public boolean add(LaborCategory laborCategory) {
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO labor_categories (project) VALUES(?)");
-            ps.setLong(1, laborCategory.getProject());
-            ps.executeUpdate();
-            ps.close();
-            return true;
+            Connection connection = sarariman.openConnection();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO labor_categories (project) VALUES(?)");
+            try {
+                ps.setLong(1, laborCategory.getProject());
+                ps.executeUpdate();
+                return true;
+            } finally {
+                ps.close();
+                connection.close();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -113,11 +120,16 @@ public class LaborCategoryTable extends AbstractCollection<LaborCategory> {
 
         LaborCategory laborCategory = (LaborCategory)o;
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM labor_categories WHERE id=?");
-            ps.setLong(1, laborCategory.getId());
-            ps.executeUpdate();
-            ps.close();
-            return true;
+            Connection connection = sarariman.openConnection();
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM labor_categories WHERE id=?");
+            try {
+                ps.setLong(1, laborCategory.getId());
+                ps.executeUpdate();
+                return true;
+            } finally {
+                ps.close();
+                connection.close();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

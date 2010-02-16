@@ -28,7 +28,8 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
     public Iterator<LaborCategoryAssignment> iterator() {
         final List<LaborCategoryAssignment> rates = new ArrayList<LaborCategoryAssignment>();
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("SELECT * FROM labor_category_assignments");
+            Connection connection = sarariman.openConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM labor_category_assignments");
             try {
                 ResultSet resultSet = ps.executeQuery();
                 try {
@@ -42,6 +43,7 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
             final Iterator<LaborCategoryAssignment> iterator = rates.iterator();
             return new Iterator<LaborCategoryAssignment>() {
@@ -65,7 +67,7 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
     }
 
     public int size() {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) as numrows FROM labor_category_assignments");
             try {
@@ -78,6 +80,7 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

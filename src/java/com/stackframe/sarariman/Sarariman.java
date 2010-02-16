@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -32,7 +31,6 @@ import javax.sql.DataSource;
 public class Sarariman implements ServletContextListener {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
-    private Connection connection;
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
     private final Timer timer = new Timer("Sarariman");
@@ -135,21 +133,6 @@ public class Sarariman implements ServletContextListener {
         return invoiceManagers;
     }
 
-    /**
-     * @deprecated
-     */
-    public Connection getConnection() {
-        try {
-            if (connection.isClosed()) {
-                connection = openConnection();
-            }
-        } catch (SQLException se) {
-            throw new RuntimeException(se);
-        }
-
-        return connection;
-    }
-
     public Timer getTimer() {
         return timer;
     }
@@ -188,8 +171,6 @@ public class Sarariman implements ServletContextListener {
     }
 
     public void contextInitialized(ServletContextEvent sce) {
-        connection = openConnection();
-
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context)initContext.lookup("java:comp/env");
@@ -211,19 +192,7 @@ public class Sarariman implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
-
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            logger.log(Level.WARNING, "exception while closing connection", e);
-        }
-
         timer.cancel();
-    }
-
-    @Override
-    protected void finalize() throws Exception {
-        connection.close();
     }
 
 }
