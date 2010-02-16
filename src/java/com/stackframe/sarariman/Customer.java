@@ -22,7 +22,7 @@ public class Customer {
     private final Sarariman sarariman;
 
     public static Map<Long, Customer> getCustomers(Sarariman sarariman) throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM customers ORDER BY name");
         try {
             ResultSet resultSet = ps.executeQuery();
@@ -39,6 +39,7 @@ public class Customer {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
@@ -57,15 +58,21 @@ public class Customer {
     }
 
     public void update(String name) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE customers SET name=? WHERE id=?");
-        ps.setString(1, name);
-        ps.setLong(2, id);
-        ps.executeUpdate();
-        ps.close();
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("UPDATE customers SET name=? WHERE id=?");
+        try {
+            ps.setString(1, name);
+            ps.setLong(2, id);
+            ps.executeUpdate();
+        } finally {
+            ps.close();
+            connection.close();
+        }
     }
 
     public static Customer create(Sarariman sarariman, String name) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO customers (name) VALUES(?)");
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO customers (name) VALUES(?)");
         try {
             ps.setString(1, name);
             ps.executeUpdate();
@@ -78,14 +85,20 @@ public class Customer {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public void delete() throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM customers WHERE id=?");
-        ps.setLong(1, id);
-        ps.executeUpdate();
-        ps.close();
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM customers WHERE id=?");
+        try {
+            ps.setLong(1, id);
+            ps.executeUpdate();
+        } finally {
+            ps.close();
+            connection.close();
+        }
     }
 
     @Override
