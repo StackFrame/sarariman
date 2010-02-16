@@ -29,7 +29,7 @@ public class EmployeeTable extends AbstractCollection<Employee> {
     }
 
     private Collection<Employee> getEmployees() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         Map<Object, Employee> employees = sarariman.getDirectory().getByNumber();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + tableName);
         try {
@@ -45,6 +45,7 @@ public class EmployeeTable extends AbstractCollection<Employee> {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
@@ -75,7 +76,7 @@ public class EmployeeTable extends AbstractCollection<Employee> {
     }
 
     public int size() {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) as numrows FROM " + tableName);
             try {
@@ -88,6 +89,7 @@ public class EmployeeTable extends AbstractCollection<Employee> {
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -97,11 +99,17 @@ public class EmployeeTable extends AbstractCollection<Employee> {
     @Override
     public boolean add(Employee employee) {
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO " + tableName + " (employee) VALUES(?)");
-            ps.setLong(1, employee.getNumber());
-            ps.executeUpdate();
-            ps.close();
-            return true;
+            Connection connection = sarariman.openConnection();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO " + tableName + " (employee) VALUES(?)");
+            try {
+                ps.setLong(1, employee.getNumber());
+                ps.executeUpdate();
+                ps.close();
+                return true;
+            } finally {
+                ps.close();
+                connection.close();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -115,11 +123,17 @@ public class EmployeeTable extends AbstractCollection<Employee> {
 
         Employee employee = (Employee)o;
         try {
-            PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM " + tableName + " WHERE employee=?");
-            ps.setLong(1, employee.getNumber());
-            ps.executeUpdate();
-            ps.close();
-            return true;
+            Connection connection = sarariman.openConnection();
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM " + tableName + " WHERE employee=?");
+            try {
+                ps.setLong(1, employee.getNumber());
+                ps.executeUpdate();
+                ps.close();
+                return true;
+            } finally {
+                ps.close();
+                connection.close();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
