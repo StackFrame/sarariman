@@ -135,6 +135,9 @@ public class Sarariman implements ServletContextListener {
         return invoiceManagers;
     }
 
+    /**
+     * @deprecated
+     */
     public Connection getConnection() {
         try {
             if (connection.isClosed()) {
