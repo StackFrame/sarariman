@@ -71,6 +71,31 @@
         <c:url var="timeReports" value="timereportsbyproject"><c:param name="week" value="${param.week}"/></c:url>
         <a href="${timeReports}">Time reports for ${param.week}.</a>
 
+        <sql:query dataSource="jdbc/sarariman" var="result">
+            SELECT DISTINCT(p.id), p.name
+            FROM hours as h
+            JOIN tasks AS t ON h.task = t.id
+            JOIN projects AS p ON t.project = p.id
+            JOIN customers AS c ON c.id = p.customer
+            WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
+            ORDER BY p.id ASC
+            <sql:param value="${param.week}"/>
+            <sql:param value="${param.week}"/>
+        </sql:query>
+
+        <table>
+            <tr><th>Project</th></tr>
+            <c:forEach var="row" items="${result.rows}">
+                <tr>
+                    <c:url var="projectLink" value="projectBilled">
+                        <c:param name="project" value="${row.id}"/>
+                        <c:param name="week" value="${param.week}"/>
+                    </c:url>
+                    <td><a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(row.name)}</a></td>
+                </tr>
+            </c:forEach>
+        </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
