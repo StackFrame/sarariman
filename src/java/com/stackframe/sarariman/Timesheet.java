@@ -43,7 +43,7 @@ public class Timesheet {
     }
 
     public double getRegularHours() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT SUM(hours.duration) AS total " +
                 "FROM hours " +
@@ -67,11 +67,12 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public double getTotalHours() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT SUM(hours.duration) AS total " +
                 "FROM hours " +
@@ -93,6 +94,7 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
@@ -109,7 +111,7 @@ public class Timesheet {
             map.put(calendar, new BigDecimal(0));
         }
 
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT duration, date " +
                 "FROM hours " +
@@ -136,12 +138,13 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
         return map;
     }
 
     private double getHours(int task) throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT SUM(hours.duration) AS total " +
                 "FROM hours " +
@@ -164,11 +167,12 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public double getHours(Date day) throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT SUM(duration) AS total FROM hours WHERE employee=? AND date=?");
         try {
             ps.setInt(1, employeeNumber);
@@ -186,6 +190,7 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
@@ -198,7 +203,7 @@ public class Timesheet {
     }
 
     public boolean isSubmitted() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, week);
@@ -211,11 +216,12 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public Employee getApprover() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT approver FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, week);
@@ -233,11 +239,12 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public Timestamp getApprovedTimestamp() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT approved_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, week);
@@ -254,11 +261,12 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public Timestamp getSubmittedTimestamp() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, week);
@@ -275,11 +283,12 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public boolean isApproved() throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, week);
@@ -296,12 +305,13 @@ public class Timesheet {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public boolean approve(Employee user) {
         try {
-            Connection connection = sarariman.getConnection();
+            Connection connection = sarariman.openConnection();
             PreparedStatement ps = connection.prepareStatement("UPDATE timecards SET approved=true, approver=?, approved_timestamp=? WHERE date=? AND employee=?");
             try {
                 ps.setInt(1, user.getNumber());
@@ -320,6 +330,7 @@ public class Timesheet {
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
         } catch (SQLException se) {
             logger.log(Level.SEVERE, "caught exception approving timesheet", se);
@@ -333,7 +344,7 @@ public class Timesheet {
 
     public boolean reject() {
         try {
-            Connection connection = sarariman.getConnection();
+            Connection connection = sarariman.openConnection();
             PreparedStatement ps = connection.prepareStatement("DELETE FROM timecards WHERE date=? AND employee=?");
             try {
                 ps.setDate(1, week);
@@ -350,6 +361,7 @@ public class Timesheet {
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
         } catch (SQLException se) {
             logger.log(Level.SEVERE, "caught exception rejecting timesheet", se);
@@ -363,7 +375,7 @@ public class Timesheet {
 
     public boolean submit() {
         try {
-            Connection connection = sarariman.getConnection();
+            Connection connection = sarariman.openConnection();
             PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
             try {
                 ps.setInt(1, employeeNumber);
@@ -381,6 +393,7 @@ public class Timesheet {
                 }
             } finally {
                 ps.close();
+                connection.close();
             }
         } catch (SQLException se) {
             logger.log(Level.SEVERE, "caught exception submitting timesheet", se);
