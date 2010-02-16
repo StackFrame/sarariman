@@ -110,7 +110,7 @@ public class Sarariman implements ServletContextListener {
         timer.schedule(reloadLDAP, ONE_HOUR, ONE_HOUR);
     }
 
-    private Connection openConnection() {
+    public Connection openConnection() {
         try {
             DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
             return source.getConnection();
