@@ -43,7 +43,7 @@ public class LaborCosts extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/csv;charset=UTF-8");
         String invoice = request.getParameter("id");
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PrintWriter out = response.getWriter();
         try {
             out.println("Employee,Task,Line Item,Charge Number,Labor Category,Date,Rate,Duration,Cost");
@@ -84,6 +84,11 @@ public class LaborCosts extends HttpServlet {
             throw new IOException(se);
         } finally {
             out.close();
+            try {
+                connection.close();
+            } catch (SQLException se) {
+                throw new ServletException(se);
+            }
         }
     }
 
