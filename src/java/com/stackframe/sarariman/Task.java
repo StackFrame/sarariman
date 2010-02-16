@@ -26,7 +26,7 @@ public class Task {
 
     public static Collection<Task> getTasks(Sarariman sarariman) throws SQLException {
         Map<Long, Project> projects = sarariman.getProjects();
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
                 "p.id AS project_id, p.name AS project_name, " +
@@ -58,12 +58,13 @@ public class Task {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public static Collection<Task> getBillableTasks(Sarariman sarariman, Employee employee) throws SQLException {
         Map<Long, Project> projects = sarariman.getProjects();
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
                 "p.id AS project_id, p.name AS project_name, " +
@@ -98,11 +99,12 @@ public class Task {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public static Collection<Task> getTasks(Sarariman sarariman, Project project) throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active " +
                 "FROM tasks AS t " +
                 "WHERE t.project = ?");
@@ -125,6 +127,7 @@ public class Task {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
