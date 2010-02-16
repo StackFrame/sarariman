@@ -28,7 +28,7 @@ public class Project {
     private final Sarariman sarariman;
 
     public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
-        Connection connection = sarariman.getConnection();
+        Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects ORDER BY name");
         try {
             ResultSet resultSet = ps.executeQuery();
@@ -49,6 +49,7 @@ public class Project {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
@@ -91,7 +92,8 @@ public class Project {
     }
 
     public static Project create(Sarariman sarariman, String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("INSERT INTO projects (name, customer, contract_number, subcontract_number, funded) VALUES(?, ?, ?, ?, ?)");
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, contract_number, subcontract_number, funded) VALUES(?, ?, ?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -108,26 +110,37 @@ public class Project {
             }
         } finally {
             ps.close();
+            connection.close();
         }
     }
 
     public void update(String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("UPDATE projects SET name=?, customer=?, contract_number=?, subcontract_number=?, funded=? WHERE id=?");
-        ps.setString(1, name);
-        ps.setLong(2, customer);
-        ps.setString(3, contract);
-        ps.setString(4, subcontract);
-        ps.setBigDecimal(5, funded);
-        ps.setLong(6, id);
-        ps.executeUpdate();
-        ps.close();
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, contract_number=?, subcontract_number=?, funded=? WHERE id=?");
+        try {
+            ps.setString(1, name);
+            ps.setLong(2, customer);
+            ps.setString(3, contract);
+            ps.setString(4, subcontract);
+            ps.setBigDecimal(5, funded);
+            ps.setLong(6, id);
+            ps.executeUpdate();
+        } finally {
+            ps.close();
+            connection.close();
+        }
     }
 
     public void delete() throws SQLException {
-        PreparedStatement ps = sarariman.getConnection().prepareStatement("DELETE FROM projects WHERE id=?");
-        ps.setLong(1, id);
-        ps.executeUpdate();
-        ps.close();
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM projects WHERE id=?");
+        try {
+            ps.setLong(1, id);
+            ps.executeUpdate();
+        } finally {
+            ps.close();
+            connection.close();
+        }
     }
 
     @Override
