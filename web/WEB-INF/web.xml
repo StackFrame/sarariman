@@ -80,6 +80,10 @@
         <jsp-file>/weekBilled.jsp</jsp-file>
     </servlet>
     <servlet>
+        <servlet-name>projectBilled</servlet-name>
+        <jsp-file>/projectBilled.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>TimesheetController</servlet-name>
         <servlet-class>com.stackframe.sarariman.TimesheetController</servlet-class>
     </servlet>
@@ -122,6 +126,10 @@
     <servlet-mapping>
         <servlet-name>weekBilled</servlet-name>
         <url-pattern>/weekBilled</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>projectBilled</servlet-name>
+        <url-pattern>/projectBilled</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>timesheets</servlet-name>

@@ -5,6 +5,7 @@
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -254,6 +255,13 @@
             </c:url>
             <a href="${hoursByProject}">Hours billed to this project</a>.
         </p>
+
+        <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
+        <c:url var="projectBilled" value="projectBilled">
+            <c:param name="project" value="${param.id}"/>
+            <c:param name="week" value="${week}"/>
+        </c:url>
+        <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
 
         <%@include file="footer.jsp" %>
     </body>
