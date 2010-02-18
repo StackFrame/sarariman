@@ -68,7 +68,7 @@
         Name: <a href="../task?task_id=${param.task_id}">${fn:escapeXml(task_name)}</a><br/>
         <form method="POST">
             <label for="charge_number">Charge Number: </label>
-            <input type="text" size="19" id="charge_number" name="charge_number" value="${task.charge_number}"/><br/>
+            <input type="text" size="30" id="charge_number" name="charge_number" value="${task.charge_number}"/><br/>
             <label for="wbs">WBS: </label>
             <input type="text" id="wbs" name="wbs" value="${task.wbs}"/>
             <label for="po_line_item">PO Line Item: </label>
