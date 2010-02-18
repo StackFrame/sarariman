@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -30,7 +29,6 @@ import javax.sql.DataSource;
  */
 public class Sarariman implements ServletContextListener {
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
     private final Timer timer = new Timer("Sarariman");
@@ -56,9 +54,6 @@ public class Sarariman implements ServletContextListener {
 
     public String getVersion() {
         return "1.0.32r" + getRevision();
-    }
-
-    public Sarariman() {
     }
 
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
