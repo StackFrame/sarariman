@@ -17,7 +17,7 @@
         <script type="text/javascript" src="../utilities.js"/>
     </head>
     <body onload="altRows('tasks')">
-        <p><a href="../">Home</a></p>
+        <%@include file="../header.jsp" %>
 
         <!-- FIXME: Get customer id out of config or look it up or something. -->
         <sql:query dataSource="jdbc/sarariman" var="tasks">

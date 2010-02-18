@@ -13,7 +13,8 @@
         <title>SAIC Invoices</title>
     </head>
     <body>
-        <p><a href="../">Home</a></p>
+        <%@include file="../header.jsp" %>
+
         <h1>SAIC Invoices</h1>
         <ul>
             <!-- FIXME: Get customer id out of config or look it up or something. -->

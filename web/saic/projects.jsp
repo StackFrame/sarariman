@@ -34,6 +34,8 @@
     </head>
 
     <body>
+        <%@include file="../header.jsp" %>
+
         <h1>${customer.rows[0].name} - ${week}</h1>
 
         <form action="${request.requestURI}" method="get">

@@ -12,8 +12,9 @@
     </head>
 
     <body>
+        <%@include file="../header.jsp" %>
+
         <h1>SAIC Tools</h1>
-        <p><a href="../">Home</a></p>
         <ul>
             <li><a href="invoices.jsp">Invoices</a></li>
             <li><a href="tasks.jsp">Tasks</a></li>

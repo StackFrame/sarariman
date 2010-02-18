@@ -23,7 +23,7 @@
         <script type="text/javascript" src="../utilities.js"/>
     </head>
     <body  onload="altRows('entries')">
-        <p><a href="../">Home</a></p>
+        <%@include file="../header.jsp" %>
 
         <h1>SAIC Invoice ${param.invoice}</h1>
 

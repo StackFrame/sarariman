@@ -58,6 +58,10 @@
                     display: none;
                 }
 
+                #topnav {
+                    display: none;
+                }
+
                 table.timereport {
                     font-size: 12px;
                     text-align: center;
@@ -72,6 +76,8 @@
     </head>
 
     <body>
+        <%@include file="../header.jsp" %>
+
         <img style="float:right" src="${sarariman.logoURL}"/>
         <h1>Timesheet</h1>
 

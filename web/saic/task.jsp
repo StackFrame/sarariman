@@ -14,7 +14,7 @@
         <title>SAIC Task ${param.task_id}</title>
     </head>
     <body>
-        <p><a href="../">Home</a></p>
+        <%@include file="../header.jsp" %>
 
         <c:if test="${user.administrator}">
             <c:if test="${!empty param.update}">
