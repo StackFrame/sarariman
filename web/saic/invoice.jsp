@@ -19,6 +19,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
+        <style type="text/css">
+            @media print{
+                #topnav {
+                    display: none;
+                }
+            }
+        </style>
         <title>Invoice ${param.invoice}</title>
         <script type="text/javascript" src="../utilities.js"/>
     </head>
