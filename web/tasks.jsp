@@ -17,7 +17,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('tasks')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Task Management</h1>
 
         <h2>Create a Task</h2>

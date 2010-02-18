@@ -16,7 +16,8 @@
     </head>
 
     <body>
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Uninvoiced Projects</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="result">

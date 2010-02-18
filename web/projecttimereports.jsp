@@ -22,6 +22,7 @@
     </head>
 
     <body>
+        <%@include file="header.jsp" %>
         <h1>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="result">

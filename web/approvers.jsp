@@ -16,7 +16,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('approvers')">
-        <p><a href="./">Home</a> <a href="tools">Tools</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Approvers</h1>
 
         <c:set var="isAdministrator" value="${user.administrator}"/>

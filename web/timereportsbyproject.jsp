@@ -28,6 +28,8 @@
     </head>
 
     <body>
+        <%@include file="header.jsp" %>
+
         <h1>Projects - ${week}</h1>
 
         <form action="${request.requestURI}" method="get">

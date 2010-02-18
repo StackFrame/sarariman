@@ -19,7 +19,7 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('projects')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
 
         <h1>Customer ${customer.id}</h1>
         <form method="POST" action="customerController">

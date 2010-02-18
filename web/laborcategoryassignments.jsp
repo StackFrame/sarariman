@@ -14,7 +14,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('rates')">
-        <p><a href="./">Home</a> <a href="tools">Tools</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Labor Category Assignments</h1>
 
         <table class="altrows" id="rates">

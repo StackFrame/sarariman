@@ -20,7 +20,8 @@
     <!-- FIXME: error if param.week is not a Saturday -->
     <!-- FIXME: Need to make PTO stand out for easier payroll processing. -->
     <body onload ="altRows('timesheets')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>

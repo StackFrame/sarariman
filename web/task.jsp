@@ -52,7 +52,7 @@
         <title>Task ${task_id}</title>
     </head>
     <body>
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
 
         <sql:query dataSource="jdbc/sarariman" var="taskLookup">
             SELECT *

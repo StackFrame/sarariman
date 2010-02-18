@@ -23,12 +23,19 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <style type="text/css">
+            @media print{
+                #topnav {
+                    display: none;
+                }
+            }
+        </style>
         <title>${employee.fullName}</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <body onload="altRows('timesheet')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
 
         <c:choose>
             <c:when test="${!empty param.week}">

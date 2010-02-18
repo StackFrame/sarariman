@@ -16,7 +16,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload ="altRows('hours')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Hours for task ${task}</h1>
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT * FROM hours WHERE task = ? ORDER BY date DESC

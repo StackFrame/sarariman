@@ -14,7 +14,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('customers')">
-        <p><a href="./">Home</a> <a href="tools">Tools</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Customers</h1>
 
         <h2>Create a new customer</h2>

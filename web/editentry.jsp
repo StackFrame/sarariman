@@ -29,6 +29,8 @@
 
     </head>
     <body onload="altRows('entries')">
+        <%@include file="header.jsp" %>
+
         <c:set var="canModify" value="${user.administrator || user.number == param.employee}"/>
         <c:if test="${!empty param.modifyEntry}">
             <c:if test="${!canModify}">

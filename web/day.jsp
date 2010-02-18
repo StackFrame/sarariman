@@ -18,7 +18,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('days')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <c:choose>
             <c:when test="${!empty param.day}">
                 <c:set var="day" value="${param.day}"/>

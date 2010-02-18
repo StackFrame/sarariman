@@ -54,6 +54,10 @@
                     white-space: nowrap;
                 }
 
+                #topnav {
+                    display: none;
+                }
+
                 .edit {
                     display: none;
                 }
@@ -72,6 +76,8 @@
     </head>
 
     <body>
+        <%@include file="header.jsp" %>
+
         <img style="float:right" src="${sarariman.logoURL}"/>
         <h1>Timesheet</h1>
 

@@ -15,7 +15,8 @@
     </head>
 
     <body>
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Uninvoiced Billable</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="result">

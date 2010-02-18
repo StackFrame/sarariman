@@ -21,7 +21,8 @@
     </head>
 
     <body>
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <h1>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${user.administrator && !empty param.create}">

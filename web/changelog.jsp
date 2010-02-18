@@ -18,7 +18,8 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload="altRows('entries')">
-        <p><a href="./">Home</a></p>
+        <%@include file="header.jsp" %>
+
         <c:set var="start" value="${param.start}"/>
         <c:if test="${empty start}">
             <c:set var="start" value="${du:weekStart(du:now())}"/>
