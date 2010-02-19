@@ -206,14 +206,17 @@
                 <sql:param value="${project.id}"/>
             </sql:query>
             <h2>Invoices</h2>
-            <ul>
+            <table class="altrows" id="invoices">
+                <tr><th>ID</th></tr>
                 <c:forEach var="invoice" items="${invoices.rows}">
-                    <c:url var="link" value="invoice">
-                        <c:param name="invoice" value="${invoice.id}"/>
-                    </c:url>
-                    <li><a href="${link}">${invoice.id}</a></li>
+                    <tr>
+                        <c:url var="link" value="invoice">
+                            <c:param name="invoice" value="${invoice.id}"/>
+                        </c:url>
+                        <td><a href="${link}">${invoice.id}</a></td>
+                    </tr>
                 </c:forEach>
-            </ul>
+            </table>
 
             <sql:query dataSource="jdbc/sarariman" var="result">
                 SELECT h.employee, h.date, h.duration, t.project
