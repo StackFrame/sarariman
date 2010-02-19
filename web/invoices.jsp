@@ -35,7 +35,7 @@
                     </c:url>
                     <td><a href="${link}">${invoice.id}</a></td>
                     <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-                        SELECT *
+                        SELECT project, customer, sent
                         FROM invoice_info AS i
                         WHERE i.id = ?
                         <sql:param value="${invoice.id}"/>
