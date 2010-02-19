@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -28,7 +28,7 @@
         <!-- /TinyMCE -->
 
     </head>
-    <body onload="altRows('entries')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <c:set var="canModify" value="${user.administrator || user.number == param.employee}"/>

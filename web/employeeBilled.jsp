@@ -24,10 +24,9 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <script type="text/javascript" src="utilities.js"/>
         <title>Billing Report for ${employee.fullName} for the week of ${param.week}</title>
     </head>
-    <body onload="altRows('tasks');altRows('categories');altRows('rates');altRows('task_assignments');">
+    <body>
         <%@include file="header.jsp" %>
 
         <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>

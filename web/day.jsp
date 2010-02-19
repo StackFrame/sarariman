@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -17,7 +17,7 @@
         <title>View Day</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('days')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <c:choose>
@@ -35,6 +35,7 @@
             <input type="text" value="${day}" id="day" name="day"/>
             <input type="submit" value="View"/>
         </form>
+
         <table class="altrows" id="days">
             <tr><th>Employee</th><th>Hours</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">

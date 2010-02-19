@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -34,7 +34,7 @@
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body onload="altRows('timesheet')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <c:choose>

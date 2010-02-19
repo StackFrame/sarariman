@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -16,7 +16,7 @@
         <title>Task Management</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('tasks')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Task Management</h1>
@@ -61,6 +61,7 @@
                 </tr>
             </c:forEach>
         </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

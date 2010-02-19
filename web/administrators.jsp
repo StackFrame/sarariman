@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -15,7 +15,7 @@
         <title>Administrators</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('administrators')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Administrators</h1>

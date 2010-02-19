@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -17,7 +17,7 @@
         <title>Changelog</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('entries')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <c:set var="start" value="${param.start}"/>

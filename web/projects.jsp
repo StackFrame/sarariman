@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -13,7 +13,7 @@
         <title>Projects</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('projects')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Projects</h1>
@@ -57,6 +57,7 @@
                 </tr>
             </c:forEach>
         </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

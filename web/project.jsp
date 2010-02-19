@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -21,7 +21,7 @@
         <script type="text/javascript" src="utilities.js"/>
         <title>Project ${project.id}</title>
     </head>
-    <body onload="altRows('tasks');altRows('categories');altRows('rates');altRows('task_assignments');">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
@@ -232,7 +232,7 @@
             </c:forEach>
 
             <h2>Cumulative</h2>
-            <table>
+            <table class="altrows">
                 <tr>
                     <td>Invoiced:</td><td><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
                     <td>Remaining from invoiced:</td><td><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>

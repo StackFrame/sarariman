@@ -18,9 +18,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-
-    <body>
+    <body  onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</h1>
@@ -44,7 +44,7 @@
         <form method="POST">
             <label>Create Invoice:</label>
             <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
-            <table>
+            <table class="altrows">
                 <tr><th>Employee</th><th>Task</th><th>Date</th><th>Duration</th><th>Invoice</th></tr>
                 <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                     <tr>
@@ -60,6 +60,7 @@
                 </c:forEach>
             </table>
         </form>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -16,7 +16,7 @@
         <title>SAIC Tasks</title>
         <script type="text/javascript" src="../utilities.js"/>
     </head>
-    <body onload="altRows('tasks')">
+    <body onload="altRows()">
         <%@include file="../header.jsp" %>
 
         <!-- FIXME: Get customer id out of config or look it up or something. -->
@@ -46,7 +46,7 @@
         </form>
 
         <h2>Tasks</h2>
-        <table id="tasks">
+        <table class="altrows" id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Charge Number</th><th>Line Item</th></tr>
             <c:forEach var="task" items="${tasks.rows}">
                 <c:if test="${task.task != null}">
@@ -64,6 +64,7 @@
                 </c:if>
             </c:forEach>
         </table>
+
         <%@include file="../footer.jsp" %>
     </body>
 </html>

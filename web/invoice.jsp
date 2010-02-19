@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -30,7 +30,7 @@
         <title>Invoice ${param.invoice}</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('hours')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Invoice ${param.invoice}</h1>
@@ -141,7 +141,7 @@
             <sql:param value="${param.invoice}"/>
         </sql:query>
 
-        <table>
+        <table class="altrows">
             <caption>Total by Employee and Task</caption>
             <tbody>
                 <tr><th>Employee</th><th>Task</th><th>Total</th></tr>
@@ -174,7 +174,7 @@
             </tbody>
         </table>
 
-        <table>
+        <table clas="altrows">
             <caption>Total by Employee</caption>
             <tbody>
                 <tr><th>Employee</th><th>Total</th></tr>

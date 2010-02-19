@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 */
 
@@ -59,9 +59,9 @@ table.altrows td {
 }
 
 .oddrow {
-    background-color:#d4e3e5;
+    background-color: #d4e3e5;
 }
 
 .evenrow {
-    background-color:#c3dde0;
+    background-color: #c3dde0;
 }

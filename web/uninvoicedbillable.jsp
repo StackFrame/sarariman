@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -12,9 +12,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced Billable</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-
-    <body>
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Uninvoiced Billable</h1>
@@ -27,7 +27,7 @@
             WHERE t.billable = 1 AND i.id IS NULL AND h.duration > 0
             ORDER BY h.date ASC
         </sql:query>
-        <table>
+        <table class="altrows">
             <tr><th>Employee</th><th>Date</th><th>Task</th></tr>
             <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                 <tr>
@@ -49,6 +49,7 @@
                 </tr>
             </c:forEach>
         </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

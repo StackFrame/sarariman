@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -15,7 +15,7 @@
         <title>Invoices</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('invoices')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
         
         <h1>Invoices</h1>
@@ -26,7 +26,7 @@
             SELECT DISTINCT id from invoices ORDER BY id DESC
         </sql:query>
 
-        <table id="invoices">
+        <table id="invoices" class="altrows">
             <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
             <c:forEach var="invoice" items="${invoices.rows}">
                 <tr>

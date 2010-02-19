@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -15,7 +15,7 @@
         <title>Hours for project ${task}</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload ="altRows('hours')">
+    <body onload ="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Hours for project ${task}</h1>
@@ -28,7 +28,7 @@
             ORDER BY h.date DESC
             <sql:param value="${project}"/>
         </sql:query>
-        <table id="hours">
+        <table class="altrows" id="hours">
             <tr><th>Date</th><th>Task</th><th>Employee</th><th>Duration</th><th>Description</th></tr>
             <c:set var="total" value="0.0"/>
             <c:forEach var="row" items="${result.rows}">

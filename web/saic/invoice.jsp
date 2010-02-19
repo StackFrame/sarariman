@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -29,7 +29,7 @@
         <title>Invoice ${param.invoice}</title>
         <script type="text/javascript" src="../utilities.js"/>
     </head>
-    <body  onload="altRows('entries')">
+    <body  onload="altRows()">
         <%@include file="../header.jsp" %>
 
         <h1>SAIC Invoice ${param.invoice}</h1>
@@ -50,7 +50,7 @@
             WHERE i.id = ?
             <sql:param value="${param.invoice}"/>
         </sql:query>
-        <table>
+        <table class="altrows">
             <caption>Entries by Line Item and Employee</caption>
             <tbody>
                 <tr>

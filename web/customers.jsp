@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -13,7 +13,7 @@
         <title>Customers</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows('customers')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <h1>Customers</h1>

@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -19,7 +19,7 @@
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <!-- FIXME: Need to make PTO stand out for easier payroll processing. -->
-    <body onload ="altRows('timesheets')">
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
         <c:choose>

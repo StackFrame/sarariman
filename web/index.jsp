@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -43,7 +43,7 @@
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body onload="altRows('hours');altRows('days')">
+    <body onload="altRows()">
         <a href="tools">Tools</a>
 
         <c:choose>
