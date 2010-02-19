@@ -43,7 +43,7 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-            SELECT *
+            SELECT project, sent, customer, payment_received
             FROM invoice_info AS i
             WHERE i.id = ?
             <sql:param value="${param.invoice}"/>
