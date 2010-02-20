@@ -6,12 +6,14 @@ package com.stackframe.sarariman;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  *
@@ -89,6 +91,35 @@ public class Project {
 
     public Collection<Task> getTasks() throws SQLException {
         return Task.getTasks(sarariman, this);
+    }
+
+    public Collection<Date> getDaysBilled() throws SQLException {
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date " +
+                "FROM hours AS h " +
+                "JOIN tasks AS t on h.task = t.id " +
+                "JOIN projects AS p on p.id = t.project " +
+                "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) " +
+                "WHERE p.id = ? AND t.billable = TRUE;");
+        try {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            try {
+                Collection<Date> days = new TreeSet<Date>();
+                while (rs.next()) {
+                    days.add(rs.getDate("date"));
+                }
+
+                System.err.println("days=" + days);
+                return days;
+            } finally {
+                rs.close();
+            }
+        } finally {
+            ps.close();
+            connection.close();
+        }
     }
 
     public static Project create(Sarariman sarariman, String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {

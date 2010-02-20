@@ -5,7 +5,9 @@
 package com.stackframe.sarariman;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.TreeSet;
 
 /**
  *
@@ -31,6 +33,15 @@ public class DateUtils {
         }
 
         return startDate.getTime();
+    }
+
+    public static Collection<Date> weekStarts(Collection<Date> dates) {
+        Collection<Date> result = new TreeSet<Date>();
+        for (Date date : dates) {
+            result.add(weekStart(date));
+        }
+
+        return result;
     }
 
     public static Date addDays(Date date, int days) {

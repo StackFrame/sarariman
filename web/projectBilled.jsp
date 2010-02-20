@@ -19,51 +19,46 @@
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+    <fmt:parseNumber var="project_id" value="${param.project}"/>
+    <c:set var="project" value="${sarariman.projects[project_id]}"/>
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Billing Report for project ${param.project} for the week of ${param.week}</title>
+        <title>Billing Report for ${fn:escapeXml(project.name)}</title>
+        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body>
+    <body onload="altRows()">
         <%@include file="header.jsp" %>
 
-        <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
-        <fmt:formatDate var="prevWeek" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
-        <c:url var="prevWeekURL" value="${request.requestURI}">
-            <c:param name="week" value="${prevWeek}"/>
-            <c:param name="project" value="${param.project}"/>
-        </c:url>
-        <a href="${fn:escapeXml(prevWeekURL)}">${prevWeek}</a>
-        <fmt:formatDate var="nextWeek" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
-        <c:url var="nextWeekURL" value="${request.requestURI}">
-            <c:param name="week" value="${nextWeek}"/>
-            <c:param name="project" value="${param.project}"/>
-        </c:url>
-        <a href="${fn:escapeXml(nextWeekURL)}">${nextWeek}</a>
+        <c:url var="projectLink" value="project"><c:param name="id" value="${param.project}"/></c:url>
 
-        <h1>Billing Report for project ${param.project} for the week of ${param.week}</h1>
+        <h1>Billing Report for <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
-            FROM hours AS h
-            JOIN tasks AS t on h.task = t.id
-            JOIN projects AS p on p.id = t.project
-            JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
-            JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-            WHERE p.id=? AND t.billable=TRUE AND h.date >= ? and h.date < DATE_ADD(?, INTERVAL 7 DAY);
-            <sql:param value="${param.project}"/>
-            <sql:param value="${param.week}"/>
-            <sql:param value="${param.week}"/>
-        </sql:query>
+        <table class="altrows">
+            <tr><th>Week</th><th>Hours</th><th>Billed</th></tr>
+            <c:forEach var="week" items="${du:weekStarts(project.daysBilled)}">
+                <tr>
+                    <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
+                    <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                        SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
+                        FROM hours AS h
+                        JOIN tasks AS t on h.task = t.id
+                        JOIN projects AS p on p.id = t.project
+                        JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                        JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                        WHERE p.id = ? AND t.billable = TRUE AND h.date >= ? and h.date < DATE_ADD(?, INTERVAL 7 DAY);
+                        <sql:param value="${param.project}"/>
+                        <sql:param value="${week}"/>
+                        <sql:param value="${week}"/>
+                    </sql:query>
 
-        <c:forEach var="row" items="${resultSet.rows}">
-            <p>Hours billed ${row.durationTotal}.<br/>
-                Total billed <fmt:formatNumber type="currency" value="${row.costTotal}"/>.
-            </p>
-        </c:forEach>
-
-        <c:url var="project" value="project"><c:param name="id" value="${param.project}"/></c:url>
-        <a href="${project}">Project ${param.project}.</a>
+                    <c:forEach var="row" items="${resultSet.rows}">
+                        <td class="duration">${row.durationTotal}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${row.costTotal}"/></td>
+                    </c:forEach>
+                </tr>
+            </c:forEach>
+        </table>
 
         <%@include file="footer.jsp" %>
     </body>

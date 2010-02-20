@@ -90,7 +90,6 @@
                 <tr>
                     <c:url var="projectLink" value="projectBilled">
                         <c:param name="project" value="${row.id}"/>
-                        <c:param name="week" value="${param.week}"/>
                     </c:url>
                     <td><a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(row.name)}</a></td>
                 </tr>
