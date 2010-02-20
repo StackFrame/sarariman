@@ -13,7 +13,7 @@
 <sql:query dataSource="jdbc/sarariman" var="resultSet">
     SELECT project FROM project_managers WHERE employee=? AND project=?
     <sql:param value="${user.number}"/>
-    <sql:param value="${param.id}"/>
+    <sql:param value="${param.project}"/>
 </sql:query>
 <c:set var="isManager" value="${resultSet.rowCount == 1}"/>
 
