@@ -50,6 +50,7 @@
 
         <script type="text/javascript">
             var data = [];
+            var xTicks = [];
         </script>
 
         <table class="altrows" id="billing">
@@ -59,8 +60,9 @@
             <c:set var="weekNumber" value="0"/>
             <tbody>
                 <c:forEach var="week" items="${weekStarts}">
+                    <fmt:formatDate var="formattedWeek" value="${week}" pattern="yyyy-MM-dd"/>
                     <tr>
-                        <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
+                        <td>${formattedWeek}</td>
                         <sql:query dataSource="jdbc/sarariman" var="resultSet">
                             SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
                             FROM hours AS h
@@ -77,23 +79,16 @@
                         <c:forEach var="row" items="${resultSet.rows}">
                             <td class="duration">${row.durationTotal}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${row.costTotal}"/></td>
-                            <script type="text/javascript">data.push([${weekNumber},${row.costTotal}]);</script>
+                            <script type="text/javascript">
+                                data.push([${weekNumber},${row.costTotal}]);
+                                xTicks.push({label: "${formattedWeek}", v: ${weekNumber}});
+                            </script>
                         </c:forEach>
                     </tr>
                     <c:set var="weekNumber" value="${weekNumber + 1}"/>
                 </c:forEach>
             </tbody>
         </table>
-
-        <script type="text/javascript">
-            var xTicks = [
-            <c:set var="weekNumber" value="0"/>
-                <c:forEach var="week" items="${weekStarts}">
-                    {label: "<fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/>", v: ${weekNumber}},
-                <c:set var="weekNumber" value="${weekNumber + 1}"/>
-            </c:forEach>
-                ];
-        </script>
 
         <script type="text/javascript">
             var layout = new Layout("line", {"xTicks": xTicks} );
