@@ -111,7 +111,6 @@ public class Project {
                     days.add(rs.getDate("date"));
                 }
 
-                System.err.println("days=" + days);
                 return days;
             } finally {
                 rs.close();
