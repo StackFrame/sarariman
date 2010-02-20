@@ -10,6 +10,17 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<sql:query dataSource="jdbc/sarariman" var="resultSet">
+    SELECT project FROM project_managers WHERE employee=? AND project=?
+    <sql:param value="${user.number}"/>
+    <sql:param value="${param.id}"/>
+</sql:query>
+<c:set var="isManager" value="${resultSet.rowCount == 1}"/>
+
+<c:if test="${!(isManager || user.administrator || user.invoiceManager)}">
+    <jsp:forward page="unauthorized.jsp"/>
+</c:if>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <fmt:parseNumber var="project_id" value="${param.project}"/>
@@ -28,17 +39,6 @@
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
-
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT project FROM project_managers WHERE employee=? AND project=?
-            <sql:param value="${user.number}"/>
-            <sql:param value="${param.id}"/>
-        </sql:query>
-        <c:set var="isManager" value="${resultSet.rowCount == 1}"/>
-
-        <c:if test="${!(isManager || user.administrator || user.invoiceManager)}">
-            <jsp:forward page="unauthorized.jsp"/>
-        </c:if>
 
         <c:url var="projectLink" value="project"><c:param name="id" value="${param.project}"/></c:url>
 
