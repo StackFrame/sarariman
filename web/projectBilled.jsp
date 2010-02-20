@@ -3,7 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -25,7 +25,13 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Billing Report for ${fn:escapeXml(project.name)}</title>
-        <script type="text/javascript" src="utilities.js"/>
+        <script type="text/javascript" src="utilities.js"></script>
+        <script src="MochiKit/MochiKit.js" type="text/javascript"></script>
+        <script src="PlotKit/excanvas.js" type="text/javascript"></script>
+        <script src="PlotKit/Base.js" type="text/javascript"></script>
+        <script src="PlotKit/Layout.js" type="text/javascript"></script>
+        <script src="PlotKit/Canvas.js" type="text/javascript"></script>
+        <script src="PlotKit/SweetCanvas.js" type="text/javascript"></script>
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
@@ -34,31 +40,51 @@
 
         <h1>Billing Report for <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
 
-        <table class="altrows">
-            <tr><th>Week</th><th>Hours</th><th>Billed</th></tr>
-            <c:forEach var="week" items="${du:weekStarts(project.daysBilled)}">
-                <tr>
-                    <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
-                    <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                        SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
-                        FROM hours AS h
-                        JOIN tasks AS t on h.task = t.id
-                        JOIN projects AS p on p.id = t.project
-                        JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
-                        JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-                        WHERE p.id = ? AND t.billable = TRUE AND h.date >= ? and h.date < DATE_ADD(?, INTERVAL 7 DAY);
-                        <sql:param value="${param.project}"/>
-                        <sql:param value="${week}"/>
-                        <sql:param value="${week}"/>
-                    </sql:query>
+        <div>
+            <table class="altrows" id="billing">
+                <thead>
+                    <tr><th>Week</th><th>Week #</th><th>Hours</th><th>Billed</th></tr>
+                </thead>
+                <c:set var="weekNumber" value="0"/>
+                <tbody>
+                    <c:forEach var="week" items="${du:weekStarts(project.daysBilled)}">
+                        <tr>
+                            <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
+                            <td>${weekNumber}</td>
+                            <c:set var="weekNumber" value="${weekNumber + 1}"/>
+                            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                                SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
+                                FROM hours AS h
+                                JOIN tasks AS t on h.task = t.id
+                                JOIN projects AS p on p.id = t.project
+                                JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                                JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                                WHERE p.id = ? AND t.billable = TRUE AND h.date >= ? and h.date < DATE_ADD(?, INTERVAL 7 DAY);
+                                <sql:param value="${param.project}"/>
+                                <sql:param value="${week}"/>
+                                <sql:param value="${week}"/>
+                            </sql:query>
 
-                    <c:forEach var="row" items="${resultSet.rows}">
-                        <td class="duration">${row.durationTotal}</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${row.costTotal}"/></td>
+                            <c:forEach var="row" items="${resultSet.rows}">
+                                <td class="duration">${row.durationTotal}</td>
+                                <td class="currency">${row.costTotal}</td>
+                            </c:forEach>
+                        </tr>
                     </c:forEach>
-                </tr>
-            </c:forEach>
-        </table>
+                </tbody>
+            </table>
+
+            <div><canvas id="billedChart" width="500" height="300"></canvas></div>
+        </div>
+
+        <script type="text/javascript">
+            var layout = new Layout("line");
+            layout.addDatasetFromTable("billed", $("billing"), xcol = 1, ycol = 3);
+            layout.evaluate();
+
+            var chart = new SweetCanvasRenderer($("billedChart"), layout);
+            chart.render();
+        </script>
 
         <%@include file="footer.jsp" %>
     </body>
