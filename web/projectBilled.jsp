@@ -24,7 +24,7 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Billing Report for ${fn:escapeXml(project.name)}</title>
+        <title>Weekly Billing Report for ${fn:escapeXml(project.name)}</title>
         <script type="text/javascript" src="utilities.js"></script>
         <script src="MochiKit/MochiKit.js" type="text/javascript"></script>
         <script src="PlotKit/excanvas.js" type="text/javascript"></script>
@@ -38,7 +38,7 @@
 
         <c:url var="projectLink" value="project"><c:param name="id" value="${param.project}"/></c:url>
 
-        <h1>Billing Report for <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
+        <h1>Weekly Billing Report for <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
 
         <div><canvas id="billedChart" width="1000" height="300"></canvas></div>
 
