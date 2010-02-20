@@ -51,6 +51,7 @@
         <script type="text/javascript">
             var data = [];
             var xTicks = [];
+            // FIXME: Need a way to compute yTicks using max value.
         </script>
 
         <table class="altrows" id="billing">
