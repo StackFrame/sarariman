@@ -40,45 +40,55 @@
 
         <h1>Billing Report for <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
 
-        <div>
-            <table class="altrows" id="billing">
-                <thead>
-                    <tr><th>Week</th><th>Week #</th><th>Hours</th><th>Billed</th></tr>
-                </thead>
-                <c:set var="weekNumber" value="0"/>
-                <tbody>
-                    <c:forEach var="week" items="${du:weekStarts(project.daysBilled)}">
-                        <tr>
-                            <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
-                            <td>${weekNumber}</td>
-                            <c:set var="weekNumber" value="${weekNumber + 1}"/>
-                            <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                                SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
-                                FROM hours AS h
-                                JOIN tasks AS t on h.task = t.id
-                                JOIN projects AS p on p.id = t.project
-                                JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
-                                JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-                                WHERE p.id = ? AND t.billable = TRUE AND h.date >= ? and h.date < DATE_ADD(?, INTERVAL 7 DAY);
-                                <sql:param value="${param.project}"/>
-                                <sql:param value="${week}"/>
-                                <sql:param value="${week}"/>
-                            </sql:query>
+        <div><canvas id="billedChart" width="500" height="300"></canvas></div>
 
-                            <c:forEach var="row" items="${resultSet.rows}">
-                                <td class="duration">${row.durationTotal}</td>
-                                <td class="currency">${row.costTotal}</td>
-                            </c:forEach>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
+        <c:set var="weekStarts" value="${du:weekStarts(project.daysBilled)}"/>
 
-            <div><canvas id="billedChart" width="500" height="300"></canvas></div>
-        </div>
+        <table class="altrows" id="billing">
+            <thead>
+                <tr><th>Week</th><th>Week #</th><th>Hours</th><th>Billed</th></tr>
+            </thead>
+            <c:set var="weekNumber" value="0"/>
+            <tbody>
+                <c:forEach var="week" items="${weekStarts}">
+                    <tr>
+                        <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
+                        <td>${weekNumber}</td>
+                        <c:set var="weekNumber" value="${weekNumber + 1}"/>
+                        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                            SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
+                            FROM hours AS h
+                            JOIN tasks AS t on h.task = t.id
+                            JOIN projects AS p on p.id = t.project
+                            JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                            JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                            WHERE p.id = ? AND t.billable = TRUE AND h.date >= ? and h.date < DATE_ADD(?, INTERVAL 7 DAY);
+                            <sql:param value="${param.project}"/>
+                            <sql:param value="${week}"/>
+                            <sql:param value="${week}"/>
+                        </sql:query>
+
+                        <c:forEach var="row" items="${resultSet.rows}">
+                            <td class="duration">${row.durationTotal}</td>
+                            <td class="currency">${row.costTotal}</td>
+                        </c:forEach>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
 
         <script type="text/javascript">
-            var layout = new Layout("line");
+            var xTicks = [
+            <c:set var="weekNumber" value="0"/>
+                <c:forEach var="week" items="${weekStarts}">
+                    {label: "<fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/>", v: ${weekNumber}},
+                <c:set var="weekNumber" value="${weekNumber + 1}"/>
+            </c:forEach>
+                ];
+        </script>
+
+        <script type="text/javascript">
+            var layout = new Layout("line", {"xTicks": xTicks} );
             layout.addDatasetFromTable("billed", $("billing"), xcol = 1, ycol = 3);
             layout.evaluate();
 
