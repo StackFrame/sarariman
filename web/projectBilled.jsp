@@ -40,21 +40,23 @@
 
         <h1>Billing Report for <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
 
-        <div><canvas id="billedChart" width="500" height="300"></canvas></div>
+        <div><canvas id="billedChart" width="1000" height="300"></canvas></div>
 
         <c:set var="weekStarts" value="${du:weekStarts(project.daysBilled)}"/>
 
+        <script type="text/javascript">
+            var data = [];
+        </script>
+
         <table class="altrows" id="billing">
             <thead>
-                <tr><th>Week</th><th>Week #</th><th>Hours</th><th>Billed</th></tr>
+                <tr><th>Week</th><th>Hours</th><th>Billed</th></tr>
             </thead>
             <c:set var="weekNumber" value="0"/>
             <tbody>
                 <c:forEach var="week" items="${weekStarts}">
                     <tr>
                         <td><fmt:formatDate value="${week}" pattern="yyyy-MM-dd"/></td>
-                        <td>${weekNumber}</td>
-                        <c:set var="weekNumber" value="${weekNumber + 1}"/>
                         <sql:query dataSource="jdbc/sarariman" var="resultSet">
                             SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
                             FROM hours AS h
@@ -70,9 +72,11 @@
 
                         <c:forEach var="row" items="${resultSet.rows}">
                             <td class="duration">${row.durationTotal}</td>
-                            <td class="currency">${row.costTotal}</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${row.costTotal}"/></td>
+                            <script type="text/javascript">data.push([${weekNumber},${row.costTotal}]);</script>
                         </c:forEach>
                     </tr>
+                    <c:set var="weekNumber" value="${weekNumber + 1}"/>
                 </c:forEach>
             </tbody>
         </table>
@@ -89,7 +93,7 @@
 
         <script type="text/javascript">
             var layout = new Layout("line", {"xTicks": xTicks} );
-            layout.addDatasetFromTable("billed", $("billing"), xcol = 1, ycol = 3);
+            layout.addDataset("billed", data);
             layout.evaluate();
 
             var chart = new SweetCanvasRenderer($("billedChart"), layout);
