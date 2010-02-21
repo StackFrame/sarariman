@@ -39,9 +39,17 @@ class CronJobs {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
+        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), date, ONE_DAY);
+    }
 
-        final TimerTask weeknightTask = new WeeknightTask(sarariman, directory, emailDispatcher);
-        timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
+    private void scheduleMorningTask() {
+        // The weeknight task runs at 11:00 PM each night filters out Saturday and Sunday itself.
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 11);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date date = calendar.getTime();
+        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), date, ONE_DAY);
     }
 
     private void scheduleDirectoryReload() {
@@ -57,6 +65,7 @@ class CronJobs {
     }
 
     void start() {
+        scheduleMorningTask();
         scheduleWeeknightTask();
         scheduleDirectoryReload();
     }
