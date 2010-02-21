@@ -38,18 +38,20 @@ class CronJobs {
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        Date date = calendar.getTime();
-        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), date, ONE_DAY);
+        Date firstTime = calendar.getTime();
+        long period = ONE_DAY;
+        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), firstTime, period);
     }
 
     private void scheduleMorningTask() {
-        // The weeknight task runs at 11:00 PM each night filters out Saturday and Sunday itself.
+        // The morning task runs at 11:00 AM each morning.
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 11);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        Date date = calendar.getTime();
-        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), date, ONE_DAY);
+        Date firstTime = calendar.getTime();
+        long period = ONE_DAY;
+        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), firstTime, period);
     }
 
     private void scheduleDirectoryReload() {
