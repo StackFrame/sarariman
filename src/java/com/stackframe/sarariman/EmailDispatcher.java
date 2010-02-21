@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -80,7 +81,8 @@ public class EmailDispatcher {
                     msg.setSentDate(new Date());
                     msg.saveChanges();
                     if (inhibit) {
-                        System.err.println("email inhibited.  Would have sent " + msg);
+                        System.err.println("email inhibited.  Would have sent {subject=\"" + msg.getSubject() + "\",} to " +
+                                Arrays.asList(msg.getAllRecipients()));
                     } else {
                         Transport transport = session.getTransport("smtp");
                         transport.connect(host, port, null, null);
