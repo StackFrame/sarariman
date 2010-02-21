@@ -1,19 +1,15 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -29,16 +25,16 @@ import javax.sql.DataSource;
  */
 public class Sarariman implements ServletContextListener {
 
-    private LDAPDirectory directory;
-    private EmailDispatcher emailDispatcher;
-    private final Timer timer = new Timer("Sarariman");
     private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
-    private String logoURL;
     private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
+    private LDAPDirectory directory;
+    private EmailDispatcher emailDispatcher;
+    private CronJobs cronJobs;
+    private String logoURL;
 
     private String getRevision() {
         StringBuilder buf = new StringBuilder();
@@ -79,40 +75,6 @@ public class Sarariman implements ServletContextListener {
         return props;
     }
 
-    public static final long ONE_SECOND = 1000;
-    public static final long ONE_MINUTE = 60 * ONE_SECOND;
-    public static final long ONE_HOUR = 60 * ONE_MINUTE;
-    public static final long ONE_DAY = 24 * ONE_HOUR;
-
-    private void scheduleWeeknightTask() {
-        // The weeknight task runs at 11:00 PM each night filters out Saturday and Sunday itself.
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date date = calendar.getTime();
-
-        final TimerTask weeknightTask = new WeeknightTask(this, directory, emailDispatcher);
-        timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
-    }
-
-    private void scheduleDirectoryReload() {
-        // Reload the directory once an hour.  The main use case is to discover new employees that were added after the application
-        // started.
-        timer.schedule(new TimerTask() {
-
-            public void run() {
-                directory.reload();
-            }
-
-        }, ONE_HOUR, ONE_HOUR);
-    }
-
-    private void scheduleTasks() {
-        scheduleWeeknightTask();
-        scheduleDirectoryReload();
-    }
-
     public Connection openConnection() {
         try {
             DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
@@ -136,10 +98,6 @@ public class Sarariman implements ServletContextListener {
 
     public Collection<Employee> getInvoiceManagers() {
         return invoiceManagers;
-    }
-
-    public Timer getTimer() {
-        return timer;
     }
 
     public Map<Long, Customer> getCustomers() throws SQLException {
@@ -187,17 +145,19 @@ public class Sarariman implements ServletContextListener {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
 
+        cronJobs = new CronJobs(this, directory, emailDispatcher);
+
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", this);
         servletContext.setAttribute("directory", directory);
 
-        scheduleTasks();
+        cronJobs.start();
         //emailDispatcher.send(directory.getByUserName().get("mcculley").getEmail(), null, "sarariman started", "Sarariman has been started");
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
-        timer.cancel();
+        cronJobs.stop();
     }
 
 }
