@@ -152,7 +152,11 @@ public class Sarariman implements ServletContextListener {
         servletContext.setAttribute("directory", directory);
 
         cronJobs.start();
-        //emailDispatcher.send(directory.getByUserName().get("mcculley").getEmail(), null, "sarariman started", "Sarariman has been started");
+        for (Employee employee : directory.getByUserName().values()) {
+            if (employee.isAdministrator()) {
+                emailDispatcher.send(employee.getEmail(), null, "sarariman started", "Sarariman has been started");
+            }
+        }
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
