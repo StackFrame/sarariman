@@ -31,6 +31,7 @@ public class MorningTask extends TimerTask {
     public void run() {
         Calendar today = Calendar.getInstance();
         java.util.Date todayDate = today.getTime();
+        // Check to see if last week's timesheet was submitted.
         try {
             Date week = new Date(DateUtils.prevWeek(DateUtils.weekStart(todayDate)).getTime());
             for (Employee employee : directory.getByUserName().values()) {
