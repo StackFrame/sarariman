@@ -34,7 +34,7 @@ class CronJobs {
     private static final long ONE_DAY = 24 * ONE_HOUR;
 
     private void scheduleWeeknightTask() {
-        // The weeknight task runs at 11:00 PM each night filters out Saturday and Sunday itself.
+        // The weeknight task runs once each night and filters out Saturday and Sunday itself.
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 0);
@@ -45,9 +45,9 @@ class CronJobs {
     }
 
     private void scheduleMorningTask() {
-        // The morning task runs at 11:00 AM each morning.
+        // The morning task runs once each morning.
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date firstTime = calendar.getTime();
