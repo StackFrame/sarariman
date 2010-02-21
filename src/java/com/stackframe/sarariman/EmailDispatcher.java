@@ -36,8 +36,10 @@ public class EmailDispatcher {
     private final Session session;
     private final String host;
     private final int port;
+    private final boolean inhibit;
 
-    public EmailDispatcher(Properties properties) {
+    public EmailDispatcher(Properties properties, boolean inhibit) {
+        this.inhibit = inhibit;
         try {
             this.from = new InternetAddress((String)properties.get("mail.from"), true);
         } catch (AddressException ae) {
@@ -77,10 +79,14 @@ public class EmailDispatcher {
                     msg.setHeader("X-Mailer", "Sarariman");
                     msg.setSentDate(new Date());
                     msg.saveChanges();
-                    Transport transport = session.getTransport("smtp");
-                    transport.connect(host, port, null, null);
-                    transport.sendMessage(msg, msg.getAllRecipients());
-                    transport.close();
+                    if (inhibit) {
+                        System.err.println("email inhibited.  Would have sent " + msg);
+                    } else {
+                        Transport transport = session.getTransport("smtp");
+                        transport.connect(host, port, null, null);
+                        transport.sendMessage(msg, msg.getAllRecipients());
+                        transport.close();
+                    }
                 } catch (MessagingException me) {
                     logger.log(Level.SEVERE, "caught exception trying to send email", me);
                 }

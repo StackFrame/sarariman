@@ -139,7 +139,8 @@ public class Sarariman implements ServletContextListener {
             Context envContext = (Context)initContext.lookup("java:comp/env");
             Properties directoryProperties = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(directoryProperties), this);
-            emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext));
+            boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
+            emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
