@@ -81,7 +81,7 @@ public class EmailDispatcher {
                     msg.setSentDate(new Date());
                     msg.saveChanges();
                     if (inhibit) {
-                        System.err.println("email inhibited.  Would have sent {subject=\"" + msg.getSubject() + "\",} to " +
+                        System.err.println("email inhibited.  Would have sent subject=\"" + msg.getSubject() + "\" to " +
                                 Arrays.asList(msg.getAllRecipients()));
                     } else {
                         Transport transport = session.getTransport("smtp");
