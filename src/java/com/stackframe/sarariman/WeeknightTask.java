@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -7,7 +7,6 @@ package com.stackframe.sarariman;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,28 +31,30 @@ public class WeeknightTask extends TimerTask {
     public void run() {
         Calendar today = Calendar.getInstance();
         int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
-        if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY) {
-            java.util.Date todayDate = today.getTime();
-            try {
-                Date week = new Date(DateUtils.weekStart(todayDate).getTime());
-                for (Employee employee : directory.getByUserName().values()) {
-                    Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
-                    if (!timesheet.isSubmitted()) {
-                        if (dayOfWeek == Calendar.FRIDAY) {
+        if (dayOfWeek == Calendar.SATURDAY && dayOfWeek == Calendar.SUNDAY) {
+            return;
+        }
+
+        java.util.Date todayDate = today.getTime();
+        try {
+            Date week = new Date(DateUtils.weekStart(todayDate).getTime());
+            for (Employee employee : directory.getByUserName().values()) {
+                Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
+                if (!timesheet.isSubmitted()) {
+                    if (dayOfWeek == Calendar.FRIDAY) {
+                        emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
+                                "timesheet", "Please submit your timesheet for the week of " + week + ".");
+                    } else {
+                        double hoursRecorded = timesheet.getHours(new Date(todayDate.getTime()));
+                        if (hoursRecorded == 0.0 && employee.isFulltime()) {
                             emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
-                                    "timesheet", "Please submit your timesheet for the week of " + week + ".");
-                        } else {
-                            double hoursRecorded = timesheet.getHours(new Date(todayDate.getTime()));
-                            if (hoursRecorded == 0.0 && employee.isFulltime()) {
-                                emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
-                                        "timesheet", "Please record your time if you worked today.");
-                            }
+                                    "timesheet", "Please record your time if you worked today.");
                         }
                     }
                 }
-            } catch (SQLException se) {
-                logger.log(Level.SEVERE, "could not get hours for " + today, se);
             }
+        } catch (SQLException se) {
+            logger.log(Level.SEVERE, "could not get hours for " + today, se);
         }
     }
 
