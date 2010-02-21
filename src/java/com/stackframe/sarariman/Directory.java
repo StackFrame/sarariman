@@ -27,4 +27,9 @@ public interface Directory {
      */
     Map<String, Employee> getByUserName();
 
+    /**
+     * Synchronized this directory against the backing store.
+     */
+    void reload();
+
 }
