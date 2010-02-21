@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -153,9 +155,16 @@ public class Sarariman implements ServletContextListener {
         servletContext.setAttribute("directory", directory);
 
         cronJobs.start();
+        String hostname;
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException uhe) {
+            hostname = "unknown";
+        }
+
         for (Employee employee : directory.getByUserName().values()) {
             if (employee.isAdministrator()) {
-                emailDispatcher.send(employee.getEmail(), null, "sarariman started", "Sarariman has been started");
+                emailDispatcher.send(employee.getEmail(), null, "sarariman started", "Sarariman has been started on " + hostname);
             }
         }
     }
