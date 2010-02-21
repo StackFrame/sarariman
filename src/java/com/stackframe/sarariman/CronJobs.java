@@ -35,24 +35,32 @@ class CronJobs {
 
     private void scheduleWeeknightTask() {
         // The weeknight task runs once each night and filters out Saturday and Sunday itself.
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date firstTime = calendar.getTime();
+        Calendar firstTime = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+        firstTime.set(Calendar.HOUR_OF_DAY, 23);
+        firstTime.set(Calendar.MINUTE, 0);
+        firstTime.set(Calendar.SECOND, 0);
+        if (firstTime.before(now)) {
+            firstTime.roll(Calendar.DATE, true);
+        }
+
         long period = ONE_DAY;
-        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), firstTime, period);
+        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), firstTime.getTime(), period);
     }
 
     private void scheduleMorningTask() {
         // The morning task runs once each morning.
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date firstTime = calendar.getTime();
+        Calendar firstTime = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+        firstTime.set(Calendar.HOUR_OF_DAY, 8);
+        firstTime.set(Calendar.MINUTE, 0);
+        firstTime.set(Calendar.SECOND, 0);
+        if (firstTime.before(now)) {
+            firstTime.roll(Calendar.DATE, true);
+        }
+
         long period = ONE_DAY;
-        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), firstTime, period);
+        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), firstTime.getTime(), period);
     }
 
     private void scheduleDirectoryReload() {
