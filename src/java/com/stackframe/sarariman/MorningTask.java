@@ -30,19 +30,18 @@ public class MorningTask extends TimerTask {
 
     public void run() {
         Calendar today = Calendar.getInstance();
-        java.util.Date todayDate = today.getTime();
+        Date prevWeek = new Date(DateUtils.prevWeek(DateUtils.weekStart(today.getTime())).getTime());
         // Check to see if last week's timesheet was submitted.
-        try {
-            Date week = new Date(DateUtils.prevWeek(DateUtils.weekStart(todayDate)).getTime());
-            for (Employee employee : directory.getByUserName().values()) {
-                Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
+        for (Employee employee : directory.getByUserName().values()) {
+            Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), prevWeek);
+            try {
                 if (!timesheet.isSubmitted()) {
                     emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
-                            "late timesheet", "Please submit your timesheet for the week of " + week + ".");
+                            "late timesheet", "Please submit your timesheet for the week of " + prevWeek + ".");
                 }
+            } catch (SQLException se) {
+                logger.log(Level.SEVERE, "could not get hours for " + today, se);
             }
-        } catch (SQLException se) {
-            logger.log(Level.SEVERE, "could not get hours for " + today, se);
         }
     }
 

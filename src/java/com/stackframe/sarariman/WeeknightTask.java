@@ -36,10 +36,10 @@ public class WeeknightTask extends TimerTask {
         }
 
         java.util.Date todayDate = today.getTime();
-        try {
-            Date week = new Date(DateUtils.weekStart(todayDate).getTime());
-            for (Employee employee : directory.getByUserName().values()) {
-                Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
+        Date week = new Date(DateUtils.weekStart(todayDate).getTime());
+        for (Employee employee : directory.getByUserName().values()) {
+            Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
+            try {
                 if (!timesheet.isSubmitted()) {
                     if (dayOfWeek == Calendar.FRIDAY) {
                         emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
@@ -52,9 +52,9 @@ public class WeeknightTask extends TimerTask {
                         }
                     }
                 }
+            } catch (SQLException se) {
+                logger.log(Level.SEVERE, "could not get hours for " + today, se);
             }
-        } catch (SQLException se) {
-            logger.log(Level.SEVERE, "could not get hours for " + today, se);
         }
     }
 
