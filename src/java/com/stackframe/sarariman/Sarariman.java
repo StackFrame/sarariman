@@ -79,28 +79,38 @@ public class Sarariman implements ServletContextListener {
         return props;
     }
 
-    private void scheduleTasks() {
+    public static final long ONE_SECOND = 1000;
+    public static final long ONE_MINUTE = 60 * ONE_SECOND;
+    public static final long ONE_HOUR = 60 * ONE_MINUTE;
+    public static final long ONE_DAY = 24 * ONE_HOUR;
+
+    private void scheduleWeeknightTask() {
+        // The weeknight task runs at 11:00 PM each night filters out Saturday and Sunday itself.
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
-        final long ONE_SECOND = 1000;
-        final long ONE_MINUTE = 60 * ONE_SECOND;
-        final long ONE_HOUR = 60 * ONE_MINUTE;
-        final long ONE_DAY = 24 * ONE_HOUR;
 
         final TimerTask weeknightTask = new WeeknightTask(this, directory, emailDispatcher);
         timer.scheduleAtFixedRate(weeknightTask, date, ONE_DAY);
+    }
 
-        final TimerTask reloadLDAP = new TimerTask() {
+    private void scheduleDirectoryReload() {
+        // Reload the directory once an hour.  The main use case is to discover new employees that were added after the application
+        // started.
+        timer.schedule(new TimerTask() {
 
             public void run() {
                 directory.reload();
             }
 
-        };
-        timer.schedule(reloadLDAP, ONE_HOUR, ONE_HOUR);
+        }, ONE_HOUR, ONE_HOUR);
+    }
+
+    private void scheduleTasks() {
+        scheduleWeeknightTask();
+        scheduleDirectoryReload();
     }
 
     public Connection openConnection() {
