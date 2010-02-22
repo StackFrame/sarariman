@@ -38,7 +38,7 @@
         </sql:query>
         <ul>
             <c:forEach var="row" items="${result.rows}">
-                <c:url var="target" value="timereport.jsp">
+                <c:url var="target" value="timereport">
                     <c:param name="project" value="${param.project}"/>
                     <c:param name="week" value="${param.week}"/>
                     <c:param name="employee" value="${row.employee}"/>
