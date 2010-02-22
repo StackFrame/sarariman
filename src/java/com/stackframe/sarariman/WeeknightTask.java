@@ -31,7 +31,7 @@ public class WeeknightTask extends TimerTask {
     public void run() {
         Calendar today = Calendar.getInstance();
         int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
-        if (dayOfWeek == Calendar.SATURDAY && dayOfWeek == Calendar.SUNDAY) {
+        if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
             return;
         }
 
