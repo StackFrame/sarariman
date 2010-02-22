@@ -159,12 +159,13 @@ public class Sarariman implements ServletContextListener {
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException uhe) {
-            hostname = "unknown";
+            hostname = "unknown host";
         }
 
         for (Employee employee : directory.getByUserName().values()) {
             if (employee.isAdministrator()) {
-                emailDispatcher.send(employee.getEmail(), null, "sarariman started", "Sarariman has been started on " + hostname);
+                emailDispatcher.send(employee.getEmail(), null, "sarariman started",
+                        String.format("Sarariman has been started on %s.", hostname));
             }
         }
     }
