@@ -8,7 +8,6 @@
     <pathelement path="lib/iText-2.0.8.jar" />
   </path>
 
-
   <target name="default" description="Compile and build WAR." >
 
     <mkdir dir="${bin_dir}" />
