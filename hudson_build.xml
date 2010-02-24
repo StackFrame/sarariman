@@ -4,6 +4,7 @@
   <path id="compile.class.path">
     <pathelement path="/usr/share/tomcat5.5/common/lib/servlet-api.jar" />
     <pathelement path="/usr/share/tomcat5.5/common/lib/servlet-api.jar" />
+    <pathelement path="/usr/share/tomcat5.5/common/lib/mail.jar" />
     <pathelement path="lib/core-renderer.jar" />
     <pathelement path="lib/iText-2.0.8.jar" />
   </path>
