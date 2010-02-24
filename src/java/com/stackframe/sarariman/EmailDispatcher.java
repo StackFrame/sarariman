@@ -17,13 +17,17 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  *
@@ -54,7 +58,8 @@ public class EmailDispatcher {
         port = (Integer)properties.get("mail.smtp.port");
     }
 
-    private void submit(final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject, final String body) {
+    private void submit(final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject,
+            final String body, final Collection<MimeBodyPart> attachments) {
         executor.execute(new Runnable() {
 
             public void run() {
@@ -76,8 +81,21 @@ public class EmailDispatcher {
                     }
 
                     msg.setSubject(subject);
-                    msg.setText(body);
                     msg.setHeader("X-Mailer", "Sarariman");
+
+                    BodyPart messageBodyPart = new MimeBodyPart();
+                    messageBodyPart.setText(body);
+
+                    Multipart multipart = new MimeMultipart();
+                    multipart.addBodyPart(messageBodyPart);
+
+                    if (attachments != null) {
+                        for (MimeBodyPart mbp : attachments) {
+                            multipart.addBodyPart(mbp);
+                        }
+                    }
+
+                    msg.setContent(multipart);
                     msg.setSentDate(new Date());
                     msg.saveChanges();
                     if (inhibit) {
@@ -98,11 +116,21 @@ public class EmailDispatcher {
     }
 
     public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(to, cc, subject, body);
+        submit(to, cc, subject, body, null);
     }
 
     public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(Collections.singleton(to), cc, subject, body);
+        submit(Collections.singleton(to), cc, subject, body, null);
+    }
+
+    public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
+            Collection<MimeBodyPart> attachments) {
+        submit(to, cc, subject, body, attachments);
+    }
+
+    public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
+            Collection<MimeBodyPart> attachments) {
+        submit(Collections.singleton(to), cc, subject, body, attachments);
     }
 
     public static Collection<InternetAddress> addresses(Collection<Employee> employees) {

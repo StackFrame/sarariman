@@ -7,7 +7,10 @@ package com.stackframe.sarariman;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -53,16 +56,23 @@ public class ProjectController extends HttpServlet {
         try {
             long id;
             Project project;
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.sql.Date pop_start;
+            java.sql.Date pop_end;
             switch (action) {
                 case create:
-                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), null, null, new BigDecimal(0));
+                    pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
+                    pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
+                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end, null, null, new BigDecimal(0));
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case update:
                     id = Long.parseLong(request.getParameter("id"));
                     project = sarariman.getProjects().get(id);
-                    project.update(name, Long.parseLong(request.getParameter("customer")), request.getParameter("contract"), request.getParameter("subcontract"), new BigDecimal(request.getParameter("funded")));
+                    pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
+                    pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
+                    project.update(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end, request.getParameter("contract"), request.getParameter("subcontract"), new BigDecimal(request.getParameter("funded")));
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:
@@ -75,8 +85,10 @@ public class ProjectController extends HttpServlet {
                     response.sendError(500);
                     return;
             }
-        } catch (SQLException se) {
-            throw new IOException(se);
+        } catch (Exception e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+            throw ioe;
         }
     }
 

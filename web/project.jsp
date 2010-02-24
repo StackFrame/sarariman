@@ -54,6 +54,12 @@
             <label for="funded">Funded: </label>
             <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>
 
+            <label for="pop_start">Period of Performance Start: </label>
+            <input type="text" id="pop_start" name="pop_start"/>
+
+            <label for="pop_end">End: </label>
+            <input type="text" id="pop_end" name="pop_end"/><br/>
+
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
 

@@ -38,14 +38,58 @@
         </sql:query>
         <ul>
             <c:forEach var="row" items="${result.rows}">
-                <c:url var="target" value="timereport">
+                <c:url var="html" value="timereport">
                     <c:param name="project" value="${param.project}"/>
                     <c:param name="week" value="${param.week}"/>
                     <c:param name="employee" value="${row.employee}"/>
                 </c:url>
-                <li><a href="${fn:escapeXml(target)}">${directory.byNumber[row.employee].fullName}</a></li>
-            </c:forEach>
+                <c:url var="pdf" value="${html}">
+                    <c:param name="outputType" value="pdf"/>
+                </c:url>
+                <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a>
+                    <a href="${fn:escapeXml(pdf)}">[PDF]</a></li>
+                </c:forEach>
         </ul>
+
+        <p>Email will go to:</p>
+        <sql:query dataSource="jdbc/sarariman" var="emailResult">
+            SELECT email
+            FROM project_emails as e
+            JOIN projects AS p ON e.project = p.id
+            WHERE p.id = ?
+            <sql:param value="${param.project}"/>
+        </sql:query>
+
+        <ul>
+            <c:forEach var="row" items="${emailResult.rows}"><li>${row.email}</li></c:forEach>
+        </ul>
+
+        <form action="${pageContext.request.contextPath}/PDFTimesheetBuilder" method="POST">
+            <c:forEach var="row" items="${result.rows}">
+                <c:url var="pdf" value="timereport">
+                    <c:param name="project" value="${param.project}"/>
+                    <c:param name="week" value="${param.week}"/>
+                    <c:param name="employee" value="${row.employee}"/>
+                    <c:param name="outputType" value="pdf"/>
+                </c:url>
+                <input type="hidden" name="employee" value="${directory.byNumber[row.employee].fullName}"/>
+                <input type="hidden" name="pdf" value="${fn:escapeXml(pdf)}"/>
+            </c:forEach>
+
+            <input type="hidden" name="project" value="${fn:escapeXml(project.name)}"/>
+            <input type="hidden" name="week" value="${param.week}"/>
+
+            <c:forEach var="row" items="${emailResult.rows}">
+                <input type="hidden" name="to" value="${row.email}"/>
+            </c:forEach>
+
+            <input type="hidden" name="cc" value="mcculley@stackframe.com"/>
+            <input type="hidden" name="cc" value="awetteland@stackframe.com"/>
+
+            <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
+            <input type="submit" value="Send"/>
+        </form>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>

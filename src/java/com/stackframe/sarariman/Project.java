@@ -121,15 +121,17 @@ public class Project {
         }
     }
 
-    public static Project create(Sarariman sarariman, String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {
+    public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract, BigDecimal funded) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, contract_number, subcontract_number, funded) VALUES(?, ?, ?, ?, ?)");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded) VALUES(?, ?, ?, ?, ?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
-            ps.setString(3, contract);
-            ps.setString(4, subcontract);
-            ps.setBigDecimal(5, funded);
+            ps.setDate(3, pop_start);
+            ps.setDate(4, pop_end);
+            ps.setString(5, contract);
+            ps.setString(6, subcontract);
+            ps.setBigDecimal(7, funded);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             try {
@@ -144,16 +146,18 @@ public class Project {
         }
     }
 
-    public void update(String name, Long customer, String contract, String subcontract, BigDecimal funded) throws SQLException {
+    public void update(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract, BigDecimal funded) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, contract_number=?, subcontract_number=?, funded=? WHERE id=?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=? WHERE id=?");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
-            ps.setString(3, contract);
-            ps.setString(4, subcontract);
-            ps.setBigDecimal(5, funded);
-            ps.setLong(6, id);
+            ps.setDate(3, pop_start);
+            ps.setDate(4, pop_end);
+            ps.setString(5, contract);
+            ps.setString(6, subcontract);
+            ps.setBigDecimal(7, funded);
+            ps.setLong(8, id);
             ps.executeUpdate();
         } finally {
             ps.close();

@@ -25,12 +25,20 @@
             <input type="hidden" name="action" value="create"/>
             <label for="name">Name: </label>
             <input type="text" size="40" id="name" name="name" value="${fn:escapeXml(project.name)}"/><br/>
+
             <label for="customer">Customer: </label>
             <select id="customer" name="customer">
                 <c:forEach var="entry" items="${customers}">
                     <option value="${entry.key}">${fn:escapeXml(entry.value.name)}</option>
                 </c:forEach>
             </select><br/>
+
+            <label for="pop_start">Period of Performance Start: </label>
+            <input type="text" id="pop_start" name="pop_start"/>
+
+            <label for="pop_end">End: </label>
+            <input type="text" id="pop_end" name="pop_end"/><br/>
+
             <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
         <br/>
