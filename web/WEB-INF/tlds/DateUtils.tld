@@ -14,6 +14,11 @@
         <function-signature>java.util.Date weekStart(java.util.Date)</function-signature>
     </function>
     <function>
+        <name>weekEnd</name>
+        <function-class>com.stackframe.sarariman.DateUtils</function-class>
+        <function-signature>java.util.Date weekEnd(java.util.Date)</function-signature>
+    </function>
+    <function>
         <name>weekStarts</name>
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
         <function-signature>java.util.Collection weekStarts(java.util.Collection)</function-signature>

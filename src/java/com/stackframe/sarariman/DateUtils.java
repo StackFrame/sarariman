@@ -35,6 +35,20 @@ public class DateUtils {
         return startDate.getTime();
     }
 
+    public static Date weekEnd(Date date) {
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(date);
+
+        int day = startDate.get(Calendar.DAY_OF_WEEK);
+        if (day == Calendar.SATURDAY) {
+            startDate.add(Calendar.DATE, 6);
+        } else {
+            startDate.add(Calendar.DATE, Calendar.FRIDAY - day);
+        }
+
+        return startDate.getTime();
+    }
+
     public static Collection<Date> weekStarts(Collection<Date> dates) {
         Collection<Date> result = new TreeSet<Date>();
         for (Date date : dates) {
