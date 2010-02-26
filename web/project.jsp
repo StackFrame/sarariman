@@ -146,7 +146,7 @@
                                 JOIN projects AS p on p.id = t.project
                                 JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
                                 JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-                                WHERE c.id=? AND t.billable=TRUE;
+                                WHERE c.id=? AND t.billable=TRUE and h.duration > 0;
                                 <sql:param value="${category.id}"/>
                             </sql:query>
 
@@ -165,7 +165,7 @@
                                 JOIN projects AS p on p.id = t.project
                                 JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
                                 JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-                                WHERE c.id=? AND t.billable=TRUE;
+                                WHERE c.id=? AND t.billable=TRUE AND h.duration > 0;
                                 <sql:param value="${category.id}"/>
                             </sql:query>
 
@@ -206,7 +206,7 @@
                 JOIN hours AS h ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
                 JOIN tasks AS t on t.id = h.task
                 JOIN projects AS p on p.id = t.project
-                WHERE p.id = ?
+                WHERE p.id = ? AND h.duration > 0
                 ORDER BY id DESC
                 <sql:param value="${project.id}"/>
             </sql:query>
@@ -228,7 +228,7 @@
                 FROM hours AS h
                 JOIN tasks AS t on h.task = t.id
                 JOIN projects AS p ON t.project = p.id
-                WHERE p.id = ? AND t.billable = TRUE
+                WHERE p.id = ? AND t.billable = TRUE AND h.duration > 0
                 <sql:param value="${project.id}"/>
             </sql:query>
             <c:forEach var="row" items="${result.rows}">
