@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -9,6 +9,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
@@ -26,8 +27,9 @@
         <h1>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${user.administrator && !empty param.create}">
-            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, customer, project, pageContext.request.parameterMap,
-                                                 paramValues.addToInvoiceEmployee, paramValues.addToInvoiceTask, paramValues.addToInvoiceDate)}"/>
+            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, customer, project, param.pop_start,
+                                                 param.pop_end, pageContext.request.parameterMap, paramValues.addToInvoiceEmployee,
+                                                 paramValues.addToInvoiceTask, paramValues.addToInvoiceDate)}"/>
             <p>Created <a href="invoice?invoice=${createdInvoice.id}">invoice ${createdInvoice.id}</a> with selected entries.</p>
         </c:if>
 
@@ -41,18 +43,34 @@
             ORDER BY h.date ASC, h.employee ASC, h.task ASC
             <sql:param value="${param.project}"/>
         </sql:query>
+
+        <fmt:parseDate var="pop_start" value="${result.rows[0].date}" pattern="yyyy-MM-dd"/>
+        <c:set var="pop_start" value="${du:weekStart(pop_start)}"/>
+
+        <c:set var="pop_end" value="${du:weekEnd(du:prevWeek(du:weekStart(du:now())))}"/>
+
         <form method="POST">
-            <label>Create Invoice:</label>
-            <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+            <label>Create Invoice:</label><br/>
+
+            <label for="pop_start">Period of Performance Start: </label>
+            <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${pop_start}" pattern="yyyy-MM-dd"/>"/>
+
+            <label for="pop_end">End: </label>
+            <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${pop_end}" pattern="yyyy-MM-dd"/>"/><br/>
+
+            <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
+
             <table class="altrows">
                 <tr><th>Employee</th><th>Task</th><th>Date</th><th>Duration</th><th>Invoice</th></tr>
                 <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
+                    <fmt:parseDate var="date" value="${row.date}" pattern="yyyy-MM-dd"/>
                     <tr>
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td>${row.task}</td>
                         <td>${row.date}</td>
                         <td>${row.duration}</td>
-                        <td><input type="checkbox" name="addToInvoice${varStatus.index}" value="true" <c:if test="${!user.administrator}">disabled="true"</c:if>/></td>
+                        <td><input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
+                                   <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/></td>
                     <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
                     <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
                     <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>

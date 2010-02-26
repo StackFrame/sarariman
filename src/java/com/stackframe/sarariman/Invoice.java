@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -12,6 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -29,21 +32,24 @@ public class Invoice {
         this.sarariman = sarariman;
     }
 
-    public static Invoice create(Sarariman sarariman, Customer customer, Project project, Map parameterMap, String[] employees, String[] tasks, String[] dates) throws SQLException {
+    public static Invoice create(Sarariman sarariman, Customer customer, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates) throws SQLException, ParseException {
         int numItems = employees.length;
         if (numItems != tasks.length || numItems != dates.length) {
             System.err.println("mismatched lengths");
         }
 
         Connection connection = sarariman.openConnection();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             connection.setAutoCommit(false);
 
-            PreparedStatement createInvoice = connection.prepareStatement("INSERT INTO invoice_info (sent, customer, project, description) VALUES(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement createInvoice = connection.prepareStatement("INSERT INTO invoice_info (sent, customer, project, pop_start, pop_end, description) VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             createInvoice.setDate(1, new Date(new java.util.Date().getTime()));
             createInvoice.setLong(2, customer.getId());
             createInvoice.setLong(3, project.getId());
-            createInvoice.setString(4, "invoice for " + customer.getName() + " - " + project.getName());
+            createInvoice.setDate(4, new Date(dateFormat.parse(popStart).getTime()));
+            createInvoice.setDate(5, new Date(dateFormat.parse(popEnd).getTime()));
+            createInvoice.setString(6, "invoice for " + customer.getName() + " - " + project.getName());
             int createdRowCount = createInvoice.executeUpdate();
             assert createdRowCount == 1;
             ResultSet keys = createInvoice.getGeneratedKeys();
