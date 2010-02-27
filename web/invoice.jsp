@@ -8,6 +8,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <%
         Employee user = (Employee)request.getAttribute("user");
@@ -57,10 +58,40 @@
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Sent: ${sent}<br/>
+            Period of Performance Start: ${invoice_info.pop_start} End: ${invoice_info.pop_end}<br/>
             Payment received: ${received}</p>
         <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
-        <p>Period of Performance Start: ${fn:escapeXml(invoice_info.pop_start)} End: ${fn:escapeXml(invoice_info.pop_end)}</p>
         <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
+
+        <h2>Timesheets</h2>
+        <ul>
+            <c:forEach var="week" items="${du:weekStartsRange(invoice_info.pop_start, invoice_info.pop_end)}">
+                <fmt:formatDate var="formattedWeek" value="${week}" pattern="yyyy-MM-dd"/>
+                <sql:query dataSource="jdbc/sarariman" var="timesheetResult">
+                    SELECT DISTINCT h.employee
+                    FROM hours as h
+                    JOIN tasks AS t ON h.task = t.id
+                    JOIN projects AS p ON t.project = p.id
+                    WHERE p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
+                    ORDER BY h.employee ASC
+                    <sql:param value="${project.id}"/>
+                    <sql:param value="${week}"/>
+                    <sql:param value="${week}"/>
+                </sql:query>
+                <c:forEach var="row" items="${timesheetResult.rows}">
+                    <c:url var="html" value="timereport">
+                        <c:param name="project" value="${project.id}"/>
+                        <c:param name="week" value="${formattedWeek}"/>
+                        <c:param name="employee" value="${row.employee}"/>
+                    </c:url>
+                    <c:url var="pdf" value="${html}">
+                        <c:param name="outputType" value="pdf"/>
+                    </c:url>
+                    <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName} ${formattedWeek}</a>
+                        <a href="${fn:escapeXml(pdf)}">[PDF]</a></li>
+                    </c:forEach>
+                </c:forEach>
+        </ul>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT i.employee, i.task, i.date, h.duration, t.project
