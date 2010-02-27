@@ -5,7 +5,6 @@
 package com.stackframe.sarariman;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,7 +40,7 @@ class CronJobs {
         firstTime.set(Calendar.MINUTE, 0);
         firstTime.set(Calendar.SECOND, 0);
         if (firstTime.before(now)) {
-            firstTime.roll(Calendar.DATE, true);
+            firstTime.add(Calendar.DATE, 1);
         }
 
         long period = ONE_DAY;
@@ -56,7 +55,7 @@ class CronJobs {
         firstTime.set(Calendar.MINUTE, 0);
         firstTime.set(Calendar.SECOND, 0);
         if (firstTime.before(now)) {
-            firstTime.roll(Calendar.DATE, true);
+            firstTime.add(Calendar.DATE, 1);
         }
 
         long period = ONE_DAY;
