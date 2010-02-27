@@ -43,7 +43,7 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-            SELECT project, sent, customer, payment_received
+            SELECT project, sent, customer, payment_received, pop_start, pop_end
             FROM invoice_info AS i
             WHERE i.id = ?
             <sql:param value="${param.invoice}"/>
@@ -59,6 +59,7 @@
             Sent: ${sent}<br/>
             Payment received: ${received}</p>
         <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
+        <p>Period of Performance Start: ${fn:escapeXml(invoice_info.pop_start)} End: ${fn:escapeXml(invoice_info.pop_end)}</p>
         <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
