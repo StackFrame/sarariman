@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -53,6 +54,21 @@ public class DateUtils {
         Collection<Date> result = new TreeSet<Date>();
         for (Date date : dates) {
             result.add(weekStart(date));
+        }
+
+        return result;
+    }
+
+    public static Collection<Date> weekStarts(Date begin, Date end) {
+        Collection<Date> result = new ArrayList<Date>();
+        Calendar day = Calendar.getInstance();
+        day.setTime(begin);
+        while (!day.getTime().after(end)) {
+            if (day.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+                result.add(day.getTime());
+            }
+
+            day.add(Calendar.DATE, 1);
         }
 
         return result;

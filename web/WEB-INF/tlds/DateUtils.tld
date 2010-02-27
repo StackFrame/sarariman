@@ -24,6 +24,11 @@
         <function-signature>java.util.Collection weekStarts(java.util.Collection)</function-signature>
     </function>
     <function>
+        <name>weekStartsRange</name>
+        <function-class>com.stackframe.sarariman.DateUtils</function-class>
+        <function-signature>java.util.Collection weekStarts(java.util.Date, java.util.Date)</function-signature>
+    </function>
+    <function>
         <name>addDays</name>
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
         <function-signature>java.util.Date addDays(java.util.Date, int)</function-signature>
