@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class Sarariman implements ServletContextListener {
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
+    private final Collection<Extension> extensions = new ArrayList<Extension>();
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
     private CronJobs cronJobs;
@@ -135,7 +137,12 @@ public class Sarariman implements ServletContextListener {
         return result;
     }
 
+    public Collection<Extension> getExtensions() {
+        return extensions;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
+        extensions.add(new SAICExtension());
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context)initContext.lookup("java:comp/env");
