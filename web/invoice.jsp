@@ -249,8 +249,11 @@
                         WHERE i.id = ?
                         <sql:param value="${param.invoice}"/>
                     </sql:query>
-                    <tr><td colspan="5"><strong>Total</strong></td><td class="duration">${sum.rows[0].total}</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td></tr>
+                    <tr>
+                        <td colspan="5"><strong>Total</strong></td>
+                        <td class="duration"><strong>${sum.rows[0].total}</strong></td>
+                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${totalCost}"/></strong></td>
+                    </tr>
                     <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
                 </tbody>
             </table>

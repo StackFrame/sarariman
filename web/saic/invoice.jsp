@@ -134,7 +134,7 @@
             </c:forEach>
             <tr>
                 <td colspan="8"><strong>Total</strong></td>
-                <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td>
+                <td class="currency"><strong><fmt:formatNumber type="currency" value="${totalCost}"/></strong></td>
             </tr>
             <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
         </tbody>
