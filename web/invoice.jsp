@@ -314,7 +314,7 @@
         </table>
 
         <br/>
-        <form id="email" action="${pageContext.request.contextPath}/PDFInvoiceBuilder" method="POST">
+        <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
             <c:forEach var="documentName" items="${documentNames}">
                 <input type="hidden" name="documentName" value="${documentName}"/>
             </c:forEach>

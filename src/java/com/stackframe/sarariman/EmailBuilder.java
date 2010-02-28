@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class PDFInvoiceBuilder extends HttpServlet {
+public class EmailBuilder extends HttpServlet {
 
     /** 
      * Handles the HTTP <code>POST</code> method.

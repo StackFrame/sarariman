@@ -132,7 +132,7 @@
         <servlet-class>com.stackframe.sarariman.LaborCosts</servlet-class>
     </servlet>
     <servlet><servlet-name>PDFTimesheetBuilder</servlet-name><servlet-class>com.stackframe.sarariman.PDFTimesheetBuilder</servlet-class></servlet>
-    <servlet><servlet-name>PDFInvoiceBuilder</servlet-name><servlet-class>com.stackframe.sarariman.PDFInvoiceBuilder</servlet-class></servlet>
+    <servlet><servlet-name>EmailBuilder</servlet-name><servlet-class>com.stackframe.sarariman.EmailBuilder</servlet-class></servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
@@ -360,8 +360,8 @@
         <url-pattern>/PDFTimesheetBuilder</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PDFInvoiceBuilder</servlet-name>
-        <url-pattern>/PDFInvoiceBuilder</url-pattern>
+        <servlet-name>EmailBuilder</servlet-name>
+        <url-pattern>/EmailBuilder</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
