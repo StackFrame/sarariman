@@ -77,7 +77,11 @@ public class EmailBuilder extends HttpServlet {
         }
 
         String subject = request.getParameter("subject");
-        String body = request.getParameter("body") + '\n';
+        String body = request.getParameter("body");
+
+        // Decode special characters because they aren't sent as characters by the JSP code.
+        body = body.replaceAll("\\\\n", "\n");
+        body = body.replaceAll("\\\\t", "\t");
 
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         sarariman.getEmailDispatcher().send(to, cc, subject, body, attachments);

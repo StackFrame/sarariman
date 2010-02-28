@@ -115,7 +115,7 @@
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Sent: ${sent}<br/>
-            Period of Performance: Start: ${invoice_info.pop_start} End: ${invoice_info.pop_end}<br/>
+            Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
             Payment received: ${received}</p>
         <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
         <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
@@ -335,7 +335,7 @@
 
             <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
             <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
-            <input type="hidden" name="body" value="Please find attached documents for invoice ${param.invoice} for ${invoiceTotal}."/>
+            <input type="hidden" name="body" value="Please find attached invoice ${param.invoice}.\n\nTotal: ${invoiceTotal}\nProject: ${fn:escapeXml(project.name)}\nPeriod: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
 
             <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
             <input type="submit" value="Send"/>
