@@ -50,6 +50,11 @@
             }
 
             @media print{
+                a {
+                    color: #000;
+                    text-decoration: none;
+                }
+
                 .dates {
                     white-space: nowrap;
                 }

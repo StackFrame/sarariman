@@ -77,7 +77,7 @@ public class EmailBuilder extends HttpServlet {
         }
 
         String subject = request.getParameter("subject");
-        String body = request.getParameter("body");
+        String body = request.getParameter("body") + '\n';
 
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         sarariman.getEmailDispatcher().send(to, cc, subject, body, attachments);

@@ -102,6 +102,7 @@
             </tr>
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+            <c:set var="totalCost" value="0"/>
             <c:forEach var="row" items="${result.rows}">
                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                 <tr>
@@ -128,15 +129,20 @@
                     </c:choose>
                     <td class="duration">${row.duration}</td>
                     <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                    <c:set var="totalCost" value="${totalCost + costData.cost}"/>
                 </tr>
             </c:forEach>
+            <tr><td>Total</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td>
+            </tr>
+            <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
         </tbody>
     </table>
 
     <c:set var="csvLinkEmitted" value="${true}" scope="request"/>
     <p id="csv"><a href="saic/laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
     <%
-documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
-documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));
+        documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
+        documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));
     %>
 </c:if>

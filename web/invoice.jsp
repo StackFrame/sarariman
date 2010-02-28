@@ -51,6 +51,11 @@
             }
 
             @media print{
+                a {
+                    color: #000;
+                    text-decoration: none;
+                }
+
                 #topnav {
                     display: none;
                 }
@@ -110,7 +115,7 @@
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Sent: ${sent}<br/>
-            Period of Performance Start: ${invoice_info.pop_start} End: ${invoice_info.pop_end}<br/>
+            Period of Performance: Start: ${invoice_info.pop_start} End: ${invoice_info.pop_end}<br/>
             Payment received: ${received}</p>
         <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
         <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
@@ -244,7 +249,9 @@
                         WHERE i.id = ?
                         <sql:param value="${param.invoice}"/>
                     </sql:query>
-                    <tr><td>Total</td><td></td><td></td><td></td><td></td><td class="duration">${sum.rows[0].total}</td><td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td></tr>
+                    <tr><td>Total</td><td></td><td></td><td></td><td></td><td class="duration">${sum.rows[0].total}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td></tr>
+                    <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
                 </tbody>
             </table>
         </c:if>
@@ -324,7 +331,8 @@
             </c:forEach>
 
             <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
-            <input type="hidden" name="body" value="Please find attached documents for invoice ${param.invoice}."/>
+            <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
+            <input type="hidden" name="body" value="Please find attached documents for invoice ${param.invoice} for ${invoiceTotal}."/>
 
             <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
             <input type="submit" value="Send"/>
