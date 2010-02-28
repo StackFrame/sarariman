@@ -32,6 +32,7 @@
         <sql:param value="${param.week}"/>
         <sql:param value="${param.week}"/>
     </sql:query>
+    <c:set var="timereportTableEmitted" value="${true}" scope="request"/>
     <table class="timereport">
         <tr>
             <th>Task</th>
