@@ -13,6 +13,9 @@
     <jsp:forward page="../unauthorized"/>
 </c:if>
 
+<jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="documentLinks" class="java.util.ArrayList" scope="request"/>
+
 <sql:query dataSource="jdbc/sarariman" var="customerResult">
     SELECT p.customer
     FROM invoice_info AS i
@@ -39,6 +42,7 @@
         WHERE i.id = ?
         <sql:param value="${param.invoice}"/>
     </sql:query>
+    <br/>
     <table class="altrows">
         <caption>Entries by Line Item and Employee</caption>
         <tbody>
@@ -81,6 +85,7 @@
         ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC
         <sql:param value="${param.invoice}"/>
     </sql:query>
+    <br/>
     <table class="altrows" id="entries">
         <caption>Entries</caption>
         <tbody>
@@ -130,4 +135,8 @@
 
     <c:set var="csvLinkEmitted" value="${true}" scope="request"/>
     <p id="csv"><a href="saic/laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+    <%
+documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
+documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));
+    %>
 </c:if>

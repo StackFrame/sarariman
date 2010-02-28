@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -23,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class PDFTimesheetBuilder extends HttpServlet {
+public class PDFInvoiceBuilder extends HttpServlet {
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -36,10 +35,10 @@ public class PDFTimesheetBuilder extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         Collection<MimeBodyPart> attachments = new ArrayList<MimeBodyPart>();
-        String[] pdfs = request.getParameterValues("pdf");
-        String[] employees = request.getParameterValues("employee");
-        for (int i = 0; i < pdfs.length; i++) {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher(pdfs[i]);
+        String[] documentLinks = request.getParameterValues("documentLink");
+        String[] documentNames = request.getParameterValues("documentName");
+        for (int i = 0; i < documentLinks.length; i++) {
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher(documentLinks[i]);
             ModifiableRequest tmpRequest = new ModifiableRequest(request);
             tmpRequest.setMethod("GET");
             ContentCaptureServletResponse capContent = new ContentCaptureServletResponse(response);
@@ -48,7 +47,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
             MimeBodyPart mbp = new MimeBodyPart();
             try {
                 mbp.setContent(data, capContent.getContentType());
-                mbp.setFileName(String.format("%s-%s.pdf", employees[i], request.getParameter("week")));
+                mbp.setFileName(documentNames[i]);
                 attachments.add(mbp);
             } catch (MessagingException me) {
                 IOException ioe = new IOException();
@@ -57,21 +56,8 @@ public class PDFTimesheetBuilder extends HttpServlet {
             }
         }
 
-        StringBuilder body = new StringBuilder("Please find attached ");
-        body.append(employees.length == 1 ? "the timesheet" : "timesheets");
-        body.append(" for");
-        if (employees.length == 1) {
-            body.append(" " + employees[0] + ".\n");
-        } else {
-            body.append(":\n");
-            for (String employee : employees) {
-                body.append('\t' + employee + '\n');
-            }
-        }
-
-        body.append("\n");
-        body.append("Project: " + request.getParameter("project") + '\n');
-        body.append("Week: " + request.getParameter("week") + '\n');
+        StringBuilder body = new StringBuilder("Documents are attached for invoice ");
+        body.append(request.getParameter("invoice") + ".\n");
         body.append("\n");
 
         Collection<InternetAddress> to = new ArrayList<InternetAddress>();
@@ -95,17 +81,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
             }
         }
 
-        String subject = employees.length == 1 ? "timesheet" : "timesheets";
-
-        String testAddress = request.getParameter("testaddress");
-        if (testAddress != null && testAddress.length() > 0) {
-            try {
-                to = Collections.singleton(new InternetAddress(testAddress));
-                cc = null;
-            } catch (AddressException ae) {
-                throw new ServletException(ae);
-            }
-        }
+        String subject = "Invoice " + request.getParameter("invoice");
 
         sarariman.getEmailDispatcher().send(to, cc, subject, body.toString(), attachments);
 
@@ -132,7 +108,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Builds PDF documents for timesheets for a project";
+        return "Builds PDF documents for invoices";
     }
 
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class ContentCaptureServletResponse extends HttpServletResponseWrapper {
 
+    private String contentType;
     private final ByteArrayOutputStream contentBuffer = new ByteArrayOutputStream();
     private final PrintWriter writer = new PrintWriter(contentBuffer);
 
@@ -49,6 +50,16 @@ public class ContentCaptureServletResponse extends HttpServletResponseWrapper {
     public byte[] getContentBytes() {
         writer.flush();
         return contentBuffer.toByteArray();
+    }
+
+    @Override
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType;
     }
 
 }

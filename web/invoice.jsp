@@ -18,7 +18,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <style type="text/css">
             @media screen, print{
                 body {
@@ -64,6 +63,10 @@
                     display: none;
                 }
 
+                #email {
+                    display: none;
+                }
+
                 table {
                     font-size: 12px;
                     text-align: center;
@@ -79,6 +82,9 @@
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
+
+        <jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
+        <jsp:useBean id="documentLinks" class="java.util.ArrayList" scope="request"/>
 
         <h1>Invoice ${param.invoice}</h1>
 
@@ -109,6 +115,11 @@
         <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
         <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
 
+        <%
+        documentNames.add("Invoice-" + request.getParameter("invoice") + ".pdf");
+        documentLinks.add(String.format("invoice?outputType=pdf&invoice=%s", request.getParameter("invoice")));
+        %>
+
         <div id="timesheets">
             <h2>Timesheets</h2>
             <ul>
@@ -135,9 +146,16 @@
                             <c:param name="outputType" value="pdf"/>
                         </c:url>
                         <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName} ${formattedWeek}</a>
-                            <a href="${fn:escapeXml(pdf)}">[PDF]</a></li>
-                        </c:forEach>
+                            <a href="${fn:escapeXml(pdf)}">[PDF]</a>
+                            <c:set var="documentName" value="${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
+                            <c:set var="documentLink" value="${pdf}"/>
+                            <%
+        documentNames.add(pageContext.getAttribute("documentName"));
+        documentLinks.add(pageContext.getAttribute("documentLink"));
+                            %>
+                        </li>
                     </c:forEach>
+                </c:forEach>
             </ul>
         </div>
 
@@ -151,6 +169,10 @@
 
         <c:if test="${!csvLinkEmitted}">
             <p id="csv"><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+            <%
+        documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
+        documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
+            %>
         </c:if>
 
 
@@ -165,6 +187,7 @@
                 ORDER BY h.date ASC, h.employee ASC, h.task ASC
                 <sql:param value="${param.invoice}"/>
             </sql:query>
+            <br/>
             <table class="altrows" id="hours">
                 <caption>Entries</caption>
                 <tbody>
@@ -234,6 +257,7 @@
             <sql:param value="${param.invoice}"/>
         </sql:query>
 
+        <br/>
         <table class="altrows">
             <caption>Total by Employee and Task</caption>
             <tbody>
@@ -267,6 +291,7 @@
             </tbody>
         </table>
 
+        <br/>
         <table class="altrows">
             <caption>Total by Employee</caption>
             <tbody>
@@ -287,6 +312,22 @@
                 </c:forEach>
             </tbody>
         </table>
+
+        <br/>
+        <form id="email" action="${pageContext.request.contextPath}/PDFInvoiceBuilder" method="POST">
+            <c:forEach var="documentName" items="${documentNames}">
+                <input type="hidden" name="documentName" value="${documentName}"/>
+            </c:forEach>
+
+            <c:forEach var="documentLink" items="${documentLinks}">
+                <input type="hidden" name="documentLink" value="${fn:escapeXml(documentLink)}"/>
+            </c:forEach>
+
+            <input type="hidden" name="invoice" value="${param.invoice}"/>
+
+            <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
+            <input type="submit" value="Send"/>
+        </form>
 
         <%@include file="footer.jsp" %>
     </body>
