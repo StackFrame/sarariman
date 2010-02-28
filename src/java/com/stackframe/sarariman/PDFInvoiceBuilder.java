@@ -33,7 +33,6 @@ public class PDFInvoiceBuilder extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         Collection<MimeBodyPart> attachments = new ArrayList<MimeBodyPart>();
         String[] documentLinks = request.getParameterValues("documentLink");
         String[] documentNames = request.getParameterValues("documentName");
@@ -56,10 +55,6 @@ public class PDFInvoiceBuilder extends HttpServlet {
             }
         }
 
-        StringBuilder body = new StringBuilder("Documents are attached for invoice ");
-        body.append(request.getParameter("invoice") + ".\n");
-        body.append("\n");
-
         Collection<InternetAddress> to = new ArrayList<InternetAddress>();
         for (String toAddress : request.getParameterValues("to")) {
             try {
@@ -81,20 +76,26 @@ public class PDFInvoiceBuilder extends HttpServlet {
             }
         }
 
-        String subject = "Invoice " + request.getParameter("invoice");
+        String subject = request.getParameter("subject");
+        String body = request.getParameter("body");
 
-        sarariman.getEmailDispatcher().send(to, cc, subject, body.toString(), attachments);
+        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        sarariman.getEmailDispatcher().send(to, cc, subject, body, attachments);
 
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Sent</title>");
+            out.println("<title>Email Sent</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Sent</h1>");
+            out.println("<h1>Email Sent</h1>");
             out.println("<p>email was sent.</p>");
+            out.println(String.format("<p>to=%s</p>", to));
+            out.println(String.format("<p>cc=%s</p>", cc));
+            out.println(String.format("<p>subject=%s</p>", subject));
+            out.println(String.format("<p>body=%s</p>", body));
             out.println("</body>");
             out.println("</html>");
         } finally {
@@ -108,7 +109,7 @@ public class PDFInvoiceBuilder extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Builds PDF documents for invoices";
+        return "Generates emails with attached documents";
     }
 
 }

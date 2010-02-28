@@ -323,7 +323,8 @@
                 <input type="hidden" name="documentLink" value="${fn:escapeXml(documentLink)}"/>
             </c:forEach>
 
-            <input type="hidden" name="invoice" value="${param.invoice}"/>
+            <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
+            <input type="hidden" name="body" value="Please find attached documents for invoice ${param.invoice}."/>
 
             <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
             <input type="submit" value="Send"/>
