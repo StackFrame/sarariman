@@ -132,7 +132,8 @@
                     <c:set var="totalCost" value="${totalCost + costData.cost}"/>
                 </tr>
             </c:forEach>
-            <tr><td>Total</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <tr>
+                <td colspan="8"><strong>Total</strong></td>
                 <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td>
             </tr>
             <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
