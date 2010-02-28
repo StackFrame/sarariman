@@ -51,7 +51,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public String getVersion() {
-        return "1.0.32r" + getRevision();
+        return "1.1.0r" + getRevision();
     }
 
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
@@ -165,7 +165,7 @@ public class Sarariman implements ServletContextListener {
         for (Employee employee : directory.getByUserName().values()) {
             if (employee.isAdministrator()) {
                 emailDispatcher.send(employee.getEmail(), null, "sarariman started",
-                        String.format("Sarariman has been started on %s.", hostname));
+                        String.format("Sarariman v%s has been started on %s.", getVersion(), hostname));
             }
         }
     }
