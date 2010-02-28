@@ -20,9 +20,57 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <style type="text/css">
+            @media screen, print{
+                body {
+                    margin: 0px auto;
+                    padding: 15px;
+                    background: white;
+                    color: black;
+                }
+
+                p.error {
+                    color: red;
+                }
+
+                #footer {
+                    text-align: center;
+                }
+
+                .duration {
+                    text-align: right;
+                }
+
+                table {
+                    border-width: 1px;
+                    border-style: outset;
+                }
+
+                table td, table th {
+                    border-width: 1px;
+                    border-style: inset;
+                }
+            }
+
             @media print{
                 #topnav {
                     display: none;
+                }
+
+                #timesheets {
+                    display: none;
+                }
+
+                #csv {
+                    display: none;
+                }
+
+                table {
+                    font-size: 12px;
+                    text-align: center;
+                }
+
+                table td, table th {
+                    padding: 5px;
                 }
             }
         </style>
@@ -61,35 +109,37 @@
         <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
         <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
 
-        <h2>Timesheets</h2>
-        <ul>
-            <c:forEach var="week" items="${du:weekStartsRange(invoice_info.pop_start, invoice_info.pop_end)}">
-                <fmt:formatDate var="formattedWeek" value="${week}" pattern="yyyy-MM-dd"/>
-                <sql:query dataSource="jdbc/sarariman" var="timesheetResult">
-                    SELECT DISTINCT h.employee
-                    FROM hours as h
-                    JOIN tasks AS t ON h.task = t.id
-                    JOIN projects AS p ON t.project = p.id
-                    WHERE p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
-                    ORDER BY h.employee ASC
-                    <sql:param value="${project.id}"/>
-                    <sql:param value="${week}"/>
-                    <sql:param value="${week}"/>
-                </sql:query>
-                <c:forEach var="row" items="${timesheetResult.rows}">
-                    <c:url var="html" value="timereport">
-                        <c:param name="project" value="${project.id}"/>
-                        <c:param name="week" value="${formattedWeek}"/>
-                        <c:param name="employee" value="${row.employee}"/>
-                    </c:url>
-                    <c:url var="pdf" value="${html}">
-                        <c:param name="outputType" value="pdf"/>
-                    </c:url>
-                    <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName} ${formattedWeek}</a>
-                        <a href="${fn:escapeXml(pdf)}">[PDF]</a></li>
+        <div id="timesheets">
+            <h2>Timesheets</h2>
+            <ul>
+                <c:forEach var="week" items="${du:weekStartsRange(invoice_info.pop_start, invoice_info.pop_end)}">
+                    <fmt:formatDate var="formattedWeek" value="${week}" pattern="yyyy-MM-dd"/>
+                    <sql:query dataSource="jdbc/sarariman" var="timesheetResult">
+                        SELECT DISTINCT h.employee
+                        FROM hours as h
+                        JOIN tasks AS t ON h.task = t.id
+                        JOIN projects AS p ON t.project = p.id
+                        WHERE p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
+                        ORDER BY h.employee ASC
+                        <sql:param value="${project.id}"/>
+                        <sql:param value="${week}"/>
+                        <sql:param value="${week}"/>
+                    </sql:query>
+                    <c:forEach var="row" items="${timesheetResult.rows}">
+                        <c:url var="html" value="timereport">
+                            <c:param name="project" value="${project.id}"/>
+                            <c:param name="week" value="${formattedWeek}"/>
+                            <c:param name="employee" value="${row.employee}"/>
+                        </c:url>
+                        <c:url var="pdf" value="${html}">
+                            <c:param name="outputType" value="pdf"/>
+                        </c:url>
+                        <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName} ${formattedWeek}</a>
+                            <a href="${fn:escapeXml(pdf)}">[PDF]</a></li>
+                        </c:forEach>
                     </c:forEach>
-                </c:forEach>
-        </ul>
+            </ul>
+        </div>
 
         <c:set var="entriesTableEmitted" value="${false}" scope="request"/>
         <c:set var="csvLinkEmitted" value="${false}" scope="request"/>
@@ -98,6 +148,11 @@
                 <jsp:param name="invoice" value="${param.invoice}"/>
             </jsp:include>
         </c:forEach>
+
+        <c:if test="${!csvLinkEmitted}">
+            <p id="csv"><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+        </c:if>
+
 
         <c:if test="${!entriesTableEmitted}">
             <sql:query dataSource="jdbc/sarariman" var="result">
@@ -171,10 +226,6 @@
             </table>
         </c:if>
 
-        <c:if test="${!csvLinkEmitted}">
-            <p><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
-        </c:if>
-
         <sql:query dataSource="jdbc/sarariman" var="employees">
             SELECT DISTINCT h.employee
             FROM invoices AS i
@@ -216,7 +267,7 @@
             </tbody>
         </table>
 
-        <table clas="altrows">
+        <table class="altrows">
             <caption>Total by Employee</caption>
             <tbody>
                 <tr><th>Employee</th><th>Total</th></tr>

@@ -129,5 +129,5 @@
     </table>
 
     <c:set var="csvLinkEmitted" value="${true}" scope="request"/>
-    <p><a href="saic/laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+    <p id="csv"><a href="saic/laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
 </c:if>

@@ -19,6 +19,12 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>PDFRenderer</filter-name>
+        <url-pattern>/invoice</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
     <listener><listener-class>com.stackframe.sarariman.Sarariman</listener-class></listener>
     <servlet>
         <servlet-name>unauthorized</servlet-name>
