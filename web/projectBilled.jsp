@@ -18,7 +18,7 @@
 <c:set var="isManager" value="${resultSet.rowCount == 1}"/>
 
 <c:if test="${!(isManager || user.administrator || user.invoiceManager)}">
-    <jsp:forward page="unauthorized.jsp"/>
+    <jsp:forward page="unauthorized"/>
 </c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">

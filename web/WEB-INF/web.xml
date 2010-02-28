@@ -21,6 +21,10 @@
     </filter-mapping>
     <listener><listener-class>com.stackframe.sarariman.Sarariman</listener-class></listener>
     <servlet>
+        <servlet-name>unauthorized</servlet-name>
+        <jsp-file>/unauthorized.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>employee</servlet-name>
         <jsp-file>/employee.jsp</jsp-file>
     </servlet>
@@ -121,13 +125,18 @@
         <servlet-name>LaborCosts</servlet-name>
         <servlet-class>com.stackframe.sarariman.LaborCosts</servlet-class>
     </servlet>
-    <servlet><servlet-name>PDFTimesheetBuilder</servlet-name><servlet-class>com.stackframe.sarariman.PDFTimesheetBuilder</servlet-class></servlet><servlet-mapping>
+    <servlet><servlet-name>PDFTimesheetBuilder</servlet-name><servlet-class>com.stackframe.sarariman.PDFTimesheetBuilder</servlet-class></servlet>
+    <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>employees</servlet-name>
         <url-pattern>/employees</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>unauthorized</servlet-name>
+        <url-pattern>/unauthorized</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>employeeBilled</servlet-name>
@@ -406,4 +415,5 @@
         <res-ref-name>jdbc/sarariman</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
-    </resource-ref></web-app>
+    </resource-ref>
+</web-app>
