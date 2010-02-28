@@ -91,77 +91,89 @@
                 </c:forEach>
         </ul>
 
-        <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT i.employee, i.task, i.date, h.duration, t.project
-            FROM invoices AS i
-            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-            JOIN tasks AS t on i.task = t.id
-            JOIN projects AS p ON t.project = p.id
-            WHERE i.id = ? AND t.billable = TRUE
-            ORDER BY h.date ASC, h.employee ASC, h.task ASC
-            <sql:param value="${param.invoice}"/>
-        </sql:query>
-        <table class="altrows" id="hours">
-            <caption>Entries</caption>
-            <tbody>
-                <tr>
-                    <th>Employee</th>
-                    <th>Task</th>
-                    <th>Labor Category</th>
-                    <th>Date</th>
-                    <th>Rate</th>
-                    <th>Duration</th>
-                    <th>Cost</th>
-                </tr>
-                <c:set var="totalCost" value="0"/>
-                <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
-                <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
-                <c:forEach var="row" items="${result.rows}">
-                    <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                    <c:set var="totalCost" value="${totalCost + costData.cost}"/>
-                    <tr>
-                        <td>${directory.byNumber[row.employee].fullName}</td>
-                        <td><a href="task?task_id=${row.task}">${row.task}</a></td>
-                        <c:choose>
-                            <c:when test="${empty costData.laborCategory}">
-                                <td class="error">no labor category</td>                                                        
-                            </c:when>
-                            <c:otherwise>
-                                <td>${costData.laborCategory.name}</td>
-                            </c:otherwise>
-                        </c:choose>
-                        <td>${row.date}</td>
-                        <c:choose>
-                            <c:when test="${empty costData.laborCategory}">
-                                <td class="error">no rate</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
-                            </c:otherwise>
-                        </c:choose>
-                        <td class="duration">${row.duration}</td>
-                        <c:choose>
-                            <c:when test="${empty costData.laborCategory}">
-                                <td class="error">no rate</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
-                            </c:otherwise>
-                        </c:choose>
-                    </tr>
-                </c:forEach>
-                <sql:query dataSource="jdbc/sarariman" var="sum">
-                    SELECT SUM(h.duration) AS total
-                    FROM invoices AS i
-                    JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                    WHERE i.id = ?
-                    <sql:param value="${param.invoice}"/>
-                </sql:query>
-                <tr><td>Total</td><td></td><td></td><td></td><td></td><td class="duration">${sum.rows[0].total}</td><td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td></tr>
-            </tbody>
-        </table>
+        <c:set var="entriesTableEmitted" value="${false}" scope="request"/>
+        <c:set var="csvLinkEmitted" value="${false}" scope="request"/>
+        <c:forEach var="extension" items="${sarariman.extensions}">
+            <jsp:include page="${extension.invoiceInclude}">
+                <jsp:param name="invoice" value="${param.invoice}"/>
+            </jsp:include>
+        </c:forEach>
 
-        <p><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+        <c:if test="${!entriesTableEmitted}">
+            <sql:query dataSource="jdbc/sarariman" var="result">
+                SELECT i.employee, i.task, i.date, h.duration, t.project
+                FROM invoices AS i
+                JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                JOIN tasks AS t on i.task = t.id
+                JOIN projects AS p ON t.project = p.id
+                WHERE i.id = ? AND t.billable = TRUE
+                ORDER BY h.date ASC, h.employee ASC, h.task ASC
+                <sql:param value="${param.invoice}"/>
+            </sql:query>
+            <table class="altrows" id="hours">
+                <caption>Entries</caption>
+                <tbody>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Task</th>
+                        <th>Labor Category</th>
+                        <th>Date</th>
+                        <th>Rate</th>
+                        <th>Duration</th>
+                        <th>Cost</th>
+                    </tr>
+                    <c:set var="totalCost" value="0"/>
+                    <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+                    <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+                    <c:forEach var="row" items="${result.rows}">
+                        <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                        <c:set var="totalCost" value="${totalCost + costData.cost}"/>
+                        <tr>
+                            <td>${directory.byNumber[row.employee].fullName}</td>
+                            <td><a href="task?task_id=${row.task}">${row.task}</a></td>
+                            <c:choose>
+                                <c:when test="${empty costData.laborCategory}">
+                                    <td class="error">no labor category</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>${costData.laborCategory.name}</td>
+                                </c:otherwise>
+                            </c:choose>
+                            <td>${row.date}</td>
+                            <c:choose>
+                                <c:when test="${empty costData.laborCategory}">
+                                    <td class="error">no rate</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
+                                </c:otherwise>
+                            </c:choose>
+                            <td class="duration">${row.duration}</td>
+                            <c:choose>
+                                <c:when test="${empty costData.laborCategory}">
+                                    <td class="error">no rate</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                                </c:otherwise>
+                            </c:choose>
+                        </tr>
+                    </c:forEach>
+                    <sql:query dataSource="jdbc/sarariman" var="sum">
+                        SELECT SUM(h.duration) AS total
+                        FROM invoices AS i
+                        JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                        WHERE i.id = ?
+                        <sql:param value="${param.invoice}"/>
+                    </sql:query>
+                    <tr><td>Total</td><td></td><td></td><td></td><td></td><td class="duration">${sum.rows[0].total}</td><td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td></tr>
+                </tbody>
+            </table>
+        </c:if>
+
+        <c:if test="${!csvLinkEmitted}">
+            <p><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+        </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="employees">
             SELECT DISTINCT h.employee

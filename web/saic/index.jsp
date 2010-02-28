@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -16,7 +16,6 @@
 
         <h1>SAIC Tools</h1>
         <ul>
-            <li><a href="invoices.jsp">Invoices</a></li>
             <li><a href="tasks.jsp">Tasks</a></li>
         </ul>
     </body>

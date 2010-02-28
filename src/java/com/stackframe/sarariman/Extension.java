@@ -14,4 +14,6 @@ public interface Extension {
 
     String getTimeReportInclude();
 
+    String getInvoiceInclude();
+
 }

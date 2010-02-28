@@ -18,4 +18,7 @@ public class SAICExtension implements Extension {
         return "saic/timereport.jsp";
     }
 
+    public String getInvoiceInclude() {
+        return "saic/invoice.jsp";
+    }
 }
