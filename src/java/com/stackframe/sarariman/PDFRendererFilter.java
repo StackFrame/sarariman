@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.resource.FSEntityResolver;
@@ -28,17 +27,6 @@ import org.xml.sax.InputSource;
  * @author mcculley
  */
 public class PDFRendererFilter implements Filter {
-
-    private final DocumentBuilder documentBuilder;
-
-    {
-        try {
-            documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            documentBuilder.setEntityResolver(FSEntityResolver.instance());
-        } catch (ParserConfigurationException pce) {
-            throw new RuntimeException(pce);
-        }
-    }
 
     public void destroy() {
     }
@@ -61,6 +49,8 @@ public class PDFRendererFilter implements Filter {
             StringReader contentReader = new StringReader(capContent.getContent());
             InputSource source = new InputSource(contentReader);
             try {
+                DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                documentBuilder.setEntityResolver(FSEntityResolver.instance());
                 Document xhtmlContent = documentBuilder.parse(source);
                 ITextRenderer renderer = new ITextRenderer();
                 renderer.setDocument(xhtmlContent, "");
