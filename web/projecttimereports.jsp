@@ -25,6 +25,7 @@
         <%@include file="header.jsp" %>
         <h1>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
 
+        <h2>Employees with hours on this project this week</h2>
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT DISTINCT h.employee
             FROM hours as h
@@ -58,6 +59,29 @@
             </c:forEach>
         </ul>
 
+        <h2>Employees assigned to this project with no hours this week</h2>
+        <sql:query dataSource="jdbc/sarariman" var="noHoursResult">
+            SELECT DISTINCT a.employee
+            FROM task_assignments AS a
+            JOIN tasks AS t ON a.task = t.id
+            JOIN projects AS p on p.id = t.project
+            WHERE p.id = ? AND a.employee NOT IN
+            (SELECT DISTINCT h.employee
+            FROM hours as h
+            JOIN tasks AS t ON h.task = t.id
+            JOIN projects AS p ON t.project = p.id
+            WHERE p.id = ? AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0)
+            <sql:param value="${param.project}"/>
+            <sql:param value="${param.project}"/>
+            <sql:param value="${param.week}"/>
+            <sql:param value="${param.week}"/>
+        </sql:query>
+        <ul>
+            <c:forEach var="row" items="${noHoursResult.rows}">
+                <li>${directory.byNumber[row.employee].fullName}</li>
+            </c:forEach>
+        </ul>
+
         <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
             <p>Email will go to:</p>
             <sql:query dataSource="jdbc/sarariman" var="emailResult">
@@ -82,6 +106,10 @@
                     </c:url>
                     <input type="hidden" name="employee" value="${directory.byNumber[row.employee].fullName}"/>
                     <input type="hidden" name="pdf" value="${fn:escapeXml(pdf)}"/>
+                </c:forEach>
+
+                <c:forEach var="row" items="${noHoursResult.rows}">
+                    <input type="hidden" name="noHoursEmployee" value="${directory.byNumber[row.employee].fullName}"/>
                 </c:forEach>
 
                 <input type="hidden" name="project" value="${fn:escapeXml(project.name)}"/>

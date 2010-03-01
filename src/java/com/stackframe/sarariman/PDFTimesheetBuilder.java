@@ -74,6 +74,16 @@ public class PDFTimesheetBuilder extends HttpServlet {
         body.append("Week: " + request.getParameter("week") + '\n');
         body.append("\n");
 
+        String[] noHoursEmployees = request.getParameterValues("noHoursEmployee");
+        if (noHoursEmployees != null && noHoursEmployees.length > 0) {
+            body.append("There were no hours this week for:\n");
+            for (String noHoursEmployee : noHoursEmployees) {
+                body.append('\t' + noHoursEmployee + '\n');
+            }
+
+            body.append("\n");
+        }
+
         Collection<InternetAddress> to = new ArrayList<InternetAddress>();
         for (String toAddress : request.getParameterValues("to")) {
             try {
@@ -114,11 +124,15 @@ public class PDFTimesheetBuilder extends HttpServlet {
         try {
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Sent</title>");
+            out.println("<title>Email Sent</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Sent</h1>");
+            out.println("<h1>Email Sent</h1>");
             out.println("<p>email was sent.</p>");
+            out.println(String.format("<p>to=%s</p>", to));
+            out.println(String.format("<p>cc=%s</p>", cc));
+            out.println(String.format("<p>subject=%s</p>", subject));
+            out.println(String.format("<p>body=%s</p>", body));
             out.println("</body>");
             out.println("</html>");
         } finally {
