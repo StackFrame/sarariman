@@ -23,6 +23,9 @@ import org.xhtmlrenderer.resource.FSEntityResolver;
 import org.xml.sax.InputSource;
 
 /**
+ * A Filter which converts the filtered document to PDF.  It looks for a special request parameter, outputType.  If outputType is
+ * "pdf" then the filtered document is rendered using Flying Saucer and iText.  If outputType is not set then the document is passed
+ * through unaltered.
  *
  * @author mcculley
  */
