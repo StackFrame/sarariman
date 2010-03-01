@@ -72,9 +72,12 @@
                     display: none;
                 }
 
+                #tracking {
+                    display: none;
+                }
+
                 table {
                     font-size: 12px;
-                    text-align: center;
                 }
 
                 table td, table th {
@@ -113,12 +116,15 @@
         <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>
 
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
-            Project: ${fn:escapeXml(project.name)}<br/>
-            Sent: ${sent}<br/>
-            Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
-            Payment received: ${received}</p>
-        <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
-        <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
+            Project: ${fn:escapeXml(project.name)}<br/>           
+            Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}</p>
+
+        <div id="tracking">
+            <p>Sent: ${sent}<br/>
+               Payment received: ${received}</p>
+            <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
+            <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
+        </div>
 
         <%
         documentNames.add("Invoice-" + request.getParameter("invoice") + ".pdf");
