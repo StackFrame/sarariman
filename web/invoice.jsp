@@ -348,15 +348,15 @@
 
             <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
             <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
-            <c:set var="body" value="Please find attached invoice ${param.invoice}.\n\n"/>
-            <c:set var="body" value="${body} Total: ${invoiceTotal}\n"/>
-            <c:set var="body" value="${body} Project: ${fn:escapeXml(project.name)}\n"/>
-            <c:set var="body" value="${body} Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
+            <c:set var="body" value="Please find attached invoice ${param.invoice}.\\\n\\\n"/>
+            <c:set var="body" value="${body}Total: ${invoiceTotal}\\\n"/>
+            <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\\\n"/>
+            <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\\\n"/>
             <c:if test="${!empty project.contract}">
-                <c:set var="body" value="${body} Contract ${project.contract}\n"/>
+                <c:set var="body" value="${body}Contract: ${project.contract}\\\n"/>
             </c:if>
             <c:if test="${!empty project.subcontract}">
-                <c:set var="body" value="${body} Subcontract ${project.subcontract}\n"/>
+                <c:set var="body" value="${body}Subcontract: ${project.subcontract}\\\n"/>
             </c:if>
             <input type="hidden" name="body" value="${body}"/>
 
