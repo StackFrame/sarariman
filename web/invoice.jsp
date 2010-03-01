@@ -117,11 +117,18 @@
 
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>           
-            Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}</p>
+            Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
+            <c:if test="${!empty project.contract}">
+                Contract: ${project.contract}<br/>
+            </c:if>
+            <c:if test="${!empty project.subcontract}">
+                Subcontract: ${project.subcontract}
+            </c:if>
+        </p>
 
         <div id="tracking">
             <p>Sent: ${sent}<br/>
-               Payment received: ${received}</p>
+                Payment received: ${received}</p>
             <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
             <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
         </div>
@@ -341,7 +348,17 @@
 
             <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
             <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
-            <input type="hidden" name="body" value="Please find attached invoice ${param.invoice}.\n\nTotal: ${invoiceTotal}\nProject: ${fn:escapeXml(project.name)}\nPeriod: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
+            <c:set var="body" value="Please find attached invoice ${param.invoice}.\n\n"/>
+            <c:set var="body" value="${body} Total: ${invoiceTotal}\n"/>
+            <c:set var="body" value="${body} Project: ${fn:escapeXml(project.name)}\n"/>
+            <c:set var="body" value="${body} Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
+            <c:if test="${!empty project.contract}">
+                <c:set var="body" value="${body} Contract ${project.contract}\n"/>
+            </c:if>
+            <c:if test="${!empty project.subcontract}">
+                <c:set var="body" value="${body} Subcontract ${project.subcontract}\n"/>
+            </c:if>
+            <input type="hidden" name="body" value="${body}"/>
 
             <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
             <input type="submit" value="Send"/>
