@@ -64,32 +64,34 @@
             <c:forEach var="row" items="${emailResult.rows}"><li>${row.email}</li></c:forEach>
         </ul>
 
-        <form action="${pageContext.request.contextPath}/PDFTimesheetBuilder" method="POST">
-            <c:forEach var="row" items="${result.rows}">
-                <c:url var="pdf" value="timereport">
-                    <c:param name="project" value="${param.project}"/>
-                    <c:param name="week" value="${param.week}"/>
-                    <c:param name="employee" value="${row.employee}"/>
-                    <c:param name="outputType" value="pdf"/>
-                </c:url>
-                <input type="hidden" name="employee" value="${directory.byNumber[row.employee].fullName}"/>
-                <input type="hidden" name="pdf" value="${fn:escapeXml(pdf)}"/>
-            </c:forEach>
+        <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
+            <form action="${pageContext.request.contextPath}/PDFTimesheetBuilder" method="POST">
+                <c:forEach var="row" items="${result.rows}">
+                    <c:url var="pdf" value="timereport">
+                        <c:param name="project" value="${param.project}"/>
+                        <c:param name="week" value="${param.week}"/>
+                        <c:param name="employee" value="${row.employee}"/>
+                        <c:param name="outputType" value="pdf"/>
+                    </c:url>
+                    <input type="hidden" name="employee" value="${directory.byNumber[row.employee].fullName}"/>
+                    <input type="hidden" name="pdf" value="${fn:escapeXml(pdf)}"/>
+                </c:forEach>
 
-            <input type="hidden" name="project" value="${fn:escapeXml(project.name)}"/>
-            <input type="hidden" name="week" value="${param.week}"/>
+                <input type="hidden" name="project" value="${fn:escapeXml(project.name)}"/>
+                <input type="hidden" name="week" value="${param.week}"/>
 
-            <c:forEach var="row" items="${emailResult.rows}">
-                <input type="hidden" name="to" value="${row.email}"/>
-            </c:forEach>
+                <c:forEach var="row" items="${emailResult.rows}">
+                    <input type="hidden" name="to" value="${row.email}"/>
+                </c:forEach>
 
-            <c:forEach var="timesheetManager" items="${sarariman.timesheetManagers}">
-                <input type="hidden" name="cc" value="${timesheetManager.email}"/>
-            </c:forEach>
+                <c:forEach var="timesheetManager" items="${sarariman.timesheetManagers}">
+                    <input type="hidden" name="cc" value="${timesheetManager.email}"/>
+                </c:forEach>
 
-            <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
-            <input type="submit" value="Send"/>
-        </form>
+                <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
+                <input type="submit" value="Send"/>
+            </form>
+        </c:if>
 
         <%@include file="footer.jsp" %>
     </body>
