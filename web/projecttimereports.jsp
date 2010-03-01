@@ -114,6 +114,12 @@
 
                 <input type="hidden" name="project" value="${fn:escapeXml(project.name)}"/>
                 <input type="hidden" name="week" value="${param.week}"/>
+                <c:if test="${!empty project.contract}">
+                    <input type="hidden" name="contract" value="${project.contract}"/>
+                </c:if>
+                <c:if test="${!empty project.subcontract}">
+                    <input type="hidden" name="subcontract" value="${project.subcontract}"/>
+                </c:if>
 
                 <c:forEach var="row" items="${emailResult.rows}">
                     <input type="hidden" name="to" value="${row.email}"/>

@@ -71,6 +71,14 @@ public class PDFTimesheetBuilder extends HttpServlet {
 
         body.append("\n");
         body.append("Project: " + request.getParameter("project") + '\n');
+        if (request.getParameter("contract") != null) {
+            body.append("Contract: " + request.getParameter("contract") + '\n');
+        }
+
+        if (request.getParameter("subcontract") != null) {
+            body.append("Subcontract: " + request.getParameter("subcontract") + '\n');
+        }
+
         body.append("Week: " + request.getParameter("week") + '\n');
         body.append("\n");
 
