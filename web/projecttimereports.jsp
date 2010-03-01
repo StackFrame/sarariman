@@ -59,7 +59,6 @@
             </c:forEach>
         </ul>
 
-        <h2>Employees assigned to this project with no hours this week</h2>
         <sql:query dataSource="jdbc/sarariman" var="noHoursResult">
             SELECT DISTINCT a.employee
             FROM task_assignments AS a
@@ -76,11 +75,14 @@
             <sql:param value="${param.week}"/>
             <sql:param value="${param.week}"/>
         </sql:query>
-        <ul>
-            <c:forEach var="row" items="${noHoursResult.rows}">
-                <li>${directory.byNumber[row.employee].fullName}</li>
-            </c:forEach>
-        </ul>
+        <c:if test="${noHoursResult.rowCount > 0}">
+            <h2>Employees assigned to this project with no hours this week</h2>
+            <ul>
+                <c:forEach var="row" items="${noHoursResult.rows}">
+                    <li>${directory.byNumber[row.employee].fullName}</li>
+                </c:forEach>
+            </ul>
+        </c:if>
 
         <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
             <p>Email will go to:</p>
