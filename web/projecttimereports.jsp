@@ -46,9 +46,16 @@
                 <c:url var="pdf" value="${html}">
                     <c:param name="outputType" value="pdf"/>
                 </c:url>
-                <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a>
-                    <a href="${fn:escapeXml(pdf)}">[PDF]</a></li>
-                </c:forEach>
+                <li>
+                    <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a>
+                    <a href="${fn:escapeXml(pdf)}">[PDF]</a>
+                    <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
+                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, row.employee, startDay)}"/>
+                    <c:if test="${!timesheet.approved}">
+                        <span class="error">This timesheet is not yet approved.</span>
+                    </c:if>
+                </li>
+            </c:forEach>
         </ul>
 
         <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
