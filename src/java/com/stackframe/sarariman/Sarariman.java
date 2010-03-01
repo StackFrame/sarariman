@@ -32,6 +32,7 @@ public class Sarariman implements ServletContextListener {
     private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
+    private final Collection<Employee> timesheetManagers = new EmployeeTable(this, "timesheet_managers");
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
     private final Collection<Extension> extensions = new ArrayList<Extension>();
@@ -102,6 +103,10 @@ public class Sarariman implements ServletContextListener {
 
     public Collection<Employee> getInvoiceManagers() {
         return invoiceManagers;
+    }
+
+    public Collection<Employee> getTimesheetManagers() {
+        return timesheetManagers;
     }
 
     public Map<Long, Customer> getCustomers() throws SQLException {

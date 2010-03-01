@@ -83,8 +83,9 @@
                 <input type="hidden" name="to" value="${row.email}"/>
             </c:forEach>
 
-            <input type="hidden" name="cc" value="mcculley@stackframe.com"/>
-            <input type="hidden" name="cc" value="awetteland@stackframe.com"/>
+            <c:forEach var="timesheetManager" items="${sarariman.timesheetManagers}">
+                <input type="hidden" name="cc" value="${timesheetManager.email}"/>
+            </c:forEach>
 
             <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
             <input type="submit" value="Send"/>
