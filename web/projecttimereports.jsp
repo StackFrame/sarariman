@@ -51,20 +51,20 @@
                 </c:forEach>
         </ul>
 
-        <p>Email will go to:</p>
-        <sql:query dataSource="jdbc/sarariman" var="emailResult">
-            SELECT email
-            FROM project_emails as e
-            JOIN projects AS p ON e.project = p.id
-            WHERE p.id = ?
-            <sql:param value="${param.project}"/>
-        </sql:query>
-
-        <ul>
-            <c:forEach var="row" items="${emailResult.rows}"><li>${row.email}</li></c:forEach>
-        </ul>
-
         <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
+            <p>Email will go to:</p>
+            <sql:query dataSource="jdbc/sarariman" var="emailResult">
+                SELECT email
+                FROM project_emails as e
+                JOIN projects AS p ON e.project = p.id
+                WHERE p.id = ?
+                <sql:param value="${param.project}"/>
+            </sql:query>
+
+            <ul>
+                <c:forEach var="row" items="${emailResult.rows}"><li>${row.email}</li></c:forEach>
+            </ul>
+
             <form action="${pageContext.request.contextPath}/PDFTimesheetBuilder" method="POST">
                 <c:forEach var="row" items="${result.rows}">
                     <c:url var="pdf" value="timereport">
