@@ -44,8 +44,15 @@
             <sql:param value="${param.project}"/>
         </sql:query>
 
-        <fmt:parseDate var="pop_start" value="${result.rows[0].date}" pattern="yyyy-MM-dd"/>
-        <c:set var="pop_start" value="${du:weekStart(pop_start)}"/>
+        <c:choose>
+            <c:when test="${result.rowCount > 0}">
+                <fmt:parseDate var="pop_start" value="${result.rows[0].date}" pattern="yyyy-MM-dd"/>
+                <c:set var="pop_start" value="${du:weekStart(pop_start)}"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="pop_start" value="${du:weekStart(du:now())}"/>
+            </c:otherwise>
+        </c:choose>
 
         <c:set var="pop_end" value="${du:weekEnd(du:prevWeek(du:weekStart(du:now())))}"/>
 
@@ -69,8 +76,12 @@
                         <td>${row.task}</td>
                         <td>${row.date}</td>
                         <td>${row.duration}</td>
-                        <td><input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
-                                   <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/></td>
+                        <td>
+                            <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
+                                   <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if>
+                                   <c:if test="${!user.administrator}">disabled="true"</c:if>
+                                   />
+                        </td>
                     <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
                     <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
                     <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
