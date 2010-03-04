@@ -46,6 +46,8 @@
                 </c:url>
                 <c:url var="pdf" value="${html}">
                     <c:param name="outputType" value="pdf"/>
+                    <c:param name="preferredFilename"
+                             value="Timesheet ${directory.byNumber[row.employee].fullName} ${param.week}.pdf"/>
                 </c:url>
                 <li>
                     <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a>

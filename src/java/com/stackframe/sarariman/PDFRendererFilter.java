@@ -59,6 +59,12 @@ public class PDFRendererFilter implements Filter {
                 renderer.setDocument(xhtmlContent, "");
                 renderer.layout();
                 response.setContentType("application/pdf");
+
+                String preferredFilename = request.getParameter("preferredFilename");
+                if (preferredFilename != null) {
+                    response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"",preferredFilename));
+                }
+
                 OutputStream browserStream = response.getOutputStream();
                 renderer.createPDF(browserStream);
                 return;
