@@ -83,12 +83,12 @@
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
-                    <th class="duration">${rowTotal}</th>
+                    <td class="duration"><strong>${rowTotal}</strong></td>
                 </tr>
             </c:if>
         </c:forEach>
         <tr>
-            <th colspan="5">Total</th>
+            <td colspan="5"><strong>Total</strong></td>
             <c:forEach var="day" begin="0" end="6">
                 <c:set var="date" value="${du:addDays(startDay, day)}"/>
                 <sql:query dataSource="jdbc/sarariman" var="total">
@@ -103,10 +103,10 @@
                 </sql:query>
                 <c:choose>
                     <c:when test="${total.rows[0].total == null}">
-                        <th class="duration">0.00</th>
+                        <td class="duration"><strong>0.00</strong></td>
                     </c:when>
                     <c:otherwise>
-                        <th class="duration">${total.rows[0].total}</th>
+                        <td class="duration"><strong>${total.rows[0].total}</strong></td>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
@@ -121,7 +121,7 @@
                 <sql:param value="${du:addDays(startDay, 7)}"/>
                 <sql:param value="${param.project}"/>
             </sql:query>
-            <th class="duration">${total.rows[0].total}</th>
+            <td class="duration"><strong>${total.rows[0].total}</strong></td>
         </tr>
     </table>
 </c:if>
