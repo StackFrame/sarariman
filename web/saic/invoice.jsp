@@ -28,56 +28,6 @@
 <c:if test="${isSAIC}">
     <c:set var="entriesTableEmitted" value="${true}" scope="request"/>
 
-    <sql:query dataSource="jdbc/sarariman" var="line_items">
-        SELECT DISTINCT s.po_line_item
-        FROM invoices AS i
-        LEFT JOIN saic_tasks AS s ON i.task = s.task
-        WHERE i.id = ?
-        <sql:param value="${param.invoice}"/>
-    </sql:query>
-    <sql:query dataSource="jdbc/sarariman" var="employees">
-        SELECT DISTINCT h.employee
-        FROM invoices AS i
-        JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-        WHERE i.id = ?
-        <sql:param value="${param.invoice}"/>
-    </sql:query>
-    <div>
-        <table class="altrows">
-            <caption>Entries by Line Item and Employee</caption>
-            <thead>
-                <tr>
-                    <th>Line Item</th>
-                    <th>Employee</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="line_item_row" items="${line_items.rows}">
-                    <c:forEach var="employee_row" items="${employees.rows}">
-                        <sql:query dataSource="jdbc/sarariman" var="total">
-                            SELECT SUM(h.duration) AS total
-                            FROM invoices AS i
-                            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                            LEFT JOIN saic_tasks AS s ON i.task = s.task
-                            WHERE i.id = ? AND s.po_line_item = ? AND i.employee = ?
-                            <sql:param value="${param.invoice}"/>
-                            <sql:param value="${line_item_row.po_line_item}"/>
-                            <sql:param value="${employee_row.employee}"/>
-                        </sql:query>
-                        <c:if test="${!empty total.rows[0].total}">
-                            <tr>
-                                <td class="line_item">${line_item_row.po_line_item}</td>
-                                <td>${directory.byNumber[employee_row.employee].fullName}</td>
-                                <td class="duration">${total.rows[0].total}</td>
-                            </tr>
-                        </c:if>
-                    </c:forEach>
-                </c:forEach>
-            </tbody>
-        </table>
-    </div>
-
     <sql:query dataSource="jdbc/sarariman" var="result">
         SELECT i.employee, i.task, t.project, i.date, h.duration, s.po_line_item, s.charge_number
         FROM invoices AS i
@@ -142,6 +92,56 @@
                     <td class="currency"><strong><fmt:formatNumber type="currency" value="${totalCost}"/></strong></td>
                 </tr>
                 <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
+            </tbody>
+        </table>
+    </div>
+
+    <sql:query dataSource="jdbc/sarariman" var="line_items">
+        SELECT DISTINCT s.po_line_item
+        FROM invoices AS i
+        LEFT JOIN saic_tasks AS s ON i.task = s.task
+        WHERE i.id = ?
+        <sql:param value="${param.invoice}"/>
+    </sql:query>
+    <sql:query dataSource="jdbc/sarariman" var="employees">
+        SELECT DISTINCT h.employee
+        FROM invoices AS i
+        JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+        WHERE i.id = ?
+        <sql:param value="${param.invoice}"/>
+    </sql:query>
+    <div>
+        <table class="altrows">
+            <caption>Entries by Line Item and Employee</caption>
+            <thead>
+                <tr>
+                    <th>Line Item</th>
+                    <th>Employee</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="line_item_row" items="${line_items.rows}">
+                    <c:forEach var="employee_row" items="${employees.rows}">
+                        <sql:query dataSource="jdbc/sarariman" var="total">
+                            SELECT SUM(h.duration) AS total
+                            FROM invoices AS i
+                            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                            LEFT JOIN saic_tasks AS s ON i.task = s.task
+                            WHERE i.id = ? AND s.po_line_item = ? AND i.employee = ?
+                            <sql:param value="${param.invoice}"/>
+                            <sql:param value="${line_item_row.po_line_item}"/>
+                            <sql:param value="${employee_row.employee}"/>
+                        </sql:query>
+                        <c:if test="${!empty total.rows[0].total}">
+                            <tr>
+                                <td class="line_item">${line_item_row.po_line_item}</td>
+                                <td>${directory.byNumber[employee_row.employee].fullName}</td>
+                                <td class="duration">${total.rows[0].total}</td>
+                            </tr>
+                        </c:if>
+                    </c:forEach>
+                </c:forEach>
             </tbody>
         </table>
     </div>
