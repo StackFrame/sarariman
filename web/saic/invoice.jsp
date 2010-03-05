@@ -38,6 +38,18 @@
         ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC
         <sql:param value="${param.invoice}"/>
     </sql:query>
+
+    <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+    <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+
+    <c:set var="totalCost" value="0"/>
+    <c:forEach var="row" items="${result.rows}">
+        <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+        <c:set var="totalCost" value="${totalCost + costData.cost}"/>
+    </c:forEach>
+    <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
+    <p>Total this invoice: <fmt:formatNumber type="currency" value="${totalCost}"/></p>
+
     <div>
         <table class="altrows" id="entries">
             <caption>Entries</caption>
@@ -55,9 +67,6 @@
                 </tr>
             </thead>
             <tbody>
-                <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
-                <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
-                <c:set var="totalCost" value="0"/>
                 <c:forEach var="row" items="${result.rows}">
                     <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                     <tr>
@@ -84,14 +93,12 @@
                         </c:choose>
                         <td class="duration">${row.duration}</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
-                        <c:set var="totalCost" value="${totalCost + costData.cost}"/>
                     </tr>
                 </c:forEach>
                 <tr>
                     <td colspan="8"><strong>Total</strong></td>
                     <td class="currency"><strong><fmt:formatNumber type="currency" value="${totalCost}"/></strong></td>
                 </tr>
-                <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
             </tbody>
         </table>
     </div>
