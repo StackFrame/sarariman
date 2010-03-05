@@ -45,12 +45,14 @@
     <br/>
     <table class="altrows">
         <caption>Entries by Line Item and Employee</caption>
-        <tbody>
+        <thead>
             <tr>
                 <th>Line Item</th>
                 <th>Employee</th>
                 <th>Total</th>
             </tr>
+        </thead>
+        <tbody>
             <c:forEach var="line_item_row" items="${line_items.rows}">
                 <c:forEach var="employee_row" items="${employees.rows}">
                     <sql:query dataSource="jdbc/sarariman" var="total">
@@ -88,7 +90,7 @@
     <br/>
     <table class="altrows" id="entries">
         <caption>Entries</caption>
-        <tbody>
+        <thead>
             <tr>
                 <th>Employee</th>
                 <th>Task</th>
@@ -100,6 +102,8 @@
                 <th>Duration</th>
                 <th>Cost</th>
             </tr>
+        </thead>
+        <tbody>
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
             <c:set var="totalCost" value="0"/>

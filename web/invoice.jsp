@@ -19,7 +19,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <style type="text/css">
-            @media screen, print{
+            @media screen, print {
                 body {
                     margin: 0px auto;
                     padding: 15px;
@@ -31,26 +31,62 @@
                     color: red;
                 }
 
+                .duration, .task, .currency, .line_item {
+                    text-align: right;
+                    font-family: monospace;
+                }
+
                 #footer {
                     text-align: center;
                 }
 
-                .duration {
-                    text-align: right;
-                }
-
                 table {
                     border-width: 1px;
-                    border-style: outset;
+                    border-style: solid;
+                    border-collapse: collapse;
                 }
 
                 table td, table th {
                     border-width: 1px;
-                    border-style: inset;
+                    border-style: solid;
+                    padding: 3px;
+                }
+
+                #totals {
+                    width: 700px;
+                    clear: both;
+                }
+
+                #task {
+                    float: left;
+                    margin: 20px;
+                    margin-left: 0px;
+                }
+
+                #employee {
+                    float: left;
+                }
+
+                #email {
+                    clear: both;
+                }
+
+                th {
+                    background: #004d91;
+                    color: white;
+                    border-color: black;
+                }
+
+                caption {
+                    font-weight: bold;
+                }
+
+                #entries {
+                    clear: both;
                 }
             }
 
-            @media print{
+            @media print {
                 a {
                     color: #000;
                     text-decoration: none;
@@ -83,7 +119,18 @@
                 table td, table th {
                     padding: 5px;
                 }
+
+                #delete {
+                    display: none;
+                }
+
+                img {
+                    height: 85.5px;
+                    width: 182.25px;
+                }
             }
+
+            @page { size: letter; }
         </style>
         <title>Invoice ${param.invoice}</title>
         <script type="text/javascript" src="utilities.js"/>
@@ -93,6 +140,8 @@
 
         <jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
         <jsp:useBean id="documentLinks" class="java.util.ArrayList" scope="request"/>
+
+        <img style="float:right" src="${sarariman.logoURL}"/>
 
         <h1>Invoice ${param.invoice}</h1>
 
@@ -210,7 +259,7 @@
             <br/>
             <table class="altrows" id="hours">
                 <caption>Entries</caption>
-                <tbody>
+                <thead>
                     <tr>
                         <th>Employee</th>
                         <th>Task</th>
@@ -220,6 +269,8 @@
                         <th>Duration</th>
                         <th>Cost</th>
                     </tr>
+                </thead>
+                <tbody>
                     <c:set var="totalCost" value="0"/>
                     <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
                     <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
@@ -282,63 +333,70 @@
             <sql:param value="${param.invoice}"/>
         </sql:query>
 
-        <br/>
-        <table class="altrows">
-            <caption>Total by Employee and Task</caption>
-            <tbody>
-                <tr><th>Employee</th><th>Task</th><th>Total</th></tr>
-                <c:forEach var="employeeRows" items="${employees.rows}">
-                    <sql:query dataSource="jdbc/sarariman" var="tasks">
-                        SELECT DISTINCT h.task
-                        FROM invoices AS i
-                        JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                        WHERE i.id = ? AND h.employee = ?
-                        <sql:param value="${param.invoice}"/>
-                        <sql:param value="${employeeRows.employee}"/>
-                    </sql:query>
-                    <c:forEach var="taskRows" items="${tasks.rows}">
-                        <tr>
-                            <td>${directory.byNumber[employeeRows.employee].fullName}</td>
-                            <td>${taskRows.task}</td>
-                            <sql:query dataSource="jdbc/sarariman" var="totals">
-                                SELECT SUM(h.duration) AS total
+        <div id="totals">
+            <div id="task">
+                <table class="altrows">
+                    <caption>Total by Employee and Task</caption>
+                    <thead>
+                        <tr><th>Employee</th><th>Task</th><th>Total</th></tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="employeeRows" items="${employees.rows}">
+                            <sql:query dataSource="jdbc/sarariman" var="tasks">
+                                SELECT DISTINCT h.task
                                 FROM invoices AS i
                                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                                WHERE i.id = ? AND h.employee = ? AND h.task = ?
+                                WHERE i.id = ? AND h.employee = ?
                                 <sql:param value="${param.invoice}"/>
                                 <sql:param value="${employeeRows.employee}"/>
-                                <sql:param value="${taskRows.task}"/>
                             </sql:query>
-                            <td class="duration">${totals.rows[0].total}</td>
-                        </tr>
-                    </c:forEach>
-                </c:forEach>
-            </tbody>
-        </table>
+                            <c:forEach var="taskRows" items="${tasks.rows}">
+                                <tr>
+                                    <td>${directory.byNumber[employeeRows.employee].fullName}</td>
+                                    <td>${taskRows.task}</td>
+                                    <sql:query dataSource="jdbc/sarariman" var="totals">
+                                        SELECT SUM(h.duration) AS total
+                                        FROM invoices AS i
+                                        JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                                        WHERE i.id = ? AND h.employee = ? AND h.task = ?
+                                        <sql:param value="${param.invoice}"/>
+                                        <sql:param value="${employeeRows.employee}"/>
+                                        <sql:param value="${taskRows.task}"/>
+                                    </sql:query>
+                                    <td class="duration">${totals.rows[0].total}</td>
+                                </tr>
+                            </c:forEach>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
 
-        <br/>
-        <table class="altrows">
-            <caption>Total by Employee</caption>
-            <tbody>
-                <tr><th>Employee</th><th>Total</th></tr>
-                <c:forEach var="employeeRows" items="${employees.rows}">
-                    <tr>
-                        <td>${directory.byNumber[employeeRows.employee].fullName}</td>
-                        <sql:query dataSource="jdbc/sarariman" var="totals">
-                            SELECT SUM(h.duration) AS total
-                            FROM invoices AS i
-                            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                            WHERE i.id = ? AND h.employee = ?
-                            <sql:param value="${param.invoice}"/>
-                            <sql:param value="${employeeRows.employee}"/>
-                        </sql:query>
-                        <td class="duration">${totals.rows[0].total}</td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
+            <div id="employees">
+                <table class="altrows">
+                    <caption>Total by Employee</caption>
+                    <thead>
+                        <tr><th>Employee</th><th>Total</th></tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="employeeRows" items="${employees.rows}">
+                            <tr>
+                                <td>${directory.byNumber[employeeRows.employee].fullName}</td>
+                                <sql:query dataSource="jdbc/sarariman" var="totals">
+                                    SELECT SUM(h.duration) AS total
+                                    FROM invoices AS i
+                                    JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                                    WHERE i.id = ? AND h.employee = ?
+                                    <sql:param value="${param.invoice}"/>
+                                    <sql:param value="${employeeRows.employee}"/>
+                                </sql:query>
+                                <td class="duration">${totals.rows[0].total}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        <br/>
         <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
             <c:forEach var="documentName" items="${documentNames}">
                 <input type="hidden" name="documentName" value="${documentName}"/>

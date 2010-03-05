@@ -18,7 +18,7 @@
     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <style type="text/css">
-            @media screen, print{
+            @media screen, print {
                 body {
                     margin: 0px auto;
                     padding: 15px;
@@ -57,7 +57,7 @@
                 }
             }
 
-            @media print{
+            @media print {
                 a {
                     color: #000;
                     text-decoration: none;
@@ -84,6 +84,8 @@
                     padding: 5px;
                 }
             }
+
+            @page { size: letter; }
         </style>
         <title>${directory.byNumber[param.employee].fullName} - ${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)} - ${param.week}</title>
     </head>
