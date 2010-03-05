@@ -97,7 +97,6 @@
             </c:if>
         </c:if>
 
-        <p><a href="./">Home</a></p>
         <sql:query dataSource="jdbc/sarariman" var="entries">
             SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
             FROM hours
