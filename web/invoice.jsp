@@ -41,7 +41,7 @@
                     border-style: solid;
                     border-collapse: collapse;
                     float: left;
-                    margin: 20px;
+                    margin: 10px;
                 }
 
                 table td, table th {
@@ -85,6 +85,7 @@
 
                 table {
                     font-size: 12px;
+                    -fs-table-paginate: paginate;
                 }
 
                 table td, table th {
