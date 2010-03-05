@@ -216,73 +216,80 @@
                 ORDER BY h.date ASC, h.employee ASC, h.task ASC
                 <sql:param value="${param.invoice}"/>
             </sql:query>
-            <br/>
-            <table class="altrows" id="hours">
-                <caption>Entries</caption>
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        <th>Task</th>
-                        <th>Labor Category</th>
-                        <th>Date</th>
-                        <th>Rate</th>
-                        <th>Duration</th>
-                        <th>Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:set var="totalCost" value="0"/>
-                    <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
-                    <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
-                    <c:forEach var="row" items="${result.rows}">
-                        <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                        <c:set var="totalCost" value="${totalCost + costData.cost}"/>
+
+            <c:set var="invoiceTotal" value="0" scope="request"/>
+            <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+            <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+
+            <c:forEach var="row" items="${result.rows}">
+                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                <c:set var="invoiceTotal" value="${invoiceTotal + costData.cost}" scope="request"/>
+            </c:forEach>
+            <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/></p>
+
+            <div>
+                <table class="altrows" id="hours">
+                    <caption>Entries</caption>
+                    <thead>
                         <tr>
-                            <td>${directory.byNumber[row.employee].fullName}</td>
-                            <td><a href="task?task_id=${row.task}">${row.task}</a></td>
-                            <c:choose>
-                                <c:when test="${empty costData.laborCategory}">
-                                    <td class="error">no labor category</td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td>${costData.laborCategory.name}</td>
-                                </c:otherwise>
-                            </c:choose>
-                            <td>${row.date}</td>
-                            <c:choose>
-                                <c:when test="${empty costData.laborCategory}">
-                                    <td class="error">no rate</td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
-                                </c:otherwise>
-                            </c:choose>
-                            <td class="duration">${row.duration}</td>
-                            <c:choose>
-                                <c:when test="${empty costData.laborCategory}">
-                                    <td class="error">no rate</td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
-                                </c:otherwise>
-                            </c:choose>
+                            <th>Employee</th>
+                            <th>Task</th>
+                            <th>Labor Category</th>
+                            <th>Date</th>
+                            <th>Rate</th>
+                            <th>Duration</th>
+                            <th>Cost</th>
                         </tr>
-                    </c:forEach>
-                    <sql:query dataSource="jdbc/sarariman" var="sum">
-                        SELECT SUM(h.duration) AS total
-                        FROM invoices AS i
-                        JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                        WHERE i.id = ?
-                        <sql:param value="${param.invoice}"/>
-                    </sql:query>
-                    <tr>
-                        <td colspan="5"><strong>Total</strong></td>
-                        <td class="duration"><strong>${sum.rows[0].total}</strong></td>
-                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${totalCost}"/></strong></td>
-                    </tr>
-                    <c:set var="invoiceTotal" value="${totalCost}" scope="request"/>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="row" items="${result.rows}">
+                            <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                            <tr>
+                                <td>${directory.byNumber[row.employee].fullName}</td>
+                                <td><a href="task?task_id=${row.task}">${row.task}</a></td>
+                                <c:choose>
+                                    <c:when test="${empty costData.laborCategory}">
+                                        <td class="error">no labor category</td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>${costData.laborCategory.name}</td>
+                                    </c:otherwise>
+                                </c:choose>
+                                <td>${row.date}</td>
+                                <c:choose>
+                                    <c:when test="${empty costData.laborCategory}">
+                                        <td class="error">no rate</td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
+                                    </c:otherwise>
+                                </c:choose>
+                                <td class="duration">${row.duration}</td>
+                                <c:choose>
+                                    <c:when test="${empty costData.laborCategory}">
+                                        <td class="error">no rate</td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </c:forEach>
+                        <sql:query dataSource="jdbc/sarariman" var="sum">
+                            SELECT SUM(h.duration) AS total
+                            FROM invoices AS i
+                            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                            WHERE i.id = ?
+                            <sql:param value="${param.invoice}"/>
+                        </sql:query>
+                        <tr>
+                            <td colspan="5"><strong>Total</strong></td>
+                            <td class="duration"><strong>${sum.rows[0].total}</strong></td>
+                            <td class="currency"><strong><fmt:formatNumber type="currency" value="${invoiceTotal}"/></strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="employees">
