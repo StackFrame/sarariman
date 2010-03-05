@@ -36,35 +36,18 @@
                     font-family: monospace;
                 }
 
-                #footer {
-                    text-align: center;
-                }
-
                 table {
                     border-width: 1px;
                     border-style: solid;
                     border-collapse: collapse;
+                    float: left;
+                    margin: 20px;
                 }
 
                 table td, table th {
                     border-width: 1px;
                     border-style: solid;
                     padding: 3px;
-                }
-
-                #totals {
-                    width: 700px;
-                    clear: both;
-                }
-
-                #task {
-                    float: left;
-                    margin: 20px;
-                    margin-left: 0px;
-                }
-
-                #employee {
-                    float: left;
                 }
 
                 #email {
@@ -84,6 +67,10 @@
                 #entries {
                     clear: both;
                 }
+
+                #footer {
+                    text-align: center;
+                }
             }
 
             @media print {
@@ -92,23 +79,7 @@
                     text-decoration: none;
                 }
 
-                #topnav {
-                    display: none;
-                }
-
-                #timesheets {
-                    display: none;
-                }
-
-                #csv {
-                    display: none;
-                }
-
-                #email {
-                    display: none;
-                }
-
-                #tracking {
+                #topnav, #timesheets, #csv, #tracking, #controls, #footer {
                     display: none;
                 }
 
@@ -118,10 +89,6 @@
 
                 table td, table th {
                     padding: 5px;
-                }
-
-                #delete {
-                    display: none;
                 }
 
                 img {
@@ -145,13 +112,6 @@
 
         <h1>Invoice ${param.invoice}</h1>
 
-        <c:if test="${user.administrator}">
-            <form action="invoiceController" method="post">
-                <input type="hidden" name="id" value="${param.invoice}"/>
-                <input type="submit" name="action" value="delete"/>
-            </form>
-        </c:if>
-
         <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
             SELECT project, sent, customer, payment_received, pop_start, pop_end
             FROM invoice_info AS i
@@ -165,7 +125,7 @@
         <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>
 
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
-            Project: ${fn:escapeXml(project.name)}<br/>           
+            Project: ${fn:escapeXml(project.name)}<br/>
             Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
             <c:if test="${!empty project.contract}">
                 Contract: ${project.contract}<br/>
@@ -397,32 +357,41 @@
             </div>
         </div>
 
-        <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
-            <c:forEach var="documentName" items="${documentNames}">
-                <input type="hidden" name="documentName" value="${documentName}"/>
-            </c:forEach>
+        <div id="controls">
+            <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
+                <c:forEach var="documentName" items="${documentNames}">
+                    <input type="hidden" name="documentName" value="${documentName}"/>
+                </c:forEach>
 
-            <c:forEach var="documentLink" items="${documentLinks}">
-                <input type="hidden" name="documentLink" value="${fn:escapeXml(documentLink)}"/>
-            </c:forEach>
+                <c:forEach var="documentLink" items="${documentLinks}">
+                    <input type="hidden" name="documentLink" value="${fn:escapeXml(documentLink)}"/>
+                </c:forEach>
 
-            <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
-            <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
-            <c:set var="body" value="Please find attached invoice ${param.invoice}.\\\n\\\n"/>
-            <c:set var="body" value="${body}Total: ${invoiceTotal}\\\n"/>
-            <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\\\n"/>
-            <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\\\n"/>
-            <c:if test="${!empty project.contract}">
-                <c:set var="body" value="${body}Contract: ${project.contract}\\\n"/>
+                <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
+                <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
+                <c:set var="body" value="Please find attached invoice ${param.invoice}.\\\n\\\n"/>
+                <c:set var="body" value="${body}Total: ${invoiceTotal}\\\n"/>
+                <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\\\n"/>
+                <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\\\n"/>
+                <c:if test="${!empty project.contract}">
+                    <c:set var="body" value="${body}Contract: ${project.contract}\\\n"/>
+                </c:if>
+                <c:if test="${!empty project.subcontract}">
+                    <c:set var="body" value="${body}Subcontract: ${project.subcontract}\\\n"/>
+                </c:if>
+                <input type="hidden" name="body" value="${body}"/>
+
+                <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
+                <input type="submit" value="Send"/>
+            </form>
+
+            <c:if test="${user.administrator}">
+                <form action="invoiceController" method="post">
+                    <input type="hidden" name="id" value="${param.invoice}"/>
+                    <input type="submit" name="action" value="delete"/>
+                </form>
             </c:if>
-            <c:if test="${!empty project.subcontract}">
-                <c:set var="body" value="${body}Subcontract: ${project.subcontract}\\\n"/>
-            </c:if>
-            <input type="hidden" name="body" value="${body}"/>
-
-            <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
-            <input type="submit" value="Send"/>
-        </form>
+        </div>
 
         <%@include file="footer.jsp" %>
     </body>
