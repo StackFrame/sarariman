@@ -66,9 +66,9 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="row" items="${result.rows}">
+                <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                     <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                    <tr>
+                    <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task.jsp?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
@@ -127,6 +127,7 @@
                 </tr>
             </thead>
             <tbody>
+                <c:set var="index" value="0"/>
                 <c:forEach var="line_item_row" items="${line_items.rows}">
                     <c:forEach var="employee_row" items="${employees.rows}">
                         <sql:query dataSource="jdbc/sarariman" var="total">
@@ -140,11 +141,12 @@
                             <sql:param value="${employee_row.employee}"/>
                         </sql:query>
                         <c:if test="${!empty total.rows[0].total}">
-                            <tr>
+                            <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                 <td class="line_item">${line_item_row.po_line_item}</td>
                                 <td>${directory.byNumber[employee_row.employee].fullName}</td>
                                 <td class="duration">${total.rows[0].total}</td>
                             </tr>
+                            <c:set var="index" value="${index + 1}"/>
                         </c:if>
                     </c:forEach>
                 </c:forEach>

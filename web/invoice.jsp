@@ -61,6 +61,10 @@
                     font-weight: bold;
                 }
 
+                .oddrow {
+                    background-color: #d4e3e5;
+                }
+
                 #footer {
                     text-align: center;
                 }
@@ -242,9 +246,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="row" items="${result.rows}">
+                        <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                             <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                            <tr>
+                            <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                 <td>${directory.byNumber[row.employee].fullName}</td>
                                 <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                                 <c:choose>
@@ -308,6 +312,7 @@
                         <tr><th>Employee</th><th>Task</th><th>Total</th></tr>
                     </thead>
                     <tbody>
+                        <c:set var="index" value="0"/>
                         <c:forEach var="employeeRows" items="${employees.rows}">
                             <sql:query dataSource="jdbc/sarariman" var="tasks">
                                 SELECT DISTINCT h.task
@@ -318,7 +323,7 @@
                                 <sql:param value="${employeeRows.employee}"/>
                             </sql:query>
                             <c:forEach var="taskRows" items="${tasks.rows}">
-                                <tr>
+                                <tr class="${index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                     <td>${directory.byNumber[employeeRows.employee].fullName}</td>
                                     <td>${taskRows.task}</td>
                                     <sql:query dataSource="jdbc/sarariman" var="totals">
@@ -332,6 +337,7 @@
                                     </sql:query>
                                     <td class="duration">${totals.rows[0].total}</td>
                                 </tr>
+                                <c:set var="index" value="${index + 1}"/>
                             </c:forEach>
                         </c:forEach>
                     </tbody>
@@ -345,8 +351,8 @@
                         <tr><th>Employee</th><th>Total</th></tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="employeeRows" items="${employees.rows}">
-                            <tr>
+                        <c:forEach var="employeeRows" items="${employees.rows}" varStatus="varStatus">
+                            <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                 <td>${directory.byNumber[employeeRows.employee].fullName}</td>
                                 <sql:query dataSource="jdbc/sarariman" var="totals">
                                     SELECT SUM(h.duration) AS total
