@@ -96,10 +96,14 @@
                 img {
                     height: 85.5px;
                     width: 182.25px;
+                    float: right;
                 }
             }
 
-            @page { size: letter; }
+            @page { size: letter;
+                    @top-left { content: "Invoice ${param.invoice}"; }
+                    @top-right { content: "Page " counter(page) " of " counter(pages); }
+            }
         </style>
         <title>Invoice ${param.invoice}</title>
     </head>
@@ -109,9 +113,9 @@
         <jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
         <jsp:useBean id="documentLinks" class="java.util.ArrayList" scope="request"/>
 
-        <img style="float:right" src="${sarariman.logoURL}"/>
+        <img alt="logo" src="${sarariman.logoURL}"/>
 
-        <h1>Invoice ${param.invoice}</h1>
+        <h1>Invoice</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
             SELECT project, sent, customer, payment_received, pop_start, pop_end
@@ -126,6 +130,7 @@
         <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>
 
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
+            Invoice: ${param.invoice}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
             <c:if test="${!empty project.contract}">
