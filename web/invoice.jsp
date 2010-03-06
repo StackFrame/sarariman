@@ -86,6 +86,7 @@
                 table {
                     font-size: 12px;
                     -fs-table-paginate: paginate;
+                    page-break-inside: avoid;
                 }
 
                 table td, table th {
@@ -101,9 +102,8 @@
             @page { size: letter; }
         </style>
         <title>Invoice ${param.invoice}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
