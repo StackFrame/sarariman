@@ -152,8 +152,8 @@
         </table>
     </div>
 
-    <c:set var="csvLinkEmitted" value="${true}" scope="request"/>
-    <p id="csv"><a href="saic/laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+    <c:set var="csvLink" value="saic/laborcosts.csv?id=${param.invoice}" scope="request"/>
+
     <%
         documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
         documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));

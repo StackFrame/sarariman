@@ -79,7 +79,7 @@
                     text-decoration: none;
                 }
 
-                #topnav, #timesheets, #csv, #tracking, #controls, #footer {
+                #topnav, #timesheets, #tracking, #controls, #footer {
                     display: none;
                 }
 
@@ -190,15 +190,15 @@
         </div>
 
         <c:set var="entriesTableEmitted" value="${false}" scope="request"/>
-        <c:set var="csvLinkEmitted" value="${false}" scope="request"/>
+
         <c:forEach var="extension" items="${sarariman.extensions}">
             <jsp:include page="${extension.invoiceInclude}">
                 <jsp:param name="invoice" value="${param.invoice}"/>
             </jsp:include>
         </c:forEach>
 
-        <c:if test="${!csvLinkEmitted}">
-            <p id="csv"><a href="laborcosts.csv?id=${param.invoice}">Download as CSV</a></p>
+        <c:if test="${empty csvLink}">
+            <c:set var="csvLink" value="laborcosts.csv?id=${param.invoice}" scope="request"/>
             <%
         documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
         documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
@@ -392,6 +392,8 @@
                 <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
                 <input type="submit" value="Send"/>
             </form>
+
+            <p><a href="${csvLink}">Export as CSV</a></p>
 
             <c:if test="${user.administrator}">
                 <form action="invoiceController" method="post">
