@@ -40,18 +40,15 @@
                     border-width: 1px;
                     border-style: solid;
                     border-collapse: collapse;
-                    float: left;
-                    margin: 10px;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-bottom: 0.5in;
                 }
 
                 table td, table th {
                     border-width: 1px;
                     border-style: solid;
                     padding: 3px;
-                }
-
-                #email {
-                    clear: both;
                 }
 
                 th {
@@ -62,10 +59,6 @@
 
                 caption {
                     font-weight: bold;
-                }
-
-                #entries {
-                    clear: both;
                 }
 
                 #footer {
@@ -102,7 +95,7 @@
 
             @page { size: letter;
                     @top-left { content: "Invoice ${param.invoice}"; }
-                    @top-right { content: "Page " counter(page) " of " counter(pages); }
+            @top-right { content: "Page " counter(page) " of " counter(pages); }
             }
         </style>
         <title>Invoice ${param.invoice}</title>
@@ -235,7 +228,7 @@
 
             <div>
                 <table class="altrows" id="hours">
-                    <caption>Entries</caption>
+                    <caption>Timesheet Entries</caption>
                     <thead>
                         <tr>
                             <th>Employee</th>

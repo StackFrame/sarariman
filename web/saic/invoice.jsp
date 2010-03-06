@@ -51,7 +51,7 @@
 
     <div>
         <table class="altrows" id="entries">
-            <caption>Entries</caption>
+            <caption>Timesheet Entries</caption>
             <thead>
                 <tr>
                     <th>Employee</th>
@@ -118,7 +118,7 @@
     </sql:query>
     <div>
         <table class="altrows">
-            <caption>Entries by Line Item and Employee</caption>
+            <caption>Totals by Line Item and Employee</caption>
             <thead>
                 <tr>
                     <th>Line Item</th>
