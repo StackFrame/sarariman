@@ -124,6 +124,7 @@
 
         <p>Customer: ${fn:escapeXml(customer.name)}<br/>
             Invoice: ${param.invoice}<br/>
+            Date: ${sent}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
             <c:if test="${!empty project.contract}">
@@ -135,8 +136,7 @@
         </p>
 
         <div id="tracking">
-            <p>Sent: ${sent}<br/>
-                Payment received: ${received}</p>
+            <p>Payment received: ${received}</p>
             <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
             <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
         </div>
