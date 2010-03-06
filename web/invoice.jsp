@@ -111,7 +111,7 @@
         <h1>Invoice</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-            SELECT project, sent, customer, payment_received, pop_start, pop_end
+            SELECT i.project, i.sent, i.customer, i.payment_received, i.pop_start, i.pop_end
             FROM invoice_info AS i
             WHERE i.id = ?
             <sql:param value="${param.invoice}"/>
@@ -127,6 +127,7 @@
             Date: ${sent}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
+            Terms: net ${project.terms} days<br/>
             <c:if test="${!empty project.contract}">
                 Contract: ${project.contract}<br/>
             </c:if>

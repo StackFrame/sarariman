@@ -27,6 +27,7 @@ public class Project {
     private final String subcontract;
     private final long customer;
     private final BigDecimal funded;
+    private final long terms;
     private final Sarariman sarariman;
 
     public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
@@ -43,7 +44,8 @@ public class Project {
                     String contract = resultSet.getString("contract_number");
                     String subcontract = resultSet.getString("subcontract_number");
                     BigDecimal funded = resultSet.getBigDecimal("funded");
-                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded));
+                    long terms = resultSet.getLong("terms");
+                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, terms));
                 }
                 return map;
             } finally {
@@ -55,7 +57,7 @@ public class Project {
         }
     }
 
-    Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded) {
+    Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded, long terms) {
         this.sarariman = sarariman;
         this.id = id;
         this.name = name;
@@ -63,6 +65,7 @@ public class Project {
         this.contract = contract;
         this.subcontract = subcontract;
         this.funded = funded;
+        this.terms = terms;
     }
 
     public long getId() {
@@ -93,6 +96,10 @@ public class Project {
         return Task.getTasks(sarariman, this);
     }
 
+    public long getTerms() {
+        return terms;
+    }
+
     public Collection<Date> getDaysBilled() throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date " +
@@ -121,9 +128,10 @@ public class Project {
         }
     }
 
-    public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract, BigDecimal funded) throws SQLException {
+    public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract,
+            String subcontract, BigDecimal funded, long terms) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded) VALUES(?, ?, ?, ?, ?, ?, ?)");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, terms) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -132,11 +140,12 @@ public class Project {
             ps.setString(5, contract);
             ps.setString(6, subcontract);
             ps.setBigDecimal(7, funded);
+            ps.setLong(8, terms);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             try {
                 rs.next();
-                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded);
+                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, terms);
             } finally {
                 rs.close();
             }
@@ -146,9 +155,10 @@ public class Project {
         }
     }
 
-    public void update(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract, BigDecimal funded) throws SQLException {
+    public void update(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract,
+            BigDecimal funded, long terms) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=? WHERE id=?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=?, terms=? WHERE id=?");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -158,6 +168,7 @@ public class Project {
             ps.setString(6, subcontract);
             ps.setBigDecimal(7, funded);
             ps.setLong(8, id);
+            ps.setLong(9, terms);
             ps.executeUpdate();
         } finally {
             ps.close();
@@ -179,7 +190,8 @@ public class Project {
 
     @Override
     public String toString() {
-        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",contract=" + contract + ",subcontract=" + subcontract + ",funded=" + funded + "}";
+        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",contract=" + contract + ",subcontract=" + subcontract +
+                ",funded=" + funded + ",terms=" + terms + "}";
     }
 
 }

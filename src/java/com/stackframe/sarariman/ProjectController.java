@@ -1,16 +1,14 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +61,8 @@ public class ProjectController extends HttpServlet {
                 case create:
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end, null, null, new BigDecimal(0));
+                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
+                            null, null, new BigDecimal(0), 0);
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
@@ -72,7 +71,9 @@ public class ProjectController extends HttpServlet {
                     project = sarariman.getProjects().get(id);
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    project.update(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end, request.getParameter("contract"), request.getParameter("subcontract"), new BigDecimal(request.getParameter("funded")));
+                    project.update(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
+                            request.getParameter("contract"), request.getParameter("subcontract"),
+                            new BigDecimal(request.getParameter("funded")),Long.parseLong(request.getParameter("terms")));
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:

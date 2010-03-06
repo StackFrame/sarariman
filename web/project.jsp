@@ -60,6 +60,9 @@
             <label for="pop_end">End: </label>
             <input type="text" id="pop_end" name="pop_end"/><br/>
 
+            <label for="terms">Terms </label>
+            <input type="text" id="terms" name="terms" value="${project.terms}"/><br/>
+
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
 
