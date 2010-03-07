@@ -387,34 +387,58 @@
         </div>
 
         <div id="controls">
-            <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
-                <c:forEach var="documentName" items="${documentNames}">
-                    <input type="hidden" name="documentName" value="${documentName}"/>
-                </c:forEach>
+            <c:if test="${fn:contains(sarariman.invoiceManagers, user)}">
 
-                <c:forEach var="documentLink" items="${documentLinks}">
-                    <input type="hidden" name="documentLink" value="${fn:escapeXml(documentLink)}"/>
-                </c:forEach>
+                <p>Email will go to:</p>
+                <sql:query dataSource="jdbc/sarariman" var="emailResult">
+                    SELECT c.name, c.email
+                    FROM project_invoice_contacts as ptc
+                    JOIN projects AS p ON ptc.project = p.id
+                    JOIN contacts AS c ON c.id = ptc.contact
+                    WHERE p.id = ?
+                    <sql:param value="${project.id}"/>
+                </sql:query>
+                <ul>
+                    <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
+                </ul>
 
-                <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
-                <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
-                <c:set var="body" value="Please find attached invoice ${param.invoice}.\n\n"/>
-                <c:set var="body" value="${body}Total: ${invoiceTotal}\n"/>
-                <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\n"/>
-                <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
-                <c:if test="${!empty project.contract}">
-                    <c:set var="body" value="${body}Contract: ${project.contract}\n"/>
-                </c:if>
-                <c:if test="${!empty project.subcontract}">
-                    <c:set var="body" value="${body}Subcontract: ${project.subcontract}\n"/>
-                </c:if>
-                <input type="hidden" name="body" value="${body}"/>
+                <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
+                    <c:forEach var="documentName" items="${documentNames}">
+                        <input type="hidden" name="documentName" value="${documentName}"/>
+                    </c:forEach>
 
-                <input type="hidden" name="from" value="billing@stackframe.com"/>
+                    <c:forEach var="documentLink" items="${documentLinks}">
+                        <input type="hidden" name="documentLink" value="${fn:escapeXml(documentLink)}"/>
+                    </c:forEach>
 
-                <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
-                <input type="submit" value="Send"/>
-            </form>
+                    <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
+                    <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
+                    <c:set var="body" value="Please find attached invoice ${param.invoice}.\n\n"/>
+                    <c:set var="body" value="${body}Total: ${invoiceTotal}\n"/>
+                    <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\n"/>
+                    <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
+                    <c:if test="${!empty project.contract}">
+                        <c:set var="body" value="${body}Contract: ${project.contract}\n"/>
+                    </c:if>
+                    <c:if test="${!empty project.subcontract}">
+                        <c:set var="body" value="${body}Subcontract: ${project.subcontract}\n"/>
+                    </c:if>
+                    <input type="hidden" name="body" value="${body}"/>
+
+                    <input type="hidden" name="from" value="billing@stackframe.com"/>
+
+                    <c:forEach var="row" items="${emailResult.rows}">
+                        <input type="hidden" name="futureto" value="${row.email}"/>
+                    </c:forEach>
+
+                    <c:forEach var="invoiceManager" items="${sarariman.invoiceManagers}">
+                        <input type="hidden" name="cc" value="${invoiceManager.email}"/>
+                    </c:forEach>
+
+                    <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
+                    <input type="submit" value="Send"/>
+                </form>
+            </c:if>
 
             <p><a href="${csvLink}">Export as CSV</a></p>
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -88,6 +89,16 @@ public class EmailBuilder extends HttpServlet {
             from = new InternetAddress(request.getParameter("from"));
         } catch (AddressException ae) {
             throw new ServletException(ae);
+        }
+
+        String testAddress = request.getParameter("testaddress");
+        if (testAddress != null && testAddress.length() > 0) {
+            try {
+                to = Collections.singleton(new InternetAddress(testAddress));
+                cc = null;
+            } catch (AddressException ae) {
+                throw new ServletException(ae);
+            }
         }
 
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");

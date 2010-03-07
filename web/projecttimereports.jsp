@@ -96,7 +96,6 @@
                 WHERE p.id = ?
                 <sql:param value="${param.project}"/>
             </sql:query>
-
             <ul>
                 <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
             </ul>
