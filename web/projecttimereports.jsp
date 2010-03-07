@@ -126,6 +126,8 @@
                     <input type="hidden" name="subcontract" value="${project.subcontract}"/>
                 </c:if>
 
+                <input type="hidden" name="from" value="timesheets@stackframe.com"/>
+
                 <c:forEach var="row" items="${emailResult.rows}">
                     <input type="hidden" name="to" value="${row.email}"/>
                 </c:forEach>

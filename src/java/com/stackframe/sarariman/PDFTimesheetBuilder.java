@@ -125,7 +125,14 @@ public class PDFTimesheetBuilder extends HttpServlet {
             }
         }
 
-        sarariman.getEmailDispatcher().send(to, cc, subject, body.toString(), attachments);
+        InternetAddress from;
+        try {
+            from = new InternetAddress(request.getParameter("from"));
+        } catch (AddressException ae) {
+            throw new ServletException(ae);
+        }
+
+        sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments);
 
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();

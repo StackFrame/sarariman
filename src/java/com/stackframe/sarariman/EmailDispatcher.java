@@ -37,7 +37,7 @@ public class EmailDispatcher {
 
     private final Executor executor = Executors.newFixedThreadPool(1);
     private final Logger logger = Logger.getLogger(getClass().getName());
-    private final InternetAddress from;
+    private final InternetAddress defaultFrom;
     private final Session session;
     private final String host;
     private final int port;
@@ -46,7 +46,7 @@ public class EmailDispatcher {
     public EmailDispatcher(Properties properties, boolean inhibit) {
         this.inhibit = inhibit;
         try {
-            this.from = new InternetAddress((String)properties.get("mail.from"), true);
+            this.defaultFrom = new InternetAddress((String)properties.get("mail.from"), true);
         } catch (AddressException ae) {
             throw new AssertionError(ae);
         }
@@ -58,7 +58,7 @@ public class EmailDispatcher {
         port = (Integer)properties.get("mail.smtp.port");
     }
 
-    private void submit(final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject,
+    private void submit(final InternetAddress from, final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject,
             final String body, final Collection<MimeBodyPart> attachments) {
         executor.execute(new Runnable() {
 
@@ -116,21 +116,39 @@ public class EmailDispatcher {
     }
 
     public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(to, cc, subject, body, null);
+        submit(defaultFrom, to, cc, subject, body, null);
     }
 
     public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(Collections.singleton(to), cc, subject, body, null);
+        submit(defaultFrom, Collections.singleton(to), cc, subject, body, null);
     }
 
     public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
-        submit(to, cc, subject, body, attachments);
+        submit(defaultFrom, to, cc, subject, body, attachments);
     }
 
     public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
-        submit(Collections.singleton(to), cc, subject, body, attachments);
+        submit(defaultFrom, Collections.singleton(to), cc, subject, body, attachments);
+    }
+
+    public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
+        submit(from, to, cc, subject, body, null);
+    }
+
+    public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
+        submit(from, Collections.singleton(to), cc, subject, body, null);
+    }
+
+    public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
+            Collection<MimeBodyPart> attachments) {
+        submit(from, to, cc, subject, body, attachments);
+    }
+
+    public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
+            Collection<MimeBodyPart> attachments) {
+        submit(from, Collections.singleton(to), cc, subject, body, attachments);
     }
 
     public static Collection<InternetAddress> addresses(Collection<Employee> employees) {

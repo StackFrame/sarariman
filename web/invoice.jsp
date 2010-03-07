@@ -410,6 +410,8 @@
                 </c:if>
                 <input type="hidden" name="body" value="${body}"/>
 
+                <input type="hidden" name="from" value="billing@stackframe.com"/>
+
                 <label for="to">Email Address: </label><input type="text" id="to" name="to"/><br/>
                 <input type="submit" value="Send"/>
             </form>

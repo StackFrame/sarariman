@@ -83,8 +83,15 @@ public class EmailBuilder extends HttpServlet {
         body = body.replaceAll("\\\\n", "\n");
         body = body.replaceAll("\\\\t", "\t");
 
+        InternetAddress from;
+        try {
+            from = new InternetAddress(request.getParameter("from"));
+        } catch (AddressException ae) {
+            throw new ServletException(ae);
+        }
+
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-        sarariman.getEmailDispatcher().send(to, cc, subject, body, attachments);
+        sarariman.getEmailDispatcher().send(from, to, cc, subject, body, attachments);
 
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
