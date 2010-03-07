@@ -28,14 +28,16 @@
         </sql:query>
 
         <table id="contacts" class="altrows">
-            <tr><th>Name</th><th>Title</th></tr>
+            <tr><th>Name</th><th>Title</th><th>Phone</th><th>Email</th></tr>
             <c:forEach var="contact" items="${contacts.rows}">
                 <tr>
                     <c:url var="link" value="contact">
                         <c:param name="id" value="${contact.id}"/>
                     </c:url>
-                    <td><a href="${link}">${contact.name}</a></td>
-                    <td><a href="${link}">${contact.title}</a></td>
+                    <td><a href="${link}" title="edit contact information for ${contact.name}">${contact.name}</a></td>
+                    <td><a href="${link}" title="edit contact information for ${contact.name}">${contact.title}</a></td>
+                    <td><a href="${link}" title="edit contact information for ${contact.name}">${contact.phone}</a></td>
+                    <td><a href="mailto:${contact.email}" title="send email to ${contact.name}">${contact.email}</a></td>
                 </tr>
             </c:forEach>
         </table>
