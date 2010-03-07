@@ -115,7 +115,7 @@
             PO Box 2606<br/>
             Sanford, FL 32772-2606<br/>
             <strong>T</strong> 407-454-9193<br/>
-            <strong>T</strong> 321-445-6045
+            <strong>F</strong> 321-445-6045
         </div>
 
         <h1>Invoice</h1>
