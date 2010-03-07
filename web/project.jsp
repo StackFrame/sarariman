@@ -100,6 +100,24 @@
             </c:forEach>
         </ul>
 
+        <h2>Invoice Contacts</h2>
+        <ul>
+            <sql:query dataSource="jdbc/sarariman" var="emailResult">
+                SELECT c.name, c.email, c.id
+                FROM project_invoice_contacts as ptc
+                JOIN projects AS p ON ptc.project = p.id
+                JOIN contacts AS c ON c.id = ptc.contact
+                WHERE p.id = ?
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:forEach var="row" items="${emailResult.rows}">
+                <c:url var="contactLink" value="contact">
+                    <c:param name="id" value="${row.id}"/>
+                </c:url>
+                <li><a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a></li>
+            </c:forEach>
+        </ul>
+
         <table class="altrows" id="tasks">
             <caption>Tasks</caption>
             <tr><th>ID</th><th>Task</th><th>Active</th></tr>
