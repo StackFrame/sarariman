@@ -196,7 +196,7 @@
                         </c:url>
                         <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName} ${formattedWeek}</a>
                             <a href="${fn:escapeXml(pdf)}">[PDF]</a>
-                            <c:set var="documentName" value="${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
+                            <c:set var="documentName" value="Timesheet ${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
                             <c:set var="documentLink" value="${pdf}"/>
                             <%
         documentNames.add(pageContext.getAttribute("documentName"));
