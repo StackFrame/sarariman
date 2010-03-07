@@ -152,7 +152,7 @@
                 Contract: ${project.contract}<br/>
             </c:if>
             <c:if test="${!empty project.subcontract}">
-                Subcontract: ${project.subcontract}
+                Subcontract: ${project.subcontract}<br/>
             </c:if>
         </p>
 
@@ -245,7 +245,30 @@
                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
                 <c:set var="invoiceTotal" value="${invoiceTotal + costData.cost}" scope="request"/>
             </c:forEach>
-            <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/></p>
+            <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/><br/>
+                <c:if test="${project.funded > 0}">
+                    Funded: <fmt:formatNumber type="currency" value="${project.funded}"/><br/>
+
+                    <sql:query dataSource="jdbc/sarariman" var="previouslyBilledResult">
+                        SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
+                        FROM hours AS h
+                        JOIN invoices AS i ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
+                        JOIN tasks AS t on h.task = t.id
+                        JOIN projects AS p on p.id = t.project
+                        JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                        JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                        WHERE p.id = ? AND t.billable = TRUE AND h.duration > 0 AND i.date < ?
+                        <sql:param value="${project.id}"/>
+                        <sql:param value="${invoice_info.pop_start}"/>
+                    </sql:query>
+                    <c:set var="previouslyBilled" value="${previouslyBilledResult.rows[0].costTotal}"/>
+                    <c:set var="cumulative" value="${previouslyBilled + invoiceTotal}"/>
+
+                    Previously Billed: <fmt:formatNumber type="currency" value="${previouslyBilled}"/><br/>
+                    Cumulative: <fmt:formatNumber type="currency" value="${cumulative}"/><br/>
+                    Funds Remaining: <fmt:formatNumber type="currency" value="${project.funded - cumulative}"/>
+                </c:if>
+            </p>
 
             <div>
                 <table class="altrows" id="hours">
