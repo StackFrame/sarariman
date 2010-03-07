@@ -69,10 +69,9 @@
                     text-align: center;
                 }
 
-                img {
-                    height: 85.5px;
-                    width: 182.25px;
+                #returnAddress {
                     float: right;
+                    text-align: center;
                 }
             }
 
@@ -110,7 +109,14 @@
         <jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
         <jsp:useBean id="documentLinks" class="java.util.ArrayList" scope="request"/>
 
-        <img alt="logo" src="${sarariman.logoURL}"/>
+        <div id="returnAddress">
+            <img alt="logo" src="${sarariman.logoURL}" height="86" width="182"/><br/><br/>
+            StackFrame, LLC<br/>
+            PO Box 2606<br/>
+            Sanford, FL 32772-2606<br/>
+            <strong>T</strong> 407-454-9193<br/>
+            <strong>T</strong> 321-445-6045
+        </div>
 
         <h1>Invoice</h1>
 
