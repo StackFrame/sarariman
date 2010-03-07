@@ -133,6 +133,10 @@
     </servlet>
     <servlet><servlet-name>PDFTimesheetBuilder</servlet-name><servlet-class>com.stackframe.sarariman.PDFTimesheetBuilder</servlet-class></servlet>
     <servlet><servlet-name>EmailBuilder</servlet-name><servlet-class>com.stackframe.sarariman.EmailBuilder</servlet-class></servlet>
+    <servlet>
+        <servlet-name>ContactController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.ContactController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
@@ -242,6 +246,22 @@
     <servlet-mapping>
         <servlet-name>invoice</servlet-name>
         <url-pattern>/invoice</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>contacts</servlet-name>
+        <jsp-file>/contacts.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>contacts</servlet-name>
+        <url-pattern>/contacts</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>contact</servlet-name>
+        <jsp-file>/contact.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>contact</servlet-name>
+        <url-pattern>/contact</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>invoices</servlet-name>
@@ -362,6 +382,10 @@
     <servlet-mapping>
         <servlet-name>EmailBuilder</servlet-name>
         <url-pattern>/EmailBuilder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ContactController</servlet-name>
+        <url-pattern>/ContactController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
