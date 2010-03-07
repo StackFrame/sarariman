@@ -68,6 +68,12 @@
                 #footer {
                     text-align: center;
                 }
+
+                img {
+                    height: 85.5px;
+                    width: 182.25px;
+                    float: right;
+                }
             }
 
             @media print {
@@ -88,12 +94,6 @@
 
                 table td, table th {
                     padding: 5px;
-                }
-
-                img {
-                    height: 85.5px;
-                    width: 182.25px;
-                    float: right;
                 }
             }
 
@@ -126,7 +126,23 @@
         <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
         <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>
 
-        <p>Customer: ${fn:escapeXml(customer.name)}<br/>
+        <p>
+            <sql:query dataSource="jdbc/sarariman" var="emailResult">
+                SELECT c.name, c.title, c.id
+                FROM project_invoice_contacts as ptc
+                JOIN projects AS p ON ptc.project = p.id
+                JOIN contacts AS c ON c.id = ptc.contact
+                WHERE p.id = ?
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:forEach var="row" items="${emailResult.rows}">
+                <c:url var="contactLink" value="contact">
+                    <c:param name="id" value="${row.id}"/>
+                </c:url>
+                Attn: <a href="${contactLink}" title="go to contact details for ${row.name}">${row.name}</a><c:if test="${!empty row.title}">, ${row.title}</c:if><br/>
+            </c:forEach>
+
+            Customer: ${fn:escapeXml(customer.name)}<br/>
             Invoice: ${param.invoice}<br/>
             Date: ${sent}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
@@ -382,15 +398,15 @@
 
                 <input type="hidden" name="subject" value="Invoice ${param.invoice}"/>
                 <fmt:formatNumber type="currency" var="invoiceTotal" value="${invoiceTotal}"/>
-                <c:set var="body" value="Please find attached invoice ${param.invoice}.\\\n\\\n"/>
-                <c:set var="body" value="${body}Total: ${invoiceTotal}\\\n"/>
-                <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\\\n"/>
-                <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\\\n"/>
+                <c:set var="body" value="Please find attached invoice ${param.invoice}.\n\n"/>
+                <c:set var="body" value="${body}Total: ${invoiceTotal}\n"/>
+                <c:set var="body" value="${body}Project: ${fn:escapeXml(project.name)}\n"/>
+                <c:set var="body" value="${body}Period: ${invoice_info.pop_start} - ${invoice_info.pop_end}\n"/>
                 <c:if test="${!empty project.contract}">
-                    <c:set var="body" value="${body}Contract: ${project.contract}\\\n"/>
+                    <c:set var="body" value="${body}Contract: ${project.contract}\n"/>
                 </c:if>
                 <c:if test="${!empty project.subcontract}">
-                    <c:set var="body" value="${body}Subcontract: ${project.subcontract}\\\n"/>
+                    <c:set var="body" value="${body}Subcontract: ${project.subcontract}\n"/>
                 </c:if>
                 <input type="hidden" name="body" value="${body}"/>
 
