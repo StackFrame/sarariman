@@ -457,7 +457,7 @@
                     <input type="hidden" name="from" value="billing@stackframe.com"/>
 
                     <c:forEach var="row" items="${emailResult.rows}">
-                        <input type="hidden" name="futureto" value="${row.email}"/>
+                        <input type="hidden" name="to" value="${row.email}"/>
                     </c:forEach>
 
                     <c:forEach var="invoiceManager" items="${sarariman.invoiceManagers}">
