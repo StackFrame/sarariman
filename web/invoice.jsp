@@ -274,6 +274,10 @@
                         <sql:param value="${invoice_info.pop_start}"/>
                     </sql:query>
                     <c:set var="previouslyBilled" value="${previouslyBilledResult.rows[0].costTotal}"/>
+                    <c:if test="${empty previouslyBilled}">
+                        <c:set var="previouslyBilled" value="0"/>
+                    </c:if>
+
                     <c:set var="cumulative" value="${previouslyBilled + invoiceTotal}"/>
 
                     Previously Billed: <fmt:formatNumber type="currency" value="${previouslyBilled}"/><br/>
