@@ -148,10 +148,16 @@
                 Attn: <a href="${contactLink}" title="go to contact details for ${row.name}">${row.name}</a><c:if test="${!empty row.title}">, ${row.title}</c:if><br/>
             </c:forEach>
 
-            Customer: ${fn:escapeXml(customer.name)}<br/>
+            <c:url var="customerLink" value="customer">
+                <c:param name="id" value="${customer.id}"/>
+            </c:url>
+            Customer: <a href="${customerLink}">${fn:escapeXml(customer.name)}</a><br/>
             Invoice: ${param.invoice}<br/>
             Date: ${sent}<br/>
-            Project: ${fn:escapeXml(project.name)}<br/>
+            <c:url var="projectLink" value="project">
+                <c:param name="id" value="${project.id}"/>
+            </c:url>
+            Project: <a href="${projectLink}">${fn:escapeXml(project.name)}</a><br/>
             Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
             Terms: net ${project.terms} days<br/>
             <c:if test="${!empty project.contract}">
