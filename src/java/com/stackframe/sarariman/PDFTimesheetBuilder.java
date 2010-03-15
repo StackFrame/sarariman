@@ -6,6 +6,10 @@ package com.stackframe.sarariman;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +38,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         Collection<MimeBodyPart> attachments = new ArrayList<MimeBodyPart>();
         String[] pdfs = request.getParameterValues("pdf");
         String[] employees = request.getParameterValues("employee");
@@ -132,7 +136,32 @@ public class PDFTimesheetBuilder extends HttpServlet {
             throw new ServletException(ae);
         }
 
-        sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments);
+        final int projectNumber = Integer.parseInt(request.getParameter("projectNumber"));
+        final int employee = ((Employee)request.getAttribute("user")).getNumber();
+        final String week = request.getParameter("week");
+        Runnable postSendAction = new Runnable() {
+
+            public void run() {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement ps = connection.prepareStatement("INSERT INTO project_timesheet_email_log (project, sender, week) VALUES(?, ?, ?)");
+                    try {
+                        ps.setInt(1, projectNumber);
+                        ps.setInt(2, employee);
+                        ps.setString(3, week);
+                        ps.executeUpdate();
+                    } finally {
+                        ps.close();
+                        connection.close();
+                    }
+                } catch (SQLException se) {
+                    throw new RuntimeException(se);
+                }
+            }
+
+        };
+
+        sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments, postSendAction);
 
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();

@@ -117,6 +117,7 @@
                 </c:forEach>
 
                 <input type="hidden" name="project" value="${fn:escapeXml(project.name)}"/>
+                <input type="hidden" name="projectNumber" value="${param.project}"/>
                 <input type="hidden" name="week" value="${param.week}"/>
                 <c:if test="${!empty project.contract}">
                     <input type="hidden" name="contract" value="${project.contract}"/>
@@ -139,6 +140,23 @@
                 <input type="submit" value="Send"/>
             </form>
         </c:if>
+
+        <table>Timesheet email log
+            <sql:query dataSource="jdbc/sarariman" var="logResult">
+                SELECT *
+                FROM project_timesheet_email_log
+                WHERE project = ? AND week = ?
+                <sql:param value="${param.project}"/>
+                <sql:param value="${param.week}"/>
+            </sql:query>
+            <tr><th>Sender</th><th>Sent</th></tr>
+            <c:forEach var="row" items="${logResult.rows}">
+                <tr>
+                    <td>${directory.byNumber[row.sender].fullName}</td>
+                    <td>${row.sent}</td>
+                </tr>
+            </c:forEach>
+        </table>
 
         <%@include file="footer.jsp" %>
     </body>

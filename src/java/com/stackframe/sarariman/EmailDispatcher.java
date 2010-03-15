@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -59,7 +59,7 @@ public class EmailDispatcher {
     }
 
     private void submit(final InternetAddress from, final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject,
-            final String body, final Collection<MimeBodyPart> attachments) {
+            final String body, final Collection<MimeBodyPart> attachments, final Runnable postSendAction) {
         executor.execute(new Runnable() {
 
             public void run() {
@@ -106,6 +106,13 @@ public class EmailDispatcher {
                         transport.connect(host, port, null, null);
                         transport.sendMessage(msg, msg.getAllRecipients());
                         transport.close();
+                        if (postSendAction != null) {
+                            try {
+                                postSendAction.run();
+                            } catch (Throwable t) {
+                                logger.log(Level.SEVERE, "caught exception executing post send action", t);
+                            }
+                        }
                     }
                 } catch (MessagingException me) {
                     logger.log(Level.SEVERE, "caught exception trying to send email", me);
@@ -116,39 +123,49 @@ public class EmailDispatcher {
     }
 
     public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(defaultFrom, to, cc, subject, body, null);
+        submit(defaultFrom, to, cc, subject, body, null, null);
     }
 
     public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(defaultFrom, Collections.singleton(to), cc, subject, body, null);
+        submit(defaultFrom, Collections.singleton(to), cc, subject, body, null, null);
     }
 
     public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
-        submit(defaultFrom, to, cc, subject, body, attachments);
+        submit(defaultFrom, to, cc, subject, body, attachments, null);
     }
 
     public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
-        submit(defaultFrom, Collections.singleton(to), cc, subject, body, attachments);
+        submit(defaultFrom, Collections.singleton(to), cc, subject, body, attachments, null);
     }
 
     public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(from, to, cc, subject, body, null);
+        submit(from, to, cc, subject, body, null, null);
     }
 
     public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
-        submit(from, Collections.singleton(to), cc, subject, body, null);
+        submit(from, Collections.singleton(to), cc, subject, body, null, null);
     }
 
     public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
-        submit(from, to, cc, subject, body, attachments);
+        submit(from, to, cc, subject, body, attachments, null);
+    }
+
+    public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
+            Collection<MimeBodyPart> attachments, Runnable postSendAction) {
+        submit(from, to, cc, subject, body, attachments, postSendAction);
     }
 
     public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
-        submit(from, Collections.singleton(to), cc, subject, body, attachments);
+        submit(from, Collections.singleton(to), cc, subject, body, attachments, null);
+    }
+
+    public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
+            Collection<MimeBodyPart> attachments, Runnable postSendAction) {
+        submit(from, Collections.singleton(to), cc, subject, body, attachments, postSendAction);
     }
 
     public static Collection<InternetAddress> addresses(Collection<Employee> employees) {
