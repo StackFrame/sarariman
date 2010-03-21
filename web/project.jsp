@@ -96,7 +96,16 @@
                 <c:url var="contactLink" value="contact">
                     <c:param name="id" value="${row.id}"/>
                 </c:url>
-                <li><a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a></li>
+                <c:url var="removeLink" value="removeProjectTimesheetContact.jsp">
+                    <c:param name="contact" value="${row.id}"/>
+                    <c:param name="project" value="${project.id}"/>
+                </c:url>
+                <li>
+                    <a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a>
+                    <c:if test="${user.administrator}">
+                        <a href="${fn:escapeXml(removeLink)}" title="remove ${row.name} as a timesheet contact">X</a>
+                    </c:if>
+                </li>
             </c:forEach>
         </ul>
 
@@ -309,5 +318,5 @@
         <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
 
         <%@include file="footer.jsp" %>
-</body>
+    </body>
 </html>
