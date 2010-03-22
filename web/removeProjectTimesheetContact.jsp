@@ -8,7 +8,6 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <c:if test="${!user.administrator}">
     <jsp:forward page="unauthorized"/>
@@ -32,7 +31,13 @@
 
         <h1>Removed Contact</h1>
 
-        <jsp:forward page="project"><jsp:param name="id" value="${param.project}"/></jsp:forward>
+        <p>Removed contact ${param.contact} from project ${param.project}.</p>
+
+        <c:url var="projectLink" value="project">
+            <c:param name="id" value="${param.project}"/>
+        </c:url>
+
+        <p><a href="${fn:escapeXml(projectLink)}">back to project ${param.project}</a></p>
 
         <%@include file="footer.jsp" %>
     </body>
