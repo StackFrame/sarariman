@@ -37,6 +37,8 @@
             <c:param name="id" value="${param.project}"/>
         </c:url>
 
+        <%-- FIXME: This should maybe just do a redirect and not even try to render anything? --%>
+
         <p><a href="${fn:escapeXml(projectLink)}">back to project ${param.project}</a></p>
 
         <%@include file="footer.jsp" %>
