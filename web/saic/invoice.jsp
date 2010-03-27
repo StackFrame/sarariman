@@ -142,7 +142,7 @@
                             <sql:param value="${employee_row.employee}"/>
                         </sql:query>
                         <c:if test="${!empty total.rows[0].total}">
-                            <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                            <tr class="${index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                 <td class="line_item">${line_item_row.po_line_item}</td>
                                 <td>${directory.byNumber[employee_row.employee].fullName}</td>
                                 <td class="duration">${total.rows[0].total}</td>
