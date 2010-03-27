@@ -28,6 +28,7 @@ public class Project {
     private final long customer;
     private final BigDecimal funded;
     private final long terms;
+    private final PeriodOfPerformance pop;
     private final Sarariman sarariman;
 
     public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
@@ -45,7 +46,8 @@ public class Project {
                     String subcontract = resultSet.getString("subcontract_number");
                     BigDecimal funded = resultSet.getBigDecimal("funded");
                     long terms = resultSet.getLong("terms");
-                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, terms));
+                    PeriodOfPerformance pop = new PeriodOfPerformance(resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
+                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, terms, pop));
                 }
                 return map;
             } finally {
@@ -57,7 +59,8 @@ public class Project {
         }
     }
 
-    Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded, long terms) {
+    Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded,
+            long terms, PeriodOfPerformance pop) {
         this.sarariman = sarariman;
         this.id = id;
         this.name = name;
@@ -66,6 +69,7 @@ public class Project {
         this.subcontract = subcontract;
         this.funded = funded;
         this.terms = terms;
+        this.pop = pop;
     }
 
     public long getId() {
@@ -100,15 +104,19 @@ public class Project {
         return terms;
     }
 
+    public PeriodOfPerformance getPop() {
+        return pop;
+    }
+
     public Collection<Date> getDaysBilled() throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date " +
-                "FROM hours AS h " +
-                "JOIN tasks AS t on h.task = t.id " +
-                "JOIN projects AS p on p.id = t.project " +
-                "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
-                "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) " +
-                "WHERE p.id = ? AND t.billable = TRUE;");
+        PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date "
+                + "FROM hours AS h "
+                + "JOIN tasks AS t on h.task = t.id "
+                + "JOIN projects AS p on p.id = t.project "
+                + "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) "
+                + "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) "
+                + "WHERE p.id = ? AND t.billable = TRUE;");
         try {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
@@ -145,7 +153,8 @@ public class Project {
             ResultSet rs = ps.getGeneratedKeys();
             try {
                 rs.next();
-                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, terms);
+                PeriodOfPerformance pop = new PeriodOfPerformance(pop_start, pop_end);
+                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, terms, pop);
             } finally {
                 rs.close();
             }
@@ -167,8 +176,8 @@ public class Project {
             ps.setString(5, contract);
             ps.setString(6, subcontract);
             ps.setBigDecimal(7, funded);
-            ps.setLong(8, id);
-            ps.setLong(9, terms);
+            ps.setLong(8, terms);
+            ps.setLong(9, id);
             ps.executeUpdate();
         } finally {
             ps.close();
@@ -190,8 +199,8 @@ public class Project {
 
     @Override
     public String toString() {
-        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",contract=" + contract + ",subcontract=" + subcontract +
-                ",funded=" + funded + ",terms=" + terms + "}";
+        return "{id=" + id + ",name=" + name + ",customer=" + customer + ",contract=" + contract + ",subcontract=" + subcontract
+                + ",funded=" + funded + ",terms=" + terms + "}";
     }
 
 }

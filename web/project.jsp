@@ -55,10 +55,10 @@
             <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>
 
             <label for="pop_start">Period of Performance Start: </label>
-            <input type="text" id="pop_start" name="pop_start"/>
+            <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${project.pop.start}" pattern="yyyy-MM-dd"/>"/>
 
             <label for="pop_end">End: </label>
-            <input type="text" id="pop_end" name="pop_end"/><br/>
+            <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${project.pop.end}" pattern="yyyy-MM-dd"/>"/><br/>
 
             <label for="terms">Terms </label>
             <input type="text" id="terms" name="terms" value="${project.terms}"/><br/>

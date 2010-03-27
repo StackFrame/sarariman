@@ -70,7 +70,7 @@ public class ProjectController extends HttpServlet {
                     id = Long.parseLong(request.getParameter("id"));
                     project = sarariman.getProjects().get(id);
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
+                    pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_end")).getTime());
                     project.update(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
                             request.getParameter("contract"), request.getParameter("subcontract"),
                             new BigDecimal(request.getParameter("funded")),Long.parseLong(request.getParameter("terms")));
