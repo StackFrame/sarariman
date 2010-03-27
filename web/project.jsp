@@ -54,6 +54,9 @@
             <label for="funded">Funded: </label>
             <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>
 
+            <label for="previously_billed">Previously Billed: </label>
+            <input type="text" size="13" id="previously_billed" name="previously_billed" value="${fn:escapeXml(project.previouslyBilled)}"/><br/>
+
             <label for="pop_start">Period of Performance Start: </label>
             <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${project.pop.start}" pattern="yyyy-MM-dd"/>"/>
 

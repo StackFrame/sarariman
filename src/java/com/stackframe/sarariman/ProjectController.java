@@ -62,7 +62,7 @@ public class ProjectController extends HttpServlet {
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
-                            null, null, new BigDecimal(0), 0);
+                            null, null, new BigDecimal(0), new BigDecimal(0), 0);
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
@@ -73,7 +73,7 @@ public class ProjectController extends HttpServlet {
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_end")).getTime());
                     project.update(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
                             request.getParameter("contract"), request.getParameter("subcontract"),
-                            new BigDecimal(request.getParameter("funded")),Long.parseLong(request.getParameter("terms")));
+                            new BigDecimal(request.getParameter("funded")), new BigDecimal(request.getParameter("previously_billed")), Long.parseLong(request.getParameter("terms")));
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:

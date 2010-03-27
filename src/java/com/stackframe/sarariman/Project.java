@@ -27,6 +27,7 @@ public class Project {
     private final String subcontract;
     private final long customer;
     private final BigDecimal funded;
+    private final BigDecimal previouslyBilled;
     private final long terms;
     private final PeriodOfPerformance pop;
     private final Sarariman sarariman;
@@ -45,9 +46,10 @@ public class Project {
                     String contract = resultSet.getString("contract_number");
                     String subcontract = resultSet.getString("subcontract_number");
                     BigDecimal funded = resultSet.getBigDecimal("funded");
+                    BigDecimal previouslyBilled = resultSet.getBigDecimal("previously_billed");
                     long terms = resultSet.getLong("terms");
                     PeriodOfPerformance pop = new PeriodOfPerformance(resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
-                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, terms, pop));
+                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop));
                 }
                 return map;
             } finally {
@@ -60,7 +62,7 @@ public class Project {
     }
 
     Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded,
-            long terms, PeriodOfPerformance pop) {
+            BigDecimal previouslyBilled, long terms, PeriodOfPerformance pop) {
         this.sarariman = sarariman;
         this.id = id;
         this.name = name;
@@ -68,6 +70,7 @@ public class Project {
         this.contract = contract;
         this.subcontract = subcontract;
         this.funded = funded;
+        this.previouslyBilled = previouslyBilled;
         this.terms = terms;
         this.pop = pop;
     }
@@ -94,6 +97,10 @@ public class Project {
 
     public BigDecimal getFunded() {
         return funded;
+    }
+
+    public BigDecimal getPreviouslyBilled() {
+        return previouslyBilled;
     }
 
     public Collection<Task> getTasks() throws SQLException {
@@ -137,9 +144,9 @@ public class Project {
     }
 
     public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract,
-            String subcontract, BigDecimal funded, long terms) throws SQLException {
+            String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, terms) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, previously_billed, terms) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -148,13 +155,14 @@ public class Project {
             ps.setString(5, contract);
             ps.setString(6, subcontract);
             ps.setBigDecimal(7, funded);
-            ps.setLong(8, terms);
+            ps.setBigDecimal(8, previouslyBilled);
+            ps.setLong(9, terms);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             try {
                 rs.next();
                 PeriodOfPerformance pop = new PeriodOfPerformance(pop_start, pop_end);
-                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, terms, pop);
+                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, previouslyBilled, terms, pop);
             } finally {
                 rs.close();
             }
@@ -165,9 +173,9 @@ public class Project {
     }
 
     public void update(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract,
-            BigDecimal funded, long terms) throws SQLException {
+            BigDecimal funded, BigDecimal previouslyBilled, long terms) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=?, terms=? WHERE id=?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=?, previously_billed=?, terms=? WHERE id=?");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -176,8 +184,9 @@ public class Project {
             ps.setString(5, contract);
             ps.setString(6, subcontract);
             ps.setBigDecimal(7, funded);
-            ps.setLong(8, terms);
-            ps.setLong(9, id);
+            ps.setBigDecimal(8, previouslyBilled);
+            ps.setLong(9, terms);
+            ps.setLong(10, id);
             ps.executeUpdate();
         } finally {
             ps.close();
@@ -200,7 +209,7 @@ public class Project {
     @Override
     public String toString() {
         return "{id=" + id + ",name=" + name + ",customer=" + customer + ",contract=" + contract + ",subcontract=" + subcontract
-                + ",funded=" + funded + ",terms=" + terms + "}";
+                + ",funded=" + funded + ",previouslyBilled=" + previouslyBilled + ",terms=" + terms + "}";
     }
 
 }

@@ -273,7 +273,7 @@
                         <sql:param value="${project.id}"/>
                         <sql:param value="${invoice_info.pop_start}"/>
                     </sql:query>
-                    <c:set var="previouslyBilled" value="${previouslyBilledResult.rows[0].costTotal}"/>
+                    <c:set var="previouslyBilled" value="${previouslyBilledResult.rows[0].costTotal + project.previouslyBilled}"/>
                     <c:if test="${empty previouslyBilled}">
                         <c:set var="previouslyBilled" value="0"/>
                     </c:if>
