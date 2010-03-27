@@ -354,8 +354,9 @@
         <sql:query dataSource="jdbc/sarariman" var="employees">
             SELECT DISTINCT h.employee
             FROM invoices AS i
+            JOIN tasks AS t ON i.task = t.id
             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-            WHERE i.id = ?
+            WHERE i.id = ? AND t.billable = TRUE
             <sql:param value="${param.invoice}"/>
         </sql:query>
 
@@ -372,8 +373,9 @@
                             <sql:query dataSource="jdbc/sarariman" var="tasks">
                                 SELECT DISTINCT h.task
                                 FROM invoices AS i
+                                JOIN tasks AS t ON i.task = t.id
                                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                                WHERE i.id = ? AND h.employee = ?
+                                WHERE i.id = ? AND h.employee = ? AND t.billable = TRUE
                                 <sql:param value="${param.invoice}"/>
                                 <sql:param value="${employeeRows.employee}"/>
                             </sql:query>
@@ -412,8 +414,9 @@
                                 <sql:query dataSource="jdbc/sarariman" var="totals">
                                     SELECT SUM(h.duration) AS total
                                     FROM invoices AS i
+                                    JOIN tasks AS t on i.task = t.id
                                     JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                                    WHERE i.id = ? AND h.employee = ?
+                                    WHERE i.id = ? AND h.employee = ? AND t.billable = TRUE
                                     <sql:param value="${param.invoice}"/>
                                     <sql:param value="${employeeRows.employee}"/>
                                 </sql:query>

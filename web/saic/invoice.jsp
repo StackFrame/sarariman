@@ -34,7 +34,7 @@
         JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
         JOIN tasks AS t on t.id = i.task
         LEFT JOIN saic_tasks AS s ON i.task = s.task
-        WHERE i.id = ?
+        WHERE i.id = ? AND t.billable = TRUE
         ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC
         <sql:param value="${param.invoice}"/>
     </sql:query>
@@ -112,8 +112,9 @@
     <sql:query dataSource="jdbc/sarariman" var="employees">
         SELECT DISTINCT h.employee
         FROM invoices AS i
+        JOIN tasks AS t ON i.task = t.id
         JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-        WHERE i.id = ?
+        WHERE i.id = ? AND t.billable = TRUE
         <sql:param value="${param.invoice}"/>
     </sql:query>
     <div>
