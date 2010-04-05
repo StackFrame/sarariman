@@ -76,7 +76,7 @@
                 </sql:query>
                 <c:forEach var="project" items="${projects.rows}">
                     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <option value="${project.id}" <c:if test="${labor_category.project == project.id}">selected="selected"</c:if>>${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</option>
+                    <option value="${project.id}" <c:if test="${laborcategory.project == project.id}">selected="selected"</c:if>>${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</option>
                 </c:forEach>
             </select><br/>
 
