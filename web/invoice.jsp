@@ -469,6 +469,8 @@
 
                     <input type="hidden" name="from" value="billing@stackframe.com"/>
 
+                    <input type="hidden" name="invoiceNumber" value="${param.invoice}"/>
+
                     <c:forEach var="row" items="${emailResult.rows}">
                         <input type="hidden" name="to" value="${row.email}"/>
                     </c:forEach>

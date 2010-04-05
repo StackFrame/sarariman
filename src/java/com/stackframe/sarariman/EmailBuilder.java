@@ -6,6 +6,9 @@ package com.stackframe.sarariman;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -101,8 +104,32 @@ public class EmailBuilder extends HttpServlet {
             }
         }
 
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-        sarariman.getEmailDispatcher().send(from, to, cc, subject, body, attachments);
+        final int employee = ((Employee)request.getAttribute("user")).getNumber();
+        final int invoiceNumber = Integer.parseInt(request.getParameter("invoiceNumber"));
+        final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+
+        Runnable postSendAction = testAddress == null ? null : new Runnable() {
+
+            public void run() {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement ps = connection.prepareStatement("INSERT INTO invoice_email_log (invoice, sender) VALUES(?, ?)");
+                    try {
+                        ps.setInt(1, invoiceNumber);
+                        ps.setInt(2, employee);
+                        ps.executeUpdate();
+                    } finally {
+                        ps.close();
+                        connection.close();
+                    }
+                } catch (SQLException se) {
+                    throw new RuntimeException(se);
+                }
+            }
+
+        };
+
+        sarariman.getEmailDispatcher().send(from, to, cc, subject, body, attachments, postSendAction);
 
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
