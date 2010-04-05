@@ -139,7 +139,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
         final int projectNumber = Integer.parseInt(request.getParameter("projectNumber"));
         final int employee = ((Employee)request.getAttribute("user")).getNumber();
         final String week = request.getParameter("week");
-        Runnable postSendAction = new Runnable() {
+        Runnable postSendAction = testAddress == null ? null : new Runnable() {
 
             public void run() {
                 Connection connection = sarariman.openConnection();
