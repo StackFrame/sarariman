@@ -119,16 +119,6 @@ public class PDFTimesheetBuilder extends HttpServlet {
 
         String subject = employees.length == 1 ? "timesheet" : "timesheets";
 
-        String testAddress = request.getParameter("testaddress");
-        if (testAddress != null && testAddress.length() > 0) {
-            try {
-                to = Collections.singleton(new InternetAddress(testAddress));
-                cc = null;
-            } catch (AddressException ae) {
-                throw new ServletException(ae);
-            }
-        }
-
         InternetAddress from;
         try {
             from = new InternetAddress(request.getParameter("from"));
@@ -139,7 +129,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
         final int projectNumber = Integer.parseInt(request.getParameter("projectNumber"));
         final int employee = ((Employee)request.getAttribute("user")).getNumber();
         final String week = request.getParameter("week");
-        Runnable postSendAction = testAddress != null ? null : new Runnable() {
+        Runnable postSendAction = new Runnable() {
 
             public void run() {
                 Connection connection = sarariman.openConnection();
@@ -160,6 +150,17 @@ public class PDFTimesheetBuilder extends HttpServlet {
             }
 
         };
+
+        String testAddress = request.getParameter("testaddress");
+        if (testAddress != null && testAddress.length() > 0) {
+            postSendAction = null;
+            try {
+                to = Collections.singleton(new InternetAddress(testAddress));
+                cc = null;
+            } catch (AddressException ae) {
+                throw new ServletException(ae);
+            }
+        }
 
         sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments, postSendAction);
 

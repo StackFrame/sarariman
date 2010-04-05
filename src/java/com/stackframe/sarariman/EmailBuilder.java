@@ -94,21 +94,11 @@ public class EmailBuilder extends HttpServlet {
             throw new ServletException(ae);
         }
 
-        String testAddress = request.getParameter("testaddress");
-        if (testAddress != null && testAddress.length() > 0) {
-            try {
-                to = Collections.singleton(new InternetAddress(testAddress));
-                cc = null;
-            } catch (AddressException ae) {
-                throw new ServletException(ae);
-            }
-        }
-
         final int employee = ((Employee)request.getAttribute("user")).getNumber();
         final int invoiceNumber = Integer.parseInt(request.getParameter("invoiceNumber"));
         final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
 
-        Runnable postSendAction = testAddress != null ? null : new Runnable() {
+        Runnable postSendAction = new Runnable() {
 
             public void run() {
                 Connection connection = sarariman.openConnection();
@@ -128,6 +118,17 @@ public class EmailBuilder extends HttpServlet {
             }
 
         };
+
+        String testAddress = request.getParameter("testaddress");
+        if (testAddress != null && testAddress.length() > 0) {
+            postSendAction = null;
+            try {
+                to = Collections.singleton(new InternetAddress(testAddress));
+                cc = null;
+            } catch (AddressException ae) {
+                throw new ServletException(ae);
+            }
+        }
 
         sarariman.getEmailDispatcher().send(from, to, cc, subject, body, attachments, postSendAction);
 
