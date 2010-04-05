@@ -141,7 +141,8 @@
             </form>
         </c:if>
 
-        <table>Timesheet email log
+        <table>
+            <caption>Timesheet email log</caption>
             <sql:query dataSource="jdbc/sarariman" var="logResult">
                 SELECT *
                 FROM project_timesheet_email_log
