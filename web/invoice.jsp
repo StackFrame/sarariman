@@ -236,6 +236,7 @@
             %>
         </c:if>
 
+        <c:set var="errorsOccurred" value="false"/>
 
         <c:if test="${!entriesTableEmitted}">
             <sql:query dataSource="jdbc/sarariman" var="result">
@@ -318,6 +319,7 @@
                                 <c:choose>
                                     <c:when test="${empty costData.laborCategory}">
                                         <td class="error">no rate</td>
+                                        <c:set var="errorsOccurred" value="true"/>
                                     </c:when>
                                     <c:otherwise>
                                         <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
@@ -327,6 +329,7 @@
                                 <c:choose>
                                     <c:when test="${empty costData.laborCategory}">
                                         <td class="error">no rate</td>
+                                        <c:set var="errorsOccurred" value="true"/>
                                     </c:when>
                                     <c:otherwise>
                                         <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
@@ -480,7 +483,7 @@
                     </c:forEach>
 
                     <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
-                    <input type="submit" value="Send"/>
+                    <input type="submit" value="Send" <c:if test="${errorsOccurred}">disabled="true"</c:if> />
                 </form>
             </c:if>
 
