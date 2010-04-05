@@ -27,7 +27,7 @@
                     color: black;
                 }
 
-                p.error {
+                .error {
                     color: red;
                 }
 
