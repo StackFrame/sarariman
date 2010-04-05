@@ -94,6 +94,8 @@ public class EmailBuilder extends HttpServlet {
             throw new ServletException(ae);
         }
 
+        // FIXME: This class would be very general and not know about invoices specifically if not for this.  Factor it out.
+
         final int employee = ((Employee)request.getAttribute("user")).getNumber();
         final int invoiceNumber = Integer.parseInt(request.getParameter("invoiceNumber"));
         final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
