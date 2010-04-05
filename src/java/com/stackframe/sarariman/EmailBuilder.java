@@ -108,7 +108,7 @@ public class EmailBuilder extends HttpServlet {
         final int invoiceNumber = Integer.parseInt(request.getParameter("invoiceNumber"));
         final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
 
-        Runnable postSendAction = testAddress == null ? null : new Runnable() {
+        Runnable postSendAction = testAddress != null ? null : new Runnable() {
 
             public void run() {
                 Connection connection = sarariman.openConnection();
