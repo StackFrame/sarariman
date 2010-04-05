@@ -175,8 +175,8 @@
         </div>
 
         <%
-        documentNames.add("Invoice-" + request.getParameter("invoice") + ".pdf");
-        documentLinks.add(String.format("invoice?outputType=pdf&invoice=%s", request.getParameter("invoice")));
+                documentNames.add("Invoice-" + request.getParameter("invoice") + ".pdf");
+                documentLinks.add(String.format("invoice?outputType=pdf&invoice=%s", request.getParameter("invoice")));
         %>
 
         <div id="timesheets">
@@ -211,8 +211,8 @@
                             <c:set var="documentName" value="Timesheet ${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
                             <c:set var="documentLink" value="${pdf}"/>
                             <%
-        documentNames.add(pageContext.getAttribute("documentName"));
-        documentLinks.add(pageContext.getAttribute("documentLink"));
+                                    documentNames.add(pageContext.getAttribute("documentName"));
+                                    documentLinks.add(pageContext.getAttribute("documentLink"));
                             %>
                         </li>
                     </c:forEach>
@@ -231,8 +231,8 @@
         <c:if test="${empty csvLink}">
             <c:set var="csvLink" value="laborcosts.csv?id=${param.invoice}" scope="request"/>
             <%
-        documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
-        documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
+                    documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
+                    documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
             %>
         </c:if>
 
@@ -493,6 +493,23 @@
                 </form>
             </c:if>
         </div>
+
+        <table>
+            <caption>Invoice email log</caption>
+            <sql:query dataSource="jdbc/sarariman" var="logResult">
+                SELECT *
+                FROM invoice_email_log
+                WHERE invoice = ?
+                <sql:param value="${param.invoice}"/>
+            </sql:query>
+            <tr><th>Sender</th><th>Sent</th></tr>
+            <c:forEach var="row" items="${logResult.rows}">
+                <tr>
+                    <td>${directory.byNumber[row.sender].fullName}</td>
+                    <td>${row.sent}</td>
+                </tr>
+            </c:forEach>
+        </table>
 
         <%@include file="footer.jsp" %>
     </body>
