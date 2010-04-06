@@ -29,7 +29,7 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
         final List<LaborCategoryAssignment> rates = new ArrayList<LaborCategoryAssignment>();
         try {
             Connection connection = sarariman.openConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM labor_category_assignments");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM labor_category_assignments ORDER BY pop_start ASC");
             try {
                 ResultSet resultSet = ps.executeQuery();
                 try {

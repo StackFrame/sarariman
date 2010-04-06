@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import javax.naming.Context;
@@ -134,7 +134,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Map<Long, LaborCategory> getLaborCategories() {
-        Map<Long, LaborCategory> result = new HashMap<Long, LaborCategory>();
+        Map<Long, LaborCategory> result = new LinkedHashMap<Long, LaborCategory>();
         for (LaborCategory lc : laborCategories) {
             result.put(lc.getId(), lc);
         }
