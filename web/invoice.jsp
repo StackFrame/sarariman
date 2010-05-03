@@ -121,8 +121,9 @@
         <h1>Invoice</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-            SELECT i.project, i.sent, i.customer, i.payment_received, i.pop_start, i.pop_end
+            SELECT i.project, i.sent, i.customer, i.payment_received, i.pop_start, i.pop_end, p.terms, DATE_ADD(i.sent, INTERVAL p.terms DAY) AS due
             FROM invoice_info AS i
+            LEFT JOIN projects AS p ON i.project = p.id
             WHERE i.id = ?
             <sql:param value="${param.invoice}"/>
         </sql:query>
@@ -130,6 +131,7 @@
         <c:set var="project" value="${sarariman.projects[invoice_info.project]}"/>
         <c:set var="customer" value="${sarariman.customers[invoice_info.customer]}"/>
         <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
+        <fmt:formatDate var="due" value="${invoice_info.due}"/>
         <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>
 
         <p>
@@ -159,7 +161,7 @@
             </c:url>
             Project: <a href="${projectLink}">${fn:escapeXml(project.name)}</a><br/>
             Period invoiced: ${invoice_info.pop_start} - ${invoice_info.pop_end}<br/>
-            Terms: net ${project.terms} days<br/>
+            Terms: net ${invoice_info.terms} days<br/>
             <c:if test="${!empty project.contract}">
                 Contract: ${project.contract}<br/>
             </c:if>
@@ -169,6 +171,7 @@
         </p>
 
         <div id="tracking">
+            <p>Due: ${due}</p>
             <p>Payment received: ${received}</p>
             <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
             <p>Comments: ${fn:escapeXml(invoice_info.comments)}</p>
