@@ -81,7 +81,7 @@
                     text-decoration: none;
                 }
 
-                #topnav, #timesheets, #tracking, #controls, #footer {
+                #topnav, #timesheets, #tracking, #controls, #footer, #emailLog {
                     display: none;
                 }
 
@@ -497,7 +497,7 @@
             </c:if>
         </div>
 
-        <table>
+        <table id="emailLog">
             <caption>Invoice email log</caption>
             <sql:query dataSource="jdbc/sarariman" var="logResult">
                 SELECT *
