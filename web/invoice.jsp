@@ -11,7 +11,24 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<c:if test="${!(user.administrator || user.invoiceManager)}">
+<sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
+    SELECT i.project, i.sent, i.customer, i.payment_received, i.pop_start, i.pop_end, p.terms, DATE_ADD(i.sent, INTERVAL p.terms DAY) AS due
+    FROM invoice_info AS i
+    LEFT JOIN projects AS p ON i.project = p.id
+    WHERE i.id = ?
+    <sql:param value="${param.invoice}"/>
+</sql:query>
+<c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
+<c:set var="project" value="${sarariman.projects[invoice_info.project]}"/>
+
+<sql:query dataSource="jdbc/sarariman" var="resultSet">
+    SELECT project FROM project_managers WHERE employee=? AND project=?
+    <sql:param value="${user.number}"/>
+    <sql:param value="${invoice_info.project}"/>
+</sql:query>
+<c:set var="isProjectManager" value="${resultSet.rowCount == 1}"/>
+
+<c:if test="${!(user.administrator || user.invoiceManager || isProjectManager)}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
@@ -120,15 +137,6 @@
 
         <h1>Invoice</h1>
 
-        <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-            SELECT i.project, i.sent, i.customer, i.payment_received, i.pop_start, i.pop_end, p.terms, DATE_ADD(i.sent, INTERVAL p.terms DAY) AS due
-            FROM invoice_info AS i
-            LEFT JOIN projects AS p ON i.project = p.id
-            WHERE i.id = ?
-            <sql:param value="${param.invoice}"/>
-        </sql:query>
-        <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
-        <c:set var="project" value="${sarariman.projects[invoice_info.project]}"/>
         <c:set var="customer" value="${sarariman.customers[invoice_info.customer]}"/>
         <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
         <fmt:formatDate var="due" value="${invoice_info.due}"/>
