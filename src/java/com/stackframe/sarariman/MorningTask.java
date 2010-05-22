@@ -35,7 +35,7 @@ public class MorningTask extends TimerTask {
         for (Employee employee : directory.getByUserName().values()) {
             Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), prevWeek);
             try {
-                if (!timesheet.isSubmitted()) {
+                if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
                     emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
                             "late timesheet", "Please submit your timesheet for the week of " + prevWeek + ".");
                 }
