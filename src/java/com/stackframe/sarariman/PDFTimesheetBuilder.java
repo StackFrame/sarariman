@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -28,6 +29,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author mcculley
  */
 public class PDFTimesheetBuilder extends HttpServlet {
+
+    private static Collection<InternetAddress> makeAddresses(String[] a) {
+        if (a == null) {
+            return new ArrayList<InternetAddress>();
+        } else {
+            return makeAddresses(new HashSet<String>(Arrays.asList(a)));
+        }
+    }
+
+    private static Collection<InternetAddress> makeAddresses(Collection<String> c) {
+        Collection<InternetAddress> result = new ArrayList<InternetAddress>();
+        for (String s : c) {
+            try {
+                result.add(new InternetAddress(s));
+            } catch (AddressException ae) {
+                throw new IllegalArgumentException(ae);
+            }
+        }
+
+        return result;
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -105,17 +127,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
             }
         }
 
-        Collection<InternetAddress> cc = new ArrayList<InternetAddress>();
-        String[] ccAddresses = request.getParameterValues("cc");
-        if (ccAddresses != null) {
-            for (String ccAddress : ccAddresses) {
-                try {
-                    cc.add(new InternetAddress(ccAddress));
-                } catch (AddressException ae) {
-                    throw new ServletException(ae);
-                }
-            }
-        }
+        Collection<InternetAddress> cc = makeAddresses(request.getParameterValues("cc"));
 
         String subject = employees.length == 1 ? "timesheet" : "timesheets";
 

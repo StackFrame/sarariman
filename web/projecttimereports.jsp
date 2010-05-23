@@ -136,6 +136,16 @@
                     <input type="hidden" name="cc" value="${timesheetManager.email}"/>
                 </c:forEach>
 
+                <sql:query dataSource="jdbc/sarariman" var="projectManagerResult">
+                    SELECT employee
+                    FROM project_managers
+                    WHERE project=?
+                    <sql:param value="${project.id}"/>
+                </sql:query>
+                <c:forEach var="row" items="${projectManagerResult.rows}">
+                    <input type="hidden" name="cc" value="${directory.byNumber[row.employee].email}"/>
+                </c:forEach>
+
                 <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
                 <input type="submit" value="Send"/>
             </form>
