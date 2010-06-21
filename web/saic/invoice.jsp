@@ -9,7 +9,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<c:if test="${!(user.administrator || user.invoiceManager)}">
+<c:if test="${!(user.administrator || user.invoiceManager || isProjectManager)}">
     <jsp:forward page="../unauthorized"/>
 </c:if>
 

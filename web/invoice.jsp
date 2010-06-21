@@ -26,7 +26,7 @@
     <sql:param value="${user.number}"/>
     <sql:param value="${invoice_info.project}"/>
 </sql:query>
-<c:set var="isProjectManager" value="${resultSet.rowCount == 1}"/>
+<c:set var="isProjectManager" value="${resultSet.rowCount != 0}" scope="request"/>
 
 <c:if test="${!(user.administrator || user.invoiceManager || isProjectManager)}">
     <jsp:forward page="unauthorized"/>
