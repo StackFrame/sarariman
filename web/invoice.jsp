@@ -352,7 +352,8 @@
                             SELECT SUM(h.duration) AS total
                             FROM invoices AS i
                             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                            WHERE i.id = ?
+                            JOIN tasks AS t ON t.id = i.task
+                            WHERE i.id = ? AND t.billable = TRUE
                             <sql:param value="${param.invoice}"/>
                         </sql:query>
                         <tr>
