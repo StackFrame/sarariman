@@ -101,6 +101,7 @@
         <c:set var="totalPTO" value="0.0"/>
         <c:set var="totalHoliday" value="0.0"/>
         <c:set var="projects" value="${sarariman.projects}"/>
+        <c:set var="customers" value="${sarariman.customers}"/>
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
@@ -114,7 +115,7 @@
                         </c:url>
                         <td><a href="${fn:escapeXml(taskLink)}">${fn:escapeXml(entry.name)}</a></td>
                         <td class="task"><a href="${fn:escapeXml(taskLink)}">${entry.task}</a></td>
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <c:set var="customer" value="${customers[project.customer]}"/>
                         <c:url var="projectLink" value="project">
                             <c:param name="id" value="${entry.project}"/>
                         </c:url>
