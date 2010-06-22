@@ -100,10 +100,11 @@
         <c:set var="totalUnbillable" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
         <c:set var="totalHoliday" value="0.0"/>
+        <c:set var="projects" value="${sarariman.projects}"/>
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
-                <c:set var="project" value="${sarariman.projects[entry.project]}"/>
+                <c:set var="project" value="${projects[entry.project]}"/>
                 <c:if test="${user.administrator || (!empty project && sarariman:isManager(user, project))}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
