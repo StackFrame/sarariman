@@ -72,10 +72,15 @@
                 <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                     <fmt:parseDate var="date" value="${row.date}" pattern="yyyy-MM-dd"/>
                     <tr>
+                        <fmt:formatDate var="timesheetWeek" value="${du:weekStart(row.date)}" pattern="yyyy-MM-dd"/>
+                        <c:url var="timesheet" value="timesheet">
+                            <c:param name="week" value="${timesheetWeek}"/>
+                            <c:param name="employee" value="${row.employee}"/>
+                        </c:url>
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td>${row.task}</td>
-                        <td>${row.date}</td>
-                        <td>${row.duration}</td>
+                        <td><a href="${fn:escapeXml(timesheet)}">${row.date}</a></td>
+                        <td><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
                         <td>
                             <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
                                    <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if>
