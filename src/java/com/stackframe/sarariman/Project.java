@@ -143,6 +143,27 @@ public class Project {
         }
     }
 
+    public boolean isManager(Employee employee) throws SQLException {
+        Connection connection = sarariman.openConnection();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_managers WHERE employee=? AND project=?");
+            try {
+                ps.setInt(1, employee.getNumber());
+                ps.setLong(2, id);
+                ResultSet rs = ps.executeQuery();
+                return rs.first();
+            } finally {
+                ps.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
+    public static boolean isManager(Employee employee, Project project) throws SQLException {
+        return project.isManager(employee);
+    }
+
     public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract,
             String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms) throws SQLException {
         Connection connection = sarariman.openConnection();
