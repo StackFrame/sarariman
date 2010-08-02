@@ -106,7 +106,7 @@
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <c:set var="project" value="${projects[entry.project]}"/>
-                <c:if test="${user.administrator || (!empty project && sarariman:isManager(user, project))}">
+                <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project))}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                         <td class="date">${entryDate}</td>
