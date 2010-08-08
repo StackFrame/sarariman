@@ -25,24 +25,20 @@
 
         <h1>${fn:escapeXml(grouping.name)}</h1>
 
-        <c:if test="${!empty grouping.pop_start || !empty grouping.pop_end}">
-            <h2>Period of Performance</h2>
-            <p>Start: ${grouping.pop_start} End: ${grouping.pop_end}</p>
-        </c:if>
+        <h2>Period of Performance</h2>
+        <p>Start: ${grouping.pop_start} End: ${grouping.pop_end}</p>
 
         <sql:query dataSource="jdbc/sarariman" var="employeesResult">
             SELECT employee FROM task_grouping_employee AS e JOIN task_grouping AS t ON t.id = e.grouping WHERE t.id=?
             <sql:param value="${param.id}"/>
         </sql:query>
 
-        <c:if test="${employeesResult.rowCount != 0}">
-            <h2>Employees</h2>
-            <ul>
-                <c:forEach var="row" items="${employeesResult.rows}">
-                    <li>${directory.byNumber[row.employee].fullName}</li>
-                </c:forEach>
-            </ul>
-        </c:if>
+        <h2>Employees</h2>
+        <ul>
+            <c:forEach var="row" items="${employeesResult.rows}">
+                <li>${directory.byNumber[row.employee].fullName}</li>
+            </c:forEach>
+        </ul>
 
         <table class="altrows" id="taskGroupingElements">
             <tr><th>Task</th><th>Name</th><th>Fraction</th></tr>
