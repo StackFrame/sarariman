@@ -31,6 +31,7 @@
             <li><a href="projects">Projects</a></li>
             <li><a href="laborcategories">Labor Categories</a></li>
             <li><a href="laborcategoryassignments">Labor Category Assignments</a></li>
+            <li><a href="taskGroupings">Task Groupings</a></li>
             <li><a href="uninvoicedbillable">Uninvoiced Billable</a></li>
             <li>
                 <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>

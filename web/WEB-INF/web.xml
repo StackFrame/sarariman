@@ -25,7 +25,9 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
-    <listener><listener-class>com.stackframe.sarariman.Sarariman</listener-class></listener>
+    <listener>
+        <listener-class>com.stackframe.sarariman.Sarariman</listener-class>
+    </listener>
     <servlet>
         <servlet-name>unauthorized</servlet-name>
         <jsp-file>/unauthorized.jsp</jsp-file>
@@ -86,7 +88,10 @@
         <servlet-name>project</servlet-name>
         <jsp-file>/project.jsp</jsp-file>
     </servlet>
-    <servlet><servlet-name>customers</servlet-name><jsp-file>/customers.jsp</jsp-file></servlet>
+    <servlet>
+        <servlet-name>customers</servlet-name>
+        <jsp-file>/customers.jsp</jsp-file>
+    </servlet>
     <servlet>
         <servlet-name>customer</servlet-name>
         <jsp-file>/customer.jsp</jsp-file>
@@ -131,11 +136,25 @@
         <servlet-name>LaborCosts</servlet-name>
         <servlet-class>com.stackframe.sarariman.LaborCosts</servlet-class>
     </servlet>
-    <servlet><servlet-name>PDFTimesheetBuilder</servlet-name><servlet-class>com.stackframe.sarariman.PDFTimesheetBuilder</servlet-class></servlet>
-    <servlet><servlet-name>EmailBuilder</servlet-name><servlet-class>com.stackframe.sarariman.EmailBuilder</servlet-class></servlet>
+    <servlet>
+        <servlet-name>PDFTimesheetBuilder</servlet-name>
+        <servlet-class>com.stackframe.sarariman.PDFTimesheetBuilder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmailBuilder</servlet-name>
+        <servlet-class>com.stackframe.sarariman.EmailBuilder</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>ContactController</servlet-name>
         <servlet-class>com.stackframe.sarariman.ContactController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>taskGroupings</servlet-name>
+        <jsp-file>/taskGroupings.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>taskGrouping</servlet-name>
+        <jsp-file>/taskGrouping.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
@@ -187,7 +206,8 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>tasks</servlet-name>
-        <url-pattern>/tasks</url-pattern></servlet-mapping>
+        <url-pattern>/tasks</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>task</servlet-name>
         <jsp-file>/task.jsp</jsp-file>
@@ -203,7 +223,8 @@
     <servlet-mapping>
         <servlet-name>day</servlet-name>
         <url-pattern>/day</url-pattern>
-    </servlet-mapping><servlet-mapping>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>day</servlet-name>
         <url-pattern>/day</url-pattern>
     </servlet-mapping>
@@ -386,6 +407,14 @@
     <servlet-mapping>
         <servlet-name>ContactController</servlet-name>
         <url-pattern>/ContactController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskGroupings</servlet-name>
+        <url-pattern>/taskGroupings</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskGrouping</servlet-name>
+        <url-pattern>/taskGrouping</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
