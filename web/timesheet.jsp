@@ -25,7 +25,7 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <style type="text/css">
             @media print{
-                #topnav {
+                #topnav, #taskGroupings {
                     display: none;
                 }
             }
@@ -185,6 +185,73 @@
         <c:if test="${totalHoursWorked > 40.0 && totalPTO > 0.0}">
             <p class="error">PTO taken when sheet is above 40 hours!</p>
         </c:if>
+
+        <div id="taskGroupings">
+            <sql:query dataSource="jdbc/sarariman" var="groupingResult">
+                SELECT DISTINCT(e.grouping) FROM hours AS h
+                JOIN task_grouping_element AS e ON e.task = h.task
+                JOIN task_grouping_employee AS emp ON e.grouping = emp.grouping
+                WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND emp.employee = ?
+                <sql:param value="${thisWeekStart}"/>
+                <sql:param value="${thisWeekStart}"/>
+                <sql:param value="${employee.number}"/>
+                <sql:param value="${employee.number}"/>
+            </sql:query>
+            <c:if test="${groupingResult.rowCount != 0}">
+                <h3>Task Groupings</h3>
+                <c:forEach var="groupRow" items="${groupingResult.rows}">
+                    <sql:query dataSource="jdbc/sarariman" var="groupResult">
+                        SELECT * FROM task_grouping where id=?
+                        <sql:param value="${groupRow.grouping}"/>
+                    </sql:query>
+                    <c:set var="grouping" value="${groupResult.rows[0]}"/>
+
+                    <table class="altrows">
+                        <caption>${fn:escapeXml(grouping.name)}</caption>
+                        <tr><th>Task</th><th>Name</th><th>Target</th><th>Actual</th></tr>
+
+                        <sql:query dataSource="jdbc/sarariman" var="elementsResult">
+                            SELECT e.fraction, e.task, t.name FROM task_grouping_element AS e
+                            JOIN task_grouping AS g ON g.id = e.grouping
+                            JOIN tasks AS t ON t.id = e.task
+                            WHERE g.id = ?
+                            ORDER BY e.task
+                            <sql:param value="${grouping.id}"/>
+                        </sql:query>
+
+                        <sql:query dataSource="jdbc/sarariman" var="totalActualResult">
+                            SELECT SUM(h.duration) AS total FROM hours AS h
+                            JOIN task_grouping_element AS e ON e.task = h.task
+                            JOIN task_grouping_employee AS emp ON e.grouping = emp.grouping
+                            WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND emp.employee = ?
+                            <sql:param value="${thisWeekStart}"/>
+                            <sql:param value="${thisWeekStart}"/>
+                            <sql:param value="${employee.number}"/>
+                            <sql:param value="${employee.number}"/>
+                        </sql:query>
+                        <c:set var="totalInGroup" value="${totalActualResult.rows[0].total}"/>
+
+                        <c:forEach var="row" items="${elementsResult.rows}">
+                            <tr>
+                                <td><a href="task?task_id=${row.task}">${row.task}</a></td>
+                                <td><a href="task?task_id=${row.task}">${fn:escapeXml(row.name)}</a></td>
+                                <td class="percentage"><fmt:formatNumber value="${row.fraction}" type="percent"/></td>
+                                <sql:query dataSource="jdbc/sarariman" var="actualResult">
+                                    SELECT SUM(h.duration) AS total FROM hours AS h
+                                    WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND h.task = ?
+                                    <sql:param value="${thisWeekStart}"/>
+                                    <sql:param value="${thisWeekStart}"/>
+                                    <sql:param value="${employee.number}"/>
+                                    <sql:param value="${row.task}"/>
+                                </sql:query>
+                                <c:set var="actual" value="${actualResult.rows[0].total / totalInGroup}"/>
+                                <td class="percentage"><fmt:formatNumber value="${actual}" type="percent"/></td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </c:forEach>
+            </c:if>
+        </div>
 
         <c:if test="${timesheet.approved}">
             <p>Approved by ${timesheet.approver.fullName} at ${timesheet.approvedTimestamp}.</p>
