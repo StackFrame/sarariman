@@ -404,7 +404,7 @@
                         <tr>
                             <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                             <td><a href="task?task_id=${row.task}">${fn:escapeXml(row.name)}</a></td>
-                            <td><fmt:formatNumber value="${row.fraction}" type="percent"/></td>
+                            <td class="percentage"><fmt:formatNumber value="${row.fraction}" type="percent"/></td>
                             <sql:query dataSource="jdbc/sarariman" var="actualResult">
                                 SELECT SUM(h.duration) AS total FROM hours AS h
                                 WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND h.task = ?
@@ -414,7 +414,7 @@
                                 <sql:param value="${row.task}"/>
                             </sql:query>
                             <c:set var="actual" value="${actualResult.rows[0].total / totalInGroup}"/>
-                            <td><fmt:formatNumber value="${actual}" type="percent"/></td>
+                            <td class="percentage"><fmt:formatNumber value="${actual}" type="percent"/></td>
                         </tr>
                     </c:forEach>
                 </table>

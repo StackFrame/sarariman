@@ -58,7 +58,7 @@
                 <tr>
                     <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                     <td><a href="task?task_id=${row.task}">${fn:escapeXml(row.name)}</a></td>
-                    <td><fmt:formatNumber value="${row.fraction}" type="percent"/></td>
+                    <td class="percentage"><fmt:formatNumber value="${row.fraction}" type="percent"/></td>
                 </tr>
                 <c:set var="total" value="${total + row.fraction}"/>
             </c:forEach>
