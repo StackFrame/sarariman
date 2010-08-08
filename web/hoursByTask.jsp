@@ -33,7 +33,7 @@
                     <td>${row.date}</td>
                     <td>${directory.byNumber[row.employee].fullName}</td>
                     <td class="duration">${row.duration}</td>
-                    <td>${fn:escapeXml(row.description)}</td>
+                    <td>${fn:escapeXml(row.description)}</td><%-- FIXME: Need to do something smarter here. --%>
                 </tr>
                 <c:set var="total" value="${total+row.duration}"/>
             </c:forEach>
