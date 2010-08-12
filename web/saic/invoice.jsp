@@ -72,7 +72,15 @@
                         <td>${directory.byNumber[row.employee].fullName}</td>
                         <td><a href="task.jsp?task_id=${row.task}">${row.task}</a></td>
                         <td>${row.date}</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
+                        <c:choose>
+                            <c:when test="${empty costData.laborCategory}">
+                                <td class="error">no rate</td>
+                                <c:set var="errorsOccurred" value="true"/>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.rate}"/></td>
+                            </c:otherwise>
+                        </c:choose>
                         <c:choose>
                             <c:when test="${!empty row.po_line_item}">
                                 <td class="line_item">${row.po_line_item}</td>
@@ -81,7 +89,15 @@
                                 <td class="error">No line item!</td>
                             </c:otherwise>
                         </c:choose>
-                        <td>${costData.laborCategory.name}</td>
+                        <c:choose>
+                            <c:when test="${empty costData.laborCategory}">
+                                <td class="error">no labor category</td>
+                                <c:set var="errorsOccurred" value="true"/>
+                            </c:when>
+                            <c:otherwise>
+                                <td>${costData.laborCategory.name}</td>
+                            </c:otherwise>
+                        </c:choose>
                         <c:choose>
                             <c:when test="${!empty row.charge_number}">
                                 <td>${row.charge_number}</td>
@@ -91,7 +107,15 @@
                             </c:otherwise>
                         </c:choose>
                         <td class="duration">${row.duration}</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                        <c:choose>
+                            <c:when test="${empty costData.laborCategory}">
+                                <td class="error">no rate</td>
+                                <c:set var="errorsOccurred" value="true"/>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                            </c:otherwise>
+                        </c:choose>
                     </tr>
                 </c:forEach>
                 <tr>
@@ -158,7 +182,7 @@
     <c:set var="csvLink" value="saic/laborcosts.csv?id=${param.invoice}" scope="request"/>
 
     <%
-        documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
-        documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));
+            documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
+            documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));
     %>
 </c:if>
