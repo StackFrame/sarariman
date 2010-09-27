@@ -360,7 +360,7 @@
             SELECT DISTINCT(e.grouping) FROM hours AS h
             JOIN task_grouping_element AS e ON e.task = h.task
             JOIN task_grouping_employee AS emp ON e.grouping = emp.grouping
-            WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND emp.employee = ?
+            WHERE h.duration > 0 AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND emp.employee = ?
             <sql:param value="${thisWeekStart}"/>
             <sql:param value="${thisWeekStart}"/>
             <sql:param value="${employeeNumber}"/>
