@@ -135,7 +135,10 @@ public class Invoice {
         // FIXME: Need to look at date ranges of both the category and the assignment.
         for (LaborCategoryAssignment projectBillRate : projectBillRates) {
             LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
-            if (projectBillRate.getEmployee().getNumber() == employee && category.getProject() == project) {
+            Employee billRateEmployee = projectBillRate.getEmployee();
+            long categoryProject = category.getProject();
+            int billRateEmployeeNumber = billRateEmployee.getNumber();
+            if (billRateEmployeeNumber == employee && categoryProject == project) {
                 java.util.Date start = projectBillRate.getPeriodOfPerformanceStart();
                 java.util.Date end = projectBillRate.getPeriodOfPerformanceEnd();
                 if (start.compareTo(date) <= 0 && end.compareTo(date) >= 0) {
