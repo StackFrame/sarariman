@@ -129,7 +129,7 @@ public class LDAPDirectory implements Directory {
     private void load() {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
-            NamingEnumeration<SearchResult> answer = context.search("ou=People", new BasicAttributes("active", "TRUE"),
+            NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
                     new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "mail"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
