@@ -1,10 +1,11 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -18,6 +19,26 @@
         <%@include file="header.jsp" %>
 
         <h1>${employee.fullName}</h1>
+
+        <c:if test="${user.administrator}">
+            <h2>Direct Rate</h2>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT rate, effective
+                FROM direct_rate
+                WHERE employee=?
+                ORDER BY effective DESC
+                <sql:param value="${param.id}"/>
+            </sql:query>
+            <table>
+                <tr><th>Rate</th><th>Effective Date</th></tr>
+                <c:forEach var="rate_row" items="${resultSet.rows}">
+                    <tr>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${rate_row.rate}"/></td>
+                        <td>${rate_row.effective}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT project FROM project_managers WHERE employee=?
