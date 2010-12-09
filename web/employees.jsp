@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2010 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -17,15 +17,26 @@
 
         <h1>Employees</h1>
 
+        <c:choose>
+            <c:when test="${param.showInactive}">
+                <a href="${request.requestURI}?showInactive=false">Hide inactive</a>
+            </c:when>
+            <c:otherwise>
+                <a href="${request.requestURI}?showInactive=true">Show inactive</a>
+            </c:otherwise>
+        </c:choose>
+
         <ul>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>
-                <li>
-                    <c:url var="link" value="employee">
-                        <c:param name="id" value="${employee.number}"/>
-                    </c:url>
-                    <a href="${fn:escapeXml(link)}">${employee.fullName}</a>
-                </li>
+                <c:if test="${employee.active || param.showInactive}">
+                    <li>
+                        <c:url var="link" value="employee">
+                            <c:param name="id" value="${employee.number}"/>
+                        </c:url>
+                        <a href="${fn:escapeXml(link)}">${employee.fullName}</a>
+                    </li>
+                </c:if>
             </c:forEach>
         </ul>
 
