@@ -30,11 +30,11 @@
                 ORDER BY effective DESC
                 <sql:param value="${param.id}"/>
             </sql:query>
-            <table>
+            <table class="altrows">
                 <tr><th>Rate</th><th>Effective Date</th><th>Duration</th></tr>
                 <c:set var="endDate" value="${du:now()}"/>
-                <c:forEach var="rate_row" items="${resultSet.rows}">
-                    <tr>
+                <c:forEach var="rate_row" items="${resultSet.rows}" varStatus="varStatus">
+                    <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                         <td class="currency"><fmt:formatNumber type="currency" value="${rate_row.rate}"/></td>
                         <fmt:parseDate var="effective" value="${rate_row.effective}" pattern="yyyy-MM-dd"/>
                         <td><fmt:formatDate value="${effective}" pattern="yyyy-MM-dd"/></td>
