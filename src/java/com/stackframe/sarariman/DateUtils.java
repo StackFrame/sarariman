@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 /**
  *
@@ -95,8 +97,10 @@ public class DateUtils {
         return startDate.getTime();
     }
 
-    public static long daysBetween(Date a, Date b) {
-        return Math.abs(a.getTime() - b.getTime()) / 1000 / 60 / 60 / 24;
+    public static int daysBetween(Date start, Date end) {
+        DateTime x = new DateTime(start);
+        DateTime y = new DateTime(end);
+        return Days.daysBetween(x, y).getDays();
     }
 
 }
