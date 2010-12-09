@@ -38,6 +38,10 @@ public class WeeknightTask extends TimerTask {
         java.util.Date todayDate = today.getTime();
         Date week = new Date(DateUtils.weekStart(todayDate).getTime());
         for (Employee employee : directory.getByUserName().values()) {
+            if (!employee.isActive()) {
+                continue;
+            }
+
             Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
             try {
                 if (!timesheet.isSubmitted()) {

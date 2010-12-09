@@ -33,6 +33,10 @@ public class MorningTask extends TimerTask {
         Date prevWeek = new Date(DateUtils.prevWeek(DateUtils.weekStart(today.getTime())).getTime());
         // Check to see if last week's timesheet was submitted.
         for (Employee employee : directory.getByUserName().values()) {
+            if (!employee.isActive()) {
+                continue;
+            }
+
             Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), prevWeek);
             try {
                 if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
