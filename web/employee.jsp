@@ -38,7 +38,7 @@
                         <td class="currency"><fmt:formatNumber type="currency" value="${rate_row.rate}"/></td>
                         <fmt:parseDate var="effective" value="${rate_row.effective}" pattern="yyyy-MM-dd"/>
                         <td><fmt:formatDate value="${effective}" pattern="yyyy-MM-dd"/></td>
-                        <td>${du:daysBetween(endDate, effective)}</td>
+                        <td>${du:daysBetween(effective, endDate)} days</td>
                         <c:set var="endDate" value="${effective}"/>
                     </tr>
                 </c:forEach>
