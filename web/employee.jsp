@@ -5,6 +5,7 @@
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
@@ -30,11 +31,15 @@
                 <sql:param value="${param.id}"/>
             </sql:query>
             <table>
-                <tr><th>Rate</th><th>Effective Date</th></tr>
+                <tr><th>Rate</th><th>Effective Date</th><th>Duration</th></tr>
+                <c:set var="endDate" value="${du:now()}"/>
                 <c:forEach var="rate_row" items="${resultSet.rows}">
                     <tr>
                         <td class="currency"><fmt:formatNumber type="currency" value="${rate_row.rate}"/></td>
-                        <td>${rate_row.effective}</td>
+                        <fmt:parseDate var="effective" value="${rate_row.effective}" pattern="yyyy-MM-dd"/>
+                        <td><fmt:formatDate value="${effective}" pattern="yyyy-MM-dd"/></td>
+                        <td>${du:daysBetween(endDate, effective)}</td>
+                        <c:set var="endDate" value="${effective}"/>
                     </tr>
                 </c:forEach>
             </table>

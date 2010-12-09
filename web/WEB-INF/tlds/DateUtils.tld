@@ -43,4 +43,9 @@
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
         <function-signature>java.util.Date prevWeek(java.util.Date)</function-signature>
     </function>
+    <function>
+        <name>daysBetween</name>
+        <function-class>com.stackframe.sarariman.DateUtils</function-class>
+        <function-signature>long daysBetween(java.util.Date, java.util.Date)</function-signature>
+    </function>
 </taglib>

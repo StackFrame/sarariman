@@ -95,4 +95,8 @@ public class DateUtils {
         return startDate.getTime();
     }
 
+    public static long daysBetween(Date a, Date b) {
+        return Math.abs(a.getTime() - b.getTime()) / 1000 / 60 / 60 / 24;
+    }
+
 }
