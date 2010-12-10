@@ -8,6 +8,7 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -22,6 +23,10 @@
         <h1>${employee.fullName}</h1>
 
         <c:if test="${user.administrator}">
+            <h2>Info</h2>
+            Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>
+            Age: ${du:yearsBetween(directory.byNumber[param.id].birthdate, du:now())}
+
             <h2>Direct Rate</h2>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
                 SELECT rate, effective
