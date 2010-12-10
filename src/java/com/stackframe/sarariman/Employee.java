@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import javax.mail.internet.InternetAddress;
+import org.joda.time.DateMidnight;
 
 /**
  *
@@ -29,4 +30,7 @@ public interface Employee {
     boolean isInvoiceManager();
 
     boolean isActive();
+
+    DateMidnight getBirthdate();
+
 }

@@ -9,8 +9,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.Years;
 
 /**
  *
@@ -101,6 +103,11 @@ public class DateUtils {
         DateTime x = new DateTime(start);
         DateTime y = new DateTime(end);
         return Days.daysBetween(x, y).getDays();
+    }
+
+    public static int yearsBetween(DateMidnight start, Date end) {
+        DateTime y = new DateTime(end);
+        return Years.yearsBetween(start, y).getYears();
     }
 
 }

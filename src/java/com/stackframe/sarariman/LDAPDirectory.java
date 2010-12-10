@@ -19,6 +19,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
+import org.joda.time.DateMidnight;
 
 /**
  *
@@ -39,14 +40,16 @@ public class LDAPDirectory implements Directory {
         private final boolean fulltime;
         private final boolean active;
         private final String email;
+        private final DateMidnight birthdate;
 
-        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email) {
+        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, DateMidnight birthdate) {
             this.fullName = fullName;
             this.userName = userName;
             this.number = number;
             this.fulltime = fulltime;
             this.active = active;
             this.email = email;
+            this.birthdate = birthdate;
         }
 
         public String getFullName() {
@@ -87,6 +90,10 @@ public class LDAPDirectory implements Directory {
 
         public boolean isInvoiceManager() {
             return sarariman.getInvoiceManagers().contains(this);
+        }
+
+        public DateMidnight getBirthdate() {
+            return birthdate;
         }
 
         @Override
@@ -135,7 +142,7 @@ public class LDAPDirectory implements Directory {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
-                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail"});
+                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -144,7 +151,8 @@ public class LDAPDirectory implements Directory {
                 boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
-                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail));
+                DateMidnight birthdate = new DateMidnight(attributes.get("birthdate").getAll().next().toString());
+                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {
