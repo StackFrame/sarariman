@@ -53,9 +53,7 @@ public class EmailBuilder extends HttpServlet {
                 mbp.setFileName(documentNames[i]);
                 attachments.add(mbp);
             } catch (MessagingException me) {
-                IOException ioe = new IOException();
-                ioe.initCause(me);
-                throw ioe;
+                throw new IOException(me);
             }
         }
 
