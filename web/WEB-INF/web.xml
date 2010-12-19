@@ -156,6 +156,10 @@
         <servlet-name>taskGrouping</servlet-name>
         <jsp-file>/taskGrouping.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>TaskAssignmentController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.TaskAssignmentController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
@@ -415,6 +419,10 @@
     <servlet-mapping>
         <servlet-name>taskGrouping</servlet-name>
         <url-pattern>/taskGrouping</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TaskAssignmentController</servlet-name>
+        <url-pattern>/TaskAssignmentController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
