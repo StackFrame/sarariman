@@ -178,6 +178,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
 
             sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments, postSendAction);
 
+            // FIXME: This should do a redirect to a GET with the confirmation.
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();
             try {
