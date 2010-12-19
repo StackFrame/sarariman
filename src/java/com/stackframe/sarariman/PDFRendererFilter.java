@@ -69,9 +69,7 @@ public class PDFRendererFilter implements Filter {
                 renderer.createPDF(browserStream);
                 return;
             } catch (Exception e) {
-                IOException ioe = new IOException();
-                ioe.initCause(e);
-                throw ioe;
+                throw new IOException(e);
             }
         } else {
             throw new RuntimeException("unknown output type " + outputType);
