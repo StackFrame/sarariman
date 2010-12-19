@@ -1,11 +1,10 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2010 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -72,9 +71,7 @@ public class TimesheetController extends HttpServlet {
             response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("timesheet?employee={0}&week={1}", employeeNumber,
                     request.getParameter("week"))));
         } catch (Exception se) {
-            IOException ioe = new IOException();
-            ioe.initCause(se);
-            throw ioe;
+            throw new IOException(se);
         }
     }
 
