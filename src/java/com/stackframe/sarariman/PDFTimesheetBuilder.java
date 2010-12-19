@@ -77,9 +77,7 @@ public class PDFTimesheetBuilder extends HttpServlet {
                 mbp.setFileName(String.format("%s-%s.pdf", employees[i], request.getParameter("week")));
                 attachments.add(mbp);
             } catch (MessagingException me) {
-                IOException ioe = new IOException();
-                ioe.initCause(me);
-                throw ioe;
+                throw new IOException(me);
             }
         }
 
