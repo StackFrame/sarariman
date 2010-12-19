@@ -25,7 +25,7 @@
         <c:if test="${user.administrator}">
             <h2>Info</h2>
             Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>
-            Age: ${du:yearsBetween(directory.byNumber[param.id].birthdate, du:now())}
+            Age: ${directory.byNumber[param.id].age}
 
             <h2>Direct Rate</h2>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">

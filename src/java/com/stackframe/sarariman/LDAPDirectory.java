@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,10 @@ public class LDAPDirectory implements Directory {
 
         public DateMidnight getBirthdate() {
             return birthdate;
+        }
+
+        public int getAge() {
+            return DateUtils.yearsBetween(birthdate, new Date());
         }
 
         @Override
