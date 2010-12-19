@@ -87,9 +87,7 @@ public class ProjectController extends HttpServlet {
                     return;
             }
         } catch (Exception e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException(e);
         }
     }
 
