@@ -127,71 +127,78 @@ public class PDFTimesheetBuilder extends HttpServlet {
 
         Collection<InternetAddress> cc = makeAddresses(request.getParameterValues("cc"));
 
-        String subject = employees.length == 1 ? "timesheet" : "timesheets";
-
-        InternetAddress from;
-        try {
-            from = new InternetAddress(request.getParameter("from"));
-        } catch (AddressException ae) {
-            throw new ServletException(ae);
-        }
-
-        final int projectNumber = Integer.parseInt(request.getParameter("projectNumber"));
+        final long projectNumber = Long.parseLong(request.getParameter("projectNumber"));
         final int employee = ((Employee)request.getAttribute("user")).getNumber();
         final String week = request.getParameter("week");
-        Runnable postSendAction = new Runnable() {
 
-            public void run() {
-                Connection connection = sarariman.openConnection();
-                try {
-                    PreparedStatement ps = connection.prepareStatement("INSERT INTO project_timesheet_email_log (project, sender, week) VALUES(?, ?, ?)");
-                    try {
-                        ps.setInt(1, projectNumber);
-                        ps.setInt(2, employee);
-                        ps.setString(3, week);
-                        ps.executeUpdate();
-                    } finally {
-                        ps.close();
-                        connection.close();
-                    }
-                } catch (SQLException se) {
-                    throw new RuntimeException(se);
-                }
-            }
+        String subject = employees.length == 1 ? "timesheet" : "timesheets";
+        try {
+            Project project = sarariman.getProjects().get((long)projectNumber);
+            subject += " - " + project.getName();
 
-        };
-
-        String testAddress = request.getParameter("testaddress");
-        if (testAddress != null && testAddress.length() > 0) {
-            postSendAction = null;
+            InternetAddress from;
             try {
-                to = Collections.singleton(new InternetAddress(testAddress));
-                cc = null;
+                from = new InternetAddress(request.getParameter("from"));
             } catch (AddressException ae) {
                 throw new ServletException(ae);
             }
-        }
 
-        sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments, postSendAction);
+            Runnable postSendAction = new Runnable() {
 
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Email Sent</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Email Sent</h1>");
-            out.println("<p>email was sent.</p>");
-            out.println(String.format("<p>to=%s</p>", to));
-            out.println(String.format("<p>cc=%s</p>", cc));
-            out.println(String.format("<p>subject=%s</p>", subject));
-            out.println(String.format("<p>body=%s</p>", body));
-            out.println("</body>");
-            out.println("</html>");
-        } finally {
-            out.close();
+                public void run() {
+                    Connection connection = sarariman.openConnection();
+                    try {
+                        PreparedStatement ps = connection.prepareStatement("INSERT INTO project_timesheet_email_log (project, sender, week) VALUES(?, ?, ?)");
+                        try {
+                            ps.setInt(1, (int)projectNumber);
+                            ps.setInt(2, employee);
+                            ps.setString(3, week);
+                            ps.executeUpdate();
+                        } finally {
+                            ps.close();
+                            connection.close();
+                        }
+                    } catch (SQLException se) {
+                        throw new RuntimeException(se);
+                    }
+                }
+
+            };
+
+            String testAddress = request.getParameter("testaddress");
+            if (testAddress != null && testAddress.length() > 0) {
+                postSendAction = null;
+                try {
+                    to = Collections.singleton(new InternetAddress(testAddress));
+                    cc = null;
+                } catch (AddressException ae) {
+                    throw new ServletException(ae);
+                }
+            }
+
+            sarariman.getEmailDispatcher().send(from, to, cc, subject, body.toString(), attachments, postSendAction);
+
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            try {
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Email Sent</title>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h1>Email Sent</h1>");
+                out.println("<p>email was sent.</p>");
+                out.println(String.format("<p>to=%s</p>", to));
+                out.println(String.format("<p>cc=%s</p>", cc));
+                out.println(String.format("<p>subject=%s</p>", subject));
+                out.println(String.format("<p>body=%s</p>", body));
+                out.println("</body>");
+                out.println("</html>");
+            } finally {
+                out.close();
+            }
+        } catch (SQLException se) {
+            throw new IOException(se);
         }
     }
 
