@@ -101,6 +101,24 @@
             </ul>
         </form>
 
+        <c:if test="${user.administrator}">
+            <form method="POST" action="TaskAssignmentController">
+                <input type="hidden" name="employee" value="${param.id}"/>
+                <input type="hidden" name="action" value="add"/>
+                <select name="task">
+                    <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                        SELECT id, name
+                        FROM tasks
+                        WHERE active = 1
+                    </sql:query>
+                    <c:forEach var="row" items="${resultSet.rows}">
+                        <option value="${row.id}">${row.id} - ${fn:escapeXml(row.name)}</option>
+                    </c:forEach>
+                </select>
+                <input type="submit" name="Add" value="Add"/>
+            </form>
+        </c:if>
+
         <h2>Tasks Worked</h2>
         <ul>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
