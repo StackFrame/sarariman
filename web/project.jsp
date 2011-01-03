@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2011 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -319,6 +319,10 @@
             <c:param name="project" value="${param.id}"/>
         </c:url>
         <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
+
+        <p>
+            <a href="uninvoiced?project=${project_id}">Uninvoiced hours</a>
+        </p>
 
         <%@include file="footer.jsp" %>
     </body>
