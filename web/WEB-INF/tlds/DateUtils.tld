@@ -46,6 +46,11 @@
     <function>
         <name>daysBetween</name>
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
-        <function-signature>long daysBetween(java.util.Date, java.util.Date)</function-signature>
+        <function-signature>int daysBetween(java.util.Date, java.util.Date)</function-signature>
+    </function>
+    <function>
+        <name>yearsBetween</name>
+        <function-class>com.stackframe.sarariman.DateUtils</function-class>
+        <function-signature>int yearsBetween(org.joda.time.DateMidnight, java.util.Date)</function-signature>
     </function>
 </taglib>
