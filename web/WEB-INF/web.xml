@@ -160,6 +160,14 @@
         <servlet-name>TaskAssignmentController</servlet-name>
         <servlet-class>com.stackframe.sarariman.TaskAssignmentController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>expense</servlet-name>
+        <jsp-file>/expense.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>expenses</servlet-name>
+        <jsp-file>/expenses.jsp</jsp-file>
+    </servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
@@ -423,6 +431,14 @@
     <servlet-mapping>
         <servlet-name>TaskAssignmentController</servlet-name>
         <url-pattern>/TaskAssignmentController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>expense</servlet-name>
+        <url-pattern>/expense</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>expenses</servlet-name>
+        <url-pattern>/expenses</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
