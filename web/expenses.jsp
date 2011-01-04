@@ -49,11 +49,11 @@
             </sql:query>
             <c:forEach var="expense" items="${resultSet.rows}">
                 <tr>
-                    <td><a href="expense?expense_id=${expense.id}">${expense.id}</a></td>
-                    <td><a href="expense?expense_id=${expense.id}">${expense.task}</a></td>
-                    <td><a href="expense?expense_id=${expense.id}">${fn:escapeXml(expense.description)}</a></td>
-                    <td><a href="expense?expense_id=${expense.id}">${expense.date}</a></td>
-                    <td><a href="expense?expense_id=${expense.id}">${fn:escapeXml(expense.cost)}</a></td>
+                    <td><a href="expense?id=${expense.id}">${expense.id}</a></td>
+                    <td><a href="expense?id=${expense.id}">${expense.task}</a></td>
+                    <td><a href="expense?id=${expense.id}">${fn:escapeXml(expense.description)}</a></td>
+                    <td><a href="expense?id=${expense.id}">${expense.date}</a></td>
+                    <td><a href="expense?id=${expense.id}">${fn:escapeXml(expense.cost)}</a></td>
                 </tr>
             </c:forEach>
         </table>
