@@ -43,7 +43,7 @@
 
         <h2>Expenses</h2>
         <table class="altrows" id="tasks">
-            <tr><th>ID</th><th>Task</th><th>Description</th><th>Cost</th></tr>
+            <tr><th>ID</th><th>Task</th><th>Description</th><th>Date</th><th>Cost</th></tr>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
                 SELECT * FROM expenses
             </sql:query>
@@ -52,6 +52,7 @@
                     <td><a href="expense?expense_id=${expense.id}">${expense.id}</a></td>
                     <td><a href="expense?expense_id=${expense.id}">${expense.task}</a></td>
                     <td><a href="expense?expense_id=${expense.id}">${fn:escapeXml(expense.description)}</a></td>
+                    <td><a href="expense?expense_id=${expense.id}">${expense.date}</a></td>
                     <td><a href="expense?expense_id=${expense.id}">${fn:escapeXml(expense.cost)}</a></td>
                 </tr>
             </c:forEach>
