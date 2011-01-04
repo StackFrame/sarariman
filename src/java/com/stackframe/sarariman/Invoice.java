@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2011 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -106,6 +106,14 @@ public class Invoice {
                         rowCount = deleteInfo.executeUpdate();
                         if (rowCount != 1) {
                             System.err.println("could not delete invoice " + id);
+                        } else {
+                            PreparedStatement deleteExpenses = connection.prepareStatement("UPDATE expenses SET invoice = NULL WHERE invoice = ?");
+                            try {
+                                deleteExpenses.setString(1, id);
+                                deleteExpenses.executeUpdate();
+                            } finally {
+                                deleteExpenses.close();
+                            }
                         }
                     } finally {
                         deleteInfo.close();

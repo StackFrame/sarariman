@@ -173,8 +173,10 @@
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
-            <c:set var="expendedTotal" value="0"/>
-            <c:set var="invoicedTotal" value="0"/>
+            <c:set var="expendedLaborTotal" value="0"/>
+            <c:set var="invoicedLaborTotal" value="0"/>
+            <c:set var="expendedExpenseTotal" value="0"/>
+            <c:set var="invoicedExpenseTotal" value="0"/>
 
             <table class="altrows" id="categories">
                 <caption>Labor Categories</caption>
@@ -206,7 +208,7 @@
 
                             <td class="duration">${expendedDuration}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
-                            <c:set var="expendedTotal" value="${expendedTotal + expendedCost}"/>
+                            <c:set var="expendedLaborTotal" value="${expendedLaborTotal + expendedCost}"/>
 
                             <sql:query dataSource="jdbc/sarariman" var="resultSet">
                                 SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
@@ -225,7 +227,7 @@
 
                             <td class="duration">${invoicedDuration}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${invoicedCost}"/></td>
-                            <c:set var="invoicedTotal" value="${invoicedTotal + invoicedCost}"/>
+                            <c:set var="invoicedLaborTotal" value="${invoicedLaborTotal + invoicedCost}"/>
 
                         </tr>
                     </c:if>
@@ -289,6 +291,24 @@
                     <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName} on ${row.date}!</p>
                 </c:if>
             </c:forEach>
+
+            <sql:query dataSource="jdbc/sarariman" var="expenseResultSet">
+                SELECT e.cost, e.invoice
+                FROM expenses AS e
+                JOIN tasks AS t on t.id = e.task
+                JOIN projects AS p ON t.project = p.id
+                WHERE p.id = ?
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:forEach var="row" items="${expenseResultSet.rows}">
+                <c:set var="expendedExpenseTotal" value="${expendedExpenseTotal + row.cost}"/>
+                <c:if test="${!empty row.invoice}">
+                    <c:set var="invoicedExpenseTotal" value="${invoicedExpenseTotal + row.cost}"/>
+                </c:if>
+            </c:forEach>
+
+            <c:set var="invoicedTotal" value="${invoicedLaborTotal + invoicedExpenseTotal}"/>
+            <c:set var="expendedTotal" value="${expendedLaborTotal + expendedExpenseTotal}"/>
 
             <h2>Cumulative</h2>
             <table class="altrows">
