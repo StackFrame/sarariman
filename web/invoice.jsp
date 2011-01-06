@@ -264,6 +264,7 @@
             <c:set var="invoiceTotal" value="0" scope="request"/>
             <c:set var="laborTotal" value="0" scope="request"/>
             <c:set var="expensesTotal" value="0" scope="request"/>
+            <c:set var="odc_fee" value="0" scope="request"/>
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
@@ -285,7 +286,11 @@
                 <c:set var="expensesTotal" value="${expensesTotal + row.cost}" scope="request"/>
             </c:forEach>
 
-            <c:set var="invoiceTotal" value="${expensesTotal + laborTotal}" scope="request"/>
+            <c:if test="${project.ODCFee > 0}">
+                <c:set var="odc_fee" value="${expensesTotal * project.ODCFee}"/>
+            </c:if>
+
+            <c:set var="invoiceTotal" value="${expensesTotal + odc_fee + laborTotal}" scope="request"/>
 
             <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/><br/>
                 <c:if test="${project.funded > 0}">
@@ -464,7 +469,7 @@
         <c:if test="${expenseResultSet.rowCount > 0}">
             <div>
                 <table class="altrows">
-                    <caption>Expenses</caption>
+                    <caption>Expenses (ODC)</caption>
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -486,6 +491,12 @@
                             <td colspan="3"><strong>Total</strong></td>
                             <td class="currency"><strong><fmt:formatNumber type="currency" value="${expensesTotal}"/></strong></td>
                         </tr>
+                        <c:if test="${project.ODCFee > 0}">
+                            <tr>
+                                <td colspan="3"><strong>ODC Fee (<fmt:formatNumber value="${project.ODCFee}" type="percent"/>)</strong></td>
+                                <td class="currency"><strong><fmt:formatNumber type="currency" value="${odc_fee}"/></strong></td>
+                            </tr>
+                        </c:if>
                     </tbody>
                 </table>
             </div>

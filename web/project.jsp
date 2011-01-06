@@ -180,6 +180,8 @@
             <c:set var="invoicedLaborTotal" value="0"/>
             <c:set var="expendedExpenseTotal" value="0"/>
             <c:set var="invoicedExpenseTotal" value="0"/>
+            <c:set var="expendedODCFeeTotal" value="0"/>
+            <c:set var="invoicedODCFeeTotal" value="0"/>
 
             <table class="altrows" id="categories">
                 <caption>Labor Categories</caption>
@@ -310,8 +312,13 @@
                 </c:if>
             </c:forEach>
 
-            <c:set var="invoicedTotal" value="${invoicedLaborTotal + invoicedExpenseTotal + project.previouslyBilled}"/>
-            <c:set var="expendedTotal" value="${expendedLaborTotal + expendedExpenseTotal + project.previouslyBilled}"/>
+            <c:if test="${project.ODCFee > 0}">
+                <c:set var="expendedODCFeeTotal" value="${expendedExpenseTotal * project.ODCFee}"/>
+                <c:set var="invoicedODCFeeTotal" value="${invoicedExpenseTotal * project.ODCFee}"/>
+            </c:if>
+
+            <c:set var="invoicedTotal" value="${invoicedLaborTotal + invoicedExpenseTotal + expendedODCFeeTotal + project.previouslyBilled}"/>
+            <c:set var="expendedTotal" value="${expendedLaborTotal + expendedExpenseTotal + invoicedODCFeeTotal + project.previouslyBilled}"/>
 
             <h2>Cumulative</h2>
             <table class="altrows">
