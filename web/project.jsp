@@ -307,8 +307,8 @@
                 </c:if>
             </c:forEach>
 
-            <c:set var="invoicedTotal" value="${invoicedLaborTotal + invoicedExpenseTotal}"/>
-            <c:set var="expendedTotal" value="${expendedLaborTotal + expendedExpenseTotal}"/>
+            <c:set var="invoicedTotal" value="${invoicedLaborTotal + invoicedExpenseTotal + project.previouslyBilled}"/>
+            <c:set var="expendedTotal" value="${expendedLaborTotal + expendedExpenseTotal + project.previouslyBilled}"/>
 
             <h2>Cumulative</h2>
             <table class="altrows">
