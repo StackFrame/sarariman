@@ -43,18 +43,31 @@
 
         <h2>Expenses</h2>
         <table class="altrows" id="tasks">
-            <tr><th>ID</th><th>Task</th><th>Employee</th><th>Description</th><th>Date</th><th>Cost</th></tr>
+            <tr>
+                <th>Task</th>
+                <th>Employee</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Cost</th>
+                <th>Invoice</th>
+                <th>Action</th>
+            </tr>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
                 SELECT * FROM expenses ORDER BY date
             </sql:query>
             <c:forEach var="expense" items="${resultSet.rows}">
                 <tr>
-                    <td><a href="expense?id=${expense.id}">${expense.id}</a></td>
-                    <td><a href="expense?id=${expense.id}">${expense.task}</a></td>
-                    <td><a href="expense?id=${expense.id}">${directory.byNumber[expense.employee].fullName}</a></td>
-                    <td><a href="expense?id=${expense.id}">${fn:escapeXml(expense.description)}</a></td>
-                    <td><a href="expense?id=${expense.id}">${expense.date}</a></td>
-                    <td><a href="expense?id=${expense.id}">${fn:escapeXml(expense.cost)}</a></td>
+                    <td><a href="task?task_id=${expense.task}" title="view task ${expense.task}">${expense.task}</a></td>
+                    <td><a href="employee?id=${expense.employee}" title="view employee info for ${directory.byNumber[expense.employee].fullName}">${directory.byNumber[expense.employee].fullName}</a></td>
+                    <td>${fn:escapeXml(expense.description)}</td>
+                    <td>${expense.date}</td>
+                    <td>${fn:escapeXml(expense.cost)}</td>
+                    <td>
+                        <c:if test="${!empty expense.invoice}">
+                            <a href="invoice?invoice=${expense.invoice}" title="view invoice ${expense.invoice}">${expense.invoice}</a>
+                        </c:if>
+                    </td>
+                    <td><a href="expense?id=${expense.id}" title="edit this expense">edit</a></td>
                 </tr>
             </c:forEach>
         </table>
