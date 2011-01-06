@@ -313,6 +313,7 @@
             </c:forEach>
 
             <c:if test="${project.ODCFee > 0}">
+                <!-- FIXME: Need to do this with proper rounding. -->
                 <c:set var="expendedODCFeeTotal" value="${expendedExpenseTotal * project.ODCFee}"/>
                 <c:set var="invoicedODCFeeTotal" value="${invoicedExpenseTotal * project.ODCFee}"/>
             </c:if>
