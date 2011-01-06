@@ -168,6 +168,10 @@
         <servlet-name>expenses</servlet-name>
         <jsp-file>/expenses.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>SAICExpenses</servlet-name>
+        <servlet-class>com.stackframe.sarariman.saic.Expenses</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
@@ -439,6 +443,10 @@
     <servlet-mapping>
         <servlet-name>expenses</servlet-name>
         <url-pattern>/expenses</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SAICExpenses</servlet-name>
+        <url-pattern>/saic/expenses.csv</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

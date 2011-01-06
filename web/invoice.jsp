@@ -239,8 +239,8 @@
             </jsp:include>
         </c:forEach>
 
-        <c:if test="${empty csvLink}">
-            <c:set var="csvLink" value="laborcosts.csv?id=${param.invoice}" scope="request"/>
+        <c:if test="${empty laborCSVLink}">
+            <c:set var="laborCSVLink" value="laborcosts.csv?id=${param.invoice}" scope="request"/>
             <%
                     documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
                     documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
@@ -499,7 +499,10 @@
                 </form>
             </c:if>
 
-            <p><a href="${csvLink}">Export as CSV</a></p>
+            <p>
+                <a href="${laborCSVLink}">Export labor costs as CSV</a><br/>
+                <a href="${expenseCSVLink}">Export expenses as CSV</a>
+            </p>
 
             <c:if test="${user.administrator}">
                 <form action="invoiceController" method="post">

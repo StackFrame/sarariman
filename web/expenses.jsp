@@ -45,7 +45,7 @@
         <table class="altrows" id="tasks">
             <tr><th>ID</th><th>Task</th><th>Employee</th><th>Description</th><th>Date</th><th>Cost</th></tr>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                SELECT * FROM expenses
+                SELECT * FROM expenses ORDER BY date
             </sql:query>
             <c:forEach var="expense" items="${resultSet.rows}">
                 <tr>
