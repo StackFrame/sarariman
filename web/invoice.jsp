@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2011 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -262,13 +262,31 @@
             </sql:query>
 
             <c:set var="invoiceTotal" value="0" scope="request"/>
+            <c:set var="laborTotal" value="0" scope="request"/>
+            <c:set var="expensesTotal" value="0" scope="request"/>
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
             <c:forEach var="row" items="${result.rows}">
                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
-                <c:set var="invoiceTotal" value="${invoiceTotal + costData.cost}" scope="request"/>
+                <c:set var="laborTotal" value="${laborTotal + costData.cost}" scope="request"/>
             </c:forEach>
+
+            <sql:query dataSource="jdbc/sarariman" var="expenseResultSet">
+                SELECT e.employee, e.date, e.cost, e.description
+                FROM expenses AS e
+                JOIN tasks AS t on t.id = e.task
+                WHERE e.invoice = ?
+                ORDER BY e.employee ASC, e.date ASC, e.task ASC
+                <sql:param value="${param.invoice}"/>
+            </sql:query>
+
+            <c:forEach var="row" items="${expenseResultSet.rows}">
+                <c:set var="expensesTotal" value="${expensesTotal + row.cost}" scope="request"/>
+            </c:forEach>
+
+            <c:set var="invoiceTotal" value="${expensesTotal + laborTotal}" scope="request"/>
+
             <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/><br/>
                 <c:if test="${project.funded > 0}">
                     Funded: <fmt:formatNumber type="currency" value="${project.funded}"/><br/>
@@ -359,7 +377,7 @@
                         <tr>
                             <td colspan="5"><strong>Total</strong></td>
                             <td class="duration"><strong>${sum.rows[0].total}</strong></td>
-                            <td class="currency"><strong><fmt:formatNumber type="currency" value="${invoiceTotal}"/></strong></td>
+                            <td class="currency"><strong><fmt:formatNumber type="currency" value="${laborTotal}"/></strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -442,6 +460,36 @@
                 </table>
             </div>
         </div>
+
+        <c:if test="${expenseResultSet.rowCount > 0}">
+            <div>
+                <table class="altrows">
+                    <caption>Expenses</caption>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Employee</th>
+                            <th>Description</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="row" items="${expenseResultSet.rows}" varStatus="varStatus">
+                            <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                                <td>${row.date}</td>
+                                <td>${directory.byNumber[row.employee].fullName}</td>
+                                <td>${fn:escapeXml(row.description)}</td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${row.cost}"/></td>
+                            </tr>
+                        </c:forEach>
+                        <tr>
+                            <td colspan="3"><strong>Total</strong></td>
+                            <td class="currency"><strong><fmt:formatNumber type="currency" value="${expensesTotal}"/></strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
 
         <div id="controls">
             <c:if test="${fn:contains(sarariman.invoiceManagers, user)}">

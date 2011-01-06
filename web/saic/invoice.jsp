@@ -232,10 +232,14 @@
         </div>
     </c:if>
 
-    <c:set var="csvLink" value="saic/laborcosts.csv?id=${param.invoice}" scope="request"/>
+    <c:set var="laborCSVLink" value="saic/laborcosts.csv?id=${param.invoice}" scope="request"/>
+    <c:set var="expenseCSVLink" value="saic/expenses.csv?id=${param.invoice}" scope="request"/>
 
     <%
             documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
             documentLinks.add(String.format("saic/laborcosts.csv?id=%s", request.getParameter("invoice")));
+
+            documentNames.add(String.format("expenses-%s.csv", request.getParameter("invoice")));
+            documentLinks.add(String.format("saic/expenses.csv?id=%s", request.getParameter("invoice")));
     %>
 </c:if>

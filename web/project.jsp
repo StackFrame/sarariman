@@ -66,6 +66,9 @@
             <label for="terms">Terms </label>
             <input type="text" id="terms" name="terms" value="${project.terms}"/><br/>
 
+            <label for="odc_fee">ODC Fee </label>
+            <input type="text" id="odc_fee" name="odc_fee" value="${project.ODCFee}"/><br/>
+
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
 
