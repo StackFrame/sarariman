@@ -46,6 +46,7 @@
             <li><a href="timereportsbyproject">Time reports by project</a></li>
             <li><a href="contacts">Contacts</a></li>
             <li><a href="expenses">Expenses</a></li>
+            <li><a href="serviceagreements">Service Agreements</a></li>
             <li><a href="saic/">SAIC Tools</a></li>
         </ul>
 
