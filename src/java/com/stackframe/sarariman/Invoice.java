@@ -32,7 +32,7 @@ public class Invoice {
         this.sarariman = sarariman;
     }
 
-    public static Invoice create(Sarariman sarariman, Customer customer, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates) throws SQLException, ParseException {
+    public static Invoice create(Sarariman sarariman, Customer customer, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates, String[] billedServices) throws SQLException, ParseException {
         int numItems = employees.length;
         if (numItems != tasks.length || numItems != dates.length) {
             System.err.println("mismatched lengths");
@@ -79,6 +79,21 @@ public class Invoice {
                     }
                 }
             }
+
+            for (String billedService : billedServices) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE billed_services SET invoice=? WHERE id=?");
+                try {
+                    ps.setString(1, id);
+                    ps.setString(2, billedService);
+                    int rowCount = ps.executeUpdate();
+                    if (rowCount != 1) {
+                        System.err.println("could not invoice billed service for id=" + billedService);
+                    }
+                } finally {
+                    ps.close();
+                }
+            }
+
             connection.commit();
             connection.setAutoCommit(true);
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice created",

@@ -264,6 +264,7 @@
             <c:set var="invoiceTotal" value="0" scope="request"/>
             <c:set var="laborTotal" value="0" scope="request"/>
             <c:set var="expensesTotal" value="0" scope="request"/>
+            <c:set var="servicesTotal" value="0" scope="request"/>
             <c:set var="odc_fee" value="0" scope="request"/>
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
@@ -291,7 +292,20 @@
                 <c:set var="odc_fee" value="${expensesTotal * project.ODCFee}"/>
             </c:if>
 
-            <c:set var="invoiceTotal" value="${expensesTotal + odc_fee + laborTotal}" scope="request"/>
+            <sql:query dataSource="jdbc/sarariman" var="servicesResultSet">
+                SELECT a.period_rate, b.pop_start, b.pop_end, a.description
+                FROM billed_services as b
+                JOIN service_agreements AS a ON b.service_agreement = a.id
+                WHERE b.invoice = ?
+                ORDER BY b.pop_start ASC
+                <sql:param value="${param.invoice}"/>
+            </sql:query>
+
+            <c:forEach var="row" items="${servicesResultSet.rows}">
+                <c:set var="servicesTotal" value="${servicesTotal + row.period_rate}" scope="request"/>
+            </c:forEach>
+
+            <c:set var="invoiceTotal" value="${expensesTotal + odc_fee + laborTotal + servicesTotal}" scope="request"/>
 
             <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/><br/>
                 <c:if test="${project.funded > 0}">
@@ -498,6 +512,32 @@
                                 <td class="currency"><strong><fmt:formatNumber type="currency" value="${odc_fee}"/></strong></td>
                             </tr>
                         </c:if>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
+
+        <c:if test="${servicesResultSet.rowCount > 0}">
+            <div>
+                <table class="altrows">
+                    <caption>Services</caption>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="row" items="${servicesResultSet.rows}" varStatus="varStatus">
+                            <tr>
+                                <td>${fn:escapeXml(row.description)}</td>
+                                <td>${row.pop_start}</td>
+                                <td>${row.pop_end}</td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${row.period_rate}"/></td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
             </div>
