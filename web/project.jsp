@@ -258,6 +258,7 @@
                 </c:forEach>
             </table>
 
+            <!-- FIXME: This needs to go away once we step up to new form invoice_info for all projects. -->
             <sql:query dataSource="jdbc/sarariman" var="invoices">
                 SELECT DISTINCT i.id
                 FROM invoices AS i
@@ -272,6 +273,26 @@
             <table class="altrows" id="invoices">
                 <tr><th>ID</th></tr>
                 <c:forEach var="invoice" items="${invoices.rows}">
+                    <tr>
+                        <c:url var="link" value="invoice">
+                            <c:param name="invoice" value="${invoice.id}"/>
+                        </c:url>
+                        <td><a href="${link}">${invoice.id}</a></td>
+                    </tr>
+                </c:forEach>
+            </table>
+
+            <sql:query dataSource="jdbc/sarariman" var="invoiceInfoResultSet">
+                SELECT id
+                FROM invoice_info
+                WHERE project = ?
+                ORDER BY id DESC
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <h2>Invoices (new form)</h2>
+            <table class="altrows" id="invoices_new">
+                <tr><th>ID</th></tr>
+                <c:forEach var="invoice" items="${invoiceInfoResultSet.rows}">
                     <tr>
                         <c:url var="link" value="invoice">
                             <c:param name="invoice" value="${invoice.id}"/>
