@@ -132,6 +132,7 @@ public class EmailBuilder extends HttpServlet {
 
         sarariman.getEmailDispatcher().send(from, to, cc, subject, body, attachments, postSendAction);
 
+        // FIXME: This should redirect to a page that says this stuff.
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
