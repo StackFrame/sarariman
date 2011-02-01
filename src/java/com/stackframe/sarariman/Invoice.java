@@ -80,17 +80,19 @@ public class Invoice {
                 }
             }
 
-            for (String billedService : billedServices) {
-                PreparedStatement ps = connection.prepareStatement("UPDATE billed_services SET invoice=? WHERE id=?");
-                try {
-                    ps.setString(1, id);
-                    ps.setString(2, billedService);
-                    int rowCount = ps.executeUpdate();
-                    if (rowCount != 1) {
-                        System.err.println("could not invoice billed service for id=" + billedService);
+            if (billedServices != null) {
+                for (String billedService : billedServices) {
+                    PreparedStatement ps = connection.prepareStatement("UPDATE billed_services SET invoice=? WHERE id=?");
+                    try {
+                        ps.setString(1, id);
+                        ps.setString(2, billedService);
+                        int rowCount = ps.executeUpdate();
+                        if (rowCount != 1) {
+                            System.err.println("could not invoice billed service for id=" + billedService);
+                        }
+                    } finally {
+                        ps.close();
                     }
-                } finally {
-                    ps.close();
                 }
             }
 

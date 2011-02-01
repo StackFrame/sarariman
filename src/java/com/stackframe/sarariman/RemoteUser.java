@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import java.util.logging.Logger;
 import javax.servlet.Filter;
@@ -36,14 +37,20 @@ public class RemoteUser implements Filter {
             String username = httpServletRequest.getRemoteUser();
             if (username == null) {
                 username = System.getProperty("user.name");
+//                username = "dedmondson";
                 logger.info("No REMOTE_USER.  Using " + username);
             }
 
             Employee user = directory.getByUserName().get(username);
+                logger.info("setting user to " + user);
             request.setAttribute("user", user);
         }
 
+        long start = System.nanoTime();
         chain.doFilter(request, response);
+        long stop = System.nanoTime();
+        long took = stop - start;
+        System.err.println("request="+((HttpServletRequest)request).getRequestURL() +" took=" + TimeUnit.NANOSECONDS.toMillis(took));
     }
 
     public void destroy() {

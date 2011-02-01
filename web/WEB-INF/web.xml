@@ -180,6 +180,14 @@
         <servlet-name>serviceagreement</servlet-name>
         <jsp-file>/serviceAgreement.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>unbilledservices</servlet-name>
+        <jsp-file>/unbilledServices.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>createServiceBilling</servlet-name>
+        <servlet-class>com.stackframe.sarariman.ServiceBillingController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>employee</servlet-name>
         <url-pattern>/employee</url-pattern>
@@ -463,6 +471,14 @@
     <servlet-mapping>
         <servlet-name>serviceagreement</servlet-name>
         <url-pattern>/serviceagreement</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>unbilledservices</servlet-name>
+        <url-pattern>/unbilledservices</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createServiceBilling</servlet-name>
+        <url-pattern>/createservicebilling</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
