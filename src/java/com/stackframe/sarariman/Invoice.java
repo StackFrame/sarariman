@@ -33,6 +33,18 @@ public class Invoice {
     }
 
     public static Invoice create(Sarariman sarariman, Customer customer, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates, String[] billedServices) throws SQLException, ParseException {
+        if (employees == null) {
+            employees = new String[0];
+        }
+
+        if (tasks == null) {
+            tasks = new String[0];
+        }
+
+        if (dates == null) {
+            dates = new String[0];
+        }
+
         int numItems = employees.length;
         if (numItems != tasks.length || numItems != dates.length) {
             System.err.println("mismatched lengths");
