@@ -597,7 +597,7 @@
                     </c:forEach>
 
                     <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
-                    <input type="submit" value="Send" <c:if test="${errorsOccurred}">disabled="true"</c:if> />
+                    <input type="submit" value="Send" <c:if test="${errorsOccurred || empty emailResult.rows}">disabled="true"</c:if> />
                 </form>
             </c:if>
 
