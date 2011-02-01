@@ -373,7 +373,7 @@
         <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
 
         <p>
-            <a href="uninvoiced?project=${project_id}">Uninvoiced hours</a>
+            <a href="uninvoiced?project=${project_id}">Uninvoiced hours and services</a>
         </p>
 
         <%@include file="footer.jsp" %>
