@@ -239,7 +239,7 @@
             </jsp:include>
         </c:forEach>
 
-        <c:if test="${empty laborCSVLink}">
+        <c:if test="${empty laborCSVLink && !empty timesheetResult.rows}">
             <c:set var="laborCSVLink" value="laborcosts.csv?id=${param.invoice}" scope="request"/>
             <%
                     documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
