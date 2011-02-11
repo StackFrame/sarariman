@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2011 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -15,7 +15,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Home</title>
+        <title>Sarariman</title>
         <script type="text/javascript" src="utilities.js"/>
 
         <!-- TinyMCE -->
