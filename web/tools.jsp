@@ -30,28 +30,28 @@
                 <li><a href="customers">Customers</a></li>
                 <li><a href="laborcategoryassignments">Labor Category Assignments</a></li>
                 <li><a href="taskGroupings">Task Groupings</a></li>
+                <li><a href="projects">Projects</a></li>
+                <li><a href="tasks">Tasks</a></li>
+                <li><a href="serviceagreements">Service Agreements</a></li>
+                <li>
+                    <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
+                    <c:url var="weekBilled" value="weekBilled">
+                        <c:param name="week" value="${week}"/>
+                    </c:url>
+                    <a href="${fn:escapeXml(weekBilled)}">Weekly Billing Report</a>
+                </li>
+                <li><a href="changelog">Changelog</a></li>
+                <li><a href="day">Daily Activity</a></li>
+                <li><a href="contacts">Contacts</a></li>
+                <li><a href="timereportsbyproject">Time reports by project</a></li>
             </c:if>
-            <li><a href="tasks">Tasks</a></li>
-            <li><a href="projects">Projects</a></li>
             <c:if test="${user.invoiceManager}">
                 <li><a href="laborcategories">Labor Categories</a></li>
+                <li><a href="uninvoicedbillable">Uninvoiced Billable</a></li>
+                <li><a href="saic/">SAIC Tools</a></li>
+                <li><a href="unbilledservices">Unbilled Services</a></li>
+                <li><a href="expenses">Expenses</a></li>
             </c:if>
-            <li><a href="uninvoicedbillable">Uninvoiced Billable</a></li>
-            <li>
-                <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
-                <c:url var="weekBilled" value="weekBilled">
-                    <c:param name="week" value="${week}"/>
-                </c:url>
-                <a href="${fn:escapeXml(weekBilled)}">Weekly Billing Report</a>
-            </li>
-            <li><a href="changelog">Changelog</a></li>
-            <li><a href="day">Daily Activity</a></li>
-            <li><a href="timereportsbyproject">Time reports by project</a></li>
-            <li><a href="contacts">Contacts</a></li>
-            <li><a href="expenses">Expenses</a></li>
-            <li><a href="serviceagreements">Service Agreements</a></li>
-            <li><a href="unbilledservices">Unbilled Services</a></li>
-            <li><a href="saic/">SAIC Tools</a></li>
         </ul>
 
         <%@include file="footer.jsp" %>
