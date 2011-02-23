@@ -10,7 +10,7 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:if test="${!user.administrator}">
+<c:if test="${!user.administrator && user.number != param.employee}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
