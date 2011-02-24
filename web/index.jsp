@@ -190,14 +190,12 @@
                     <label for="unbillable_task">Unbillable Task:</label>
                     <select name="unbillable_task" id="unbillable_task" onchange="resetSelect('billable_task');enable('submit');">
                         <option selected="true"></option>
-                        <c:forEach var="task" items="${sarariman.tasks}">
-                            <c:if test="${task.active && !task.billable}">
-                                <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
-                                    <c:if test="${!empty task.project}">
-                                        - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
-                                    </c:if>
-                                </option>
-                            </c:if>
+                        <c:forEach var="task" items="${sarariman:unbillableTasks(sarariman, user)}">
+                            <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
+                                <c:if test="${!empty task.project}">
+                                    - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
+                                </c:if>
+                            </option>
                         </c:forEach>
                     </select>                    
                     <br/>

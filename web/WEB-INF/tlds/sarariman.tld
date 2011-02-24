@@ -44,6 +44,11 @@
         <function-signature>java.util.Collection getBillableTasks(com.stackframe.sarariman.Sarariman, com.stackframe.sarariman.Employee)</function-signature>
     </function>
     <function>
+        <name>unbillableTasks</name>
+        <function-class>com.stackframe.sarariman.Task</function-class>
+        <function-signature>java.util.Collection getUnbillableTasks(com.stackframe.sarariman.Sarariman, com.stackframe.sarariman.Employee)</function-signature>
+    </function>
+    <function>
         <name>isManager</name>
         <function-class>com.stackframe.sarariman.Project</function-class>
         <function-signature>boolean isManager(com.stackframe.sarariman.Employee, com.stackframe.sarariman.Project)</function-signature>

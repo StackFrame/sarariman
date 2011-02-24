@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2011 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -28,12 +28,12 @@ public class Task {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
-                "p.id AS project_id, p.name AS project_name, " +
-                "c.id AS customer_id, c.name AS customer_name " +
-                "FROM tasks AS t " +
-                "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
-                "LEFT OUTER JOIN customers AS c ON c.id = p.customer");
+                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, "
+                + "p.id AS project_id, p.name AS project_name, "
+                + "c.id AS customer_id, c.name AS customer_name "
+                + "FROM tasks AS t "
+                + "LEFT OUTER JOIN projects AS p ON t.project = p.id "
+                + "LEFT OUTER JOIN customers AS c ON c.id = p.customer");
         try {
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -62,27 +62,35 @@ public class Task {
         }
     }
 
+    public static Collection<Task> getUnbillableTasks(Sarariman sarariman, Employee employee) throws SQLException {
+        return getTasks(sarariman, employee, false);
+    }
+
     public static Collection<Task> getBillableTasks(Sarariman sarariman, Employee employee) throws SQLException {
+        return getTasks(sarariman, employee, true);
+    }
+
+    private static Collection<Task> getTasks(Sarariman sarariman, Employee employee, boolean billable) throws SQLException {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, " +
-                "p.id AS project_id, p.name AS project_name, " +
-                "c.id AS customer_id, c.name AS customer_name " +
-                "FROM tasks AS t " +
-                "JOIN task_assignments AS a ON a.task = t.id " +
-                "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
-                "LEFT OUTER JOIN customers AS c ON c.id = p.customer " +
-                "WHERE employee=? AND billable=TRUE AND active=TRUE");
+                "SELECT t.id AS task_id, t.name AS task_name, t.active, "
+                + "p.id AS project_id, p.name AS project_name, "
+                + "c.id AS customer_id, c.name AS customer_name "
+                + "FROM tasks AS t "
+                + "JOIN task_assignments AS a ON a.task = t.id "
+                + "LEFT OUTER JOIN projects AS p ON t.project = p.id "
+                + "LEFT OUTER JOIN customers AS c ON c.id = p.customer "
+                + "WHERE employee=? AND billable=? AND active=TRUE");
         try {
             ps.setInt(1, employee.getNumber());
+            ps.setBoolean(2, billable);
             ResultSet resultSet = ps.executeQuery();
             try {
                 Collection<Task> list = new ArrayList<Task>();
                 while (resultSet.next()) {
                     int id = resultSet.getInt("task_id");
                     String task_name = resultSet.getString("task_name");
-                    boolean billable = resultSet.getBoolean("billable");
                     boolean active = resultSet.getBoolean("active");
                     long project_id = resultSet.getInt("project_id");
                     Project project = null;
@@ -105,9 +113,9 @@ public class Task {
 
     public static Collection<Task> getTasks(Sarariman sarariman, Project project) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active " +
-                "FROM tasks AS t " +
-                "WHERE t.project = ?");
+        PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active "
+                + "FROM tasks AS t "
+                + "WHERE t.project = ?");
         ps.setLong(1, project.getId());
         try {
             ResultSet resultSet = ps.executeQuery();
