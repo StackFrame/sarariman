@@ -44,7 +44,7 @@
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
             LEFT OUTER JOIN invoices AS i ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-            WHERE p.id = ? AND i.id IS NULL AND h.duration > 0
+            WHERE p.id = ? AND i.id IS NULL AND h.duration > 0 AND h.service_agreement IS NULL
             ORDER BY h.date ASC, h.employee ASC, h.task ASC
             <sql:param value="${param.project}"/>
         </sql:query>
