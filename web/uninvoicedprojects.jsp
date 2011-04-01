@@ -32,7 +32,7 @@
             JOIN projects AS p ON t.project = p.id
             JOIN customers AS c ON c.id = p.customer
             LEFT OUTER JOIN invoices AS i ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-            WHERE t.billable = 1 AND i.id IS NULL AND h.duration > 0
+            WHERE t.billable = 1 AND i.id IS NULL AND h.duration > 0 AND h.service_agreement IS NULL
         </sql:query>
         <ul>
             <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
