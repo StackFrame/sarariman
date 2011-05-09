@@ -251,7 +251,7 @@
 
         <c:if test="${!entriesTableEmitted}">
             <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT i.employee, i.task, i.date, h.duration, t.project
+                SELECT i.employee, i.task, i.date, h.duration, t.project, t.line_item
                 FROM invoices AS i
                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
                 JOIN tasks AS t on i.task = t.id
@@ -344,6 +344,7 @@
                             <tr>
                                 <th>Employee</th>
                                 <th>Task</th>
+                                <th>Line Item</th>
                                 <th>Labor Category</th>
                                 <th>Date</th>
                                 <th>Rate</th>
@@ -357,6 +358,7 @@
                                 <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                     <td>${directory.byNumber[row.employee].fullName}</td>
                                     <td><a href="task?task_id=${row.task}">${row.task}</a></td>
+                                    <td class="line_item">${row.line_item}</td>
                                     <c:choose>
                                         <c:when test="${empty costData.laborCategory}">
                                             <td class="error">no labor category</td>
@@ -396,7 +398,7 @@
                                 <sql:param value="${param.invoice}"/>
                             </sql:query>
                             <tr>
-                                <td colspan="5"><strong>Total</strong></td>
+                                <td colspan="6"><strong>Total</strong></td>
                                 <td class="duration"><strong>${sum.rows[0].total}</strong></td>
                                 <td class="currency"><strong><fmt:formatNumber type="currency" value="${laborTotal}"/></strong></td>
                             </tr>

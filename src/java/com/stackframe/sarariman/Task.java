@@ -22,13 +22,14 @@ public class Task {
     private final String name;
     private final boolean billable;
     private final boolean active;
+    private final int lineItem;
     private final Project project;
 
     public static Collection<Task> getTasks(Sarariman sarariman) throws SQLException {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, "
+                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item"
                 + "p.id AS project_id, p.name AS project_name, "
                 + "c.id AS customer_id, c.name AS customer_name "
                 + "FROM tasks AS t "
@@ -42,6 +43,7 @@ public class Task {
                     int id = resultSet.getInt("task_id");
                     String task_name = resultSet.getString("task_name");
                     boolean billable = resultSet.getBoolean("billable");
+                    int lineItem = resultSet.getInt("line_item");
                     boolean active = resultSet.getBoolean("active");
                     long project_id = resultSet.getInt("project_id");
                     Project project = null;
@@ -49,7 +51,7 @@ public class Task {
                         project = projects.get(project_id);
                     }
 
-                    list.add(new Task(id, task_name, billable, active, project));
+                    list.add(new Task(id, task_name, billable, lineItem, active, project));
                 }
 
                 return list;
@@ -74,7 +76,7 @@ public class Task {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.active, "
+                "SELECT t.id AS task_id, t.name AS task_name, t.active, t.line_item, "
                 + "p.id AS project_id, p.name AS project_name, "
                 + "c.id AS customer_id, c.name AS customer_name "
                 + "FROM tasks AS t "
@@ -92,13 +94,14 @@ public class Task {
                     int id = resultSet.getInt("task_id");
                     String task_name = resultSet.getString("task_name");
                     boolean active = resultSet.getBoolean("active");
+                    int lineItem = resultSet.getInt("line_item");
                     long project_id = resultSet.getInt("project_id");
                     Project project = null;
                     if (project_id != 0) {
                         project = projects.get(project_id);
                     }
 
-                    list.add(new Task(id, task_name, billable, active, project));
+                    list.add(new Task(id, task_name, billable, lineItem, active, project));
                 }
 
                 return list;
@@ -113,7 +116,7 @@ public class Task {
 
     public static Collection<Task> getTasks(Sarariman sarariman, Project project) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active "
+        PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item "
                 + "FROM tasks AS t "
                 + "WHERE t.project = ?");
         ps.setLong(1, project.getId());
@@ -125,8 +128,9 @@ public class Task {
                     int id = resultSet.getInt("task_id");
                     String task_name = resultSet.getString("task_name");
                     boolean billable = resultSet.getBoolean("billable");
+                    int lineItem = resultSet.getInt("line_item");
                     boolean active = resultSet.getBoolean("active");
-                    list.add(new Task(id, task_name, billable, active, project));
+                    list.add(new Task(id, task_name, billable, lineItem, active, project));
                 }
 
                 return list;
@@ -139,12 +143,13 @@ public class Task {
         }
     }
 
-    private Task(int id, String name, boolean billable, boolean active, Project project) {
+    private Task(int id, String name, boolean billable, int lineItem, boolean active, Project project) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.active = active;
         this.project = project;
+        this.lineItem = lineItem;
     }
 
     public int getId() {
@@ -165,6 +170,10 @@ public class Task {
 
     public Project getProject() {
         return project;
+    }
+
+    public int getLineItem() {
+        return lineItem;
     }
 
 }
