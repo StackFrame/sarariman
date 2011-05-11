@@ -29,7 +29,7 @@ public class Task {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item"
+                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item, "
                 + "p.id AS project_id, p.name AS project_name, "
                 + "c.id AS customer_id, c.name AS customer_name "
                 + "FROM tasks AS t "
