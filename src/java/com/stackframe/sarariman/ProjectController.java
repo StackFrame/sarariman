@@ -76,7 +76,7 @@ public class ProjectController extends HttpServlet {
                             new BigDecimal(request.getParameter("funded")),
                             new BigDecimal(request.getParameter("previously_billed")),
                             Long.parseLong(request.getParameter("terms")),
-                            new BigDecimal(request.getParameter("odc_fee")), Boolean.parseBoolean(request.getParameter("active")));
+                            new BigDecimal(request.getParameter("odc_fee")), "on".equals(request.getParameter("active")));
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:
