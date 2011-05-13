@@ -74,6 +74,9 @@
             <label for="odc_fee">ODC Fee </label>
             <input type="text" id="odc_fee" name="odc_fee" value="${project.ODCFee}"/><br/>
 
+            <label for="active">Active: </label>
+            <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
+
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
         </form>
 
@@ -137,6 +140,18 @@
                 <li><a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a></li>
             </c:forEach>
         </ul>
+
+        <table class="altrows" id="line_items">
+            <caption>Line Items</caption>
+            <tr><th>Line Item</th><th>Description</th><th>Funded</th></tr>
+            <c:forEach var="lineItem" items="${project.lineItems}">
+                <tr>
+                    <td class="line_item">${lineItem.id}</td>
+                    <td>${lineItem.description}</td>                    
+                    <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded}"/></td>
+                </tr>
+            </c:forEach>
+        </table>
 
         <table class="altrows" id="tasks">
             <caption>Tasks</caption>
