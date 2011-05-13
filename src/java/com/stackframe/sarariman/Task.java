@@ -29,7 +29,7 @@ public class Task {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item, "
+                "SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active AS task_active, t.line_item, "
                 + "p.id AS project_id, p.name AS project_name, "
                 + "c.id AS customer_id, c.name AS customer_name "
                 + "FROM tasks AS t "
@@ -44,7 +44,7 @@ public class Task {
                     String task_name = resultSet.getString("task_name");
                     boolean billable = resultSet.getBoolean("billable");
                     int lineItem = resultSet.getInt("line_item");
-                    boolean active = resultSet.getBoolean("active");
+                    boolean active = resultSet.getBoolean("task_active");
                     long project_id = resultSet.getInt("project_id");
                     Project project = null;
                     if (project_id != 0) {
@@ -76,14 +76,14 @@ public class Task {
         Map<Long, Project> projects = sarariman.getProjects();
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT t.id AS task_id, t.name AS task_name, t.active, t.line_item, "
+                "SELECT t.id AS task_id, t.name AS task_name, t.active AS task_active, t.line_item, "
                 + "p.id AS project_id, p.name AS project_name, "
                 + "c.id AS customer_id, c.name AS customer_name "
                 + "FROM tasks AS t "
                 + "JOIN task_assignments AS a ON a.task = t.id "
                 + "LEFT OUTER JOIN projects AS p ON t.project = p.id "
                 + "LEFT OUTER JOIN customers AS c ON c.id = p.customer "
-                + "WHERE employee=? AND billable=? AND active=TRUE");
+                + "WHERE employee=? AND billable=? AND t.active=TRUE");
         try {
             ps.setInt(1, employee.getNumber());
             ps.setBoolean(2, billable);
@@ -93,7 +93,7 @@ public class Task {
                 while (resultSet.next()) {
                     int id = resultSet.getInt("task_id");
                     String task_name = resultSet.getString("task_name");
-                    boolean active = resultSet.getBoolean("active");
+                    boolean active = resultSet.getBoolean("task_active");
                     int lineItem = resultSet.getInt("line_item");
                     long project_id = resultSet.getInt("project_id");
                     Project project = null;
