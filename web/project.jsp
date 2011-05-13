@@ -145,8 +145,8 @@
         <c:if test="${!empty lineItems}">
             <table class="altrows" id="line_items">
                 <caption>Line Items</caption>
-                <tr><th>Line Item</th><th>Description</th><th>Funded</th><th colspan="2">Expended</th></tr>
-                <tr><th colspan="3"></th><th>Hours</th><th>Dollars</th></tr>
+                <tr><th>Line Item</th><th>Description</th><th>Funded</th><th colspan="3">Expended</th></tr>
+                <tr><th colspan="3"></th><th>Hours</th><th>Dollars</th><th>Remaining</th></tr>
                 <c:set var="fundedTotal" value="0.0"/>
                 <c:set var="expendedHoursTotal" value="0.0"/>
                 <c:set var="expendedDollarsTotal" value="0.0"/>
@@ -175,6 +175,8 @@
                         <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
                         <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
                         <c:set var="expendedHoursTotal" value="${expendedHoursTotal + expendedDuration}"/>
+
+                        <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded - expendedCost}"/></td>
                     </tr>
                 </c:forEach>
                 <tr>
@@ -182,6 +184,7 @@
                     <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal}"/></td>
                     <td class="duration">${expendedHoursTotal}</td>
                     <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
+                    <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - expendedDollarsTotal}"/></td>
                 </tr>
             </table>
             <c:if test="${fundedTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
