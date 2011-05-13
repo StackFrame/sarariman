@@ -146,13 +146,19 @@
             <table class="altrows" id="line_items">
                 <caption>Line Items</caption>
                 <tr><th>Line Item</th><th>Description</th><th>Funded</th></tr>
+                <c:set var="lineItemTotal" value="0.0"/>
                 <c:forEach var="lineItem" items="${lineItems}">
                     <tr>
                         <td class="line_item">${lineItem.id}</td>
                         <td>${lineItem.description}</td>                    
                         <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded}"/></td>
+                        <c:set var="lineItemTotal" value="${lineItemTotal + lineItem.funded}"/>
                     </tr>
                 </c:forEach>
+                <tr>
+                    <td colspan="2">Total</td>
+                    <td class="currency"><fmt:formatNumber type="currency" value="${lineItemTotal}"/></td>
+                </tr>
             </table>
         </c:if>
 
@@ -168,9 +174,9 @@
                     <td>
                         <form>
                             <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                            </form>
-                        </td>
-                    </tr>
+                        </form>
+                    </td>
+                </tr>
             </c:forEach>
         </table>
 
@@ -215,8 +221,8 @@
                     <c:if test="${entry.value.project == project.id}">
                         <c:set var="category" value="${entry.value}"/>
                         <c:url var="catLink" value="laborcategory"><c:param name="id" value="${entry.key}"/></c:url>
-                            <tr>
-                                <td><a href="${catLink}">${category.name}</a></td>
+                        <tr>
+                            <td><a href="${catLink}">${category.name}</a></td>
                             <td class="currency"><a href="${catLink}"><fmt:formatNumber type="currency" value="${category.rate}"/></a></td>
                             <td><a href="${catLink}">${category.periodOfPerformanceStart}</a></td>
                             <td><a href="${catLink}">${category.periodOfPerformanceEnd}</a></td>
