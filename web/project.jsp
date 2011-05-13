@@ -145,22 +145,46 @@
         <c:if test="${!empty lineItems}">
             <table class="altrows" id="line_items">
                 <caption>Line Items</caption>
-                <tr><th>Line Item</th><th>Description</th><th>Funded</th></tr>
-                <c:set var="lineItemTotal" value="0.0"/>
+                <tr><th>Line Item</th><th>Description</th><th>Funded</th><th colspan="2">Expended</th></tr>
+                <tr><th colspan="3"></th><th>Hours</th><th>Dollars</th></tr>
+                <c:set var="fundedTotal" value="0.0"/>
+                <c:set var="expendedHoursTotal" value="0.0"/>
+                <c:set var="expendedDollarsTotal" value="0.0"/>
                 <c:forEach var="lineItem" items="${lineItems}">
                     <tr>
                         <td class="line_item">${lineItem.id}</td>
-                        <td>${lineItem.description}</td>                    
+                        <td>${lineItem.description}</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded}"/></td>
-                        <c:set var="lineItemTotal" value="${lineItemTotal + lineItem.funded}"/>
+                        <c:set var="fundedTotal" value="${fundedTotal + lineItem.funded}"/>
+
+                        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                            SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
+                            FROM hours AS h
+                            JOIN tasks AS t on h.task = t.id
+                            JOIN projects AS p on p.id = t.project
+                            JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                            JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                            WHERE t.line_item=? AND t.project=? AND t.billable=TRUE and h.duration > 0;
+                            <sql:param value="${lineItem.id}"/>
+                            <sql:param value="${project.id}"/>
+                        </sql:query>
+
+                        <c:set var="expendedDuration" value="${resultSet.rows[0].durationTotal}"/>
+                        <c:set var="expendedCost" value="${resultSet.rows[0].costTotal}"/>
+                        <td class="duration">${expendedDuration}</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
+                        <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
+                        <c:set var="expendedHoursTotal" value="${expendedHoursTotal + expendedDuration}"/>
                     </tr>
                 </c:forEach>
                 <tr>
                     <td colspan="2">Total</td>
-                    <td class="currency"><fmt:formatNumber type="currency" value="${lineItemTotal}"/></td>
+                    <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal}"/></td>
+                    <td class="duration">${expendedHoursTotal}</td>
+                    <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
                 </tr>
             </table>
-            <c:if test="${lineItemTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
+            <c:if test="${fundedTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
         </c:if>
 
         <table class="altrows" id="tasks">
