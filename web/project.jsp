@@ -160,6 +160,7 @@
                     <td class="currency"><fmt:formatNumber type="currency" value="${lineItemTotal}"/></td>
                 </tr>
             </table>
+            <c:if test="${lineItemTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
         </c:if>
 
         <table class="altrows" id="tasks">
