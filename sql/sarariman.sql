@@ -22,9 +22,9 @@
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `administrators` (
-  `employee` int(10) unsigned NOT NULL,
+  `employee` int(10) unsigned NOT NULL COMMENT 'LDAP uid of the employee.',
   PRIMARY KEY  (`employee`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Employees who have permission to modify the database.';
 SET character_set_client = @saved_cs_client;
 
 --
@@ -510,4 +510,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-05-20 13:22:24
+-- Dump completed on 2011-05-20 13:52:01
