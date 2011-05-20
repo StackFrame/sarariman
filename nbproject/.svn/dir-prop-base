@@ -1,8 +1,0 @@
-K 10
-svn:ignore
-V 39
-.cvsignore
-private
-.build-impl.xml.swp
-
-END
