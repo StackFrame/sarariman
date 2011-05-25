@@ -4,5 +4,5 @@
 --%>
 
 <div id="footer">
-    <p>Sarariman v${sarariman.version} &#169; 2004-2011 <a href="http://www.stackframe.com/">StackFrame, LLC</a></p>
+    <p>Sarariman ${sarariman.version} &#169; 2004-2011 <a href="http://www.stackframe.com/">StackFrame, LLC</a></p>
 </div>
