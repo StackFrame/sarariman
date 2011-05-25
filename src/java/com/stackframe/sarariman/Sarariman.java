@@ -164,7 +164,7 @@ public class Sarariman implements ServletContextListener {
         for (Employee employee : directory.getByUserName().values()) {
             if (employee.isAdministrator()) {
                 emailDispatcher.send(employee.getEmail(), null, "sarariman started",
-                        String.format("Sarariman v%s has been started on %s.", getVersion(), hostname));
+                        String.format("Sarariman version %s has been started on %s.", getVersion(), hostname));
             }
         }
     }
