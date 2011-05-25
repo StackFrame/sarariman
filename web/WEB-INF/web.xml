@@ -509,11 +509,6 @@
         <env-entry-value>uid=mycroft,ou=People,dc=stackframe,dc=com</env-entry-value>
     </env-entry>
     <env-entry>
-        <env-entry-name>java.naming.security.credentials</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>67qwnm</env-entry-value>
-    </env-entry>
-    <env-entry>
         <env-entry-name>mail.smtp.host</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>mail.stackframe.com</env-entry-value>
