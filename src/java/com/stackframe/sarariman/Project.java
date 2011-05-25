@@ -185,7 +185,7 @@ public class Project {
     public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract,
             String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, previously_billed, terms, odc_fee) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, previously_billed, terms, odc_fee, active) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -196,7 +196,7 @@ public class Project {
             ps.setBigDecimal(7, funded);
             ps.setBigDecimal(8, previouslyBilled);
             ps.setLong(9, terms);
-            ps.setLong(10, terms);
+            ps.setBigDecimal(10, odc_fee);
             ps.setBoolean(11, active);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
