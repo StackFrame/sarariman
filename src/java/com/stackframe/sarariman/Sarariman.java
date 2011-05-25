@@ -28,7 +28,6 @@ import javax.sql.DataSource;
  */
 public class Sarariman implements ServletContextListener {
 
-    private final String revision = "$Revision$"; // Do not edit this.  It is set by Subversion.
     private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
@@ -41,20 +40,8 @@ public class Sarariman implements ServletContextListener {
     private CronJobs cronJobs;
     private String logoURL;
 
-    private String getRevision() {
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < revision.length(); i++) {
-            char c = revision.charAt(i);
-            if (Character.isDigit(c)) {
-                buf.append(c);
-            }
-        }
-
-        return buf.toString();
-    }
-
     public String getVersion() {
-        return "1.1.35r" + getRevision();
+        return Version.version;
     }
 
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
