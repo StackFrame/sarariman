@@ -496,7 +496,7 @@
     <env-entry>
         <env-entry-name>java.naming.provider.url</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>ldap://ldap.stackframe.com:389/dc=stackframe,dc=com</env-entry-value>
+        <env-entry-value>ldap://ldap.company.com/dc=company,dc=com</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>java.naming.security.authentication</env-entry-name>
@@ -506,12 +506,12 @@
     <env-entry>
         <env-entry-name>java.naming.security.principal</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>uid=mycroft,ou=People,dc=stackframe,dc=com</env-entry-value>
+        <env-entry-value>uid=timesheet,ou=People,dc=stackframe,dc=com</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>mail.smtp.host</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>mail.stackframe.com</env-entry-value>
+        <env-entry-value>mail.company.com</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>mail.smtp.port</env-entry-name>
@@ -521,7 +521,7 @@
     <env-entry>
         <env-entry-name>mail.from</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>sarariman@stackframe.com</env-entry-value>
+        <env-entry-value>sarariman@company.com</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>logoURL</env-entry-name>
