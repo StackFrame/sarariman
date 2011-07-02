@@ -488,6 +488,7 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+<!--
     <env-entry>
         <env-entry-name>java.naming.factory.initial</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -508,6 +509,7 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>uid=timesheet,ou=People,dc=stackframe,dc=com</env-entry-value>
     </env-entry>
+-->
     <env-entry>
         <env-entry-name>mail.smtp.host</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
