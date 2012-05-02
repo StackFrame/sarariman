@@ -34,15 +34,15 @@
             Collection<Integer> managers = sarariman.getOrganizationHierarchy().getManagers(employee.getNumber());
             pageContext.setAttribute("managers", managers);
         %>
-        <h2>Managers</h2>
-        <c:when test="${!empty managers}">
+        <c:if test="${!empty managers}">
+            <h2>Managers</h2>
             <ul>
                 <c:forEach var="manager" items="${managers}">
                     <c:url var="managerURL" value="${pageContext.request.servletPath}"><c:param name="id" value="${manager}"/></c:url>
                     <li><a href="${managerURL}">${directory.byNumber[manager].fullName}</a></li>
                 </c:forEach>
             </ul>
-        </c:when>   
+        </c:if>   
 
         <c:if test="${user.administrator}">
             <h2>Info</h2>
