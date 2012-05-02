@@ -44,6 +44,20 @@
             </ul>
         </c:if>   
 
+        <%
+            Collection<Integer> directReports = sarariman.getOrganizationHierarchy().getDirectReports(employee.getNumber());
+            pageContext.setAttribute("directReports", directReports);
+        %>
+        <c:if test="${!empty directReports}">
+            <h2>Direct Reports</h2>
+            <ul>
+                <c:forEach var="report" items="${directReports}">
+                    <c:url var="reportURL" value="${pageContext.request.servletPath}"><c:param name="id" value="${report}"/></c:url>
+                    <li><a href="${reportURL}">${directory.byNumber[report].fullName}</a></li>
+                </c:forEach>
+            </ul>
+        </c:if>   
+
         <c:if test="${user.administrator}">
             <h2>Info</h2>
             Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>

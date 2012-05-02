@@ -30,4 +30,21 @@ public interface OrganizationHierarchy {
      */
     Collection<Integer> getManagers(int employee);
 
+    /**
+     * Get a list of the direct reports of an employee on a given date.
+     *
+     * @param employee the ID of the employee to find direct reports of
+     * @param date the date
+     * @return a list of direct reports
+     */
+    Collection<Integer> getDirectReports(int employee, Date date);
+
+    /**
+     * Get a list of the direct reports of an employee at this time.
+     *
+     * @param employee the ID of the employee to find direct reports of
+     * @return a list of direct reports
+     */
+    Collection<Integer> getDirectReports(int employee);
+
 }

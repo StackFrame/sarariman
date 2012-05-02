@@ -60,4 +60,40 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         return getManagers(employee, new Date(new java.util.Date().getTime()));
     }
 
+    public Collection<Integer> getDirectReports(int employee, Date date) {
+        Collection<Integer> managers = new ArrayList<Integer>();
+        try {
+            Connection connection = connectionFactory.openConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement("SELECT employee FROM organization_hierarchy WHERE manager=? AND ((begin <= ? AND end >= ?) OR (begin <= ? AND end IS NULL));");
+                try {
+                    ps.setInt(1, employee);
+                    ps.setDate(2, date);
+                    ps.setDate(3, date);
+                    ps.setDate(4, date);
+                    ResultSet rs = ps.executeQuery();
+                    try {
+                        while (rs.next()) {
+                            managers.add(rs.getInt("employee"));
+                        }
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return managers;
+    }
+
+    public Collection<Integer> getDirectReports(int employee) {
+        return getDirectReports(employee, new Date(new java.util.Date().getTime()));
+    }
+
 }
