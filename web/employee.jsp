@@ -3,6 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
+<%@page import="java.util.Collection,com.stackframe.sarariman.Sarariman,com.stackframe.sarariman.Employee"%>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
@@ -26,6 +27,22 @@
         <%@include file="header.jsp" %>
 
         <h1>${employee.fullName}</h1>
+
+        <%
+            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+            Employee employee = (Employee)pageContext.getAttribute("employee");
+            Collection<Integer> managers = sarariman.getOrganizationHierarchy().getManagers(employee.getNumber());
+            pageContext.setAttribute("managers", managers);
+        %>
+        <h2>Managers</h2>
+        <c:when test="${!empty managers}">
+            <ul>
+                <c:forEach var="manager" items="${managers}">
+                    <c:url var="managerURL" value="${pageContext.request.servletPath}"><c:param name="id" value="${manager}"/></c:url>
+                    <li><a href="${managerURL}">${directory.byNumber[manager].fullName}</a></li>
+                </c:forEach>
+            </ul>
+        </c:when>   
 
         <c:if test="${user.administrator}">
             <h2>Info</h2>

@@ -26,7 +26,7 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class Sarariman implements ServletContextListener {
+public class Sarariman implements ServletContextListener, ConnectionFactory {
 
     private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
@@ -35,6 +35,7 @@ public class Sarariman implements ServletContextListener {
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
     private final Collection<Extension> extensions = new ArrayList<Extension>();
+    private final OrganizationHierarchy organizationHierarchy = new OrganizationHierarchyImpl(this);
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
     private CronJobs cronJobs;
@@ -131,6 +132,10 @@ public class Sarariman implements ServletContextListener {
 
     public Collection<Extension> getExtensions() {
         return extensions;
+    }
+
+    public OrganizationHierarchy getOrganizationHierarchy() {
+        return organizationHierarchy;
     }
 
     public void contextInitialized(ServletContextEvent sce) {
