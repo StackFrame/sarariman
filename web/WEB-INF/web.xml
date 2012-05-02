@@ -349,12 +349,12 @@
         <url-pattern>/uninvoiced</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>orgchart</servlet-name>
-        <jsp-file>/orgchart.jsp</jsp-file>
+        <servlet-name>orgChart</servlet-name>
+        <jsp-file>/orgChart.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>orgchart</servlet-name>
-        <url-pattern>/orgchart</url-pattern>
+        <servlet-name>orgChart</servlet-name>
+        <url-pattern>/orgChart</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>uninvoicedprojects</servlet-name>
