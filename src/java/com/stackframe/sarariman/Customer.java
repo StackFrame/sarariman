@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public class Customer {
 
     public static Customer create(Sarariman sarariman, String name) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO customers (name) VALUES(?)");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO customers (name) VALUES(?)", Statement.RETURN_GENERATED_KEYS);
         try {
             ps.setString(1, name);
             ps.executeUpdate();
