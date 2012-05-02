@@ -47,4 +47,27 @@ public interface OrganizationHierarchy {
      */
     Collection<Integer> getDirectReports(int employee);
 
+    interface Node {
+
+        int id();
+
+        Collection<Node> directReports();
+
+    }
+
+    /**
+     * Builds an org chart for a given date.
+     *
+     * @param the date
+     * @return a tree of Node objects representing the org chart
+     */
+    Collection<Node> getOrgChart(Date date);
+
+    /**
+     * Builds an org chart for this time.
+     *
+     * @return a tree of Node objects representing the org chart
+     */
+    Collection<Node> getOrgChart();
+
 }
