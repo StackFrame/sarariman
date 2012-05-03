@@ -56,9 +56,7 @@
         <%
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
             Employee user = (Employee)request.getAttribute("user");
-            System.err.println("user="+user);
             Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
-            System.err.println("reports="+reports);
             pageContext.setAttribute("reports", reports);
         %>
 
