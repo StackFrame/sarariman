@@ -7,9 +7,11 @@ package com.stackframe.sarariman;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.internet.InternetAddress;
 
 /**
  *
@@ -45,13 +47,15 @@ public class WeeknightTask extends TimerTask {
             Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
             try {
                 if (!timesheet.isSubmitted()) {
+                    Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
+                    Collection<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
                     if (dayOfWeek == Calendar.FRIDAY) {
-                        emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
+                        emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses,
                                 "timesheet", "Please submit your timesheet for the week of " + week + ".");
                     } else {
                         double hoursRecorded = timesheet.getHours(new Date(todayDate.getTime()));
                         if (hoursRecorded == 0.0 && employee.isFulltime()) {
-                            emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
+                            emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses,
                                     "timesheet", "Please record your time if you worked today.");
                         }
                     }

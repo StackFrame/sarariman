@@ -138,6 +138,15 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return organizationHierarchy;
     }
 
+    public Collection<Employee> employees(Collection<Integer> ids) {
+        Collection<Employee> result = new ArrayList<Employee>();
+        for (int id : ids) {
+            result.add(directory.getByNumber().get(id));
+        }
+
+        return result;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {

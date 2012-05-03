@@ -7,9 +7,11 @@ package com.stackframe.sarariman;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.internet.InternetAddress;
 
 /**
  *
@@ -40,7 +42,9 @@ public class MorningTask extends TimerTask {
             Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), prevWeek);
             try {
                 if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
-                    emailDispatcher.send(employee.getEmail(), EmailDispatcher.addresses(sarariman.getApprovers()),
+                    Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
+                    Collection<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
+                    emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses,
                             "late timesheet", "Please submit your timesheet for the week of " + prevWeek + ".");
                 }
             } catch (SQLException se) {

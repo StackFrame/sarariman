@@ -16,13 +16,13 @@ import java.util.*;
  * @author mcculley
  */
 public class OrganizationHierarchyImpl implements OrganizationHierarchy {
-
+    
     private final ConnectionFactory connectionFactory;
-
+    
     public OrganizationHierarchyImpl(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
-
+    
     public Collection<Integer> getManagers(int employee, Date date) {
         Collection<Integer> managers = new ArrayList<Integer>();
         try {
@@ -51,14 +51,29 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        
         return managers;
     }
-
+    
     public Collection<Integer> getManagers(int employee) {
         return getManagers(employee, now());
     }
-
+    
+    public Collection<Integer> getChainsOfCommand(int employee, Date date) {
+        Collection<Integer> list = new HashSet<Integer>();
+        Collection<Integer> toAdd = getManagers(employee, date);
+        for (int e : toAdd) {
+            list.add(e);
+            list.addAll(getChainsOfCommand(e, date));
+        }
+        
+        return list;
+    }
+    
+    public Collection<Integer> getChainsOfCommand(int employee) {
+        return getChainsOfCommand(employee, now());
+    }
+    
     public Collection<Integer> getDirectReports(int employee, Date date) {
         Collection<Integer> managers = new ArrayList<Integer>();
         try {
@@ -87,38 +102,38 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        
         return managers;
     }
-
+    
     public Collection<Integer> getDirectReports(int employee) {
         return getDirectReports(employee, now());
     }
-
+    
     public static class EmployeeNode implements Node {
-
+        
         private final int id;
         private final Collection<Node> directReports = new ArrayList<Node>();
-
+        
         public EmployeeNode(int id) {
             this.id = id;
         }
-
+        
         public Collection<Node> directReports() {
             return directReports;
         }
-
+        
         public int id() {
             return id;
         }
-
+        
         @Override
         public String toString() {
             return "EmployeeNode{" + "id=" + id + ", directReports=" + directReports + '}';
         }
-
+        
     }
-
+    
     private Collection<EmployeeNode> getEmployees(Date date) {
         Collection<EmployeeNode> employees = new ArrayList<EmployeeNode>();
         Set<Integer> ids = new HashSet<Integer>();
@@ -148,14 +163,14 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        
         for (int i : ids) {
             employees.add(new EmployeeNode(i));
         }
-
+        
         return employees;
     }
-
+    
     public Collection<Node> getOrgChart(Date date) {
         Collection<EmployeeNode> employees = getEmployees(date);
         Collection<Node> bosses = new ArrayList<Node>();
@@ -167,23 +182,23 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
                 bosses.add(employee);
             }
         }
-
+        
         for (EmployeeNode employee : employees) {
             Collection<Integer> directReports = getDirectReports(employee.id, date);
             for (int report : directReports) {
                 employee.directReports.add(byNum.get(report));
             }
         }
-
+        
         return bosses;
     }
-
+    
     public Collection<Node> getOrgChart() {
         return getOrgChart(now());
     }
-
+    
     private static Date now() {
         return new Date(new java.util.Date().getTime());
     }
-
+    
 }
