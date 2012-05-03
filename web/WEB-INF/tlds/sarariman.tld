@@ -58,4 +58,9 @@
         <function-class>com.stackframe.sarariman.ServiceAgreements</function-class>
         <function-signature>java.util.Collection getMissingBillings(com.stackframe.sarariman.Sarariman, int)</function-signature>
     </function>
+    <function>
+        <name>contains</name>
+        <function-class>com.stackframe.sarariman.Sarariman</function-class>
+        <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
+    </function>
 </taglib>

@@ -147,6 +147,17 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return result;
     }
 
+    /**
+     * Make contains visible to the tag library.
+     *
+     * @param coll
+     * @param o
+     * @return whether or not coll contains o
+     */
+    public static boolean contains(Collection<?> coll, Object o) {
+        return coll.contains(o);
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
