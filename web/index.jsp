@@ -420,7 +420,11 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT project FROM project_managers WHERE employee=?
+            SELECT pm.project
+            FROM project_managers AS pm
+            JOIN projects AS p ON pm.project = p.id
+            WHERE pm.employee=? AND
+            p.active = TRUE
             <sql:param value="${employeeNumber}"/>
         </sql:query>
         <c:if test="${resultSet.rowCount != 0}">
