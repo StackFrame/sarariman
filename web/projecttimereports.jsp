@@ -23,8 +23,9 @@
 
     <body>
         <%@include file="header.jsp" %>
+        <c:url var="customerURL" value="customer"><c:param name="id" value="${customer.id}"/></c:url>
         <c:url var="projectURL" value="project"><c:param name="id" value="${project_id}"/></c:url>
-        <h1>${fn:escapeXml(customer.name)} - <a href="${projectURL}">${fn:escapeXml(project.name)}</a> - ${param.week}</h1>
+        <h1><a href="${customerURL}">${fn:escapeXml(customer.name)}</a> - <a href="${projectURL}">${fn:escapeXml(project.name)}</a> - ${param.week}</h1>
 
         <h2>Employees with hours on this project this week</h2>
         <sql:query dataSource="jdbc/sarariman" var="result">
