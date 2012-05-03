@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -44,6 +44,7 @@ public class ProjectController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Employee user = (Employee)request.getAttribute("user");
+        // FIXME: Break this into checking cost manager or manager.
         if (!user.isAdministrator()) {
             response.sendError(401);
             return;
