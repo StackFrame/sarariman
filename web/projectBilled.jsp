@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2010 StackFrame, LLC
+  Copyright (C) 2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -10,21 +10,16 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
-<sql:query dataSource="jdbc/sarariman" var="resultSet">
-    SELECT project FROM project_managers WHERE employee=? AND project=?
-    <sql:param value="${user.number}"/>
-    <sql:param value="${param.project}"/>
-</sql:query>
-<c:set var="isManager" value="${resultSet.rowCount == 1}"/>
 
-<c:if test="${!(isManager || user.administrator || user.invoiceManager)}">
+<fmt:parseNumber var="project_id" value="${param.project}"/>
+<c:set var="project" value="${sarariman.projects[project_id]}"/>
+
+<c:if test="${!(sarariman:isCostManager(user, project) || user.administrator)}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <fmt:parseNumber var="project_id" value="${param.project}"/>
-    <c:set var="project" value="${sarariman.projects[project_id]}"/>
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
