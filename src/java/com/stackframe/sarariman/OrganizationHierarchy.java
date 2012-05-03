@@ -64,6 +64,23 @@ public interface OrganizationHierarchy {
      */
     Collection<Integer> getDirectReports(int employee);
 
+    /**
+     * Get a list of all reports (direct and indirect) of an employee on a given date.
+     *
+     * @param employee the ID of the employee to find reports of
+     * @param date the date
+     * @return a list of direct reports
+     */
+    Collection<Integer> getReports(int employee, Date date);
+
+    /**
+     * Get a list of all reports (direct and indirect) of an employee at this time.
+     *
+     * @param employee the ID of the employee to find reports of
+     * @return a list of direct reports
+     */
+    Collection<Integer> getReports(int employee);
+
     interface Node {
 
         int id();
