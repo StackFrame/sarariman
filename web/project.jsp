@@ -420,14 +420,18 @@
             <a href="${hoursByProject}">Hours billed to this project</a>.
         </p>
 
-        <c:url var="projectBilled" value="projectBilled">
-            <c:param name="project" value="${param.id}"/>
-        </c:url>
-        <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
+        <c:if test="${isCostManager}">
+            <c:url var="projectBilled" value="projectBilled">
+                <c:param name="project" value="${param.id}"/>
+            </c:url>
+            <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
+        </c:if>
 
-        <p>
-            <a href="uninvoiced?project=${project_id}">Uninvoiced hours and services</a>
-        </p>
+        <c:if test="${isManager}">        
+            <p>
+                <a href="uninvoiced?project=${project_id}">Uninvoiced hours and services</a>
+            </p>
+        </c:if>
 
         <%@include file="footer.jsp" %>
     </body>
