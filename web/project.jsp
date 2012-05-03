@@ -186,7 +186,14 @@
                             <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
                             <c:set var="expendedHoursTotal" value="${expendedHoursTotal + expendedDuration}"/>
 
-                            <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded - expendedCost}"/></td>
+                            <c:set var="remaining" value="${lineItem.funded - expendedCost}"/>
+                            <c:choose>
+                                <c:when test="${remaining < 0}"><c:set var="error" value="error"/></c:when>
+                                <c:otherwise><c:set var="error" value=""/></c:otherwise>
+                            </c:choose>
+                            <td class="currency ${error}">
+                                <fmt:formatNumber type="currency" value="${remaining}"/>                                       
+                            </td>
                         </tr>
                     </c:forEach>
                     <tr>
