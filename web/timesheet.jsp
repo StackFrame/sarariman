@@ -1,8 +1,9 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
+<%@page import="java.util.Collection,com.stackframe.sarariman.Sarariman,com.stackframe.sarariman.Employee"%>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -20,6 +21,13 @@
             <c:set var="employee" value="${user}"/>
         </c:otherwise>
     </c:choose>
+
+    <%
+        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        Employee user = (Employee)request.getAttribute("user");
+        Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
+        pageContext.setAttribute("reports", reports);
+    %>
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -77,7 +85,7 @@
                 </c:if>
                 <!-- FIXME: Only allow this if the time has not been invoiced. -->
                 <input type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
-            </form>
+                </form>
         </c:if>
 
         <h2>Timesheet for ${employee.fullName} for the week of ${thisWeekStart}</h2>
@@ -106,7 +114,7 @@
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <c:set var="project" value="${projects[entry.project]}"/>
-                <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project))}">
+                <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project)) || sarariman:contains(reports, employee.number)}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                         <td class="date">${entryDate}</td>
