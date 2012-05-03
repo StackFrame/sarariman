@@ -11,15 +11,15 @@
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 
-<c:if test="${!user.administrator}">
+<fmt:parseNumber var="project_id" value="${param.project}"/>
+<c:set var="project" value="${sarariman.projects[project_id]}"/>
+<c:if test="${!(sarariman:isCostManager(user, project) || sarariman:isManager(user, project))}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-    <fmt:parseNumber var="project_id" value="${param.project}"/>
-    <c:set var="project" value="${sarariman.projects[project_id]}"/>
     <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -105,8 +105,8 @@
                                        <c:if test="${!user.administrator}">disabled="true"</c:if>
                                        />
                             </td>
-                    </tr>
-                </c:forEach>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </table>
 
@@ -136,11 +136,11 @@
                                        <c:if test="${!user.administrator}">disabled="true"</c:if>
                                        />
                             </td>
-                    <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
-                    <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
-                    <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
-                    </tr>
-                </c:forEach>
+                            <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
+                            <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
+                            <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </table>
         </form>
