@@ -54,6 +54,11 @@
         <function-signature>boolean isManager(com.stackframe.sarariman.Employee, com.stackframe.sarariman.Project)</function-signature>
     </function>
     <function>
+        <name>isCostManager</name>
+        <function-class>com.stackframe.sarariman.Project</function-class>
+        <function-signature>boolean isCostManager(com.stackframe.sarariman.Employee, com.stackframe.sarariman.Project)</function-signature>
+    </function>
+    <function>
         <name>missingBillings</name>
         <function-class>com.stackframe.sarariman.ServiceAgreements</function-class>
         <function-signature>java.util.Collection getMissingBillings(com.stackframe.sarariman.Sarariman, int)</function-signature>

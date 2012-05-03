@@ -11,10 +11,6 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<c:if test="${!user.administrator}">
-    <jsp:forward page="unauthorized"/>
-</c:if>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -26,7 +22,7 @@
             <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
         </c:otherwise>
     </c:choose>
-    
+
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Projects - ${week}</title>
@@ -58,15 +54,17 @@
         </sql:query>
         <ul>
             <c:forEach var="row" items="${result.rows}">
-                <c:url var="target" value="projecttimereports">
-                    <c:param name="project" value="${row.id}"/>
-                    <c:param name="week" value="${week}"/>
-                </c:url>
-                <li>
-                    <c:set var="project" value="${sarariman.projects[row.id]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <a href="${fn:escapeXml(target)}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
-                </li>
+                <c:set var="project" value="${sarariman.projects[row.id]}"/>
+                <c:if test="${sarariman:isManager(user, project) || sarariman:isCostManager(user, project)}">
+                    <c:url var="target" value="projecttimereports">
+                        <c:param name="project" value="${row.id}"/>
+                        <c:param name="week" value="${week}"/>
+                    </c:url>
+                    <li>
+                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <a href="${fn:escapeXml(target)}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                    </li>
+                </c:if>
             </c:forEach>
         </ul>
         <%@include file="footer.jsp" %>
