@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2011 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -20,6 +20,7 @@
             <li><a href="./">Home</a></li>
             <li><a href="help.xhtml">Help</a></li>
             <li><a href="orgChart">Org Chart</a></li>
+            <li><a href="timesheets">Timesheets</a></li>
             <c:if test="${user.administrator}">
                 <li><a href="administrators">Administrators</a></li>
                 <li><a href="approvers">Approvers</a></li>
@@ -27,7 +28,6 @@
                 <li><a href="invoices">Invoices</a></li>
                 <li><a href="invoicemanagers">Invoice Managers</a></li>
                 <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
-                <li><a href="timesheets">Timesheets</a></li>
                 <li><a href="customers">Customers</a></li>
                 <li><a href="laborcategoryassignments">Labor Category Assignments</a></li>
                 <li><a href="taskGroupings">Task Groupings</a></li>

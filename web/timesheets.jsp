@@ -3,6 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
+<%@page import="java.util.Collection,com.stackframe.sarariman.Sarariman,com.stackframe.sarariman.Employee"%>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -10,10 +11,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
-
-<c:if test="${!user.administrator}">
-    <jsp:forward page="unauthorized"/>
-</c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -44,23 +41,32 @@
             <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
             <c:if test="${param.showInactive == 'on'}"><input type="hidden" name="showInactive" value="on"/></c:if>
-        </form>
+            </form>
 
-        <form action="${request.requestURI}" method="get">
+            <form action="${request.requestURI}" method="get">
             <input type="hidden" name="week" value="${param.week}"/>
             <label for="showInactive">Show Inactive</label>
             <input type="checkbox" name="showInactive" id="showInactive" <c:if test="${param.showInactive == 'on'}">checked="checked"</c:if> /><input type="submit" value="Update"/>
-        </form>
+            </form>
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
+        <%
+            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+            Employee user = (Employee)request.getAttribute("user");
+            System.err.println("user="+user);
+            Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
+            System.err.println("reports="+reports);
+            pageContext.setAttribute("reports", reports);
+        %>
+
         <table class="altrows" id="timesheets">
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>
-                <c:if test="${employee.active || param.showInactive == 'on'}">
+                <c:if test="${(employee.active || param.showInactive == 'on') && sarariman:contains(reports, employee.number)}">
                     <tr>
                         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
                         <c:set var="PTO" value="${timesheet.PTOHours}"/>
@@ -90,14 +96,14 @@
                         <td class="checkbox">
                             <form>
                                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                            </form>
-                        </td>
-                        <td class="checkbox">
-                            <form>
-                                <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                            </form>
-                        </td>
-                    </tr>
+                                </form>
+                            </td>
+                            <td class="checkbox">
+                                <form>
+                                    <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
+                                </form>
+                            </td>
+                        </tr>
                 </c:if>
             </c:forEach>
         </table>
