@@ -22,7 +22,9 @@
                 StringBuilder buf = new StringBuilder();
                 Directory directory = (Directory)getServletContext().getAttribute("directory");
                 String name = directory.getByNumber().get(node.id()).getFullName();
+                buf.append("<a href=\"employee?id=" + node.id() + "\">");
                 buf.append(name);
+                buf.append("</a>");
                 buf.append('\n');
                 Collection<OrganizationHierarchy.Node> directReports = node.directReports();
                 if (!directReports.isEmpty()) {
