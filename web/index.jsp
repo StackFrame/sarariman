@@ -44,9 +44,7 @@
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body onload="altRows()">
-        <c:if test="${user.administrator}">
-            <a href="tools">Tools</a>
-        </c:if>
+        <a href="tools">Tools</a>
 
         <c:choose>
             <c:when test="${!empty param.week}">
