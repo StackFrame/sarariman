@@ -21,10 +21,11 @@
             <li><a href="help.xhtml">Help</a></li>
             <li><a href="orgChart">Org Chart</a></li>
             <li><a href="timesheets">Timesheets</a></li>
+            <li><a href="timereportsbyproject">Time reports by project</a></li>
+            <li><a href="employees">Employees</a></li>
             <c:if test="${user.administrator}">
                 <li><a href="administrators">Administrators</a></li>
                 <li><a href="approvers">Approvers</a></li>
-                <li><a href="employees">Employees</a></li>
                 <li><a href="invoices">Invoices</a></li>
                 <li><a href="invoicemanagers">Invoice Managers</a></li>
                 <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
@@ -44,7 +45,6 @@
                 <li><a href="changelog">Changelog</a></li>
                 <li><a href="day">Daily Activity</a></li>
                 <li><a href="contacts">Contacts</a></li>
-                <li><a href="timereportsbyproject">Time reports by project</a></li>
             </c:if>
             <c:if test="${user.invoiceManager}">
                 <li><a href="laborcategories">Labor Categories</a></li>
