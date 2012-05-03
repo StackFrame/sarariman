@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -23,7 +23,8 @@
 
     <body>
         <%@include file="header.jsp" %>
-        <h1>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</h1>
+        <c:url var="projectURL" value="project"><c:param name="id" value="${project_id}"/></c:url>
+        <h1>${fn:escapeXml(customer.name)} - <a href="${projectURL}">${fn:escapeXml(project.name)}</a> - ${param.week}</h1>
 
         <h2>Employees with hours on this project this week</h2>
         <sql:query dataSource="jdbc/sarariman" var="result">
