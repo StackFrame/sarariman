@@ -131,7 +131,8 @@
             <table class="altrows">
                 <caption>Labor</caption>
                 <thead>
-                    <tr><th>Employee</th><th>Task ID</th><th>Task Name</th><th>Date</th><th>Duration</th><th>Cost</th><th>Invoice</th></tr>
+                    <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Date</th><th rowspan="2">Duration</th><th rowspan="2">Cost</th><th rowspan="2">Invoice</th></tr>
+                    <tr><th>ID</th><th>Name</th></tr>
                 </thead>
                 <tbody>
                     <fmt:parseDate var="filter_pop_start" value="${param.filter_pop_start}" pattern="yyyy-MM-dd"/>
