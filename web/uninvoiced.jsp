@@ -39,7 +39,7 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT h.employee, h.task, h.date, h.duration, t.name
+            SELECT h.employee, h.task, h.date, h.duration, t.name, t.project
             FROM hours as h
             JOIN tasks AS t ON h.task = t.id
             JOIN projects AS p ON t.project = p.id
@@ -131,35 +131,39 @@
             <table class="altrows">
                 <caption>Labor</caption>
                 <thead>
-                    <tr><th>Employee</th><th>Task</th><th>Task Name</th><th>Date</th><th>Duration</th><th>Invoice</th></tr>
+                    <tr><th>Employee</th><th>Task ID</th><th>Task Name</th><th>Date</th><th>Duration</th><th>Cost</th><th>Invoice</th></tr>
                 </thead>
                 <tbody>
                     <fmt:parseDate var="filter_pop_start" value="${param.filter_pop_start}" pattern="yyyy-MM-dd"/>
                     <fmt:parseDate var="filter_pop_end" value="${param.filter_pop_end}" pattern="yyyy-MM-dd"/>
+                    <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
+                    <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
                     <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                         <fmt:parseDate var="date" value="${row.date}" pattern="yyyy-MM-dd"/>
                         <c:if test="${(empty filter_pop_start || date ge filter_pop_start) && (empty filter_pop_end || date le filter_pop_end) && (empty param.filter_task || param.filter_task == row.task)}">
-                        <tr>
-                            <fmt:formatDate var="timesheetWeek" value="${du:weekStart(row.date)}" pattern="yyyy-MM-dd"/>
-                            <c:url var="timesheet" value="timesheet">
-                                <c:param name="week" value="${timesheetWeek}"/>
-                                <c:param name="employee" value="${row.employee}"/>
-                            </c:url>
-                            <td>${directory.byNumber[row.employee].fullName}</td>
-                            <td>${row.task}</td>
-                            <td>${row.name}</td>
-                            <td><a href="${fn:escapeXml(timesheet)}">${row.date}</a></td>
-                            <td><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
-                            <td>
-                                <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
-                                       <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if>
-                                       <c:if test="${!user.administrator}">disabled="true"</c:if>
-                                       />
-                            </td>
-                            <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
-                            <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
-                            <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
-                        </tr>
+                            <tr>
+                                <fmt:formatDate var="timesheetWeek" value="${du:weekStart(row.date)}" pattern="yyyy-MM-dd"/>
+                                <c:url var="timesheet" value="timesheet">
+                                    <c:param name="week" value="${timesheetWeek}"/>
+                                    <c:param name="employee" value="${row.employee}"/>
+                                </c:url>
+                                <td>${directory.byNumber[row.employee].fullName}</td>
+                                <td>${row.task}</td>
+                                <td>${row.name}</td>
+                                <td><a href="${fn:escapeXml(timesheet)}">${row.date}</a></td>
+                                <td><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
+                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
+                                <td>
+                                    <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
+                                           <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if>
+                                           <c:if test="${!user.administrator}">disabled="true"</c:if>
+                                           />
+                                </td>
+                                <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
+                                <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
+                                <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
+                            </tr>
                         </c:if>
                     </c:forEach>
                 </tbody>
