@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -29,6 +29,7 @@
     <body  onload="altRows()">
         <%@include file="header.jsp" %>
 
+        <!-- FIXME: Add customer and project hyperlinks. -->
         <h1>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</h1>
 
         <c:if test="${user.administrator && !empty param.create}">
@@ -73,6 +74,7 @@
 
         <!-- FIXME: Need date pickers. -->
         <!-- FIXME: Need task picker. -->
+        <!-- FIXME: Add subtotal by task. -->
 
         <form method="GET">
             <label>Filter:</label><br/>
