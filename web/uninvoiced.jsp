@@ -138,6 +138,8 @@
                     <fmt:parseDate var="filter_pop_end" value="${param.filter_pop_end}" pattern="yyyy-MM-dd"/>
                     <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
                     <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
+                    <c:set var="totalApproved" value="0.0"/>
+                    <c:set var="totalRecorded" value="0.0"/>
                     <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                         <fmt:parseDate var="date" value="${row.date}" pattern="yyyy-MM-dd"/>
                         <c:if test="${(empty filter_pop_start || date ge filter_pop_start) && (empty filter_pop_end || date le filter_pop_end) && (empty param.filter_task || param.filter_task == row.task)}">
@@ -149,14 +151,15 @@
                                 </c:url>
                                 <td>${directory.byNumber[row.employee].fullName}</td>
                                 <td>${row.task}</td>
-                                <td>${row.name}</td>
+                                <td>${fn:escapeXml(row.name)}</td>
                                 <td><a href="${fn:escapeXml(timesheet)}">${row.date}</a></td>
-                                <td><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
+                                <td class="duration"><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
                                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                                <c:set var="totalRecorded" value="${totalRecorded + costData.cost}"/> 
                                 <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                                 <td>
                                     <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
-                                           <c:if test="${date >= pop_start && date <= pop_end}">checked="true"</c:if>
+                                           <c:if test="${date >= pop_start && date <= pop_end}">checked="true" <c:set var="totalApproved" value="${totalApproved + costData.cost}"/></c:if>
                                            <c:if test="${!user.administrator}">disabled="true"</c:if>
                                            />
                                 </td>
@@ -166,6 +169,8 @@
                             </tr>
                         </c:if>
                     </c:forEach>
+                    <tr><td colspan="5">Total Approved</td><td class="currency"><fmt:formatNumber type="currency" value="${totalApproved}"/></td><td></td></tr>
+                    <tr><td colspan="5">Total Recorded</td><td class="currency"><fmt:formatNumber type="currency" value="${totalRecorded}"/></td><td></td></tr>
                 </tbody>
             </table>
         </form>
