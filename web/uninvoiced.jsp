@@ -13,7 +13,7 @@
 
 <fmt:parseNumber var="project_id" value="${param.project}"/>
 <c:set var="project" value="${sarariman.projects[project_id]}"/>
-<c:if test="${!(sarariman:isCostManager(user, project) || sarariman:isManager(user, project))}">
+<c:if test="${!sarariman:isCostManager(user, project)}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
