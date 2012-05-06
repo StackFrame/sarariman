@@ -423,14 +423,22 @@
             SELECT pm.project
             FROM project_managers AS pm
             JOIN projects AS p ON pm.project = p.id
-            WHERE pm.employee=? AND
+            WHERE pm.employee = ? AND
             p.active = TRUE
             UNION
             SELECT pm.project
             FROM project_cost_managers AS pm
             JOIN projects AS p ON pm.project = p.id
-            WHERE pm.employee=? AND
+            WHERE pm.employee = ? AND
             p.active = TRUE
+            UNION
+            SELECT DISTINCT(p.id) AS project
+            FROM projects AS p
+            JOIN tasks AS t ON t.project = p.id
+            JOIN task_assignments AS ta ON ta.task=t.id
+            WHERE ta.employee = ? AND
+            p.active = TRUE
+            <sql:param value="${employeeNumber}"/>
             <sql:param value="${employeeNumber}"/>
             <sql:param value="${employeeNumber}"/>
         </sql:query>
