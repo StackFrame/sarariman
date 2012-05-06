@@ -425,32 +425,17 @@
             JOIN projects AS p ON pm.project = p.id
             WHERE pm.employee=? AND
             p.active = TRUE
-            <sql:param value="${employeeNumber}"/>
-        </sql:query>
-        <c:if test="${resultSet.rowCount != 0}">
-            <h2>Projects Managed</h2>
-            <ul>
-                <c:forEach var="mapping_row" items="${resultSet.rows}">
-                    <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <c:url var="link" value="project">
-                        <c:param name="id" value="${mapping_row.project}"/>
-                    </c:url>
-                    <li><a href="${link}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a></li>
-                </c:forEach>
-            </ul>
-        </c:if>
-
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            UNION
             SELECT pm.project
             FROM project_cost_managers AS pm
             JOIN projects AS p ON pm.project = p.id
             WHERE pm.employee=? AND
             p.active = TRUE
             <sql:param value="${employeeNumber}"/>
+            <sql:param value="${employeeNumber}"/>
         </sql:query>
         <c:if test="${resultSet.rowCount != 0}">
-            <h2>Projects Cost Managed</h2>
+            <h2>Projects</h2>
             <ul>
                 <c:forEach var="mapping_row" items="${resultSet.rows}">
                     <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
