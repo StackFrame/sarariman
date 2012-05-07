@@ -89,7 +89,6 @@
 
         <c:set var="pop_end" value="${du:weekEnd(du:prevWeek(du:weekStart(du:now())))}"/>
 
-        <!-- FIXME: Need date pickers. -->
         <!-- FIXME: Need task picker. -->
         <!-- FIXME: Add subtotal by task. -->
 
