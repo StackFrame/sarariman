@@ -268,8 +268,7 @@
                         <c:if test="${entry.value.project == project.id}">
                             <c:set var="category" value="${entry.value}"/>
                             <c:url var="catLink" value="laborcategory"><c:param name="id" value="${entry.key}"/></c:url>
-                            <tr>
-                                <td><a href="${catLink}">${category.name}</a></td>
+                            <tr><td><a href="${catLink}">${category.name}</a></td>
                                 <td class="currency"><a href="${catLink}"><fmt:formatNumber type="currency" value="${category.rate}"/></a></td>
                                 <td><a href="${catLink}">${category.periodOfPerformanceStart}</a></td>
                                 <td><a href="${catLink}">${category.periodOfPerformanceEnd}</a></td>
@@ -432,9 +431,7 @@
                 <c:param name="project" value="${param.id}"/>
             </c:url>
             <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
-        </c:if>
 
-        <c:if test="${isManager}">        
             <p>
                 <a href="uninvoiced?project=${project_id}">Uninvoiced hours and services</a>
             </p>
