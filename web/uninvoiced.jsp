@@ -25,6 +25,21 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</title>
         <script type="text/javascript" src="utilities.js"/>
+
+        <!-- jQuery -->
+        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
+        <!-- /jQuery -->
+        
+        <script>
+            $(function() {
+                $( "#pop_start" ).datepicker({dateFormat: 'yy-mm-dd'});
+                $( "#pop_end" ).datepicker({dateFormat: 'yy-mm-dd'});
+                $( "#filter_pop_start" ).datepicker({dateFormat: 'yy-mm-dd'});
+                $( "#filter_pop_end" ).datepicker({dateFormat: 'yy-mm-dd'});
+            });
+        </script>
     </head>
     <body  onload="altRows()">
         <%@include file="header.jsp" %>
@@ -78,11 +93,11 @@
 
         <form method="GET">
             <label>Filter:</label><br/>
-            <label for="pop_start">Period of Performance Start: </label>
-            <input type="text" id="pop_start" name="filter_pop_start" value="${param.filter_pop_start}"/>
+            <label for="filter_pop_start">Period of Performance Start: </label>
+            <input size="10" type="text" id="filter_pop_start" name="filter_pop_start" value="${param.filter_pop_start}"/>
 
-            <label for="pop_end">End: </label>
-            <input type="text" id="pop_end" name="filter_pop_end" value="${param.filter_pop_end}"/><br/>
+            <label for="filter_pop_end">End: </label>
+            <input size="10" type="text" id="filter_pop_end" name="filter_pop_end" value="${param.filter_pop_end}"/><br/>
 
             <label for="task">Task: </label>
             <input type="text" id="task" name="filter_task" value="${param.filter_task}"/><br/>
@@ -96,25 +111,25 @@
             <label>Create Invoice:</label><br/>
 
             <label for="pop_start">Period of Performance Start: </label>
-            <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${pop_start}" pattern="yyyy-MM-dd"/>"/>
+            <input size="10" type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${pop_start}" pattern="yyyy-MM-dd"/>"/>
 
             <label for="pop_end">End: </label>
-            <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${pop_end}" pattern="yyyy-MM-dd"/>"/><br/>
+            <input size="10" type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${pop_end}" pattern="yyyy-MM-dd"/>"/><br/>
 
             <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-            <table class="altrows">
-                <caption>Services</caption>
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Cost</th>
-                        <th>Invoice</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <table class="altrows">
+                    <caption>Services</caption>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Cost</th>
+                            <th>Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     <c:forEach var="row" items="${servicesResultSet.rows}" varStatus="varStatus">
                         <tr>
                             <td>${fn:escapeXml(row.description)}</td>
@@ -124,9 +139,9 @@
                             <td>
                                 <input type="checkbox" name="addToInvoiceService" value="${row.id}" checked="true"
                                        <c:if test="${!user.administrator}">disabled="true"</c:if>
-                                       />
-                            </td>
-                        </tr>
+                                           />
+                                </td>
+                            </tr>
                     </c:forEach>
                 </tbody>
             </table>
@@ -167,9 +182,9 @@
                                     <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
                                            <c:if test="${date >= pop_start && date <= pop_end}">checked="true" <c:set var="totalApproved" value="${totalApproved + costData.cost}"/></c:if>
                                            <c:if test="${!user.administrator}">disabled="true"</c:if>
-                                           />
-                                </td>
-                                <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
+                                               />
+                                    </td>
+                                    <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
                                 <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
                                 <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
                             </tr>
