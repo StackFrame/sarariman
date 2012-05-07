@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -55,7 +55,7 @@
         <ul>
             <c:forEach var="row" items="${result.rows}">
                 <c:set var="project" value="${sarariman.projects[row.id]}"/>
-                <c:if test="${sarariman:isManager(user, project) || sarariman:isCostManager(user, project)}">
+                <c:if test="${sarariman:isManager(user, project) || sarariman:isCostManager(user, project) || user.administrator}">
                     <c:url var="target" value="projecttimereports">
                         <c:param name="project" value="${row.id}"/>
                         <c:param name="week" value="${week}"/>
