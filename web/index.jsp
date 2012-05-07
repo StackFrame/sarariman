@@ -18,6 +18,12 @@
         <title>Sarariman</title>
         <script type="text/javascript" src="utilities.js"/>
 
+        <!-- jQuery -->
+        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
+        <!-- /jQuery -->
+
         <!-- TinyMCE -->
         <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
         <script type="text/javascript">
@@ -39,6 +45,10 @@
                 var element = document.getElementById(id);
                 element.disabled = false;
             }
+            
+            $(function() {
+                $( "#date" ).datepicker({dateFormat: 'yy-mm-dd'});
+            });
         </script>
     </head>
 
