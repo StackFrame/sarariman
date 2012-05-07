@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -52,6 +52,19 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Labor Category ${id}</title>
+
+        <!-- jQuery -->
+        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
+        <!-- /jQuery -->
+
+        <script>
+            $(function() {
+                $( "#pop_start" ).datepicker({dateFormat: 'yy-mm-dd'});
+                $( "#pop_end" ).datepicker({dateFormat: 'yy-mm-dd'});
+            });
+        </script>
     </head>
     <body>
         <%@include file="header.jsp" %>
@@ -85,14 +98,14 @@
 
             <label for="pop_start">Period of Performance Start: </label>
             <fmt:formatDate var="pop_start" value="${laborcategory.pop_start}" type="date" pattern="yyyy-MM-dd"/>
-            <input type="text" id="pop_start" name="pop_start" value="${pop_start}"/>
+            <input size="10" type="text" id="pop_start" name="pop_start" value="${pop_start}"/>
 
             <label for="pop_end">End: </label>
             <fmt:formatDate var="pop_end" value="${laborcategory.pop_end}" type="date" pattern="yyyy-MM-dd"/>
-            <input type="text" id="pop_end" name="pop_end" value="${pop_end}"/><br/>
+            <input size="10" type="text" id="pop_end" name="pop_end" value="${pop_end}"/><br/>
 
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-        </form>
+            </form>
 
         <%@include file="footer.jsp" %>
     </body>
