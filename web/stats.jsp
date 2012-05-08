@@ -22,8 +22,6 @@
         how long in operation
         total with clearances?
         total with degrees?
-        active clients?
-        active projects?
         -->
 
         <c:set var="totalEmployees" value="0"/>
@@ -43,8 +41,24 @@
             <tr><th>Type</th><th>Total</th></tr>
             <tr><td>Full-time</td><td class="quantity">${totalFullTime}</td></tr>
             <tr><td>Part-time</td><td class="quantity">${totalEmployees - totalFullTime}</td></tr>
-            <tr><td>Total</td><td class="quantity">${totalEmployees}</td></tr>
+            <tr><td>Total</td><td class="quantity"><a href="employees">${totalEmployees}</a></td></tr>
         </table>
+
+        <p>
+            
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT COUNT(id) AS count FROM customers WHERE active = TRUE AND official = TRUE
+        </sql:query>
+        <c:set var="activeClients" value="${resultSet.rows[0].count}"/>
+        Active clients: <a href="customers"><span class="quantity">${activeClients}</span></a><br/>
+
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT COUNT(id) AS count FROM projects WHERE active = TRUE
+        </sql:query>
+        <c:set var="activeProjects" value="${resultSet.rows[0].count}"/>
+        Active projects: <a href="projects"><span class="quantity">${activeProjects}</span></a>
+        
+        </p>
 
         <%@include file="footer.jsp" %>
     </body>
