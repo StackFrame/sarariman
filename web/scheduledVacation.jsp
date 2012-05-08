@@ -7,6 +7,7 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -21,7 +22,7 @@
         <!-- FIXME: filter by management relationship (all indirect reports) -->
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT employee, begin, end
+            SELECT employee, begin, end, comment
             FROM vacation
             WHERE begin >= DATE(NOW()) OR end >= DATE(NOW())
             ORDER BY begin
@@ -40,6 +41,7 @@
                                 <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
                             </c:otherwise>
                         </c:choose>
+                        ${fn:escapeXml(row.comment)}
                     </li>
                 </c:forEach>
             </ul>

@@ -83,7 +83,7 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT begin, end FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+            SELECT begin, end, comment FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
             <sql:param value="${param.id}"/>
         </sql:query>
         <c:if test="${resultSet.rowCount != 0}">
@@ -100,6 +100,7 @@
                                 <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
                             </c:otherwise>
                         </c:choose>
+                        ${fn:escapeXml(row.comment)}
                     </li>
                 </c:forEach>
             </ul>

@@ -151,13 +151,13 @@
         </ul>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT v.employee, v.begin, v.end
+            SELECT v.employee, v.begin, v.end, v.comment
             FROM vacation AS v
             JOIN task_assignments AS ta ON ta.employee = v.employee
             JOIN tasks AS t on t.id = ta.task
             JOIN projects AS p ON p.id = t.project
             WHERE p.id = ? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-            GROUP BY v.employee, v.begin, v.end
+            GROUP BY v.employee, v.begin, v.end, v.comment
             ORDER BY v.begin
             <sql:param value="${param.id}"/>
         </sql:query>
@@ -176,6 +176,7 @@
                                 <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
                             </c:otherwise>
                         </c:choose>
+                        ${fn:escapeXml(row.comment)}
                     </li>
                 </c:forEach>
             </ul>
