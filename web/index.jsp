@@ -481,7 +481,7 @@
         </table>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT begin, end FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()));
+            SELECT begin, end FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
             <sql:param value="${employeeNumber}"/>
         </sql:query>
         <c:if test="${resultSet.rowCount != 0}">
