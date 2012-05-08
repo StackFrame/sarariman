@@ -480,6 +480,23 @@
             </c:forEach>
         </table>
 
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT begin, end FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()));
+            <sql:param value="${employeeNumber}"/>
+        </sql:query>
+        <c:if test="${resultSet.rowCount != 0}">
+            <h2>Scheduled Vacation</h2>
+            <table>
+                <tr><th>Begin</th><th>End</th></tr>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <tr>
+                        <td>${row.begin}</td>
+                        <td>${row.end}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
