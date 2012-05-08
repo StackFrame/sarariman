@@ -23,6 +23,7 @@
             <li><a href="timesheets">Timesheets</a></li>
             <li><a href="timereportsbyproject">Time reports by project</a></li>
             <li><a href="employees">Employees</a></li>
+            <li><a href="scheduledVacation">Scheduled Vacation</a></li>
             <c:if test="${user.administrator}">
                 <li><a href="administrators">Administrators</a></li>
                 <li><a href="approvers">Approvers</a></li>

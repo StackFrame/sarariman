@@ -241,6 +241,14 @@
         <url-pattern>/tasks</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>scheduledVacation</servlet-name>
+        <jsp-file>/scheduledVacation.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>scheduledVacation</servlet-name>
+        <url-pattern>/scheduledVacation</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>task</servlet-name>
         <jsp-file>/task.jsp</jsp-file>
     </servlet>
