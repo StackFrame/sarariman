@@ -490,8 +490,15 @@
                 <tr><th>Begin</th><th>End</th></tr>
                 <c:forEach var="row" items="${resultSet.rows}">
                     <tr>
-                        <td>${row.begin}</td>
-                        <td>${row.end}</td>
+                        <c:choose>
+                            <c:when test="${row.begin eq row.end}">
+                                <td colspan="2">${row.begin}</td>                                
+                            </c:when>
+                            <c:otherwise>
+                                <td>${row.begin}</td>
+                                <td>${row.end}</td>
+                            </c:otherwise>
+                        </c:choose>
                     </tr>
                 </c:forEach>
             </table>
