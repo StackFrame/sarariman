@@ -480,29 +480,42 @@
             </c:forEach>
         </table>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT begin, end, comment FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-            <sql:param value="${employeeNumber}"/>
-        </sql:query>
-        <c:if test="${resultSet.rowCount != 0}">
-            <h2>Scheduled Vacation</h2>
-            <ul>
-                <c:forEach var="row" items="${resultSet.rows}">
-                    <li>
-                        <c:choose>
-                            <c:when test="${row.begin eq row.end}">
-                                <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" />
-                            </c:when>
-                            <c:otherwise>
-                                <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" /> -
-                                <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
-                            </c:otherwise>
-                        </c:choose>
-                        ${fn:escapeXml(row.comment)}
-                    </li>
-                </c:forEach>
-            </ul>
-        </c:if>
+        <h2 id="scheduledVacation">Scheduled Vacation</h2>
+        <p>
+            <a href="vacation/create.jsp">Add an entry</a>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT begin, end, comment FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+                <sql:param value="${employeeNumber}"/>
+            </sql:query>
+            <c:if test="${resultSet.rowCount != 0}">
+                <ul>
+                    <c:forEach var="row" items="${resultSet.rows}">
+                        <li>
+                            <c:choose>
+                                <c:when test="${row.begin eq row.end}">
+                                    <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" />
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" /> -
+                                    <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
+                                </c:otherwise>
+                            </c:choose>
+                            ${fn:escapeXml(row.comment)}
+                            <form style="display:inline" method="GET" action="vacation/edit.jsp">
+                                <input type="hidden" name="begin" value="${row.begin}"/>
+                                <input type="hidden" name="end" value="${row.end}"/>
+                                <input type="submit" name="Edit" value="edit"/>
+                            </form>
+                            <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
+                                <input type="hidden" name="begin" value="${row.begin}"/>
+                                <input type="hidden" name="end" value="${row.end}"/>
+                                <input type="submit" name="Delete" value="delete"/>
+                            </form>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:if>
+        </p>
 
         <%@include file="footer.jsp" %>
     </body>
