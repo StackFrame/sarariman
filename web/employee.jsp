@@ -83,6 +83,29 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT begin, end FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <c:if test="${resultSet.rowCount != 0}">
+            <h2>Scheduled Vacation</h2>
+            <ul>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <li>
+                        <c:choose>
+                            <c:when test="${row.begin eq row.end}">
+                                <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" />
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" /> -
+                                <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
+                            </c:otherwise>
+                        </c:choose>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT project FROM project_managers WHERE employee=?
             <sql:param value="${param.id}"/>
         </sql:query>
