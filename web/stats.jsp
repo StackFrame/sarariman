@@ -22,32 +22,28 @@
         how long in operation
         total with clearances?
         total with degrees?
+        active clients?
+        active projects?
         -->
 
         <c:set var="totalEmployees" value="0"/>
         <c:set var="totalFullTime" value="0"/>
-        <c:set var="totalPartTime" value="0"/>
         <c:forEach var="e" items="${directory.byUserName}">
             <c:set var="employee" value="${e.value}"/>
             <c:if test="${employee.active}">
                 <c:set var="totalEmployees" value="${totalEmployees + 1}"/>
-                <c:choose>
-                    <c:when test="${employee.fulltime}">
-                        <c:set var="totalFullTime" value="${totalFullTime + 1}"/>                        
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="totalPartTime" value="${totalPartTime + 1}"/>                                                
-                    </c:otherwise>
-                </c:choose>
+                <c:if test="${employee.fulltime}">
+                    <c:set var="totalFullTime" value="${totalFullTime + 1}"/>                        
+                </c:if>
             </c:if>
         </c:forEach>
-        
+
         <table>
             <caption>Employees</caption>
             <tr><th>Type</th><th>Total</th></tr>
-            <tr><td>Full Time</td><td>${totalFullTime}</td></tr>
-            <tr><td>Part Time</td><td>${totalPartTime}</td></tr>
-            <tr><td>Total</td><td>${totalEmployees}</td></tr>
+            <tr><td>Full-time</td><td class="quantity">${totalFullTime}</td></tr>
+            <tr><td>Part-time</td><td class="quantity">${totalEmployees - totalFullTime}</td></tr>
+            <tr><td>Total</td><td class="quantity">${totalEmployees}</td></tr>
         </table>
 
         <%@include file="footer.jsp" %>

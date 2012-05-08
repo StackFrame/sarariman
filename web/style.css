@@ -18,7 +18,7 @@ body {
     text-align: center;
 }
 
-.duration, .task, .currency, .line_item, .percentage {
+.quantity, .duration, .task, .currency, .line_item, .percentage {
     text-align: right;
     font-family: monospace;
 }
