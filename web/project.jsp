@@ -150,6 +150,37 @@
             </c:forEach>
         </ul>
 
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT v.employee, v.begin, v.end
+            FROM vacation AS v
+            JOIN task_assignments AS ta ON ta.employee = v.employee
+            JOIN tasks AS t on t.id = ta.task
+            JOIN projects AS p ON p.id = t.project
+            WHERE p.id = ? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+            GROUP BY v.employee, v.begin, v.end
+            ORDER BY v.begin
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <c:if test="${resultSet.rowCount != 0}">
+            <h2>Scheduled Vacation</h2>
+            <ul>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <li>
+                        ${directory.byNumber[row.employee].fullName}:
+                        <c:choose>
+                            <c:when test="${row.begin eq row.end}">
+                                <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" />
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" /> -
+                                <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
+                            </c:otherwise>
+                        </c:choose>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
         <c:if test="${isCostManager}">
             <c:set var="lineItems" value="${project.lineItems}"/>
             <c:if test="${!empty lineItems}">
