@@ -466,6 +466,20 @@
             </ul>
         </c:if>
 
+        <h2>Upcoming Holidays</h2>
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT * FROM holidays WHERE date >= DATE(NOW()) ORDER BY date
+        </sql:query>
+        <table>
+            <tr><th>Date</th><th>Holiday</th></tr>
+            <c:forEach var="row" items="${resultSet.rows}">
+                <tr>
+                    <td>${row.date}</td>
+                    <td>${row.description}</td>
+                </tr>
+            </c:forEach>
+        </table>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
