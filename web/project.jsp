@@ -229,7 +229,7 @@
                     <c:forEach var="lineItem" items="${lineItems}">
                         <tr>
                             <td class="line_item">${lineItem.id}</td>
-                            <td>${lineItem.description}</td>
+                            <td>${fn:escapeXml(lineItem.description)}</td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded}"/></td>
                             <c:set var="fundedTotal" value="${fundedTotal + lineItem.funded}"/>
 
