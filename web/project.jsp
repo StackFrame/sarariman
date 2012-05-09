@@ -221,8 +221,8 @@
             <c:if test="${!empty lineItems}">
                 <table class="altrows" id="line_items">
                     <caption>Line Items</caption>
-                    <tr><th>Line Item</th><th>Description</th><th>Funded</th><th colspan="3">Expended</th></tr>
-                    <tr><th colspan="3"></th><th>Hours</th><th>Dollars</th><th>Remaining</th></tr>
+                    <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="3">Expended</th></tr>
+                    <tr><th>Start</th><th>End</th><th>Hours</th><th>Dollars</th><th>Remaining</th></tr>
                     <c:set var="fundedTotal" value="0.0"/>
                     <c:set var="expendedHoursTotal" value="0.0"/>
                     <c:set var="expendedDollarsTotal" value="0.0"/>
@@ -230,6 +230,8 @@
                         <tr>
                             <td class="line_item">${lineItem.id}</td>
                             <td>${fn:escapeXml(lineItem.description)}</td>
+                            <td class="date"><fmt:formatDate value="${lineItem.pop.start}" pattern="yyyy-MM-dd"/></td>
+                            <td class="date"><fmt:formatDate value="${lineItem.pop.end}" pattern="yyyy-MM-dd"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded}"/></td>
                             <c:set var="fundedTotal" value="${fundedTotal + lineItem.funded}"/>
 
@@ -247,7 +249,7 @@
 
                             <c:set var="expendedDuration" value="${resultSet.rows[0].durationTotal}"/>
                             <c:set var="expendedCost" value="${resultSet.rows[0].costTotal}"/>
-                            <td class="duration">${expendedDuration}</td>
+                            <td class="duration"><fmt:formatNumber value="${expendedDuration}" minFractionDigits="2"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
                             <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
                             <c:set var="expendedHoursTotal" value="${expendedHoursTotal + expendedDuration}"/>
@@ -263,9 +265,9 @@
                         </tr>
                     </c:forEach>
                     <tr>
-                        <td colspan="2">Total</td>
+                        <td colspan="4">Total</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal}"/></td>
-                        <td class="duration">${expendedHoursTotal}</td>
+                        <td class="duration"><fmt:formatNumber value="${expendedHoursTotal}" minFractionDigits="2"/></td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - expendedDollarsTotal}"/></td>
                     </tr>
