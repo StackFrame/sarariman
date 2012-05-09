@@ -191,9 +191,11 @@
                 <input type="hidden" name="action" value="add"/>
                 <select name="task">
                     <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                        SELECT id, name
+                        SELECT tasks.id, tasks.name
                         FROM tasks
-                        WHERE active = 1
+                        WHERE tasks.id NOT IN
+                        (SELECT task_assignments.task FROM task_assignments WHERE task_assignments.employee = ?)
+                        <sql:param value="${param.id}"/>
                     </sql:query>
                     <c:forEach var="row" items="${resultSet.rows}">
                         <option value="${row.id}">${row.id} - ${fn:escapeXml(row.name)}</option>
