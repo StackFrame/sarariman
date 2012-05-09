@@ -41,6 +41,10 @@
 
                 <input type="submit" value="Schedule" name="schedule"/>
             </p>
+            <p>                
+                Enter the begin and end date of your vacation time. If you are going to be out for a single day, just set the end
+                date to be the same as the begin date. Supplying a comment is optional.
+            </p>
         </form>
 
         <%@include file="../footer.jsp" %>
