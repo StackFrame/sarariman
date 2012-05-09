@@ -528,9 +528,18 @@
                 <ul>
                     <c:forEach var="row" items="${resultSet.rows}">
                         <li>
-                            <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" /> -
-                            <fmt:formatDate value="${row.end}" type="both" dateStyle="long" />
-                            ${fn:escapeXml(row.comment)}
+                            <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                            <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
+                            <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
+                            <c:choose>
+                                <c:when test="${beginDate eq endDate}">
+                                    <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                </c:otherwise>
+                            </c:choose>
+                            - ${fn:escapeXml(row.comment)}
                             <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
                                 <input type="hidden" name="id" value="${row.id}"/>
                                 <input type="submit" name="Edit" value="edit"/>
