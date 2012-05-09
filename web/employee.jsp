@@ -203,6 +203,7 @@
                         <sql:param value="${param.id}"/>
                     </sql:query>
                     <c:forEach var="row" items="${resultSet.rows}">
+                        <!-- FIXME: Add customer name. -->
                         <option value="${row.id}">${row.id} - ${fn:escapeXml(row.name)}</option>
                     </c:forEach>
                 </select>
