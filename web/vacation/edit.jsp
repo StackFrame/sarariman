@@ -39,6 +39,8 @@
             <sql:param value="${param.end}"/>
         </sql:query>
 
+        <!-- FIXME: Validate that end is greater than begin. -->
+
         <form method="POST" action="handleEdit.jsp">
             <p>
                 <label for="begin">Begin: </label>

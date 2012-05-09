@@ -31,6 +31,8 @@
         <%@include file="../header.jsp" %>
         <h1>Schedule Out of Office Time</h1>
 
+        <!-- FIXME: Validate that end is greater than begin. -->
+
         <form method="POST" action="handleCreate.jsp">
             <p>
                 <label for="begin">Begin: </label>
