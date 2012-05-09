@@ -193,8 +193,13 @@
                     <sql:query dataSource="jdbc/sarariman" var="resultSet">
                         SELECT tasks.id, tasks.name
                         FROM tasks
+                        LEFT JOIN projects ON projects.id = tasks.project
+                        LEFT JOIN customers ON customers.id = projects.customer
                         WHERE tasks.id NOT IN
                         (SELECT task_assignments.task FROM task_assignments WHERE task_assignments.employee = ?)
+                        AND tasks.active = TRUE
+                        AND (projects.id IS NULL OR projects.active = TRUE)
+                        AND (customers.id IS NULL OR customers.active = TRUE)
                         <sql:param value="${param.id}"/>
                     </sql:query>
                     <c:forEach var="row" items="${resultSet.rows}">
