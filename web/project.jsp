@@ -182,6 +182,31 @@
             </ul>
         </c:if>
 
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT v.employee, v.begin, v.end, v.comment
+            FROM out_of_office AS v
+            JOIN task_assignments AS ta ON ta.employee = v.employee
+            JOIN tasks AS t on t.id = ta.task
+            JOIN projects AS p ON p.id = t.project
+            WHERE p.id = ? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+            GROUP BY v.employee, v.begin, v.end, v.comment
+            ORDER BY v.begin
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <c:if test="${resultSet.rowCount != 0}">
+            <h2>Scheduled Out of Office</h2>
+            <ul>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <li>
+                        ${directory.byNumber[row.employee].fullName}:
+                        <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" /> -
+                        <fmt:formatDate value="${row.end}" type="both" dateStyle="long" />
+                        ${fn:escapeXml(row.comment)}
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
         <c:if test="${isCostManager}">
             <c:set var="lineItems" value="${project.lineItems}"/>
             <c:if test="${!empty lineItems}">
