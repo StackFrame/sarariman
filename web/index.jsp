@@ -517,6 +517,34 @@
             </c:if>
         </p>
 
+        <h2 id="outOfOffice">Scheduled Out of Office</h2>
+        <p>
+            <a href="outOfOffice/create.jsp">Add an entry</a>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT id, begin, end, comment FROM out_of_office WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+                <sql:param value="${employeeNumber}"/>
+            </sql:query>
+            <c:if test="${resultSet.rowCount != 0}">
+                <ul>
+                    <c:forEach var="row" items="${resultSet.rows}">
+                        <li>
+                            <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" /> -
+                            <fmt:formatDate value="${row.end}" type="both" dateStyle="long" />
+                            ${fn:escapeXml(row.comment)}
+                            <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
+                                <input type="hidden" name="id" value="${row.id}"/>
+                                <input type="submit" name="Edit" value="edit"/>
+                            </form>
+                            <form style="display:inline" method="POST" action="outOfOffice/handleDelete.jsp">
+                                <input type="hidden" name="id" value="${row.id}"/>
+                                <input type="submit" name="Delete" value="delete"/>
+                            </form>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:if>
+        </p>
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
