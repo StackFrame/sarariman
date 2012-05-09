@@ -32,6 +32,7 @@
                 <c:forEach var="row" items="${resultSet.rows}">
                     <li>
                         ${directory.byNumber[row.employee].fullName}:
+                        <!-- FIXME: This could be much nicer. e.g., "May 21, 2012 - May 25, 2012" could be "May 21 - 25, 2012", "May 21, 2012 - June 2, 2012" could be "May 21 - June 2, 2012". -->
                         <c:choose>
                             <c:when test="${row.begin eq row.end}">
                                 <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" />
