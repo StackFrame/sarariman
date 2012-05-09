@@ -107,6 +107,23 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT begin, end, comment FROM out_of_office WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <c:if test="${resultSet.rowCount != 0}">
+            <h2>Scheduled Out of Office</h2>
+            <ul>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <li>
+                        <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" /> -
+                        <fmt:formatDate value="${row.end}" type="both" dateStyle="long" />
+                        ${fn:escapeXml(row.comment)}
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT project FROM project_managers WHERE employee=?
             <sql:param value="${param.id}"/>
         </sql:query>
