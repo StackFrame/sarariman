@@ -221,7 +221,7 @@
             <c:if test="${!empty lineItems}">
                 <table class="altrows" id="line_items">
                     <caption>Line Items</caption>
-                    <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="3">Expended</th></tr>
+                    <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="3">Expended</th><th rowspan="2"></th></tr>
                     <tr><th>Start</th><th>End</th><th>Hours</th><th>Dollars</th><th>Remaining</th></tr>
                     <c:set var="fundedTotal" value="0.0"/>
                     <c:set var="expendedHoursTotal" value="0.0"/>
@@ -262,6 +262,13 @@
                             <td class="currency ${error}">
                                 <fmt:formatNumber type="currency" value="${remaining}"/>                                       
                             </td>
+                            <td>   
+                                <form style="display:inline" method="GET" action="lineItems/edit.jsp">
+                                    <input type="hidden" name="id" value="${lineItem.id}"/>
+                                    <input type="hidden" name="project" value="${lineItem.project}"/>
+                                    <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+                                </form>
+                            </td>
                         </tr>
                     </c:forEach>
                     <tr>
@@ -270,6 +277,7 @@
                         <td class="duration"><fmt:formatNumber value="${expendedHoursTotal}" minFractionDigits="2"/></td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - expendedDollarsTotal}"/></td>
+                        <td></td>
                     </tr>
                 </table>
                 <c:if test="${fundedTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
