@@ -76,6 +76,21 @@
             </form>
         </c:if>
 
+        <sql:query dataSource="jdbc/sarariman" var="result">
+            SELECT URL, description
+            FROM project_links
+            WHERE project = ?
+            <sql:param value="${project.id}"/>
+        </sql:query>
+        <c:if test="${!empty result.rows}">
+            <h2>Links</h2>
+            <ul>
+                <c:forEach var="row" items="${result.rows}">
+                    <li><a href="${fn:escapeXml(row.URL)}">${fn:escapeXml(row.description)}</a></li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
         <h2>Managers</h2>
         <ul>
             <sql:query dataSource="jdbc/sarariman" var="result">
