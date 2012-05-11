@@ -500,7 +500,9 @@
                                     <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
                                 </c:otherwise>
                             </c:choose>
-                            ${fn:escapeXml(row.comment)}
+                            <c:if test="${!empty row.comment}">
+                                - ${fn:escapeXml(row.comment)}
+                            </c:if>
                             <form style="display:inline" method="GET" action="vacation/edit.jsp">
                                 <input type="hidden" name="begin" value="${row.begin}"/>
                                 <input type="hidden" name="end" value="${row.end}"/>
@@ -539,7 +541,9 @@
                                     <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
                                 </c:otherwise>
                             </c:choose>
-                            - ${fn:escapeXml(row.comment)}
+                            <c:if test="${!empty row.comment}">
+                                - ${fn:escapeXml(row.comment)}
+                            </c:if>
                             <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
                                 <input type="hidden" name="id" value="${row.id}"/>
                                 <input type="submit" name="Edit" value="edit"/>
