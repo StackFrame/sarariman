@@ -91,6 +91,24 @@
             </ul>
         </c:if>
 
+        <c:if test="${user.administrator || isCostManager}">
+            <sql:query dataSource="jdbc/sarariman" var="result">
+                SELECT DATEDIFF(NOW(), sent) AS days
+                FROM invoice_info
+                WHERE project = ?
+                ORDER BY sent DESC LIMIT 1;
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <c:choose>
+                <c:when test="${!empty result.rows}">
+                    <p>Days since last invoice: ${result.rows[0].days}</p>
+                </c:when>
+                <c:otherwise>
+                    <p class="error">Not yet invoiced.</p>
+                </c:otherwise>
+            </c:choose>
+        </c:if>
+
         <h2>Managers</h2>
         <ul>
             <sql:query dataSource="jdbc/sarariman" var="result">
