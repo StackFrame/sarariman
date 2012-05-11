@@ -56,6 +56,21 @@
     <body onload="altRows()">
         <a href="tools">Tools</a>
 
+        <sql:query dataSource="jdbc/sarariman" var="averageEntry">
+            SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average
+            FROM hours
+            JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date
+            WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)
+            <sql:param value="${employeeNumber}"/>
+        </sql:query>
+        <c:set var="good" value="${averageEntry.rows[0].average < 0.25}"/>
+        <p>
+            <c:choose>
+                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!">&#x263A;</span></c:when> 
+                <c:otherwise><span title="Your recent timesheet entries have been late.">&#x2639;</span></c:otherwise>
+            </c:choose>
+        </p>
+
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
