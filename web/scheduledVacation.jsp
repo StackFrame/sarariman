@@ -42,7 +42,9 @@
                                 <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
                             </c:otherwise>
                         </c:choose>
-                        ${fn:escapeXml(row.comment)}
+                        <c:if test="${!empty row.comment}">
+                            - ${fn:escapeXml(row.comment)}
+                        </c:if>
                     </li>
                 </c:forEach>
             </ul>
