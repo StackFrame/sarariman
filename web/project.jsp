@@ -105,50 +105,52 @@
             </c:forEach>
         </ul>
 
-        <h2>Timesheet Contacts</h2>
-        <ul>
-            <sql:query dataSource="jdbc/sarariman" var="emailResult">
-                SELECT c.name, c.email, c.id
-                FROM project_timesheet_contacts as ptc
-                JOIN projects AS p ON ptc.project = p.id
-                JOIN contacts AS c ON c.id = ptc.contact
-                WHERE p.id = ?
-                <sql:param value="${project.id}"/>
-            </sql:query>
-            <c:forEach var="row" items="${emailResult.rows}">
-                <c:url var="contactLink" value="contact">
-                    <c:param name="id" value="${row.id}"/>
-                </c:url>
-                <c:url var="removeLink" value="removeProjectTimesheetContact.jsp">
-                    <c:param name="contact" value="${row.id}"/>
-                    <c:param name="project" value="${project.id}"/>
-                </c:url>
-                <li>
-                    <a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a>
-                    <c:if test="${user.administrator}">
-                        <a href="${fn:escapeXml(removeLink)}" title="remove ${row.name} as a timesheet contact">X</a>
-                    </c:if>
-                </li>
-            </c:forEach>
-        </ul>
+        <c:if test="${isManager || isCostManager}">
+            <h2>Timesheet Contacts</h2>
+            <ul>
+                <sql:query dataSource="jdbc/sarariman" var="emailResult">
+                    SELECT c.name, c.email, c.id
+                    FROM project_timesheet_contacts as ptc
+                    JOIN projects AS p ON ptc.project = p.id
+                    JOIN contacts AS c ON c.id = ptc.contact
+                    WHERE p.id = ?
+                    <sql:param value="${project.id}"/>
+                </sql:query>
+                <c:forEach var="row" items="${emailResult.rows}">
+                    <c:url var="contactLink" value="contact">
+                        <c:param name="id" value="${row.id}"/>
+                    </c:url>
+                    <c:url var="removeLink" value="removeProjectTimesheetContact.jsp">
+                        <c:param name="contact" value="${row.id}"/>
+                        <c:param name="project" value="${project.id}"/>
+                    </c:url>
+                    <li>
+                        <a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a>
+                        <c:if test="${user.administrator}">
+                            <a href="${fn:escapeXml(removeLink)}" title="remove ${row.name} as a timesheet contact">X</a>
+                        </c:if>
+                    </li>
+                </c:forEach>
+            </ul>
 
-        <h2>Invoice Contacts</h2>
-        <ul>
-            <sql:query dataSource="jdbc/sarariman" var="emailResult">
-                SELECT c.name, c.email, c.id
-                FROM project_invoice_contacts as ptc
-                JOIN projects AS p ON ptc.project = p.id
-                JOIN contacts AS c ON c.id = ptc.contact
-                WHERE p.id = ?
-                <sql:param value="${project.id}"/>
-            </sql:query>
-            <c:forEach var="row" items="${emailResult.rows}">
-                <c:url var="contactLink" value="contact">
-                    <c:param name="id" value="${row.id}"/>
-                </c:url>
-                <li><a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a></li>
-            </c:forEach>
-        </ul>
+            <h2>Invoice Contacts</h2>
+            <ul>
+                <sql:query dataSource="jdbc/sarariman" var="emailResult">
+                    SELECT c.name, c.email, c.id
+                    FROM project_invoice_contacts as ptc
+                    JOIN projects AS p ON ptc.project = p.id
+                    JOIN contacts AS c ON c.id = ptc.contact
+                    WHERE p.id = ?
+                    <sql:param value="${project.id}"/>
+                </sql:query>
+                <c:forEach var="row" items="${emailResult.rows}">
+                    <c:url var="contactLink" value="contact">
+                        <c:param name="id" value="${row.id}"/>
+                    </c:url>
+                    <li><a href="${contactLink}" title="go to contact details for ${row.name}">${row.name} &lt;${row.email}&gt;</a></li>
+                </c:forEach>
+            </ul>
+        </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT v.employee, v.begin, v.end, v.comment
@@ -284,44 +286,46 @@
             </c:if>                
         </c:if>
 
-        <table class="altrows" id="tasks">
-            <caption>Tasks</caption>
-            <tr><th>ID</th><th>Task</th><th>Line Item</th><th>Active</th></tr>
-            <c:forEach var="task" items="${project.tasks}">
-                <tr>
-                    <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
-                    <td><a href="${link}">${task.id}</a></td>
-                    <td><a href="${link}">${fn:escapeXml(task.name)}</a></td>
-                    <td class="line_item">${task.lineItem}</td>
-                    <td>
-                        <form>
-                            <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
+        <c:if test="${isManager || isCostManager}">
+            <table class="altrows" id="tasks">
+                <caption>Tasks</caption>
+                <tr><th>ID</th><th>Task</th><th>Line Item</th><th>Active</th></tr>
+                <c:forEach var="task" items="${project.tasks}">
+                    <tr>
+                        <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
+                        <td><a href="${link}">${task.id}</a></td>
+                        <td><a href="${link}">${fn:escapeXml(task.name)}</a></td>
+                        <td class="line_item">${task.lineItem}</td>
+                        <td>
+                            <form>
+                                <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
+                            </form>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT a.employee, t.id, t.name
-            FROM task_assignments as a
-            JOIN tasks AS t on t.id = a.task
-            JOIN projects AS p on p.id = t.project
-            WHERE p.id = ?
-            <sql:param value="${project.id}"/>
-        </sql:query>
-        <table class="altrows" id="task_assignments">
-            <caption>Task Assignments</caption>
-            <tr><th>Employee</th><th colspan="2">Task</th></tr>
-            <c:forEach var="row" items="${resultSet.rows}">
-                <tr>
-                    <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
-                    <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
-                    <c:url var="link" value="task"><c:param name="task_id" value="${row.id}"/></c:url>
-                    <td><a href="${link}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
-                </tr>
-            </c:forEach>
-        </table>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT a.employee, t.id, t.name
+                FROM task_assignments as a
+                JOIN tasks AS t on t.id = a.task
+                JOIN projects AS p on p.id = t.project
+                WHERE p.id = ?
+                <sql:param value="${project.id}"/>
+            </sql:query>
+            <table class="altrows" id="task_assignments">
+                <caption>Task Assignments</caption>
+                <tr><th>Employee</th><th colspan="2">Task</th></tr>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <tr>
+                        <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
+                        <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
+                        <c:url var="link" value="task"><c:param name="task_id" value="${row.id}"/></c:url>
+                        <td><a href="${link}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
 
         <c:if test="${isManager || user.administrator}">
 
@@ -495,12 +499,14 @@
 
         </c:if>
 
-        <p>
-            <c:url var="hoursByProject" value="hoursByProject">
-                <c:param name="project" value="${param.id}"/>
-            </c:url>
-            <a href="${hoursByProject}">Hours billed to this project</a>.
-        </p>
+        <c:if test="${isManager || isCostManager}">
+            <p>
+                <c:url var="hoursByProject" value="hoursByProject">
+                    <c:param name="project" value="${param.id}"/>
+                </c:url>
+                <a href="${hoursByProject}">Hours billed to this project</a>.
+            </p>
+        </c:if>
 
         <c:if test="${isCostManager}">
             <c:url var="projectBilled" value="projectBilled">
