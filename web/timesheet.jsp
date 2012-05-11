@@ -88,7 +88,10 @@
                 </form>
         </c:if>
 
-        <h2>Timesheet for ${employee.fullName} for the week of ${thisWeekStart}</h2>
+        <c:url var="employeeLink" value="employee">
+            <c:param name="id" value="${employee.number}"/>
+        </c:url>
+        <h2>Timesheet for <a href="${employeeLink}">${employee.fullName}</a> for the week of ${thisWeekStart}</h2>
         <c:if test="${!timesheet.approved}">
             <p class="error">This timesheet is not yet approved.</p>
         </c:if>
