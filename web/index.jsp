@@ -66,8 +66,8 @@
         <c:set var="good" value="${averageEntry.rows[0].average < 0.25}"/>
         <p>
             <c:choose>
-                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!">&#x263A;</span></c:when> 
-                <c:otherwise><span title="Your recent timesheet entries have been late.">&#x2639;</span></c:otherwise>
+                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when> 
+                <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
             </c:choose>
         </p>
 
