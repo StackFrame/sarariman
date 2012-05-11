@@ -41,13 +41,13 @@
             <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
             <c:if test="${param.showInactive == 'on'}"><input type="hidden" name="showInactive" value="on"/></c:if>
-            </form>
+        </form>
 
-            <form action="${request.requestURI}" method="get">
+        <form action="${request.requestURI}" method="get">
             <input type="hidden" name="week" value="${param.week}"/>
             <label for="showInactive">Show Inactive</label>
             <input type="checkbox" name="showInactive" id="showInactive" <c:if test="${param.showInactive == 'on'}">checked="checked"</c:if> /><input type="submit" value="Update"/>
-            </form>
+        </form>
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
@@ -61,7 +61,7 @@
         %>
 
         <table class="altrows" id="timesheets">
-            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th></tr>
+            <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>On Time</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>
                 <c:if test="${(employee.active || param.showInactive == 'on') && sarariman:contains(reports, employee.number)}">
@@ -94,14 +94,33 @@
                         <td class="checkbox">
                             <form>
                                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                                </form>
-                            </td>
-                            <td class="checkbox">
-                                <form>
-                                    <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                                </form>
-                            </td>
-                        </tr>
+                            </form>
+                        </td>
+                        <td class="checkbox">
+                            <form>
+                                <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
+                            </form>
+                        </td>
+
+                        <sql:query dataSource="jdbc/sarariman" var="averageEntry">
+                            SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average
+                            FROM hours
+                            JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date
+                            WHERE hours.employee = ? AND hours.date >= ?
+                            <sql:param value="${employee.number}"/>
+                            <sql:param value="${thisWeekStart}"/>
+                        </sql:query>
+                        <c:set var="good" value="${averageEntry.rows[0].average < 0.25}"/>
+                        <td>
+                            <span style="font-size: 14pt">
+                                <c:choose>
+                                    <c:when test="${good}">&#x263A;</c:when> 
+                                    <c:otherwise>&#x2639;</c:otherwise>
+                                </c:choose>
+                            </span>
+                        </td>
+
+                    </tr>
                 </c:if>
             </c:forEach>
         </table>
