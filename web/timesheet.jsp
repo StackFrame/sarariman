@@ -88,6 +88,7 @@
                 </form>
         </c:if>
 
+        <!-- FIXME: Make this render without hyperlink in printable page? -->
         <c:url var="employeeLink" value="employee">
             <c:param name="id" value="${employee.number}"/>
         </c:url>
