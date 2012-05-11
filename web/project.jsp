@@ -21,12 +21,12 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <script type="text/javascript" src="utilities.js"/>
-        <title>Project ${project.id}</title>
+        <title>${fn:escapeXml(project.name)} (project ${project.id})</title>
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
 
-        <h1>Project ${project.id}</h1>
+        <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
         <form method="POST" action="projectController">
             <input type="hidden" name="action" value="update"/>
             <input type="hidden" name="id" value="${project.id}"/>
