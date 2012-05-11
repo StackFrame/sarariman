@@ -27,51 +27,54 @@
         <%@include file="header.jsp" %>
 
         <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
-        <form method="POST" action="projectController">
-            <input type="hidden" name="action" value="update"/>
-            <input type="hidden" name="id" value="${project.id}"/>
 
-            <label for="name">Name: </label>
-            <input type="text" size="40" id="name" name="name" value="${fn:escapeXml(project.name)}"/><br/>
+        <c:if test="${user.administrator || isManager || isCostManager}">
+            <form method="POST" action="projectController">
+                <input type="hidden" name="action" value="update"/>
+                <input type="hidden" name="id" value="${project.id}"/>
 
-            <label for="customer">Customer: </label>
-            <select id="customer" name="customer">
-                <c:forEach var="entry" items="${sarariman.customers}">
-                    <option value="${entry.key}" <c:if test="${entry.key == project.customer}">selected="selected"</c:if>>${fn:escapeXml(entry.value.name)}</option>
-                </c:forEach>
-            </select><br/>
+                <label for="name">Name: </label>
+                <input type="text" size="40" id="name" name="name" value="${fn:escapeXml(project.name)}"/><br/>
 
-            <label for="contract">Contract: </label>
-            <input type="text" size="40" id="contract" name="contract" value="${fn:escapeXml(project.contract)}"/><br/>
+                <label for="customer">Customer: </label>
+                <select id="customer" name="customer">
+                    <c:forEach var="entry" items="${sarariman.customers}">
+                        <option value="${entry.key}" <c:if test="${entry.key == project.customer}">selected="selected"</c:if>>${fn:escapeXml(entry.value.name)}</option>
+                    </c:forEach>
+                </select><br/>
 
-            <label for="subcontract">Subcontract: </label>
-            <input type="text" size="40" id="subcontract" name="subcontract" value="${fn:escapeXml(project.subcontract)}"/><br/>
+                <label for="contract">Contract: </label>
+                <input type="text" size="40" id="contract" name="contract" value="${fn:escapeXml(project.contract)}"/><br/>
 
-            <c:if test="${isCostManager}">
-                <label for="funded">Funded: </label>
-                <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>
+                <label for="subcontract">Subcontract: </label>
+                <input type="text" size="40" id="subcontract" name="subcontract" value="${fn:escapeXml(project.subcontract)}"/><br/>
 
-                <label for="previously_billed">Previously Billed: </label>
-                <input type="text" size="13" id="previously_billed" name="previously_billed" value="${fn:escapeXml(project.previouslyBilled)}"/><br/>
+                <c:if test="${isCostManager}">
+                    <label for="funded">Funded: </label>
+                    <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>
 
-                <label for="terms">Terms </label>
-                <input type="text" id="terms" name="terms" value="${project.terms}"/><br/>
+                    <label for="previously_billed">Previously Billed: </label>
+                    <input type="text" size="13" id="previously_billed" name="previously_billed" value="${fn:escapeXml(project.previouslyBilled)}"/><br/>
 
-                <label for="odc_fee">ODC Fee </label>
-                <input type="text" id="odc_fee" name="odc_fee" value="${project.ODCFee}"/><br/>
-            </c:if>
+                    <label for="terms">Terms </label>
+                    <input type="text" id="terms" name="terms" value="${project.terms}"/><br/>
 
-            <label for="pop_start">Period of Performance Start: </label>
-            <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${project.pop.start}" pattern="yyyy-MM-dd"/>"/>
+                    <label for="odc_fee">ODC Fee </label>
+                    <input type="text" id="odc_fee" name="odc_fee" value="${project.ODCFee}"/><br/>
+                </c:if>
 
-            <label for="pop_end">End: </label>
-            <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${project.pop.end}" pattern="yyyy-MM-dd"/>"/><br/>
+                <label for="pop_start">Period of Performance Start: </label>
+                <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${project.pop.start}" pattern="yyyy-MM-dd"/>"/>
 
-            <label for="active">Active: </label>
-            <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
+                <label for="pop_end">End: </label>
+                <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${project.pop.end}" pattern="yyyy-MM-dd"/>"/><br/>
 
-            <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-        </form>
+                <label for="active">Active: </label>
+                <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
+
+                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
+        </c:if>
 
         <h2>Managers</h2>
         <ul>
