@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -40,6 +40,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private EmailDispatcher emailDispatcher;
     private CronJobs cronJobs;
     private String logoURL;
+    private String mountPoint = "<unknown>";
 
     public String getVersion() {
         return Version.version;
@@ -117,6 +118,10 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return logoURL;
     }
 
+    public String getMountPoint() {
+        return mountPoint;
+    }
+
     public Collection<LaborCategoryAssignment> getProjectBillRates() {
         return projectBillRates;
     }
@@ -168,6 +173,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");
+            mountPoint = (String)envContext.lookup("mountPoint");
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
@@ -188,8 +194,8 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
 
         for (Employee employee : directory.getByUserName().values()) {
             if (employee.isAdministrator()) {
-                emailDispatcher.send(employee.getEmail(), null, "sarariman started",
-                        String.format("Sarariman version %s has been started on %s.", getVersion(), hostname));
+                String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname, mountPoint);
+                emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
             }
         }
     }
