@@ -110,7 +110,7 @@
                             <sql:param value="${employee.number}"/>
                             <sql:param value="${thisWeekStart}"/>
                         </sql:query>
-                        <c:set var="good" value="${averageEntry.rows[0].average < 0.25}"/>
+                        <c:set var="good" value="${empty averageEntry.rows[0].average || averageEntry.rows[0].average < 0.25}"/>
                         <td>
                             <span style="font-size: 14pt">
                                 <c:choose>
