@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -44,8 +44,8 @@ public class MorningTask extends TimerTask {
                 if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
                     Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
                     Collection<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
-                    emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses,
-                            "late timesheet", "Please submit your timesheet for the week of " + prevWeek + ".");
+                    String message = "Please submit your timesheet for the week of " + prevWeek + " at " + sarariman.getMountPoint() + ".";
+                    emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "late timesheet", message);
                 }
             } catch (SQLException se) {
                 logger.log(Level.SEVERE, "could not get hours for " + today, se);
