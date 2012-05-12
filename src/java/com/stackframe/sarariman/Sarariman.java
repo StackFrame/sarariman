@@ -40,7 +40,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private EmailDispatcher emailDispatcher;
     private CronJobs cronJobs;
     private String logoURL;
-    private String mountPoint = "<unknown>";
+    private String mountPoint;
 
     public String getVersion() {
         return Version.version;
