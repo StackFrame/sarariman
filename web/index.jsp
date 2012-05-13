@@ -489,7 +489,7 @@
             <tr><th>Date</th><th>Holiday</th></tr>
             <c:forEach var="row" items="${resultSet.rows}">
                 <tr>
-                    <td>${row.date}</td>
+                    <td><fmt:formatDate value="${row.date}" type="date" pattern="MMM d" /></td>
                     <td>${row.description}</td>
                 </tr>
             </c:forEach>
