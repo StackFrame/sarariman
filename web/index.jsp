@@ -35,11 +35,6 @@
         <!-- /TinyMCE -->
 
         <script>
-            function resetSelect(id) {
-                var selectElement = document.getElementById(id);
-                selectElement[0].selected = "1";
-            }
-
             // FIXME: Replace this with a single function that validates the entire form and enables the submit button if valid.
             function enable(id) {
                 var element = document.getElementById(id);
@@ -90,15 +85,8 @@
         <c:if test="${!empty param.recordTime}">
 
             <c:choose>
-                <c:when test="${!empty param.unbillable_task && !empty param.billable_task}">
-                    <p class="error">You must enter a task only from billable or unbillable.</p>
-                    <c:set var="insertError" value="true"/>
-                </c:when>
-                <c:when test="${!empty param.unbillable_task}">
-                    <c:set var="task" value="${param.unbillable_task}"/>
-                </c:when>
-                <c:when test="${!empty param.billable_task}">
-                    <c:set var="task" value="${param.billable_task}"/>
+                <c:when test="${!empty param.task}">
+                    <c:set var="task" value="${param.task}"/>
                 </c:when>
                 <c:otherwise>
                     <p class="error">You must enter a task.</p>
@@ -197,8 +185,8 @@
                     <input size="10" type="text" name="date" id="date" value="${now}"/>
                     <br/>
 
-                    <label for="billable_task">Billable Task:</label>
-                    <select name="billable_task" id="billable_task" onchange="resetSelect('unbillable_task');enable('submit');">
+                    <label for="task">Task:</label>
+                    <select name="task" id="task" onchange="enable('submit');">
                         <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman:billableTasks(sarariman, user)}">
                             <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
@@ -207,12 +195,6 @@
                                 </c:if>
                             </option>
                         </c:forEach>
-                    </select>
-                    <br/>
-
-                    <label for="unbillable_task">Unbillable Task:</label>
-                    <select name="unbillable_task" id="unbillable_task" onchange="resetSelect('billable_task');enable('submit');">
-                        <option selected="true"></option>
                         <c:forEach var="task" items="${sarariman:unbillableTasks(sarariman, user)}">
                             <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
                                 <c:if test="${!empty task.project}">
@@ -220,7 +202,7 @@
                                 </c:if>
                             </option>
                         </c:forEach>
-                    </select>                    
+                    </select>
                     <br/>
 
                     <label for="duration">Duration:</label>
