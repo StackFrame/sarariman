@@ -557,7 +557,7 @@
     <env-entry>
         <env-entry-name>mountPoint</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>https://www.company.com/intraweb/sarariman/</env-entry-value>
+        <env-entry-value>https://is3.stackframe.com/sarariman/</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>inhibitEmail</env-entry-name>
