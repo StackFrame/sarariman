@@ -32,8 +32,10 @@ public class LaborCosts extends HttpServlet {
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     }
 
-    /** 
-     * Handles the HTTP <code>GET</code> method.
+    /**
+     * Handles the HTTP
+     * <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -47,14 +49,14 @@ public class LaborCosts extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             out.println("Employee,Task,Line Item,Charge Number,Labor Category,Date,Rate,Duration,Cost");
-            PreparedStatement ps = connection.prepareStatement("SELECT i.employee, i.task, i.date, h.duration, t.project, s.po_line_item, s.charge_number " +
-                    "FROM invoices AS i " +
-                    "JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date " +
-                    "JOIN tasks AS t on i.task = t.id " +
-                    "JOIN projects AS p ON t.project = p.id " +
-                    "JOIN saic_tasks AS s ON i.task = s.task " +
-                    "WHERE i.id = ? " +
-                    "ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC");
+            PreparedStatement ps = connection.prepareStatement("SELECT i.employee, i.task, i.date, h.duration, t.project, s.po_line_item, s.charge_number "
+                    + "FROM invoices AS i "
+                    + "JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date "
+                    + "JOIN tasks AS t on i.task = t.id "
+                    + "JOIN projects AS p ON t.project = p.id "
+                    + "JOIN saic_tasks AS s ON i.task = s.task "
+                    + "WHERE i.id = ? "
+                    + "ORDER BY s.po_line_item ASC, h.employee ASC, h.date ASC, h.task ASC, s.charge_number ASC");
             ps.setString(1, invoice);
             try {
                 ResultSet resultSet = ps.executeQuery();
@@ -70,9 +72,9 @@ public class LaborCosts extends HttpServlet {
                         BigDecimal scaledDuration = new BigDecimal(duration).setScale(2);
                         int project = resultSet.getInt("project");
                         CostData costData = Invoice.cost(sarariman, project, employeeNumber, date, duration);
-                        out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + "," + chargeNumber + 
-                              ",\"" +   costData.getLaborCategory().getName() + "\"," + date + "," + costData.getRate() + "," +
-                                scaledDuration + "," + costData.getCost());
+                        out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + "," + chargeNumber
+                                + ",\"" + costData.getLaborCategory().getName() + "\"," + date + "," + costData.getRate() + ","
+                                + scaledDuration + "," + costData.getCost());
                     }
                 } finally {
                     resultSet.close();
@@ -92,8 +94,9 @@ public class LaborCosts extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

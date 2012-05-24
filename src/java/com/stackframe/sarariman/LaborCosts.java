@@ -31,8 +31,10 @@ public class LaborCosts extends HttpServlet {
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     }
 
-    /** 
-     * Handles the HTTP <code>GET</code> method.
+    /**
+     * Handles the HTTP
+     * <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -88,8 +90,9 @@ public class LaborCosts extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
