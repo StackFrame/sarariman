@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -67,8 +67,8 @@ public class LaborCosts extends HttpServlet {
                         BigDecimal scaledDuration = new BigDecimal(duration).setScale(2);
                         int project = resultSet.getInt("project");
                         CostData costData = Invoice.cost(sarariman, project, employeeNumber, date, duration);
-                        out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + "," + costData.getLaborCategory().getName()
-                                + "," + date + "," + costData.getRate() + "," + scaledDuration + "," + costData.getCost());
+                        out.println("\"" + employee.getFullName() + "\"," + task + "," + lineItem + ",\"" + costData.getLaborCategory().getName()
+                                + "\"," + date + "," + costData.getRate() + "," + scaledDuration + "," + costData.getCost());
                     }
                 } finally {
                     resultSet.close();
