@@ -29,11 +29,11 @@
             <input type="hidden" name="id" value="${customer.id}"/>
             <input type="text" id="name" name="name" size="40" value="${fn:escapeXml(customer.name)}"/><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-            </form>
+        </form>
 
-            <h2>Projects</h2>
-            <table class="altrows" id="projects">
-                <tr><th>ID</th><th>Name</th></tr>
+        <h2>Projects</h2>
+        <table class="altrows" id="projects">
+            <tr><th>ID</th><th>Name</th></tr>
             <c:forEach var="entry" items="${sarariman.projects}">
                 <c:if test="${entry.value.customer == customer.id}">
                     <tr>
@@ -43,6 +43,12 @@
                 </c:if>
             </c:forEach>
         </table>
+
+        <c:url var="invoicesLink" value="invoicesByCustomer.jsp">
+            <c:param name="customer" value="${param.id}"/>
+        </c:url>
+        <h2><a href="${invoicesLink}">Invoices</a></h2>
+
 
         <%@include file="footer.jsp" %>
     </body>
