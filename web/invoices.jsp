@@ -22,7 +22,7 @@
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
-        
+
         <h1>Invoices</h1>
 
         <!-- FIXME: use invoice_info directly once we have fixed all of the entries. -->
