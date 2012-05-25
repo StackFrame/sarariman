@@ -126,7 +126,9 @@
                                 <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
                             </c:otherwise>
                         </c:choose>
+                        <c:if test="${!empty row.comment}">
                         - ${fn:escapeXml(row.comment)}
+                        </c:if>
                     </li>
                 </c:forEach>
             </ul>
