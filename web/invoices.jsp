@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -28,7 +28,7 @@
         <!-- FIXME: use invoice_info directly once we have fixed all of the entries. -->
 
         <sql:query dataSource="jdbc/sarariman" var="invoices">
-            SELECT DISTINCT id from invoices ORDER BY id DESC
+            SELECT DISTINCT(id) FROM invoice_info ORDER BY id DESC
         </sql:query>
 
         <table id="invoices" class="altrows">
