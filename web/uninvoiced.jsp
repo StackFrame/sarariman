@@ -191,6 +191,7 @@
                             </tr>
                         </c:if>
                     </c:forEach>
+                    <!-- FIXME: Add total duration. -->
                     <tr><td colspan="5">Total Approved</td><td class="currency"><fmt:formatNumber type="currency" value="${totalApproved}"/></td><td></td></tr>
                     <tr><td colspan="5">Total Recorded</td><td class="currency"><fmt:formatNumber type="currency" value="${totalRecorded}"/></td><td></td></tr>
                 </tbody>
