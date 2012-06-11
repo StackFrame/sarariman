@@ -463,6 +463,34 @@
             </ul>
         </c:if>
 
+        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+            SELECT begin, end, name, description FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+        </sql:query>
+        <c:if test="${resultSet.rowCount != 0}">
+            <h2>Events</h2>
+            <ul>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <li>
+                        <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
+                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
+                        <c:choose>
+                            <c:when test="${beginDate eq endDate}">
+                                <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                            </c:otherwise>
+                        </c:choose>
+                        - ${fn:escapeXml(row.name)}
+                        <c:if test="${!empty row.description}">
+                            - ${fn:escapeXml(row.description)}
+                        </c:if>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
         <h2>Upcoming Holidays</h2>
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT * FROM holidays WHERE date >= DATE(NOW()) ORDER BY date
