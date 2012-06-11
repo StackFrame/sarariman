@@ -89,6 +89,7 @@
         </c:if>
 
         <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
+<!-- FIXME: Use chain of command. -->
             <p>Email will go to:</p>
             <sql:query dataSource="jdbc/sarariman" var="emailResult">
                 SELECT c.name, c.email

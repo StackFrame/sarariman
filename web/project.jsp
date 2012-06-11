@@ -382,6 +382,7 @@
             <c:if test="${isCostManager}">
                 <table class="altrows" id="categories">
                     <caption>Labor Categories</caption>
+                    <!-- FIXME: Sort by date and then rate. Check out project 49 for example where this is needed. -->
                     <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th colspan="2">Expended</th><th colspan="2">Invoiced</th></tr>
                     <tr><th colspan="4"></th><th>Hours</th><th>Dollars</th><th>Hours</th><th>Dollars</th></tr>
                     <c:forEach var="entry" items="${sarariman.laborCategories}">
