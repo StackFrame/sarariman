@@ -479,7 +479,7 @@
             </c:if>
 
             <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT h.employee, h.date, h.duration, t.project
+                SELECT h.employee, h.date, h.duration, t.project, h.task
                 FROM hours AS h
                 JOIN tasks AS t on h.task = t.id
                 JOIN projects AS p ON t.project = p.id
@@ -487,7 +487,7 @@
                 <sql:param value="${project.id}"/>
             </sql:query>
             <c:forEach var="row" items="${result.rows}">
-                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
                 <c:if test="${empty costData.laborCategory}">
                     <c:set var="missingLaborCategory" value="true"/>
                     <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName} on ${row.date}!</p>
