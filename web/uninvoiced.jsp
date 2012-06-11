@@ -176,7 +176,7 @@
                                 <td>${fn:escapeXml(row.name)}</td>
                                 <td><a href="${fn:escapeXml(timesheet)}">${row.date}</a></td>
                                 <td class="duration"><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
-                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
                                 <c:set var="totalRecorded" value="${totalRecorded + costData.cost}"/> 
                                 <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                                 <td>

@@ -114,6 +114,35 @@ public class Task {
         }
     }
 
+    public static Task getTask(Sarariman sarariman, int id) throws SQLException {
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT name, billable, line_item, active, project "
+                + "FROM tasks "
+                + "WHERE id = ?");
+        ps.setLong(1, id);
+        try {
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                Collection<Task> list = new ArrayList<Task>();
+                if (resultSet.next()) {
+                    String task_name = resultSet.getString("name");
+                    boolean billable = resultSet.getBoolean("billable");
+                    int lineItem = resultSet.getInt("line_item");
+                    boolean active = resultSet.getBoolean("active");
+                    Project project = Project.getProjects(sarariman).get(resultSet.getLong("project"));
+                    return new Task(id, task_name, billable, lineItem, active, project);
+                }
+
+                return null;
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+            connection.close();
+        }
+    }
+
     public static Collection<Task> getTasks(Sarariman sarariman, Project project) throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item "

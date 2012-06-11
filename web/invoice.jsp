@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2011 StackFrame, LLC
+  Copyright (C) 2009-2012 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -270,7 +270,7 @@
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
 
             <c:forEach var="row" items="${result.rows}">
-                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
                 <c:set var="laborTotal" value="${laborTotal + costData.cost}" scope="request"/>
             </c:forEach>
 
@@ -354,7 +354,7 @@
                         </thead>
                         <tbody>
                             <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
-                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.date, row.duration)}"/>
+                                <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
                                 <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                     <td>${directory.byNumber[row.employee].fullName}</td>
                                     <td><a href="task?task_id=${row.task}">${row.task}</a></td>

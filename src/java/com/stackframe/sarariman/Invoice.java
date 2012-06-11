@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -163,14 +163,15 @@ public class Invoice {
         }
     }
 
-    public static CostData cost(Sarariman sarariman, int project, int employee, Date date, double duration) {
+    public static CostData cost(Sarariman sarariman, int project, int employee, int task, Date date, double duration) throws SQLException {
         Map<Long, LaborCategory> categoriesById = sarariman.getLaborCategories();
         Collection<LaborCategoryAssignment> projectBillRates = sarariman.getProjectBillRates();
-        return cost(sarariman, categoriesById, projectBillRates, project, employee, date, duration);
+        return cost(sarariman, categoriesById, projectBillRates, project, employee, task, date, duration);
     }
 
-    public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, Date date, double duration) {
+    public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, int task_id, Date date, double duration) throws SQLException {
         // FIXME: Need to look at date ranges of both the category and the assignment.
+        Task task = Task.getTask(sarariman, task_id);
         for (LaborCategoryAssignment projectBillRate : projectBillRates) {
             LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
             Employee billRateEmployee = projectBillRate.getEmployee();
@@ -181,6 +182,10 @@ public class Invoice {
                 java.util.Date end = projectBillRate.getPeriodOfPerformanceEnd();
                 if (start.compareTo(date) <= 0 && end.compareTo(date) >= 0) {
                     BigDecimal rate = category.getRate().setScale(2);
+                    if (!task.isBillable()) {
+                        rate = BigDecimal.ZERO;
+                    }
+
                     BigDecimal cost = rate.multiply(new BigDecimal(duration));
                     cost = cost.setScale(2, RoundingMode.UP);
                     return new CostData(cost, category, rate);
