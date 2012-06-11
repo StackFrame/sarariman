@@ -110,6 +110,7 @@ public class Invoice {
 
             connection.commit();
             connection.setAutoCommit(true);
+// FIXME: Add hyperlink to invoice.
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice created",
                     "Invoice " + id + " was created.");
             return new Invoice(id, sarariman);
