@@ -181,13 +181,16 @@ public class Invoice {
                 java.util.Date start = projectBillRate.getPeriodOfPerformanceStart();
                 java.util.Date end = projectBillRate.getPeriodOfPerformanceEnd();
                 if (start.compareTo(date) <= 0 && end.compareTo(date) >= 0) {
-                    BigDecimal rate = category.getRate().setScale(2);
-                    if (!task.isBillable()) {
-                        rate = BigDecimal.ZERO;
+                    BigDecimal rate;
+                    BigDecimal cost;
+                    if (task.isBillable()) {
+                        rate = category.getRate().setScale(2);
+                        cost = rate.multiply(new BigDecimal(duration));
+                        cost = cost.setScale(2, RoundingMode.UP);
+                    } else {
+                        rate = cost = BigDecimal.ZERO;
                     }
 
-                    BigDecimal cost = rate.multiply(new BigDecimal(duration));
-                    cost = cost.setScale(2, RoundingMode.UP);
                     return new CostData(cost, category, rate);
                 }
             }
