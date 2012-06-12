@@ -256,7 +256,7 @@
                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
                 JOIN tasks AS t on i.task = t.id
                 JOIN projects AS p ON t.project = p.id
-                WHERE i.id = ? AND t.billable = TRUE
+                WHERE i.id = ?
                 ORDER BY h.date ASC, h.employee ASC, h.task ASC
                 <sql:param value="${param.invoice}"/>
             </sql:query>
@@ -319,7 +319,7 @@
                         JOIN projects AS p on p.id = t.project
                         JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
                         JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-                        WHERE p.id = ? AND t.billable = TRUE AND h.duration > 0 AND i.date < ?
+                        WHERE p.id = ? AND h.duration > 0 AND i.date < ?
                         <sql:param value="${project.id}"/>
                         <sql:param value="${invoice_info.pop_start}"/>
                     </sql:query>
@@ -394,7 +394,7 @@
                                 FROM invoices AS i
                                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
                                 JOIN tasks AS t ON t.id = i.task
-                                WHERE i.id = ? AND t.billable = TRUE
+                                WHERE i.id = ?
                                 <sql:param value="${param.invoice}"/>
                             </sql:query>
                             <tr>
@@ -411,7 +411,7 @@
                     FROM invoices AS i
                     JOIN tasks AS t ON i.task = t.id
                     JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                    WHERE i.id = ? AND t.billable = TRUE
+                    WHERE i.id = ?
                     <sql:param value="${param.invoice}"/>
                 </sql:query>
 
@@ -430,7 +430,7 @@
                                         FROM invoices AS i
                                         JOIN tasks AS t ON i.task = t.id
                                         JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                                        WHERE i.id = ? AND h.employee = ? AND t.billable = TRUE
+                                        WHERE i.id = ? AND h.employee = ?
                                         <sql:param value="${param.invoice}"/>
                                         <sql:param value="${employeeRows.employee}"/>
                                     </sql:query>
@@ -471,7 +471,7 @@
                                             FROM invoices AS i
                                             JOIN tasks AS t on i.task = t.id
                                             JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                                            WHERE i.id = ? AND h.employee = ? AND t.billable = TRUE
+                                            WHERE i.id = ? AND h.employee = ?
                                             <sql:param value="${param.invoice}"/>
                                             <sql:param value="${employeeRows.employee}"/>
                                         </sql:query>
