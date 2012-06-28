@@ -123,7 +123,6 @@ public class Task {
         try {
             ResultSet resultSet = ps.executeQuery();
             try {
-                Collection<Task> list = new ArrayList<Task>();
                 if (resultSet.next()) {
                     String task_name = resultSet.getString("name");
                     boolean billable = resultSet.getBoolean("billable");
