@@ -194,6 +194,8 @@
             </tr>
         </table>
 
+        <!-- FIXME: Add a table with totals by task. -->
+
         <c:if test="${totalHoursWorked > 40.0 && totalPTO > 0.0}">
             <p class="error">PTO taken when sheet is above 40 hours!</p>
         </c:if>
