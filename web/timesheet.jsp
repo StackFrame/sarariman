@@ -102,7 +102,7 @@
             FROM hours
             INNER JOIN tasks ON hours.task=tasks.id
             WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
-            ORDER BY hours.date DESC, hours.task ASC
+            ORDER BY hours.date ASC, hours.task ASC
             <sql:param value="${employee.number}"/>
             <sql:param value="${thisWeekStart}"/>
             <sql:param value="${thisWeekStart}"/>
