@@ -218,6 +218,9 @@
             </table>
         </c:if>
 
+        <!-- FIXME: Add employee picture. -->
+        <!-- FIXME: Add a table that summarizes by task. -->
+
         <sql:query dataSource="jdbc/sarariman" var="detail">
             SELECT h.task, h.date, t.name, h.description, h.employee
             FROM hours as h
