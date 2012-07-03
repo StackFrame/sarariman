@@ -85,7 +85,7 @@
                 </c:if>
                 <!-- FIXME: Only allow this if the time has not been invoiced. -->
                 <input type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
-                </form>
+            </form>
         </c:if>
 
         <!-- FIXME: Make this render without hyperlink in printable page? -->
@@ -194,7 +194,101 @@
             </tr>
         </table>
 
-        <!-- FIXME: Add a table with totals by task. -->
+        <div>
+            <sql:query dataSource="jdbc/sarariman" var="customerEntries">
+                SELECT DISTINCT(customers.id)
+                FROM hours
+                INNER JOIN tasks ON hours.task = tasks.id
+                INNER JOIN projects ON tasks.project = projects.id
+                INNER JOIN customers ON projects.customer = customers.id
+                WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
+                <sql:param value="${employee.number}"/>
+                <sql:param value="${thisWeekStart}"/>
+                <sql:param value="${thisWeekStart}"/>
+            </sql:query>
+            <!-- FIXME: Add totals by task. -->
+            <table class="altrows" id="summary">
+                <caption>Summary</caption>
+                <tr><th>Customer</th><th>Project</th><th>Hours</th></tr>
+                <c:forEach var="entry" items="${customerEntries.rows}">
+                    <c:set var="customer" value="${customers[entry.id]}"/>
+                    <c:if test="${user.administrator || user.invoiceManager || sarariman:contains(reports, employee.number)}">
+                        <sql:query dataSource="jdbc/sarariman" var="projectEntries">
+                            SELECT DISTINCT(projects.id)
+                            FROM hours
+                            INNER JOIN tasks ON hours.task = tasks.id
+                            INNER JOIN projects ON tasks.project = projects.id
+                            INNER JOIN customers ON projects.customer = customers.id
+                            WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND customers.id = ?
+                            <sql:param value="${employee.number}"/>
+                            <sql:param value="${thisWeekStart}"/>
+                            <sql:param value="${thisWeekStart}"/>
+                            <sql:param value="${entry.id}"/>
+                        </sql:query>
+                        <tr>
+                            <c:url var="customerLink" value="customer">
+                                <c:param name="id" value="${entry.id}"/>
+                            </c:url>
+                            <td rowspan="${projectEntries.rowCount}">
+                                <c:if test="${!empty customer}">
+                                    <a href="${fn:escapeXml(customerLink)}">${fn:escapeXml(customer.name)}</a>
+                                </c:if>
+                            </td>
+                            <td>
+                                <c:set var="project" value="${projects[projectEntries.rows[0].id]}"/>
+                                <c:url var="projectLink" value="project">
+                                    <c:param name="id" value="${projectEntries.rows[0].id}"/>
+                                </c:url>
+                                <c:if test="${!empty project}">
+                                    <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(project.name)}</a>
+                                </c:if>
+                            </td>
+                            <sql:query dataSource="jdbc/sarariman" var="durationEntries">
+                                SELECT SUM(hours.duration) AS duration
+                                FROM hours
+                                INNER JOIN tasks ON hours.task = tasks.id
+                                INNER JOIN projects ON tasks.project = projects.id
+                                INNER JOIN customers ON projects.customer = customers.id
+                                WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND customers.id = ? AND projects.id = ?
+                                <sql:param value="${employee.number}"/>
+                                <sql:param value="${thisWeekStart}"/>
+                                <sql:param value="${thisWeekStart}"/>
+                                <sql:param value="${entry.id}"/>
+                                <sql:param value="${projectEntries.rows[0].id}"/>
+                            </sql:query>
+                            <td class="duration">${durationEntries.rows[0].duration}</td>
+                        </tr>
+                        <c:forEach var="projectEntry" begin="1" items="${projectEntries.rows}">
+                            <c:set var="project" value="${projects[projectEntry.id]}"/>
+                            <c:url var="projectLink" value="project">
+                                <c:param name="id" value="${projectEntry.id}"/>
+                            </c:url>
+                            <tr>
+                                <td>
+                                    <c:if test="${!empty project}">
+                                        <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(project.name)}</a>
+                                    </c:if>
+                                </td>
+                                <sql:query dataSource="jdbc/sarariman" var="durationEntries">
+                                    SELECT SUM(hours.duration) AS duration
+                                    FROM hours
+                                    INNER JOIN tasks ON hours.task = tasks.id
+                                    INNER JOIN projects ON tasks.project = projects.id
+                                    INNER JOIN customers ON projects.customer = customers.id
+                                    WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND customers.id = ? AND projects.id = ?
+                                    <sql:param value="${employee.number}"/>
+                                    <sql:param value="${thisWeekStart}"/>
+                                    <sql:param value="${thisWeekStart}"/>
+                                    <sql:param value="${entry.id}"/>
+                                    <sql:param value="${projectEntry.id}"/>
+                                </sql:query>
+                                <td class="duration">${durationEntries.rows[0].duration}</td>
+                            </tr>
+                        </c:forEach>
+                    </c:if>
+                </c:forEach>
+            </table>
+        </div>
 
         <c:if test="${totalHoursWorked > 40.0 && totalPTO > 0.0}">
             <p class="error">PTO taken when sheet is above 40 hours!</p>
