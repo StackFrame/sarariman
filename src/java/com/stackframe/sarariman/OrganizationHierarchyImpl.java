@@ -9,7 +9,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -18,9 +23,11 @@ import java.util.*;
 public class OrganizationHierarchyImpl implements OrganizationHierarchy {
 
     private final ConnectionFactory connectionFactory;
+    private final Directory directory;
 
-    public OrganizationHierarchyImpl(ConnectionFactory connectionFactory) {
+    public OrganizationHierarchyImpl(ConnectionFactory connectionFactory, Directory directory) {
         this.connectionFactory = connectionFactory;
+        this.directory = directory;
     }
 
     public Collection<Integer> getManagers(int employee, Date date) {
@@ -37,7 +44,11 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
                     ResultSet rs = ps.executeQuery();
                     try {
                         while (rs.next()) {
-                            managers.add(rs.getInt("manager"));
+                            int managerNumber = rs.getInt("manager");
+                            Employee manager = directory.getByNumber().get(managerNumber);
+                            if (manager.isActive()) {
+                                managers.add(managerNumber);
+                            }
                         }
                     } finally {
                         rs.close();
@@ -88,7 +99,11 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
                     ResultSet rs = ps.executeQuery();
                     try {
                         while (rs.next()) {
-                            managers.add(rs.getInt("employee"));
+                            int employeeNumber = rs.getInt("employee");
+                            Employee e = directory.getByNumber().get(employeeNumber);
+                            if (e.isActive()) {
+                                managers.add(employeeNumber);
+                            }
                         }
                     } finally {
                         rs.close();

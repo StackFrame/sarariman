@@ -35,7 +35,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
     private final Collection<Extension> extensions = new ArrayList<Extension>();
-    private final OrganizationHierarchy organizationHierarchy = new OrganizationHierarchyImpl(this);
+    private OrganizationHierarchy organizationHierarchy;
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
     private CronJobs cronJobs;
@@ -170,6 +170,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             Context envContext = (Context)initContext.lookup("java:comp/env");
             Properties directoryProperties = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(directoryProperties), this);
+            organizationHierarchy = new OrganizationHierarchyImpl(this, directory);
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");
