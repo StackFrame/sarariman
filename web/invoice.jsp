@@ -424,7 +424,7 @@
                         <table class="altrows">
                             <caption>Total by Employee and Task</caption>
                             <thead>
-                                <tr><th>Employee</th><th>Task</th><th>Total</th></tr>
+                                <tr><th>Employee</th><th>Task</th><th>Hours</th></tr>
                             </thead>
                             <tbody>
                                 <c:set var="index" value="0"/>
@@ -464,7 +464,7 @@
                         <table class="altrows">
                             <caption>Total by Employee</caption>
                             <thead>
-                                <tr><th>Employee</th><th>Total</th></tr>
+                                <tr><th>Employee</th><th>Hours</th></tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="employeeRows" items="${employees.rows}" varStatus="varStatus">
