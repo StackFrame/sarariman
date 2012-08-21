@@ -186,8 +186,8 @@
         </div>
 
         <%
-                documentNames.add("Invoice-" + request.getParameter("invoice") + ".pdf");
-                documentLinks.add(String.format("invoice?outputType=pdf&invoice=%s", request.getParameter("invoice")));
+            documentNames.add("Invoice-" + request.getParameter("invoice") + ".pdf");
+            documentLinks.add(String.format("invoice?outputType=pdf&invoice=%s", request.getParameter("invoice")));
         %>
 
         <div id="timesheets">
@@ -222,8 +222,8 @@
                             <c:set var="documentName" value="Timesheet ${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
                             <c:set var="documentLink" value="${pdf}"/>
                             <%
-                                    documentNames.add(pageContext.getAttribute("documentName"));
-                                    documentLinks.add(pageContext.getAttribute("documentLink"));
+                                documentNames.add(pageContext.getAttribute("documentName"));
+                                documentLinks.add(pageContext.getAttribute("documentLink"));
                             %>
                         </li>
                     </c:forEach>
@@ -242,8 +242,8 @@
         <c:if test="${empty laborCSVLink && !empty timesheetResult.rows}">
             <c:set var="laborCSVLink" value="laborcosts.csv?id=${param.invoice}" scope="request"/>
             <%
-                    documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
-                    documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
+                documentNames.add(String.format("laborcosts-%s.csv", request.getParameter("invoice")));
+                documentLinks.add(String.format("laborcosts.csv?id=%s", request.getParameter("invoice")));
             %>
         </c:if>
 
@@ -306,6 +306,10 @@
             </c:forEach>
 
             <c:set var="invoiceTotal" value="${expensesTotal + odc_fee + laborTotal + servicesTotal}" scope="request"/>
+
+            <c:if test="${!empty project.invoiceText}">
+                <div>${project.invoiceText}</div>
+            </c:if>
 
             <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/><br/>
                 <c:if test="${project.funded > 0}">
@@ -561,9 +565,9 @@
                 </sql:query>
                 <ul>
                     <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
-                </ul>
+                    </ul>
 
-                <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
+                    <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
                     <c:forEach var="documentName" items="${documentNames}">
                         <input type="hidden" name="documentName" value="${documentName}"/>
                     </c:forEach>
@@ -600,7 +604,7 @@
 
                     <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
                     <input type="submit" value="Send" <c:if test="${errorsOccurred || empty emailResult.rows}">disabled="true"</c:if> />
-                </form>
+                    </form>
             </c:if>
 
             <p>

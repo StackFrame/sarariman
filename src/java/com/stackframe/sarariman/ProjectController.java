@@ -34,7 +34,8 @@ public class ProjectController extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP
+     * <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -63,7 +64,7 @@ public class ProjectController extends HttpServlet {
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
-                            null, null, new BigDecimal(0), new BigDecimal(0), 0, new BigDecimal(0), true);
+                            null, null, new BigDecimal(0), new BigDecimal(0), 0, new BigDecimal(0), true, null);
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
@@ -77,7 +78,7 @@ public class ProjectController extends HttpServlet {
                             new BigDecimal(request.getParameter("funded")),
                             new BigDecimal(request.getParameter("previously_billed")),
                             Long.parseLong(request.getParameter("terms")),
-                            new BigDecimal(request.getParameter("odc_fee")), "on".equals(request.getParameter("active")));
+                            new BigDecimal(request.getParameter("odc_fee")), "on".equals(request.getParameter("active")), null);
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:
@@ -95,7 +96,7 @@ public class ProjectController extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description

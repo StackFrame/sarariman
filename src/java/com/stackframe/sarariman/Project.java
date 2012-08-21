@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -33,6 +33,7 @@ public class Project {
     private final BigDecimal odc_fee;
     private final PeriodOfPerformance pop;
     private final boolean active;
+    private final String invoiceText;
     private final Sarariman sarariman;
 
     public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
@@ -54,7 +55,8 @@ public class Project {
                     PeriodOfPerformance pop = new PeriodOfPerformance(resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
                     BigDecimal odc_fee = resultSet.getBigDecimal("odc_fee");
                     boolean active = resultSet.getBoolean("active");
-                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active));
+                    String invoiceText = resultSet.getString("invoice_text");
+                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText));
                 }
                 return map;
             } finally {
@@ -67,7 +69,7 @@ public class Project {
     }
 
     Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded,
-            BigDecimal previouslyBilled, long terms, PeriodOfPerformance pop, BigDecimal odc_fee, boolean active) {
+            BigDecimal previouslyBilled, long terms, PeriodOfPerformance pop, BigDecimal odc_fee, boolean active, String invoiceText) {
         this.sarariman = sarariman;
         this.id = id;
         this.name = name;
@@ -80,6 +82,7 @@ public class Project {
         this.odc_fee = odc_fee;
         this.pop = pop;
         this.active = active;
+        this.invoiceText = invoiceText;
     }
 
     public long getId() {
@@ -128,6 +131,10 @@ public class Project {
 
     public boolean isActive() {
         return active;
+    }
+
+    public String getInvoiceText() {
+        return invoiceText;
     }
 
     public Collection<LineItem> getLineItems() throws SQLException {
@@ -205,9 +212,9 @@ public class Project {
     }
 
     public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract,
-            String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active) throws SQLException {
+            String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active, String invoiceText) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, previously_billed, terms, odc_fee, active) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, previously_billed, terms, odc_fee, active, invoice_text) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -220,12 +227,13 @@ public class Project {
             ps.setLong(9, terms);
             ps.setBigDecimal(10, odc_fee);
             ps.setBoolean(11, active);
+            ps.setString(12, invoiceText);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             try {
                 rs.next();
                 PeriodOfPerformance pop = new PeriodOfPerformance(pop_start, pop_end);
-                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active);
+                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText);
             } finally {
                 rs.close();
             }
@@ -236,9 +244,9 @@ public class Project {
     }
 
     public void update(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract,
-            BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active) throws SQLException {
+            BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active, String invoiceText) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=?, previously_billed=?, terms=?, odc_fee=?, active=? WHERE id=?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=?, previously_billed=?, terms=?, odc_fee=?, active=?, invoice_text=? WHERE id=?");
         try {
             ps.setString(1, name);
             ps.setLong(2, customer);
@@ -251,7 +259,8 @@ public class Project {
             ps.setLong(9, terms);
             ps.setBigDecimal(10, odc_fee);
             ps.setBoolean(11, active);
-            ps.setLong(12, id);
+            ps.setString(12, invoiceText);
+            ps.setLong(13, id);
             ps.executeUpdate();
         } finally {
             ps.close();
