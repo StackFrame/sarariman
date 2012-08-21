@@ -403,7 +403,7 @@
                             </sql:query>
                             <tr>
                                 <td colspan="6"><strong>Total</strong></td>
-                                <td class="duration"><strong>${sum.rows[0].total}</strong></td>
+                                <td class="duration"><strong><fmt:formatNumber value="${sum.rows[0].total}"/></strong></td>
                                 <td class="currency"><strong><fmt:formatNumber type="currency" value="${laborTotal}"/></strong></td>
                             </tr>
                         </tbody>
