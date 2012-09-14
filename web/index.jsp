@@ -251,8 +251,10 @@
 
             <!-- FIXME: Can I do the nextWeek part in SQL? -->
             <sql:query dataSource="jdbc/sarariman" var="entries">
-                SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name
-                FROM hours INNER JOIN tasks ON hours.task=tasks.id
+                SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name AS task_name, projects.name AS project_name, customers.name AS customer_name
+                FROM hours INNER JOIN tasks ON hours.task = tasks.id
+                LEFT JOIN projects ON projects.id = tasks.project
+                LEFT JOIN customers ON customers.id = projects.customer
                 WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
                 ORDER BY hours.date DESC, hours.task ASC
                 <sql:param value="${employeeNumber}"/>
@@ -264,7 +266,7 @@
             <c:set var="totalPTO" value="0.0"/>
             <c:set var="totalHoliday" value="0.0"/>
             <table class="altrows" id="hours">
-                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Duration</th><th>Description</th>
+                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th>
                     <c:if test="${!timesheet.submitted}">
                         <th></th>
                     </c:if>
@@ -273,8 +275,10 @@
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                         <td class="date">${entryDate}</td>
-                        <td>${fn:escapeXml(entry.name)}</td>
+                        <td>${fn:escapeXml(entry.task_name)}</td>
                         <td class="task">${entry.task}</td>
+                        <td>${fn:escapeXml(entry.project_name)}</td>
+                        <td>${fn:escapeXml(entry.customer_name)}</td>
                         <td class="duration">${entry.duration}</td>
                         <c:set var="entryDescription" value="${entry.description}"/>
                         <c:if test="${sarariman:containsHTML(entryDescription)}">
@@ -308,22 +312,22 @@
                     </tr>
                 </c:forEach>
                 <tr>
-                    <td colspan="3"><b>Total</b></td>
+                    <td colspan="5"><b>Total</b></td>
                     <td class="duration"><b>${totalHours}</b></td>
                     <td colspan="2"></td>
                 </tr>
                 <tr>
-                    <td colspan="3"><b>Total Regular</b></td>
+                    <td colspan="5"><b>Total Regular</b></td>
                     <td class="duration"><b>${totalRegular}</b></td>
                     <td colspan="2"></td>
                 </tr>
                 <tr>
-                    <td colspan="3"><b>Total Holiday</b></td>
+                    <td colspan="5"><b>Total Holiday</b></td>
                     <td class="duration"><b>${totalHoliday}</b></td>
                     <td colspan="2"></td>
                 </tr>
                 <tr>
-                    <td colspan="3"><b>Total PTO</b></td>
+                    <td colspan="5"><b>Total PTO</b></td>
                     <td class="duration"><b>${totalPTO}</b></td>
                     <td colspan="2"></td>
                 </tr>
