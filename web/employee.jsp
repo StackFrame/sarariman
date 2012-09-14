@@ -54,6 +54,8 @@
             </ul>
         </c:if>   
 
+        <!-- FIXME: Need a section with labor category assignments. -->
+
         <c:if test="${user.administrator}">
             <h2>Info</h2>
             Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>
