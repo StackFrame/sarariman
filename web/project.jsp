@@ -358,6 +358,7 @@
                 <tr><th>Employee</th><th colspan="2">Task</th></tr>
                 <c:forEach var="row" items="${resultSet.rows}">
                     <tr>
+                        <!-- FIXME: Join rows with the same task together. -->
                         <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
                         <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
                         <c:url var="link" value="task"><c:param name="task_id" value="${row.id}"/></c:url>
