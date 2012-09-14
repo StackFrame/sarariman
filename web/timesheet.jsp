@@ -206,7 +206,10 @@
                 <sql:param value="${thisWeekStart}"/>
                 <sql:param value="${thisWeekStart}"/>
             </sql:query>
+
             <!-- FIXME: Add totals by task. -->
+            <!-- FIXME: Add totals by line item. -->
+
             <table class="altrows" id="summary">
                 <caption>Summary</caption>
                 <tr><th>Customer</th><th>Project</th><th>Hours</th></tr>
