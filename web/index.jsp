@@ -266,11 +266,12 @@
             <c:set var="totalPTO" value="0.0"/>
             <c:set var="totalHoliday" value="0.0"/>
             <table class="altrows" id="hours">
-                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th>
+                <tr><th rowspan="2">Date</th><th colspan="2">Task</th><th rowspan="2">Project</th><th rowspan="2">Customer</th><th rowspan="2">Duration</th><th rowspan="2">Description</th>
                     <c:if test="${!timesheet.submitted}">
-                        <th></th>
+                        <th rowspan="2"></th>
                     </c:if>
                 </tr>
+                <tr><th>Name</th><th>#</th></tr>
                 <c:forEach var="entry" items="${entries.rows}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
