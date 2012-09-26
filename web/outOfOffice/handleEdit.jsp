@@ -6,6 +6,8 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!-- FIXME: Validate begin and end. -->
+
 <sql:update dataSource="jdbc/sarariman">
     UPDATE out_of_office
     SET begin = ?, end = ?, comment = ?

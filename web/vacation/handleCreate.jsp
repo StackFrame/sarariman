@@ -6,6 +6,8 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!-- FIXME: Validate begin and end. -->
+
 <sql:update dataSource="jdbc/sarariman">
     INSERT INTO vacation (employee, begin, end, comment) VALUES(?, ?, ?, ?)
     <sql:param value="${user.number}"/>
