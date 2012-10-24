@@ -3,6 +3,7 @@
   <property name="bin_dir" location="build/WEB-INF/classes"/>
   <path id="compile.class.path">
     <pathelement path="/usr/share/java/servlet-api-2.5.jar" />
+    <pathelement path="/usr/share/java/gnumail-1.1.2.jar" />
     <pathelement path="/usr/share/tomcat5.5/common/lib/servlet-api.jar" />
     <pathelement path="/usr/share/tomcat5.5/common/lib/servlet-api.jar" />
     <pathelement path="/usr/share/tomcat5.5/common/lib/mail.jar" />
