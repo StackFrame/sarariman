@@ -29,6 +29,7 @@
       <fileset dir="web" />
       <lib dir="lib" />
       <webinf dir="web/WEB-INF" />
+      <metainf file="${contextPath}" />
     </war>
 
   </target>
