@@ -431,22 +431,6 @@
             </c:forEach>
         </c:if>
 
-        <c:if test="${user.fulltime}">
-            <sql:query dataSource="jdbc/sarariman" var="ptoResultSet">
-                SELECT SUM(amount) AS total
-                FROM paid_time_off
-                WHERE employee = ?
-                <sql:param value="${employeeNumber}"/>
-            </sql:query>
-            <p>
-                PTO available: <span class="duration">${ptoResultSet.rows[0].total}</span> hours
-                <c:url var="PTOLink" value="PTODetails">
-                    <c:param name="employee" value="${employeeNumber}"/>
-                </c:url>
-                <a href="${PTOLink}">history</a>
-            </p>
-        </c:if>
-
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT pm.project
             FROM project_managers AS pm

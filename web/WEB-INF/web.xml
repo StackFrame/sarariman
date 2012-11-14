@@ -241,6 +241,14 @@
         <url-pattern>/tasks</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>PTODetails</servlet-name>
+        <jsp-file>/PTODetails.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PTODetails</servlet-name>
+        <url-pattern>/PTODetails</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>scheduledVacation</servlet-name>
         <jsp-file>/scheduledVacation.jsp</jsp-file>
     </servlet>
