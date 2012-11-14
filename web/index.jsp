@@ -438,7 +438,13 @@
                 WHERE employee = ?
                 <sql:param value="${employeeNumber}"/>
             </sql:query>
-            <p>PTO available: <span class="duration">${ptoResultSet.rows[0].total}</span> hours</p>
+            <p>
+                PTO available: <span class="duration">${ptoResultSet.rows[0].total}</span> hours
+                <c:url var="PTOLink" value="PTODetails.jsp">
+                    <c:param name="employee" value="${employeeNumber}"/>
+                </c:url>
+                <a href="${PTOLink}">history</a>
+            </p>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
