@@ -3,14 +3,30 @@
   This code is licensed under GPLv2.
 --%>
 
+<%@page import="java.util.Collection" %>
+<%@page import="com.stackframe.sarariman.Sarariman" %>
+<%@page import="com.stackframe.sarariman.Employee" %>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <c:if test="${empty param.employee}">
     <c:redirect url="${pageContext.request.servletPath}">
         <c:param name="employee" value="${user.number}"/>
     </c:redirect>
+</c:if>
+
+<%
+    Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+    Employee user = (Employee)request.getAttribute("user");
+    Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
+    pageContext.setAttribute("reports", reports);
+    request.setAttribute("employeeParam", Integer.parseInt(request.getParameter("employee")));
+%>
+
+<c:if test="${!(user.number == param.employee || sarariman:contains(reports, employeeParam))}">
+    <jsp:forward page="unauthorized"/>
 </c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
