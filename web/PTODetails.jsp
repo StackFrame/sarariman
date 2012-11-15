@@ -23,7 +23,7 @@
     <body onload="altRows()">
         <%@include file="header.jsp" %>
 
-        <h1>PTO Details</h1>
+        <h1>PTO Details for ${directory.byNumber[param.employee].fullName}</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="ptoResultSet">
             SELECT SUM(amount) AS total
