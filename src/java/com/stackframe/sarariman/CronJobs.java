@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -66,7 +68,6 @@ class CronJobs {
         // Reload the directory once an hour.  The main use case is to discover new employees that were added after the application
         // started.
         timer.schedule(new TimerTask() {
-
             public void run() {
                 directory.reload();
             }
@@ -74,10 +75,29 @@ class CronJobs {
         }, ONE_HOUR, ONE_HOUR);
     }
 
+    private void schedulePaidTimeOffUpdate() {
+        // Update paid time off once an hour. This should only need to happen once per day, but doing it more often ensures we
+        // correctly update employees added in the middle of the day.
+        timer.schedule(new TimerTask() {
+            public void run() {
+                try {
+                    Calendar today = Calendar.getInstance();
+                    java.util.Date todayDate = today.getTime();
+                    PaidTimeOff.creditWeeklyPaidTimeOff(sarariman, new Date(DateUtils.weekStart(todayDate).getTime()));
+                    PaidTimeOff.creditHolidayPTO(sarariman);
+                } catch (SQLException se) {
+                    System.err.println("caught exception in PTO update:" + se);
+                }
+            }
+
+        }, 0, ONE_HOUR);
+    }
+
     void start() {
         scheduleMorningTask();
         scheduleWeeknightTask();
         scheduleDirectoryReload();
+        schedulePaidTimeOffUpdate();
     }
 
     void stop() {
