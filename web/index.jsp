@@ -486,9 +486,9 @@
 
         <h2 id="events">Events</h2>
         <p>
-            <a href="events/create.jsp">Add an entry</a>
+            <a href="events/create.jsp">Add an event</a>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                SELECT id, begin, end, name, description, creator FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+                SELECT id, begin, end, name, description FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))
             </sql:query>
             <c:if test="${resultSet.rowCount != 0}">
                 <ul>
@@ -510,14 +510,6 @@
                                     </c:otherwise>
                                 </c:choose>
                                 - ${fn:escapeXml(row.name)}</a>
-                            <form style="display:inline" method="GET" action="events/edit.jsp">
-                                <input type="hidden" name="id" value="${row.id}"/>
-                                <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne row.creator}">disabled="true"</c:if>/>
-                            </form>
-                            <form style="display:inline" method="POST" action="events/handleDelete.jsp">
-                                <input type="hidden" name="id" value="${row.id}"/>
-                                <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne row.creator}">disabled="true"</c:if>/>
-                            </form>
                         </li>
                     </c:forEach>
                 </ul>

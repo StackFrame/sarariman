@@ -9,7 +9,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <sql:query dataSource="jdbc/sarariman" var="resultSet">
-    SELECT begin, end, name, location, description, creator
+    SELECT id, begin, end, name, location, description, creator
     FROM company_events
     WHERE id = ?
     <sql:param value="${param.id}"/>
@@ -36,6 +36,16 @@
 
             Owner: ${directory.byNumber[resultSet.rows[0].creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
         </p>
+
+        <form style="display:inline" method="GET" action="edit.jsp">
+            <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
+            <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
+        </form>
+        <form style="display:inline" method="POST" action="handleDelete.jsp">
+            <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
+            <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
+        </form>
+
         <%@include file="../footer.jsp" %>
     </body>
 </html>
