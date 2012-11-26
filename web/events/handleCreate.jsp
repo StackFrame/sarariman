@@ -9,11 +9,12 @@
 <!-- FIXME: Validate begin and end. -->
 
 <sql:update dataSource="jdbc/sarariman">
-    INSERT INTO company_events (begin, end, name, location, description) VALUES(?, ?, ?, ?, ?)
+    INSERT INTO company_events (begin, end, name, location, description, creator) VALUES(?, ?, ?, ?, ?, ?)
     <sql:param value="${param.begin}"/>
     <sql:param value="${param.end}"/>
     <sql:param value="${param.name}"/>
     <sql:param value="${param.location}"/>
     <sql:param value="${param.description}"/>
+    <sql:param value="${user.number}"/>
 </sql:update>
 <c:redirect url="../#events"/>

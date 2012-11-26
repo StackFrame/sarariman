@@ -9,7 +9,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <sql:query dataSource="jdbc/sarariman" var="resultSet">
-    SELECT begin, end, name, location, description
+    SELECT begin, end, name, location, description, creator
     FROM company_events
     WHERE id = ?
     <sql:param value="${param.id}"/>
@@ -33,6 +33,8 @@
             Location: ${fn:escapeXml(resultSet.rows[0].location)}<br/>
 
             Description: ${fn:escapeXml(resultSet.rows[0].description)}<br/>
+            
+            Owner: ${directory.byNumber[resultSet.rows[0].creator].fullName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
         </p>
         <%@include file="../footer.jsp" %>
     </body>
