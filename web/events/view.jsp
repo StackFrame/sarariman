@@ -135,6 +135,18 @@
                             <input type="submit" name="Invite" value="invite" />
                         </form>
 
+                        <sql:query dataSource="jdbc/sarariman" var="resultLog">
+                            SELECT invited
+                            FROM company_events_invitation_log
+                            WHERE event = ? AND employee = ?
+                            ORDER BY invited DESC
+                            <sql:param value="${param.id}"/>
+                            <sql:param value="${employeeEntry.value.number}"/>
+                        </sql:query>
+
+                        <c:if test="${resultLog.rowCount ne 0}">
+                            Invited ${resultLog.rows[0].invited}.
+                        </c:if>
                     </li>
                 </c:if>
             </c:forEach>
