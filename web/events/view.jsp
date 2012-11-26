@@ -34,7 +34,7 @@
 
             Description: ${fn:escapeXml(resultSet.rows[0].description)}<br/>
 
-            Owner: ${directory.byNumber[resultSet.rows[0].creator].fullName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
+            Owner: ${directory.byNumber[resultSet.rows[0].creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
         </p>
         <%@include file="../footer.jsp" %>
     </body>
