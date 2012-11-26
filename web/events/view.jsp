@@ -9,7 +9,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <sql:query dataSource="jdbc/sarariman" var="resultSet">
-    SELECT id, begin, end, name, location, description, creator
+    SELECT id, begin, end, name, location, location_url, description, creator
     FROM company_events
     WHERE id = ?
     <sql:param value="${param.id}"/>
@@ -30,7 +30,15 @@
 
             End: ${resultSet.rows[0].end}<br/>
 
-            Location: ${fn:escapeXml(resultSet.rows[0].location)}<br/>
+            Location:            <c:choose>
+                <c:when test="${!empty resultSet.rows[0].location_url}">
+                    <a href="${resultSet.rows[0].location_url}">${fn:escapeXml(resultSet.rows[0].location)}</a>
+                </c:when>
+                <c:otherwise>
+                    ${fn:escapeXml(resultSet.rows[0].location)}
+                </c:otherwise>
+            </c:choose>
+            <br/>
 
             Description: ${fn:escapeXml(resultSet.rows[0].description)}<br/>
 

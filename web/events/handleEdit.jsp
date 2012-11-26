@@ -17,12 +17,13 @@
 <c:if test="${user.number eq resultSet.rows[0].creator}">
     <sql:update dataSource="jdbc/sarariman">
         UPDATE company_events
-        SET begin = ?, end = ?, name = ?, location = ?, description = ?
+        SET begin = ?, end = ?, name = ?, location = ?, location_url = ?, description = ?
         WHERE id = ?
         <sql:param value="${param.begin}"/>
         <sql:param value="${param.end}"/>
         <sql:param value="${param.name}"/>
         <sql:param value="${param.location}"/>
+        <sql:param value="${param.location_url}"/>
         <sql:param value="${param.description}"/>
         <sql:param value="${param.id}"/>
     </sql:update>

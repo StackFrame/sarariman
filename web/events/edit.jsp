@@ -57,6 +57,9 @@
                 <label for="location">Location: </label>
                 <input size="50" type="text" id="location" name="location" value="${fn:escapeXml(resultSet.rows[0].location)}"/><br/>
 
+                <label for="location_url">Location URL: </label>
+                <input size="50" type="text" id="location_url" name="location_url" value="${fn:escapeXml(resultSet.rows[0].location_url)}"/><br/>
+
                 <label for="description">Description: </label>
                 <textarea rows="3" cols="70" id="description" name="description">${fn:escapeXml(resultSet.rows[0].description)}</textarea><br/>
 

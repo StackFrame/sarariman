@@ -47,6 +47,9 @@
                 <label for="location">Location: </label>
                 <input size="50" type="text" id="location" name="location"/><br/>
 
+                <label for="location_url">Location URL: </label>
+                <input size="50" type="text" id="location_url" name="location_url"/><br/>
+
                 <label for="description">Description: </label>
                 <input size="50" type="text" id="description" name="description"/><br/>
 
