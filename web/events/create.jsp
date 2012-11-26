@@ -50,6 +50,9 @@
                 <label for="location_url">Location URL: </label>
                 <input size="50" type="text" id="location_url" name="location_url"/><br/>
 
+                <label for="location_map_url">Location Map URL: </label>
+                <input size="50" type="text" id="location_map_url" name="location_map_url"/><br/>
+
                 <label for="description">Description: </label>
                 <input size="50" type="text" id="description" name="description"/><br/>
 

@@ -35,7 +35,7 @@
         <h1>Edit Event</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT begin, end, name, location, description, creator
+            SELECT begin, end, name, location, location_url, location_map_url, description, creator
             FROM company_events
             WHERE id = ?
             <sql:param value="${param.id}"/>
@@ -59,6 +59,9 @@
 
                 <label for="location_url">Location URL: </label>
                 <input size="50" type="text" id="location_url" name="location_url" value="${fn:escapeXml(resultSet.rows[0].location_url)}"/><br/>
+
+                <label for="location_map_url">Location Map URL: </label>
+                <input size="50" type="text" id="location_map_url" name="location_map_url" value="${fn:escapeXml(resultSet.rows[0].location_map_url)}"/><br/>
 
                 <label for="description">Description: </label>
                 <textarea rows="3" cols="70" id="description" name="description">${fn:escapeXml(resultSet.rows[0].description)}</textarea><br/>
