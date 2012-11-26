@@ -37,14 +37,83 @@
             Owner: ${directory.byNumber[resultSet.rows[0].creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
         </p>
 
-        <form style="display:inline" method="GET" action="edit.jsp">
-            <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
-            <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
-        </form>
-        <form style="display:inline" method="POST" action="handleDelete.jsp">
-            <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
-            <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
-        </form>
+        <p>
+            <sql:query dataSource="jdbc/sarariman" var="resultRSVP">
+                SELECT attending
+                FROM company_events_rsvp
+                WHERE event = ? AND employee = ?
+                <sql:param value="${param.id}"/>
+                <sql:param value="${user.number}"/>
+            </sql:query>
+            <form style="display:inline" method="POST" action="handleRSVP.jsp">
+                <input type="hidden" name="event" value="${resultSet.rows[0].id}"/>
+                <input type="hidden" name="employee" value="${user.number}"/>
+                <input type="hidden" name="attending" value="true"/>
+                <input type="submit" name="Delete" value="I'm attending" <c:if test="${resultRSVP.rows[0].attending eq 'true'}">disabled="true"</c:if>/>
+            </form>
+            <form style="display:inline" method="POST" action="handleRSVP.jsp">
+                <input type="hidden" name="event" value="${resultSet.rows[0].id}"/>
+                <input type="hidden" name="employee" value="${user.number}"/>
+                <input type="hidden" name="attending" value="false"/>
+                <input type="submit" name="Delete" value="I'm not attending" <c:if test="${resultRSVP.rows[0].attending eq 'false'}">disabled="true"</c:if>/>
+            </form>
+            <form style="display:inline" method="POST" action="handleRSVP.jsp">
+                <input type="hidden" name="event" value="${resultSet.rows[0].id}"/>
+                <input type="hidden" name="employee" value="${user.number}"/>
+                <input type="hidden" name="attending" value="maybe"/>
+                <input type="submit" name="Delete" value="I may be attending" <c:if test="${resultRSVP.rows[0].attending eq 'maybe'}">disabled="true"</c:if>/>
+            </form>
+        </p>
+
+        <p>
+            <form style="display:inline" method="GET" action="edit.jsp">
+                <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
+                <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
+            </form>
+            <form style="display:inline" method="POST" action="handleDelete.jsp">
+                <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
+                <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
+            </form>
+        </p>
+
+        <h2>Attending</h2>
+        <sql:query dataSource="jdbc/sarariman" var="resultAttending">
+            SELECT employee
+            FROM company_events_rsvp
+            WHERE event = ? AND attending = "true"
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <ol>
+            <c:forEach var="row" items="${resultAttending.rows}">
+                <li>${directory.byNumber[row.employee].displayName}</li>
+            </c:forEach>
+        </ol>
+
+        <h2>May Be Attending</h2>
+        <sql:query dataSource="jdbc/sarariman" var="resultAttending">
+            SELECT employee
+            FROM company_events_rsvp
+            WHERE event = ? AND attending = "maybe"
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <ol>
+            <c:forEach var="row" items="${resultAttending.rows}">
+                <li>${directory.byNumber[row.employee].displayName}</li>
+            </c:forEach>
+        </ol>
+
+        <h2>Not Attending</h2>
+        <sql:query dataSource="jdbc/sarariman" var="resultAttending">
+            SELECT employee
+            FROM company_events_rsvp
+            WHERE event = ? AND attending = "false"
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <ol>
+            <c:forEach var="row" items="${resultAttending.rows}">
+                <li>${directory.byNumber[row.employee].displayName}</li>
+            </c:forEach>
+        </ol>
 
         <%@include file="../footer.jsp" %>
     </body>
