@@ -115,6 +115,22 @@
             </c:forEach>
         </ol>
 
+        <h2>No Response</h2>
+        <ol>
+            <c:forEach var="employeeEntry" items="${directory.byUserName}">
+                <sql:query dataSource="jdbc/sarariman" var="resultRSVP">
+                    SELECT employee
+                    FROM company_events_rsvp
+                    WHERE event = ? AND employee = ?
+                    <sql:param value="${param.id}"/>
+                    <sql:param value="${employee.value.number}"/>
+                </sql:query>
+                <c:if test="${resultRSVP.rowCount == 0 and employeeEntry.value.active}">
+                    <li>${employeeEntry.value.displayName}</li>
+                </c:if>
+            </c:forEach>
+        </ol>
+
         <%@include file="../footer.jsp" %>
     </body>
 </html>
