@@ -8,15 +8,23 @@
 
 <!-- FIXME: Validate begin and end. -->
 
-<sql:update dataSource="jdbc/sarariman">
-    UPDATE company_events
-    SET begin = ?, end = ?, name = ?, location = ?, description = ?
+<sql:query dataSource="jdbc/sarariman" var="resultSet">
+    SELECT creator
+    FROM company_events
     WHERE id = ?
-    <sql:param value="${param.begin}"/>
-    <sql:param value="${param.end}"/>
-    <sql:param value="${param.name}"/>
-    <sql:param value="${param.location}"/>
-    <sql:param value="${param.description}"/>
     <sql:param value="${param.id}"/>
-</sql:update>
+</sql:query>
+<c:if test="${user.number eq resultSet.rows[0].creator}">
+    <sql:update dataSource="jdbc/sarariman">
+        UPDATE company_events
+        SET begin = ?, end = ?, name = ?, location = ?, description = ?
+        WHERE id = ?
+        <sql:param value="${param.begin}"/>
+        <sql:param value="${param.end}"/>
+        <sql:param value="${param.name}"/>
+        <sql:param value="${param.location}"/>
+        <sql:param value="${param.description}"/>
+        <sql:param value="${param.id}"/>
+    </sql:update>
+</c:if>
 <c:redirect url="../#events"/>

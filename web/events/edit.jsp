@@ -35,7 +35,7 @@
         <h1>Edit Event</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT begin, end, name, location, description
+            SELECT begin, end, name, location, description, creator
             FROM company_events
             WHERE id = ?
             <sql:param value="${param.id}"/>
@@ -61,7 +61,7 @@
                 <textarea rows="3" cols="70" id="description" name="description">${fn:escapeXml(resultSet.rows[0].description)}</textarea><br/>
 
                 <input type="hidden" name="id" value="${param.id}"/>
-                <input type="submit" value="Update" name="update" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                <input type="submit" value="Update" name="update" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
             </p>
         </form>
 

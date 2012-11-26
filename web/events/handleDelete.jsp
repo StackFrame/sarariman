@@ -6,9 +6,17 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<sql:update dataSource="jdbc/sarariman">
-    DELETE FROM company_events
+<sql:query dataSource="jdbc/sarariman" var="resultSet">
+    SELECT creator
+    FROM company_events
     WHERE id = ?
     <sql:param value="${param.id}"/>
-</sql:update>
+</sql:query>
+<c:if test="${user.number eq resultSet.rows[0].creator}">
+    <sql:update dataSource="jdbc/sarariman">
+        DELETE FROM company_events
+        WHERE id = ?
+        <sql:param value="${param.id}"/>
+    </sql:update>
+</c:if>
 <c:redirect url="../#events"/>
