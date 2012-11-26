@@ -126,7 +126,16 @@
                     <sql:param value="${employee.value.number}"/>
                 </sql:query>
                 <c:if test="${resultRSVP.rowCount == 0 and employeeEntry.value.active}">
-                    <li>${employeeEntry.value.displayName}</li>
+                    <li>${employeeEntry.value.displayName} 
+
+                        <form style="display:inline" method="POST" action="handleInvitation">
+                            <input type="hidden" name="event" value="${param.id}"/>
+                            <input type="hidden" name="eventName" value="${fn:escapeXml(resultSet.rows[0].name)}"/>
+                            <input type="hidden" name="employee" value="${employeeEntry.value.number}"/>
+                            <input type="submit" name="Invite" value="invite" />
+                        </form>
+
+                    </li>
                 </c:if>
             </c:forEach>
         </ol>

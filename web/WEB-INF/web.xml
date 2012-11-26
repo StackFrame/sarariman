@@ -149,6 +149,14 @@
         <servlet-class>com.stackframe.sarariman.ContactController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>InvitationHandler</servlet-name>
+        <servlet-class>com.stackframe.sarariman.events.InvitationHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InvitationHandler</servlet-name>
+        <url-pattern>/events/handleInvitation</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>taskGroupings</servlet-name>
         <jsp-file>/taskGroupings.jsp</jsp-file>
     </servlet>
