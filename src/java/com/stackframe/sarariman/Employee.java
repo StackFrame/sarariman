@@ -34,4 +34,7 @@ public interface Employee {
     DateMidnight getBirthdate();
 
     int getAge();
+
+    String getDisplayName();
+
 }

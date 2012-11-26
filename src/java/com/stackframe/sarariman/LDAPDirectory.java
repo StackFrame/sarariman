@@ -42,8 +42,9 @@ public class LDAPDirectory implements Directory {
         private final boolean active;
         private final String email;
         private final DateMidnight birthdate;
+        private final String displayName;
 
-        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, DateMidnight birthdate) {
+        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, DateMidnight birthdate, String displayName) {
             this.fullName = fullName;
             this.userName = userName;
             this.number = number;
@@ -51,6 +52,7 @@ public class LDAPDirectory implements Directory {
             this.active = active;
             this.email = email;
             this.birthdate = birthdate;
+            this.displayName = displayName;
         }
 
         public String getFullName() {
@@ -59,6 +61,10 @@ public class LDAPDirectory implements Directory {
 
         public String getUserName() {
             return userName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
         }
 
         public int getNumber() {
@@ -137,8 +143,8 @@ public class LDAPDirectory implements Directory {
     }
 
     /*
-    FIXME: It would be nice to intercept lookups on the maps and try a reload when a lookup fails.  This would require doing
-    something different with the defensive copies.
+     FIXME: It would be nice to intercept lookups on the maps and try a reload when a lookup fails.  This would require doing
+     something different with the defensive copies.
      */
     /**
      * Load the directory from LDAP.
@@ -147,21 +153,21 @@ public class LDAPDirectory implements Directory {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
-                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate"});
+                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
                 String uid = attributes.get("uid").getAll().next().toString();
+                String displayName = attributes.get("displayName").getAll().next().toString();
                 String mail = attributes.get("mail").getAll().next().toString();
                 boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
                 DateMidnight birthdate = new DateMidnight(attributes.get("birthdate").getAll().next().toString());
-                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate));
+                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {
-
                 public int compare(Employee e1, Employee e2) {
                     return e1.getFullName().compareTo(e2.getFullName());
                 }
