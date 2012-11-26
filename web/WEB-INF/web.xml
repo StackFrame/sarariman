@@ -381,6 +381,14 @@
         <url-pattern>/orgChart</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>viewEvent</servlet-name>
+        <jsp-file>/events/view.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>viewEvent</servlet-name>
+        <url-pattern>/events/view</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>uninvoicedprojects</servlet-name>
         <jsp-file>/uninvoicedprojects.jsp</jsp-file>
     </servlet>

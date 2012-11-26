@@ -496,7 +496,7 @@
                 <ul>
                     <c:forEach var="row" items="${resultSet.rows}">
                         <li>
-                            <c:url var="eventLink" value="events/view.jsp">
+                            <c:url var="eventLink" value="events/view">
                                 <c:param name="id" value="${row.id}"/>
                             </c:url>
                             <a href="${eventLink}">
