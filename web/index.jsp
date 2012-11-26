@@ -484,33 +484,47 @@
             </ul>
         </c:if>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT begin, end, name, description FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-        </sql:query>
-        <c:if test="${resultSet.rowCount != 0}">
-            <h2>Events</h2>
-            <ul>
-                <c:forEach var="row" items="${resultSet.rows}">
-                    <li>
-                        <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
-                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
-                        <c:choose>
-                            <c:when test="${beginDate eq endDate}">
-                                <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
-                            </c:when>
-                            <c:otherwise>
-                                <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
-                            </c:otherwise>
-                        </c:choose>
-                        - ${fn:escapeXml(row.name)}
-                        <c:if test="${!empty row.description}">
-                            - ${fn:escapeXml(row.description)}
-                        </c:if>
-                    </li>
-                </c:forEach>
-            </ul>
-        </c:if>
+        <h2 id="events">Events</h2>
+        <p>
+            <c:if test="${user.administrator}">
+                <a href="events/create.jsp">Add an entry</a>
+            </c:if>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT id, begin, end, name, description FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))
+            </sql:query>
+            <c:if test="${resultSet.rowCount != 0}">
+                <ul>
+                    <c:forEach var="row" items="${resultSet.rows}">
+                        <li>
+                            <c:url var="eventLink" value="events/view.jsp">
+                                <c:param name="id" value="${row.id}"/>
+                            </c:url>
+                            <a href="${eventLink}">
+                                <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                                <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
+                                <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
+                                <c:choose>
+                                    <c:when test="${beginDate eq endDate}">
+                                        <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
+                                    </c:when>
+                                    <c:otherwise>
+                                        <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                    </c:otherwise>
+                                </c:choose>
+                                - ${fn:escapeXml(row.name)}</a>
+                            <form style="display:inline" method="GET" action="events/edit.jsp">
+                                <input type="hidden" name="id" value="${row.id}"/>
+                                <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                            </form>
+                            <form style="display:inline" method="POST" action="events/handleDelete.jsp">
+                                <input type="hidden" name="id" value="${row.id}"/>
+                                <input type="submit" name="Delete" value="delete" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                            </form>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:if>
+        </p>
 
         <h2>Upcoming Holidays</h2>
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
