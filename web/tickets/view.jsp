@@ -62,6 +62,31 @@
             <input type="submit" value="Change Name" name="update"/>
         </form>
 
+        <p>
+            <sql:query dataSource="jdbc/sarariman" var="statusResultSet">
+                SELECT status FROM ticket_status WHERE ticket = ?
+                ORDER BY updated DESC
+                LIMIT 1
+                <sql:param value="${param.id}"/>
+            </sql:query>
+            <c:set var="status" value="${statusResultSet.rows[0].status}"/>
+            Status: ${status}
+            <form method="POST" action="handleStatus.jsp">
+                <select name="status" id="status">
+                    <sql:query dataSource="jdbc/sarariman" var="statusTypeResultSet">
+                        SELECT name FROM ticket_status_type
+                    </sql:query>
+                    <c:forEach var="row" items="${statusTypeResultSet.rows}">
+                        <c:if test="${row.name ne status}">
+                            <option value="${row.name}">'${row.name}' '${status}'</option>
+                        </c:if>
+                    </c:forEach>
+                </select>
+                <input type="hidden" name="id" value="${param.id}"/>
+                <input type="submit" value="Change Status"/>
+            </form>
+        </p>
+
         <form method="POST" action="handleDescription.jsp">
             <label for="description">Description: </label>
             <textarea cols="80" rows="10" name="description" id="description">

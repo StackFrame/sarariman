@@ -32,6 +32,11 @@
         <sql:param value="${user.number}"/>
         <sql:param value="${user.number}"/>
     </sql:update>
+    <sql:update>
+        INSERT INTO ticket_status (ticket, status, employee) VALUES(?, 'open', ?)
+        <sql:param value="${ticket_id}"/>
+        <sql:param value="${user.number}"/>
+    </sql:update>
 </sql:transaction>
 <c:redirect url="view">
     <c:param name="id" value="${ticket_id}"/>

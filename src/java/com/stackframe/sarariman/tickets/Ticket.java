@@ -124,6 +124,35 @@ public class Ticket {
         return details;
     }
 
+    private List<Detail> getStatusDetails() throws SQLException {
+        List<Detail> details = new ArrayList<Detail>();
+        Connection connection = sarariman.openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_status WHERE ticket = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    while (resultSet.next()) {
+                        Timestamp timestamp = resultSet.getTimestamp("updated");
+                        String status = resultSet.getString("status");
+                        Employee employee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        Detail detail = new Detail(timestamp, employee, employee.getDisplayName() + " set status to " + status);
+                        details.add(detail);
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return details;
+    }
+
     private List<Detail> getNameDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         Connection connection = sarariman.openConnection();
@@ -159,6 +188,7 @@ public class Ticket {
         details.addAll(getNameDetails());
         details.addAll(getAssignmentDetails());
         details.addAll(getDescriptionDetails());
+        details.addAll(getStatusDetails());
         Collections.sort(details, new Comparator<Detail>() {
             public int compare(Detail o1, Detail o2) {
                 return o1.timestamp.compareTo(o2.timestamp);
