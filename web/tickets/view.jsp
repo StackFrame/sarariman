@@ -50,6 +50,24 @@
             <input type="submit" value="Change Name" name="update"/>
         </form>
 
+        <h2>Assignees</h2>
+        <ol>
+            <!-- FIXME: There must be a smarter way to do this in SQL instead of doing two queries. -->
+            <sql:query dataSource="jdbc/sarariman" var="assigneeResultSet">
+                SELECT DISTINCT assignee FROM ticket_assignment WHERE ticket = ?
+                <sql:param value="${param.id}"/>
+            </sql:query>
+            <c:forEach var="assigneeRow" items="${assigneeResultSet.rows}">
+                <sql:query dataSource="jdbc/sarariman" var="sumResultSet">
+                    SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE ticket = ? AND assignee = ?
+                    <sql:param value="${param.id}"/>
+                    <sql:param value="${assigneeRow.assignee}"/>
+                </sql:query>
+                <c:if test="${sumResultSet.rows[0].sum gt 0}">
+                    <li>${directory.byNumber[assigneeRow.assignee].displayName}</li>
+                </c:if>
+            </c:forEach>
+        </ol>
         <p>
             Employee Creator: ${directory.byNumber[ticket.employee_creator].displayName}<br/>
             <c:if test="${ticket.has_creator_location}">
