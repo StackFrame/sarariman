@@ -9,7 +9,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-    SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude
+    SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent
     FROM ticket
     WHERE id = ?
     <sql:param value="${param.id}"/>
@@ -39,7 +39,8 @@
                 <c:url var="mapURL" value="https://maps.google.com/maps">
                     <c:param name="q" value="${ticket.creator_latitude},${ticket.creator_longitude}"/>
                 </c:url>
-                Location: <a href="${mapURL}">${ticket.creator_latitude},${ticket.creator_longitude}</a>
+                Location: <a href="${mapURL}">${ticket.creator_latitude},${ticket.creator_longitude}</a><br/>
+                Creator User Agent: ${fn:escapeXml(ticket.creator_user_agent)}
             </c:if>
         </p>
 
