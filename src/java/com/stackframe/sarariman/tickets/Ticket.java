@@ -57,6 +57,44 @@ public class Ticket {
         this.sarariman = sarariman;
     }
 
+    private List<Detail> getAssignmentDetails() throws SQLException {
+        List<Detail> details = new ArrayList<Detail>();
+        Connection connection = sarariman.openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_assignment WHERE ticket = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    while (resultSet.next()) {
+                        Timestamp timestamp = resultSet.getTimestamp("updated");
+                        Employee assignee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("assignee"));
+                        Employee assignor = sarariman.getDirectory().getByNumber().get(resultSet.getInt("assignor"));
+                        int assignment = resultSet.getInt("assignment");
+                        Detail detail;
+                        if (assignment == 1) {
+                            detail = new Detail(timestamp, assignor, "assigned to " + assignee.getDisplayName() + " by " + assignor.getDisplayName());
+                        } else if (assignment == -1) {
+                            detail = new Detail(timestamp, assignor, "unassigned from " + assignee.getDisplayName() + " by " + assignor.getDisplayName());
+                        } else {
+                            throw new AssertionError("unexpected value for assignement: " + assignment);
+                        }
+
+                        details.add(detail);
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return details;
+    }
+
     private List<Detail> getNameDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         Connection connection = sarariman.openConnection();
@@ -90,6 +128,7 @@ public class Ticket {
     public List<Detail> getHistory() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         details.addAll(getNameDetails());
+        details.addAll(getAssignmentDetails());
         Collections.sort(details, new Comparator<Detail>() {
             public int compare(Detail o1, Detail o2) {
                 return o1.timestamp.compareTo(o2.timestamp);

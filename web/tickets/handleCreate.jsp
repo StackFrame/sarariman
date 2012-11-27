@@ -26,6 +26,12 @@
         <sql:param value="${param.name}"/>
         <sql:param value="${user.number}"/>
     </sql:update>
+    <sql:update>
+        INSERT INTO ticket_assignment (ticket, assignee, assignor, assignment) VALUES(?, ?, ?, 1)
+        <sql:param value="${ticket_id}"/>
+        <sql:param value="${user.number}"/>
+        <sql:param value="${user.number}"/>
+    </sql:update>
 </sql:transaction>
 <c:redirect url="view.jsp">
     <c:param name="id" value="${ticket_id}"/>
