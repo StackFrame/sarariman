@@ -30,7 +30,7 @@
 
         <table class="altrows">
             <tr>
-                <th>#</th><th>Name</th>
+                <th>#</th><th>Name</th><th>Status</th>
             </tr>
             <c:forEach var="ticket" items="${ticketResultSet.rows}">
                 <sql:query dataSource="jdbc/sarariman" var="ticketNameResultSet">
@@ -41,12 +41,23 @@
                     <sql:param value="${ticket.id}"/>
                 </sql:query>
                 <c:set var="name" value="${ticketNameResultSet.rows[0].name}"/>
+
                 <c:url var="ticketViewURL" value="view">
                     <c:param name="id" value="${ticket.id}"/>
                 </c:url>
+
+                <sql:query dataSource="jdbc/sarariman" var="statusResultSet">
+                    SELECT status FROM ticket_status WHERE ticket = ?
+                    ORDER BY updated DESC
+                    LIMIT 1
+                    <sql:param value="${ticket.id}"/>
+                </sql:query>
+                <c:set var="status" value="${statusResultSet.rows[0].status}"/>
+
                 <tr>
                     <td><a href="${ticketViewURL}">${ticket.id}</a></td>
                     <td><a href="${ticketViewURL}">${fn:escapeXml(name)}</a></td>
+                    <td><a href="${ticketViewURL}">${status}</a></td>
                 </tr>
             </c:forEach>
         </table>
