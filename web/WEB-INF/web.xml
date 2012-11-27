@@ -397,7 +397,6 @@
         <url-pattern>/events/view</url-pattern>
     </servlet-mapping>
     <servlet>
-    <servlet>
         <servlet-name>viewTicket</servlet-name>
         <jsp-file>/tickets/view.jsp</jsp-file>
     </servlet>
@@ -405,6 +404,7 @@
         <servlet-name>viewTicket</servlet-name>
         <url-pattern>/tickets/view</url-pattern>
     </servlet-mapping>
+    <servlet>
         <servlet-name>uninvoicedprojects</servlet-name>
         <jsp-file>/uninvoicedprojects.jsp</jsp-file>
     </servlet>
