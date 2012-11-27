@@ -33,6 +33,6 @@
         <sql:param value="${user.number}"/>
     </sql:update>
 </sql:transaction>
-<c:redirect url="view.jsp">
+<c:redirect url="view">
     <c:param name="id" value="${ticket_id}"/>
 </c:redirect>

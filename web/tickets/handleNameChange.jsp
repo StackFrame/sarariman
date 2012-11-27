@@ -12,6 +12,6 @@
     <sql:param value="${param.name}"/>
     <sql:param value="${user.number}"/>
 </sql:update>
-<c:redirect url="view.jsp">
+<c:redirect url="view">
     <c:param name="id" value="${param.id}"/>
 </c:redirect>
