@@ -8,9 +8,10 @@
 
 <sql:transaction dataSource="jdbc/sarariman">
     <sql:update>
-        INSERT INTO ticket (employee_creator, creator_IP, creator_latitude, creator_longitude, creator_user_agent) VALUES(?, ?, ?, ?, ?)
+        INSERT INTO ticket (employee_creator, creator_IP, has_creator_location, creator_latitude, creator_longitude, creator_user_agent) VALUES(?, ?, ?, ?, ?, ?)
         <sql:param value="${user.number}"/>
         <sql:param value="${pageContext.request.remoteAddr}"/>
+        <sql:param value="${param.has_creator_location}"/>
         <sql:param value="${param.latitude}"/>
         <sql:param value="${param.longitude}"/>
         <sql:param value="${header['User-Agent']}"/>

@@ -14,6 +14,7 @@
         <script type="text/javascript" src="../jquery/js/jquery-1.7.2.min.js"></script>
         <script>
             function gotCurrentPosition(position) {
+                $("input[name='has_creator_location']").val("1");
                 $("input[name='latitude']").val(position.coords.latitude);
                 $("input[name='longitude']").val(position.coords.longitude);
             }
@@ -31,8 +32,9 @@
             <p>
                 <label for="name">Name: </label>
                 <input size="50" type="text" id="name" name="name"/><br/>
-                <input type="hidden" id="latitude" name="latitude" value=""/>
-                <input type="hidden" id="longitude" name="longitude" value=""/>
+                <input type="hidden" id="has_creator_location" name="has_creator_location" value="0"/>
+                <input type="hidden" id="latitude" name="latitude" value="0.0"/>
+                <input type="hidden" id="longitude" name="longitude" value="0.0"/>
                 <input type="submit" value="Create" name="create"/>
             </p>
             <p>Enter a name for the ticket.</p>
