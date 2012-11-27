@@ -29,7 +29,6 @@
         <sql:param value="${param.id}"/>
     </sql:update>
 </c:if>
-<c:url var="eventLink" value="view">
+<c:redirect url="view">
     <c:param name="id" value="${param.id}"/>
-</c:url>
-<c:redirect url="${eventLink}"/>
+</c:redirect>
