@@ -58,7 +58,7 @@
         <form method="POST" action="handleNameChange.jsp">
             <label for="name">Name: </label>
             <input type="hidden" name="id" value="${param.id}"/>
-            <input size="50" type="text" id="name" name="name" value="${name}"/>
+            <input size="50" type="text" id="name" name="name" value="${fn:escapeXml(name)}"/>
             <input type="submit" value="Change Name" name="update"/>
         </form>
 
