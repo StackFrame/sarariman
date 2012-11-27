@@ -146,7 +146,7 @@
                             <input type="hidden" name="event" value="${param.id}"/>
                             <input type="hidden" name="eventName" value="${fn:escapeXml(event.name)}"/>
                             <input type="hidden" name="employee" value="${employeeEntry.value.number}"/>
-                            <input type="submit" name="Invite" value="invite" />
+                            <input type="submit" name="Invite" value="invite" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
                         </form>
 
                         <sql:query dataSource="jdbc/sarariman" var="resultLog">
