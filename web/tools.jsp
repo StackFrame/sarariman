@@ -19,7 +19,7 @@
         <ul>
             <li><a href="./">Home</a></li>
             <li><a href="help.xhtml">Help</a></li>
-            <li><a href="tickets/create.jsp">Create a Ticket</a></li>
+            <li><a href="tickets/">Tickets</a></li>
             <li><a href="orgChart">Org Chart</a></li>
             <li><a href="timesheets">Timesheets</a></li>
             <li><a href="timereportsbyproject">Time reports by project</a></li>
