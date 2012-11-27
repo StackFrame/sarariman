@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,6 +79,35 @@ public class Ticket {
                             throw new AssertionError("unexpected value for assignement: " + assignment);
                         }
 
+                        details.add(detail);
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return details;
+    }
+
+    private List<Detail> getCommentDetails() throws SQLException {
+        List<Detail> details = new ArrayList<Detail>();
+        Connection connection = sarariman.openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_comment WHERE ticket = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    while (resultSet.next()) {
+                        Timestamp timestamp = resultSet.getTimestamp("updated");
+                        String comment = resultSet.getString("comment");
+                        Employee employee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        Detail detail = new Detail(timestamp, employee, employee.getDisplayName() + " commented: <div>" + comment + "</div>");
                         details.add(detail);
                     }
                 } finally {
@@ -189,6 +217,7 @@ public class Ticket {
         details.addAll(getAssignmentDetails());
         details.addAll(getDescriptionDetails());
         details.addAll(getStatusDetails());
+        details.addAll(getCommentDetails());
         Collections.sort(details, new Comparator<Detail>() {
             public int compare(Detail o1, Detail o2) {
                 return o1.timestamp.compareTo(o2.timestamp);

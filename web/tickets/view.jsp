@@ -78,7 +78,7 @@
                     </sql:query>
                     <c:forEach var="row" items="${statusTypeResultSet.rows}">
                         <c:if test="${row.name ne status}">
-                            <option value="${row.name}">'${row.name}' '${status}'</option>
+                            <option value="${row.name}">${row.name}</option>
                         </c:if>
                     </c:forEach>
                 </select>
@@ -146,6 +146,13 @@
             <input type="hidden" name="id" value="${param.id}"/>
             <input type="hidden" name="assignment" value="1"/>
             <input type="submit" value="Add Assignee"/>
+        </form>
+
+        <form method="POST" action="handleComment.jsp">
+            <label for="comment">Comment: </label>
+            <textarea cols="80" rows="10" name="comment" id="comment"></textarea>
+            <input type="hidden" name="id" value="${param.id}"/>
+            <input type="submit" value="Add Comment" name="update"/>
         </form>
 
         <p>
