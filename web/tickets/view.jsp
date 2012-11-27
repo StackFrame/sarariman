@@ -21,6 +21,7 @@
     SELECT name
     FROM ticket_name
     WHERE ticket = ?
+    ORDER BY updated DESC LIMIT 1
     <sql:param value="${param.id}"/>
 </sql:query>
 <c:set var="name" value="${ticketNameResultSet.rows[0].name}"/>
