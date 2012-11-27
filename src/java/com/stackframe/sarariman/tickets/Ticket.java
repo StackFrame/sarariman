@@ -95,6 +95,35 @@ public class Ticket {
         return details;
     }
 
+    private List<Detail> getDescriptionDetails() throws SQLException {
+        List<Detail> details = new ArrayList<Detail>();
+        Connection connection = sarariman.openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_description WHERE ticket = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    while (resultSet.next()) {
+                        Timestamp timestamp = resultSet.getTimestamp("updated");
+                        String description = resultSet.getString("description");
+                        Employee employee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        Detail detail = new Detail(timestamp, employee, employee.getDisplayName() + " set description to: <div>" + description + "</div>");
+                        details.add(detail);
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return details;
+    }
+
     private List<Detail> getNameDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         Connection connection = sarariman.openConnection();
@@ -129,6 +158,7 @@ public class Ticket {
         List<Detail> details = new ArrayList<Detail>();
         details.addAll(getNameDetails());
         details.addAll(getAssignmentDetails());
+        details.addAll(getDescriptionDetails());
         Collections.sort(details, new Comparator<Detail>() {
             public int compare(Detail o1, Detail o2) {
                 return o1.timestamp.compareTo(o2.timestamp);

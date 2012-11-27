@@ -38,6 +38,17 @@
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
         <title>Ticket ${param.id}: ${fn:escapeXml(name)}</title>
+
+        <!-- TinyMCE -->
+        <script type="text/javascript" src="../tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript">
+            tinyMCE.init({
+                mode : "textareas",
+                theme : "simple"
+            });
+        </script>
+        <!-- /TinyMCE -->
+
     </head>
     <body>
         <%@include file="../header.jsp" %>
@@ -48,6 +59,21 @@
             <input type="hidden" name="id" value="${param.id}"/>
             <input size="50" type="text" id="name" name="name" value="${name}"/>
             <input type="submit" value="Change Name" name="update"/>
+        </form>
+
+        <form method="POST" action="handleDescription.jsp">
+            <label for="description">Description: </label>
+            <textarea cols="80" rows="10" name="description" id="description">
+                <sql:query dataSource="jdbc/sarariman" var="descriptionResultSet">
+                    SELECT description FROM ticket_description WHERE ticket = ?
+                    ORDER BY updated DESC
+                    LIMIT 1
+                    <sql:param value="${param.id}"/>
+                </sql:query>
+                ${fn:escapeXml(descriptionResultSet.rows[0].description)}
+            </textarea>
+            <input type="hidden" name="id" value="${param.id}"/>
+            <input type="submit" value="Update Description" name="update"/>
         </form>
 
         <h2>Assignees</h2>
