@@ -8,46 +8,47 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<sql:query dataSource="jdbc/sarariman" var="resultSet">
+<sql:query dataSource="jdbc/sarariman" var="eventResultSet">
     SELECT id, begin, end, name, location, location_url, location_map_url, description, creator
     FROM company_events
     WHERE id = ?
     <sql:param value="${param.id}"/>
 </sql:query>
+<c:set var="event" value="${eventResultSet.rows[0]}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
-        <title>${fn:escapeXml(resultSet.rows[0].name)}</title>
+        <title>${fn:escapeXml(event.name)}</title>
     </head>
     <body>
         <%@include file="../header.jsp" %>
-        <h1>${fn:escapeXml(resultSet.rows[0].name)}</h1>
+        <h1>${fn:escapeXml(event.name)}</h1>
 
         <p>
-            Begin: ${resultSet.rows[0].begin}
+            Begin: ${event.begin}
 
-            End: ${resultSet.rows[0].end}<br/>
+            End: ${event.end}<br/>
 
             Location:
             <c:choose>
-                <c:when test="${!empty resultSet.rows[0].location_url}">
-                    <a href="${fn:escapeXml(resultSet.rows[0].location_url)}">${fn:escapeXml(resultSet.rows[0].location)}</a>
+                <c:when test="${!empty event.location_url}">
+                    <a href="${fn:escapeXml(event.location_url)}">${fn:escapeXml(event.location)}</a>
                 </c:when>
                 <c:otherwise>
-                    ${fn:escapeXml(resultSet.rows[0].location)}
+                    ${fn:escapeXml(event.location)}
                 </c:otherwise>
             </c:choose>
 
-            <c:if test="${!empty resultSet.rows[0].location_map_url}">
-                <a href="${fn:escapeXml(resultSet.rows[0].location_map_url)}">map</a>
+            <c:if test="${!empty event.location_map_url}">
+                <a href="${fn:escapeXml(event.location_map_url)}">map</a>
             </c:if>
             <br/>
 
-            Description: ${fn:escapeXml(resultSet.rows[0].description)}<br/>
+            Description: ${fn:escapeXml(event.description)}<br/>
 
-            Owner: ${directory.byNumber[resultSet.rows[0].creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
+            Owner: ${directory.byNumber[event.creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
         </p>
 
         <p>
@@ -59,37 +60,37 @@
                 <sql:param value="${user.number}"/>
             </sql:query>
             <form style="display:inline" method="POST" action="handleRSVP.jsp">
-                <input type="hidden" name="event" value="${resultSet.rows[0].id}"/>
+                <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
                 <input type="hidden" name="attending" value="true"/>
                 <input type="submit" name="Delete" value="I'm attending" <c:if test="${resultRSVP.rows[0].attending eq 'true'}">disabled="true"</c:if>/>
-            </form>
-            <form style="display:inline" method="POST" action="handleRSVP.jsp">
-                <input type="hidden" name="event" value="${resultSet.rows[0].id}"/>
+                </form>
+                <form style="display:inline" method="POST" action="handleRSVP.jsp">
+                    <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
                 <input type="hidden" name="attending" value="false"/>
                 <input type="submit" name="Delete" value="I'm not attending" <c:if test="${resultRSVP.rows[0].attending eq 'false'}">disabled="true"</c:if>/>
-            </form>
-            <form style="display:inline" method="POST" action="handleRSVP.jsp">
-                <input type="hidden" name="event" value="${resultSet.rows[0].id}"/>
+                </form>
+                <form style="display:inline" method="POST" action="handleRSVP.jsp">
+                    <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
                 <input type="hidden" name="attending" value="maybe"/>
                 <input type="submit" name="Delete" value="I may be attending" <c:if test="${resultRSVP.rows[0].attending eq 'maybe'}">disabled="true"</c:if>/>
-            </form>
-        </p>
+                </form>
+            </p>
 
-        <p>
-            <form style="display:inline" method="GET" action="edit.jsp">
-                <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
-                <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
-            </form>
-            <form style="display:inline" method="POST" action="handleDelete.jsp">
-                <input type="hidden" name="id" value="${resultSet.rows[0].id}"/>
-                <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne resultSet.rows[0].creator}">disabled="true"</c:if>/>
-            </form>
-        </p>
+            <p>
+                <form style="display:inline" method="GET" action="edit.jsp">
+                    <input type="hidden" name="id" value="${event.id}"/>
+                <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+                </form>
+                <form style="display:inline" method="POST" action="handleDelete.jsp">
+                    <input type="hidden" name="id" value="${event.id}"/>
+                <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+                </form>
+            </p>
 
-        <h2>Attending</h2>
+            <h2>Attending</h2>
         <sql:query dataSource="jdbc/sarariman" var="resultAttending">
             SELECT employee
             FROM company_events_rsvp
@@ -143,7 +144,7 @@
 
                         <form style="display:inline" method="POST" action="handleInvitation">
                             <input type="hidden" name="event" value="${param.id}"/>
-                            <input type="hidden" name="eventName" value="${fn:escapeXml(resultSet.rows[0].name)}"/>
+                            <input type="hidden" name="eventName" value="${fn:escapeXml(event.name)}"/>
                             <input type="hidden" name="employee" value="${employeeEntry.value.number}"/>
                             <input type="submit" name="Invite" value="invite" />
                         </form>
