@@ -66,11 +66,20 @@
             </c:choose>
         </p>
 
-        <c:url var="ticketsURL" value="tickets/">
-            <c:param name="assignee" value="${user.number}"/>
-            <c:param name="notStatus" value="closed"/>
-        </c:url>
-        <p><a href="${fn:escapeXml(ticketsURL)}">My Tickets</a></p>
+        <h2>Tickets</h2>
+        <ul>
+            <li>        
+                <c:url var="myTicketsURL" value="tickets/">
+                    <c:param name="assignee" value="${user.number}"/>
+                    <c:param name="notStatus" value="closed"/>
+                </c:url>
+                <a href="${fn:escapeXml(myTicketsURL)}">My Unclosed Tickets</a>
+            </li>
+            <li>        
+                <c:url var="ticketsURL" value="tickets/"/>
+                <a href="${fn:escapeXml(ticketsURL)}">All Tickets</a>
+            </li>
+        </ul>
 
         <c:choose>
             <c:when test="${!empty param.week}">
