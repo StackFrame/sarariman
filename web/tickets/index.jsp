@@ -54,11 +54,23 @@
                 </sql:query>
                 <c:set var="status" value="${statusResultSet.rows[0].status}"/>
 
-                <tr>
-                    <td><a href="${ticketViewURL}">${ticket.id}</a></td>
-                    <td><a href="${ticketViewURL}">${fn:escapeXml(name)}</a></td>
-                    <td><a href="${ticketViewURL}">${status}</a></td>
-                </tr>
+                <c:set var="skip" value="false"/>
+
+                <c:if test="${not empty param.status and param.status ne status}">
+                    <c:set var="skip" value="true"/>
+                </c:if>
+
+                <c:if test="${not empty param.notStatus and param.notStatus eq status}">
+                    <c:set var="skip" value="true"/>
+                </c:if>
+
+                <c:if test="${not skip}">
+                    <tr>
+                        <td><a href="${ticketViewURL}">${ticket.id}</a></td>
+                        <td><a href="${ticketViewURL}">${fn:escapeXml(name)}</a></td>
+                        <td><a href="${ticketViewURL}">${status}</a></td>
+                    </tr>
+                </c:if>
             </c:forEach>
         </table>
 
