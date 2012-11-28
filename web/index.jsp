@@ -66,6 +66,12 @@
             </c:choose>
         </p>
 
+        <c:url var="ticketsURL" value="tickets/">
+            <c:param name="assignee" value="${user.number}"/>
+            <c:param name="notStatus" value="closed"/>
+        </c:url>
+        <p><a href="${fn:escapeXml(ticketsURL)}">My Tickets</a></p>
+
         <c:choose>
             <c:when test="${!empty param.week}">
                 <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
