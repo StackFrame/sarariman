@@ -20,13 +20,25 @@
         <h1>Tickets</h1>
 
         <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-            SELECT id, created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP
+            SELECT id
             FROM ticket
         </sql:query>
 
         <a href="create.jsp">Create a Ticket</a>
         <br/>
         <br/>
+
+        <form method="GET">
+            <select name="assignee" id="assignee">
+                <option value="" <c:if test="${empty param.assignee}">selected="selected"</c:if>></option>
+                <c:forEach var="e" items="${directory.byUserName}">
+                    <c:if test="${e.value.active}">
+                        <option value="${e.value.number}" <c:if test="${param.assignee eq e.value.number}">selected="selected"</c:if>>${e.value.displayName}</option>
+                    </c:if>
+                </c:forEach>
+            </select>
+            <input type="submit" value="Search"/>
+        </form>
 
         <table class="altrows">
             <tr>
