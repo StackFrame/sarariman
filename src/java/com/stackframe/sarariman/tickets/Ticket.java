@@ -4,8 +4,8 @@
  */
 package com.stackframe.sarariman.tickets;
 
+import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
-import com.stackframe.sarariman.Sarariman;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
  *
@@ -22,8 +25,7 @@ import java.util.List;
  */
 public class Ticket {
 
-    private final int id;
-    private final Sarariman sarariman;
+    private int id;
 
     public static class Detail {
 
@@ -51,14 +53,35 @@ public class Ticket {
 
     }
 
-    public Ticket(int id, Sarariman sarariman) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
         this.id = id;
-        this.sarariman = sarariman;
+    }
+
+    private Connection openConnection() throws SQLException {
+        try {
+            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
+            return source.getConnection();
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Directory getDirectory() {
+        try {
+            Directory directory = (Directory)new InitialContext().lookup("sarariman.directory");
+            return directory;
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private List<Detail> getAssignmentDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
-        Connection connection = sarariman.openConnection();
+        Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_assignment WHERE ticket = ?");
             try {
@@ -67,8 +90,8 @@ public class Ticket {
                 try {
                     while (resultSet.next()) {
                         Timestamp timestamp = resultSet.getTimestamp("updated");
-                        Employee assignee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("assignee"));
-                        Employee assignor = sarariman.getDirectory().getByNumber().get(resultSet.getInt("assignor"));
+                        Employee assignee = getDirectory().getByNumber().get(resultSet.getInt("assignee"));
+                        Employee assignor = getDirectory().getByNumber().get(resultSet.getInt("assignor"));
                         int assignment = resultSet.getInt("assignment");
                         Detail detail;
                         if (assignment == 1) {
@@ -96,7 +119,7 @@ public class Ticket {
 
     private List<Detail> getCommentDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
-        Connection connection = sarariman.openConnection();
+        Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_comment WHERE ticket = ?");
             try {
@@ -106,7 +129,7 @@ public class Ticket {
                     while (resultSet.next()) {
                         Timestamp timestamp = resultSet.getTimestamp("updated");
                         String comment = resultSet.getString("comment");
-                        Employee employee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        Employee employee = getDirectory().getByNumber().get(resultSet.getInt("employee"));
                         Detail detail = new Detail(timestamp, employee, employee.getDisplayName() + " commented: <div>" + comment + "</div>");
                         details.add(detail);
                     }
@@ -125,7 +148,7 @@ public class Ticket {
 
     private List<Detail> getDescriptionDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
-        Connection connection = sarariman.openConnection();
+        Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_description WHERE ticket = ?");
             try {
@@ -135,7 +158,7 @@ public class Ticket {
                     while (resultSet.next()) {
                         Timestamp timestamp = resultSet.getTimestamp("updated");
                         String description = resultSet.getString("description");
-                        Employee employee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        Employee employee = getDirectory().getByNumber().get(resultSet.getInt("employee"));
                         Detail detail = new Detail(timestamp, employee, employee.getDisplayName() + " set description to: <div>" + description + "</div>");
                         details.add(detail);
                     }
@@ -154,7 +177,7 @@ public class Ticket {
 
     private List<Detail> getStatusDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
-        Connection connection = sarariman.openConnection();
+        Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_status WHERE ticket = ?");
             try {
@@ -164,7 +187,7 @@ public class Ticket {
                     while (resultSet.next()) {
                         Timestamp timestamp = resultSet.getTimestamp("updated");
                         String status = resultSet.getString("status");
-                        Employee employee = sarariman.getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        Employee employee = getDirectory().getByNumber().get(resultSet.getInt("employee"));
                         Detail detail = new Detail(timestamp, employee, employee.getDisplayName() + " set status to " + status);
                         details.add(detail);
                     }
@@ -183,7 +206,7 @@ public class Ticket {
 
     private List<Detail> getNameDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
-        Connection connection = sarariman.openConnection();
+        Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT * FROM ticket_name WHERE ticket = ?");
             try {
@@ -194,7 +217,7 @@ public class Ticket {
                         Timestamp timestamp = resultSet.getTimestamp("updated");
                         String name = resultSet.getString("name");
                         int employeeID = resultSet.getInt("employee");
-                        Employee employee = sarariman.getDirectory().getByNumber().get(employeeID);
+                        Employee employee = getDirectory().getByNumber().get(employeeID);
                         Detail detail = new Detail(timestamp, employee, "name was set to '" + name + "' by " + employee.getDisplayName());
                         details.add(detail);
                     }

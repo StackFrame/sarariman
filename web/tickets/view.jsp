@@ -4,8 +4,6 @@
 --%>
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
-<%@page import="com.stackframe.sarariman.Sarariman"%>
-<%@page import="com.stackframe.sarariman.tickets.Ticket"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -26,13 +24,9 @@
 </sql:query>
 <c:set var="name" value="${ticketNameResultSet.rows[0].name}"/>
 
-<%
-    Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-    int ticket_id = Integer.parseInt(request.getParameter("id"));
-    Ticket ticket = new Ticket(ticket_id, sarariman);
-    pageContext.setAttribute("history", ticket.getHistory());
-%>
-
+<jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket">
+    <jsp:setProperty name="ticketBean" property="id" value="${param.id}"/>
+</jsp:useBean>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -169,7 +163,7 @@
 
         <h2>History</h2>
         <ol>
-            <c:forEach var="item" items="${history}">
+            <c:forEach var="item" items="${ticketBean.history}">
                 <li>${item.timestamp}: ${item.text}</li>
             </c:forEach>
         </ol>
