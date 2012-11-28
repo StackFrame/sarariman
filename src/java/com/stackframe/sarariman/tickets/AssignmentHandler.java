@@ -71,23 +71,26 @@ public class AssignmentHandler extends HttpServlet {
         Employee assignor = (Employee)request.getAttribute("user");
         try {
             assign(ticket, assigneeID, assignor.getNumber(), assignment);
-            String messageBody;
-            String messageSubject;
-            if (assignment == 1) {
-                messageBody = String.format("%s assigned ticket %d to you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, request.getHeader("Referer"));
-                messageSubject = String.format("ticket %d: assigned", ticket);
-            } else if (assignment == -1) {
-                messageBody = String.format("%s unassigned ticket %d from you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, request.getHeader("Referer"));
-                messageSubject = String.format("ticket %d: unassigned", ticket);
-            } else {
-                throw new AssertionError("unexpected assignment value: " + assignment);
+            if (assigneeID != assignor.getNumber()) {
+                String messageBody;
+                String messageSubject;
+                if (assignment == 1) {
+                    messageBody = String.format("%s assigned ticket %d to you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, request.getHeader("Referer"));
+                    messageSubject = String.format("ticket %d: assigned", ticket);
+                } else if (assignment == -1) {
+                    messageBody = String.format("%s unassigned ticket %d from you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, request.getHeader("Referer"));
+                    messageSubject = String.format("ticket %d: unassigned", ticket);
+                } else {
+                    throw new AssertionError("unexpected assignment value: " + assignment);
+                }
+
+                Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+                Employee assignee = sarariman.getDirectory().getByNumber().get(assigneeID);
+                Collection<InternetAddress> cc = new ArrayList<InternetAddress>();
+                cc.add(assignor.getEmail());
+                sarariman.getEmailDispatcher().send(assignee.getEmail(), cc, messageSubject, messageBody);
             }
 
-            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-            Employee assignee = sarariman.getDirectory().getByNumber().get(assigneeID);
-            Collection<InternetAddress> cc = new ArrayList<InternetAddress>();
-            cc.add(assignor.getEmail());
-            sarariman.getEmailDispatcher().send(assignee.getEmail(), cc, messageSubject, messageBody);
             response.sendRedirect(request.getHeader("Referer"));
         } catch (SQLException se) {
             throw new ServletException(se);
