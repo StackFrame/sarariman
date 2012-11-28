@@ -134,6 +134,30 @@
             <input type="submit" value="Add Comment" name="update"/>
         </form>
 
+        <h2>Watchers</h2>
+        <ol>
+            <c:forEach var="watcher" items="${ticketBean.watchers}">
+                <li>${watcher.displayName}
+                    <form method="POST" action="WatchHandler">
+                        <input type="hidden" name="watcher" value="${watcher.number}"/>
+                        <input type="hidden" name="ticket" value="${param.id}"/>
+                        <input type="hidden" name="watch" value="false"/>
+                        <input type="submit" value="Remove"/>
+                    </form>
+                </li>
+            </c:forEach>
+        </ol>
+        <form method="POST" action="WatchHandler">
+            <select name="watcher" id="watcher">
+                <c:forEach var="e" items="${directory.byUserName}">
+                    <option value="${e.value.number}">${e.value.displayName}</option>
+                </c:forEach>
+            </select>
+            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="watch" value="true"/>
+            <input type="submit" value="Add Watcher"/>
+        </form>
+
         <p>
             Employee Creator: ${directory.byNumber[ticket.employee_creator].displayName}<br/>
             <c:if test="${ticket.has_creator_location}">

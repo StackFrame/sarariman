@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -77,6 +78,32 @@ public class Ticket {
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Collection<Employee> getWatchers() throws SQLException {
+        Collection<Employee> result = new ArrayList<Employee>();
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT employee FROM ticket_watcher WHERE ticket = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    while (resultSet.next()) {
+                        Employee watcher = getDirectory().getByNumber().get(resultSet.getInt("employee"));
+                        result.add(watcher);
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return result;
     }
 
     public Employee getEmployeeCreator() throws SQLException {
