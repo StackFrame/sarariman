@@ -64,6 +64,17 @@
                     <c:set var="skip" value="true"/>
                 </c:if>
 
+                <c:if test="${not empty param.assignee}">
+                    <sql:query dataSource="jdbc/sarariman" var="sumResultSet">
+                        SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE ticket = ? AND assignee = ?
+                        <sql:param value="${ticket.id}"/>
+                        <sql:param value="${param.assignee}"/>
+                    </sql:query>
+                    <c:if test="${sumResultSet.rows[0].sum ne 1}">
+                        <c:set var="skip" value="true"/>
+                    </c:if>
+                </c:if>
+
                 <c:if test="${not skip}">
                     <tr>
                         <td><a href="${ticketViewURL}">${ticket.id}</a></td>
