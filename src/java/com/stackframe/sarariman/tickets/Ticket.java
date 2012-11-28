@@ -79,6 +79,31 @@ public class Ticket {
         }
     }
 
+    public Employee getEmployeeCreator() throws SQLException {
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT employee_creator FROM ticket WHERE id = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    boolean hasEmployeeCreator = resultSet.first();
+                    if (!hasEmployeeCreator) {
+                        return null;
+                    } else {
+                        return getDirectory().getByNumber().get(resultSet.getInt("employee_creator"));
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     public String getName() throws SQLException {
         Connection connection = openConnection();
         try {

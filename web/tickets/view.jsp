@@ -50,7 +50,7 @@
 
         <p>
             Status: ${ticketBean.status}
-            <form method="POST" action="handleStatus.jsp">
+            <form method="POST" action="StatusChangeHandler">
                 <select name="status" id="status">
                     <sql:query dataSource="jdbc/sarariman" var="statusTypeResultSet">
                         SELECT name FROM ticket_status_type
