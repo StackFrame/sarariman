@@ -192,14 +192,14 @@
         <servlet-name>unbilledservices</servlet-name>
         <jsp-file>/unbilledServices.jsp</jsp-file>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>TicketStatusChangeHandler</servlet-name>
-        <url-pattern>/tickets/StatusChangeHandler</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>TicketStatusChangeHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.tickets.StatusChangeHandler</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>TicketStatusChangeHandler</servlet-name>
+        <url-pattern>/tickets/StatusChangeHandler</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>TicketsAssignmentHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.tickets.AssignmentHandler</servlet-class>
