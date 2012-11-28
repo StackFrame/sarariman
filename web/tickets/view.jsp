@@ -7,6 +7,7 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
     SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP
@@ -150,7 +151,9 @@
         <form method="POST" action="WatchHandler">
             <select name="watcher" id="watcher">
                 <c:forEach var="e" items="${directory.byUserName}">
+                    <c:if test="${e.value.active and not sarariman:contains(ticketBean.watchers, e.value)}">
                     <option value="${e.value.number}">${e.value.displayName}</option>
+                    </c:if>
                 </c:forEach>
             </select>
             <input type="hidden" name="ticket" value="${param.id}"/>
