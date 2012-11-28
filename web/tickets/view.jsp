@@ -15,14 +15,6 @@
     <sql:param value="${param.id}"/>
 </sql:query>
 <c:set var="ticket" value="${ticketResultSet.rows[0]}"/>
-<sql:query dataSource="jdbc/sarariman" var="ticketNameResultSet">
-    SELECT name
-    FROM ticket_name
-    WHERE ticket = ?
-    ORDER BY updated DESC LIMIT 1
-    <sql:param value="${param.id}"/>
-</sql:query>
-<c:set var="name" value="${ticketNameResultSet.rows[0].name}"/>
 
 <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket">
     <jsp:setProperty name="ticketBean" property="id" value="${param.id}"/>
@@ -32,7 +24,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
-        <title>Ticket ${param.id}: ${fn:escapeXml(name)}</title>
+        <title>Ticket ${param.id}: ${fn:escapeXml(ticketBean.name)}</title>
 
         <!-- TinyMCE -->
         <script type="text/javascript" src="../tiny_mce/tiny_mce.js"></script>
@@ -47,12 +39,12 @@
     </head>
     <body>
         <%@include file="../header.jsp" %>
-        <h1>Ticket ${param.id}: ${fn:escapeXml(name)}</h1>
+        <h1>Ticket ${param.id}: ${fn:escapeXml(ticketBean.name)}</h1>
 
         <form method="POST" action="handleNameChange.jsp">
             <label for="name">Name: </label>
             <input type="hidden" name="id" value="${param.id}"/>
-            <input size="50" type="text" id="name" name="name" value="${fn:escapeXml(name)}"/>
+            <input size="50" type="text" id="name" name="name" value="${fn:escapeXml(ticketBean.name)}"/>
             <input type="submit" value="Change Name" name="update"/>
         </form>
 

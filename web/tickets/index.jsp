@@ -67,14 +67,8 @@
                 <th>#</th><th>Name</th><th>Status</th>
             </tr>
             <c:forEach var="ticket" items="${ticketResultSet.rows}">
-                <sql:query dataSource="jdbc/sarariman" var="ticketNameResultSet">
-                    SELECT name
-                    FROM ticket_name
-                    WHERE ticket = ?
-                    ORDER BY updated DESC LIMIT 1
-                    <sql:param value="${ticket.id}"/>
-                </sql:query>
-                <c:set var="name" value="${ticketNameResultSet.rows[0].name}"/>
+                <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket"/>
+                <jsp:setProperty name="ticketBean" property="id" value="${ticket.id}"/>
 
                 <c:url var="ticketViewURL" value="view">
                     <c:param name="id" value="${ticket.id}"/>
@@ -112,7 +106,7 @@
                 <c:if test="${not skip}">
                     <tr>
                         <td><a href="${ticketViewURL}">${ticket.id}</a></td>
-                        <td><a href="${ticketViewURL}">${fn:escapeXml(name)}</a></td>
+                        <td><a href="${ticketViewURL}">${fn:escapeXml(ticketBean.name)}</a></td>
                         <td><a href="${ticketViewURL}">${status}</a></td>
                     </tr>
                 </c:if>

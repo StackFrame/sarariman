@@ -29,9 +29,9 @@ public class Ticket {
 
     public static class Detail {
 
-        public final Timestamp timestamp;
-        public final Employee employee;
-        public final String text;
+        private final Timestamp timestamp;
+        private final Employee employee;
+        private final String text;
 
         public Detail(Timestamp date, Employee employee, String text) {
             this.timestamp = date;
@@ -76,6 +76,27 @@ public class Ticket {
             return directory;
         } catch (NamingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public String getName() throws SQLException {
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT name FROM ticket_name WHERE ticket = ? ORDER BY updated DESC LIMIT 1");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    resultSet.first();
+                    return resultSet.getString("name");
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
         }
     }
 
