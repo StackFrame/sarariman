@@ -54,6 +54,26 @@ public class AssignmentHandler extends HttpServlet {
         }
     }
 
+    private void sendEmail(int assigneeID, Employee assignor, int ticket, String referer, int assignment) {
+        String messageBody;
+        String messageSubject;
+        if (assignment == 1) {
+            messageBody = String.format("%s assigned ticket %d to you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, referer);
+            messageSubject = String.format("ticket %d: assigned", ticket);
+        } else if (assignment == -1) {
+            messageBody = String.format("%s unassigned ticket %d from you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, referer);
+            messageSubject = String.format("ticket %d: unassigned", ticket);
+        } else {
+            throw new AssertionError("unexpected assignment value: " + assignment);
+        }
+
+        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        Employee assignee = sarariman.getDirectory().getByNumber().get(assigneeID);
+        Collection<InternetAddress> cc = new ArrayList<InternetAddress>();
+        cc.add(assignor.getEmail());
+        sarariman.getEmailDispatcher().send(assignee.getEmail(), cc, messageSubject, messageBody);
+    }
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -72,23 +92,7 @@ public class AssignmentHandler extends HttpServlet {
         try {
             assign(ticket, assigneeID, assignor.getNumber(), assignment);
             if (assigneeID != assignor.getNumber()) {
-                String messageBody;
-                String messageSubject;
-                if (assignment == 1) {
-                    messageBody = String.format("%s assigned ticket %d to you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, request.getHeader("Referer"));
-                    messageSubject = String.format("ticket %d: assigned", ticket);
-                } else if (assignment == -1) {
-                    messageBody = String.format("%s unassigned ticket %d from you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, request.getHeader("Referer"));
-                    messageSubject = String.format("ticket %d: unassigned", ticket);
-                } else {
-                    throw new AssertionError("unexpected assignment value: " + assignment);
-                }
-
-                Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-                Employee assignee = sarariman.getDirectory().getByNumber().get(assigneeID);
-                Collection<InternetAddress> cc = new ArrayList<InternetAddress>();
-                cc.add(assignor.getEmail());
-                sarariman.getEmailDispatcher().send(assignee.getEmail(), cc, messageSubject, messageBody);
+                sendEmail(assigneeID, assignor, ticket, request.getHeader("Referer"), assignment);
             }
 
             response.sendRedirect(request.getHeader("Referer"));
