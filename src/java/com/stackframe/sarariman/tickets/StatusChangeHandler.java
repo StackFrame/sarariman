@@ -66,7 +66,7 @@ public class StatusChangeHandler extends HttpServlet {
         Employee employee = (Employee)request.getAttribute("user");
         try {
             updateStatus(ticket, status, employee.getNumber());
-            String messageBody = String.format(employee.getDisplayName() + " changed the status of ticket %d to %s.\n\nGo to %s to view.", ticket, status, request.getHeader("Referer"));
+            String messageBody = String.format("%s changed the status of ticket %d to %s.\n\nGo to %s to view.", employee.getDisplayName(), ticket, status, request.getHeader("Referer"));
             String messageSubject = String.format("ticket %d: new status: %s", ticket, status);
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
             Ticket ticketBean = new Ticket();
