@@ -4,12 +4,15 @@
  */
 package com.stackframe.sarariman.tickets;
 
+import com.stackframe.sarariman.EmailDispatcher;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -72,9 +75,13 @@ public class StatusChangeHandler extends HttpServlet {
             Ticket ticketBean = new Ticket();
             ticketBean.setId(ticket);
             Employee creator = ticketBean.getEmployeeCreator();
+            Collection<Employee> recipients = new HashSet<Employee>();
             if (creator != null) {
-                sarariman.getEmailDispatcher().send(creator.getEmail(), null, messageSubject, messageBody);
+                recipients.add(creator);
             }
+
+            recipients.addAll(ticketBean.getWatchers());
+            sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(recipients), null, messageSubject, messageBody);
 
             // FIXME: If external_creator_email is set, send to it.
 
