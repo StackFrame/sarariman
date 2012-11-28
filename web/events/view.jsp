@@ -137,7 +137,7 @@
                     FROM company_events_rsvp
                     WHERE event = ? AND employee = ?
                     <sql:param value="${param.id}"/>
-                    <sql:param value="${employee.value.number}"/>
+                    <sql:param value="${employeeEntry.value.number}"/>
                 </sql:query>
                 <c:if test="${resultRSVP.rowCount == 0 and employeeEntry.value.active}">
                     <li>${employeeEntry.value.displayName} 
