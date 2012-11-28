@@ -74,21 +74,13 @@
                     <c:param name="id" value="${ticket.id}"/>
                 </c:url>
 
-                <sql:query dataSource="jdbc/sarariman" var="statusResultSet">
-                    SELECT status FROM ticket_status WHERE ticket = ?
-                    ORDER BY updated DESC
-                    LIMIT 1
-                    <sql:param value="${ticket.id}"/>
-                </sql:query>
-                <c:set var="status" value="${statusResultSet.rows[0].status}"/>
-
                 <c:set var="skip" value="false"/>
 
-                <c:if test="${not empty param.status and param.status ne status}">
+                <c:if test="${not empty param.status and param.status ne ticketBean.status}">
                     <c:set var="skip" value="true"/>
                 </c:if>
 
-                <c:if test="${not empty param.notStatus and param.notStatus eq status}">
+                <c:if test="${not empty param.notStatus and param.notStatus eq ticketBean.status}">
                     <c:set var="skip" value="true"/>
                 </c:if>
 
@@ -107,7 +99,7 @@
                     <tr>
                         <td><a href="${ticketViewURL}">${ticket.id}</a></td>
                         <td><a href="${ticketViewURL}">${fn:escapeXml(ticketBean.name)}</a></td>
-                        <td><a href="${ticketViewURL}">${status}</a></td>
+                        <td><a href="${ticketViewURL}">${ticketBean.status}</a></td>
                     </tr>
                 </c:if>
             </c:forEach>

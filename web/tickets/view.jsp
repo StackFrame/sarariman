@@ -49,21 +49,14 @@
         </form>
 
         <p>
-            <sql:query dataSource="jdbc/sarariman" var="statusResultSet">
-                SELECT status FROM ticket_status WHERE ticket = ?
-                ORDER BY updated DESC
-                LIMIT 1
-                <sql:param value="${param.id}"/>
-            </sql:query>
-            <c:set var="status" value="${statusResultSet.rows[0].status}"/>
-            Status: ${status}
+            Status: ${ticketBean.status}
             <form method="POST" action="handleStatus.jsp">
                 <select name="status" id="status">
                     <sql:query dataSource="jdbc/sarariman" var="statusTypeResultSet">
                         SELECT name FROM ticket_status_type
                     </sql:query>
                     <c:forEach var="row" items="${statusTypeResultSet.rows}">
-                        <c:if test="${row.name ne status}">
+                        <c:if test="${row.name ne ticketBean.status}">
                             <option value="${row.name}">${row.name}</option>
                         </c:if>
                     </c:forEach>

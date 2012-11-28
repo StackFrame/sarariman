@@ -100,6 +100,27 @@ public class Ticket {
         }
     }
 
+    public String getStatus() throws SQLException {
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT status FROM ticket_status WHERE ticket = ? ORDER BY updated DESC LIMIT 1");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    resultSet.first();
+                    return resultSet.getString("status");
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     private List<Detail> getAssignmentDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         Connection connection = openConnection();
