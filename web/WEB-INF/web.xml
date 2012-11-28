@@ -201,6 +201,14 @@
         <servlet-class>com.stackframe.sarariman.tickets.StatusChangeHandler</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>TicketsAssignmentHandler</servlet-name>
+        <servlet-class>com.stackframe.sarariman.tickets.AssignmentHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TicketsAssignmentHandler</servlet-name>
+        <url-pattern>/tickets/AssignmentHandler</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>createServiceBilling</servlet-name>
         <servlet-class>com.stackframe.sarariman.ServiceBillingController</servlet-class>
     </servlet>

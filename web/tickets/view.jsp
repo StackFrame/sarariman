@@ -97,7 +97,7 @@
                 <c:if test="${sumResultSet.rows[0].sum gt 0}">
                     <li>
                         ${directory.byNumber[assigneeRow.assignee].displayName}
-                        <form method="POST" action="handleAssignment.jsp">
+                        <form method="POST" action="AssignmentHandler">
                             <input type="hidden" name="assignee" value="${assigneeRow.assignee}"/>
                             <input type="hidden" name="id" value="${param.id}"/>
                             <input type="hidden" name="assignment" value="-1"/>
@@ -108,7 +108,7 @@
             </c:forEach>
         </ol>
 
-        <form method="POST" action="handleAssignment.jsp">
+        <form method="POST" action="AssignmentHandler">
             <select name="assignee" id="assignee">
                 <c:forEach var="e" items="${directory.byUserName}">
                     <!-- FIXME: There must be a smarter way to do this instead of running this query for each employee. -->
