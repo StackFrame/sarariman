@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
 import javax.mail.internet.InternetAddress;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -61,6 +60,13 @@ public class TextUpdateHandler extends HttpServlet {
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
+    private void sendDescriptionChangeEmail(int ticket, Employee updater, String description, String viewURL, Collection<InternetAddress> to) {
+        String messageSubject = String.format("ticket %d: description changed", ticket);
+        String messageBody = String.format("%s changed the description of ticket %d (%s) to:\n\n%s", updater.getDisplayName(), ticket, viewURL, description);
+        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
+    }
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -77,10 +83,13 @@ public class TextUpdateHandler extends HttpServlet {
         String text = request.getParameter("text");
         Employee updater = (Employee)request.getAttribute("user");
         try {
+            // FIXME: Check table name before update to defend against injection.
             update(ticket, table, text, updater.getNumber());
             Ticket ticketBean = new Ticket();
             ticketBean.setId(ticket);
             if (table.equals("name")) {
+                sendDescriptionChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
+            } else if (table.equals("description")) {
                 sendNameChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else {
                 throw new IllegalArgumentException("invalid table: " + table);

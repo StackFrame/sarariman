@@ -68,9 +68,9 @@
             </form>
         </p>
 
-        <form method="POST" action="handleDescription.jsp">
+        <form method="POST" action="TextUpdateHandler">
             <label for="description">Description: </label>
-            <textarea cols="80" rows="10" name="description" id="description">
+            <textarea cols="80" rows="10" name="text" id="description">
                 <sql:query dataSource="jdbc/sarariman" var="descriptionResultSet">
                     SELECT description FROM ticket_description WHERE ticket = ?
                     ORDER BY updated DESC
@@ -79,7 +79,8 @@
                 </sql:query>
                 ${fn:escapeXml(descriptionResultSet.rows[0].description)}
             </textarea>
-            <input type="hidden" name="id" value="${param.id}"/>
+            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="table" value="description"/>
             <input type="submit" value="Update Description" name="update"/>
         </form>
 
