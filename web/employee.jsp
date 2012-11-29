@@ -54,18 +54,26 @@
             </ul>
         </c:if>   
 
-        <p>
-            <c:url var="myTicketsURL" value="tickets/">
-                <c:param name="assignee" value="${param.id}"/>
-                <c:param name="notStatus" value="closed"/>
-            </c:url>
-            <a href="${fn:escapeXml(myTicketsURL)}">Unclosed Tickets</a>
-        </p>
-
         <!-- FIXME: Need a section with labor category assignments. -->
 
         <c:if test="${user.administrator}">
             <h2>Info</h2>
+            <ul>
+                <li>
+                    <c:url var="myTicketsURL" value="tickets/">
+                        <c:param name="assignee" value="${param.id}"/>
+                        <c:param name="notStatus" value="closed"/>
+                    </c:url>
+                    <a href="${fn:escapeXml(myTicketsURL)}">Unclosed Tickets</a>
+                </li>
+                <li>
+                    <c:url var="PTOLink" value="PTODetails">
+                        <c:param name="employee" value="${param.id}"/>
+                    </c:url>
+                    <a href="${PTOLink}">Paid Time Off</a>
+                </li>
+            </ul>
+
             Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>
             Age: ${directory.byNumber[param.id].age}
 
