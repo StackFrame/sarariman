@@ -74,14 +74,7 @@ public class StatusChangeHandler extends HttpServlet {
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
             Ticket ticketBean = new Ticket();
             ticketBean.setId(ticket);
-            Employee creator = ticketBean.getEmployeeCreator();
-            Collection<Employee> recipients = new HashSet<Employee>();
-            if (creator != null) {
-                recipients.add(creator);
-            }
-
-            recipients.addAll(ticketBean.getWatchers());
-            sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(recipients), null, messageSubject, messageBody);
+            sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(ticketBean.getStakeholders()), null, messageSubject, messageBody);
 
             // FIXME: If external_creator_email is set, send to it.
 
