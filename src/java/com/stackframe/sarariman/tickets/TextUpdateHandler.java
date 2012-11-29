@@ -67,6 +67,13 @@ public class TextUpdateHandler extends HttpServlet {
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
+    private void sendCommentEmail(int ticket, Employee updater, String comment, String viewURL, Collection<InternetAddress> to) {
+        String messageSubject = String.format("ticket %d: commented", ticket);
+        String messageBody = String.format("%s commented on ticket %d (%s):\n\n%s", updater.getDisplayName(), ticket, viewURL, comment);
+        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
+    }
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -91,6 +98,8 @@ public class TextUpdateHandler extends HttpServlet {
                 sendDescriptionChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("description")) {
                 sendNameChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
+            } else if (table.equals("comment")) {
+                sendCommentEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else {
                 throw new IllegalArgumentException("invalid table: " + table);
             }

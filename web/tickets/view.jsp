@@ -118,10 +118,11 @@
             <input type="submit" value="Add Assignee"/>
         </form>
 
-        <form method="POST" action="handleComment.jsp">
+        <form method="POST" action="TextUpdateHandler">
             <label for="comment">Comment: </label>
-            <textarea cols="80" rows="10" name="comment" id="comment"></textarea>
-            <input type="hidden" name="id" value="${param.id}"/>
+            <textarea cols="80" rows="10" name="text" id="comment"></textarea>
+            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="table" value="comment"/>
             <input type="submit" value="Add Comment" name="update"/>
         </form>
 
