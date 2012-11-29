@@ -54,6 +54,14 @@
             </ul>
         </c:if>   
 
+        <p>
+            <c:url var="myTicketsURL" value="tickets/">
+                <c:param name="assignee" value="${param.id}"/>
+                <c:param name="notStatus" value="closed"/>
+            </c:url>
+            <a href="${fn:escapeXml(myTicketsURL)}">Unclosed Tickets</a>
+        </p>
+
         <!-- FIXME: Need a section with labor category assignments. -->
 
         <c:if test="${user.administrator}">
@@ -129,7 +137,7 @@
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${!empty row.comment}">
-                        - ${fn:escapeXml(row.comment)}
+                            - ${fn:escapeXml(row.comment)}
                         </c:if>
                     </li>
                 </c:forEach>
