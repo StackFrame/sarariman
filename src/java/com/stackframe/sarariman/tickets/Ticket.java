@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -78,6 +79,19 @@ public class Ticket {
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Collection<Employee> getStakeholders() throws SQLException {
+        Collection<Employee> result = new HashSet<Employee>();
+        Employee creator = getEmployeeCreator();
+        if (creator != null) {
+            result.add(creator);
+        }
+
+        result.addAll(getWatchers());
+        result.addAll(getAssignees());
+
+        return result;
     }
 
     public Collection<Employee> getWatchers() throws SQLException {

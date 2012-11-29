@@ -80,15 +80,8 @@ public class TextUpdateHandler extends HttpServlet {
             update(ticket, table, text, updater.getNumber());
             Ticket ticketBean = new Ticket();
             ticketBean.setId(ticket);
-            Collection<Employee> recipients = new HashSet<Employee>();
-            Employee creator = ticketBean.getEmployeeCreator();
-            if (creator != null) {
-                recipients.add(creator);
-            }
-
-            recipients.addAll(ticketBean.getWatchers());
             if (table.equals("name")) {
-                sendNameChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(recipients));
+                sendNameChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else {
                 throw new IllegalArgumentException("invalid table: " + table);
             }
