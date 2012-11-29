@@ -152,6 +152,50 @@ public class Ticket {
         }
     }
 
+    public Collection<Employee> getAssignees() throws SQLException {
+        Collection<Employee> result = new ArrayList<Employee>();
+        Connection connection = openConnection();
+        try {
+            // FIXME: There must be a smarter way to do this in SQL instead of doing two queries. Self-join?
+            PreparedStatement assigneeQuery = connection.prepareStatement("SELECT DISTINCT assignee FROM ticket_assignment WHERE ticket = ?");
+            try {
+                assigneeQuery.setInt(1, id);
+                ResultSet assigneeResultSet = assigneeQuery.executeQuery();
+                try {
+                    while (assigneeResultSet.next()) {
+                        int assignee = assigneeResultSet.getInt("assignee");
+                        PreparedStatement sumQuery = connection.prepareStatement("SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE ticket = ? AND assignee = ?");
+                        try {
+                            sumQuery.setInt(1, id);
+                            sumQuery.setInt(2, assignee);
+                            ResultSet sumResultSet = sumQuery.executeQuery();
+                            sumResultSet.first();
+                            try {
+                                int sum = sumResultSet.getInt("sum");
+                                if (sum > 0) {
+                                    Employee watcher = getDirectory().getByNumber().get(assignee);
+                                    result.add(watcher);
+                                }
+                            } finally {
+                                sumResultSet.close();
+                            }
+                        } finally {
+                            sumQuery.close();
+                        }
+                    }
+                } finally {
+                    assigneeResultSet.close();
+                }
+            } finally {
+                assigneeQuery.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return result;
+    }
+
     public String getStatus() throws SQLException {
         Connection connection = openConnection();
         try {

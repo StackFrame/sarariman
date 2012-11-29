@@ -85,28 +85,16 @@
 
         <h2>Assignees</h2>
         <ol>
-            <!-- FIXME: There must be a smarter way to do this in SQL instead of doing two queries. -->
-            <sql:query dataSource="jdbc/sarariman" var="assigneeResultSet">
-                SELECT DISTINCT assignee FROM ticket_assignment WHERE ticket = ?
-                <sql:param value="${param.id}"/>
-            </sql:query>
-            <c:forEach var="assigneeRow" items="${assigneeResultSet.rows}">
-                <sql:query dataSource="jdbc/sarariman" var="sumResultSet">
-                    SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE ticket = ? AND assignee = ?
-                    <sql:param value="${param.id}"/>
-                    <sql:param value="${assigneeRow.assignee}"/>
-                </sql:query>
-                <c:if test="${sumResultSet.rows[0].sum gt 0}">
-                    <li>
-                        ${directory.byNumber[assigneeRow.assignee].displayName}
-                        <form method="POST" action="AssignmentHandler">
-                            <input type="hidden" name="assignee" value="${assigneeRow.assignee}"/>
-                            <input type="hidden" name="id" value="${param.id}"/>
-                            <input type="hidden" name="assignment" value="-1"/>
-                            <input type="submit" value="Unassign"/>
-                        </form>
-                    </li>
-                </c:if>
+            <c:forEach var="assignee" items="${ticketBean.assignees}">
+                <li>
+                    ${assignee.displayName}
+                    <form method="POST" action="AssignmentHandler">
+                        <input type="hidden" name="assignee" value="${assignee.number}"/>
+                        <input type="hidden" name="id" value="${param.id}"/>
+                        <input type="hidden" name="assignment" value="-1"/>
+                        <input type="submit" value="Unassign"/>
+                    </form>
+                </li>
             </c:forEach>
         </ol>
 
@@ -153,7 +141,7 @@
             <select name="watcher" id="watcher">
                 <c:forEach var="e" items="${directory.byUserName}">
                     <c:if test="${e.value.active and not sarariman:contains(ticketBean.watchers, e.value)}">
-                    <option value="${e.value.number}">${e.value.displayName}</option>
+                        <option value="${e.value.number}">${e.value.displayName}</option>
                     </c:if>
                 </c:forEach>
             </select>
