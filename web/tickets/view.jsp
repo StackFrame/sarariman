@@ -42,10 +42,11 @@
         <%@include file="../header.jsp" %>
         <h1>Ticket ${param.id}: ${fn:escapeXml(ticketBean.name)}</h1>
 
-        <form method="POST" action="handleNameChange.jsp">
+        <form method="POST" action="TextUpdateHandler">
             <label for="name">Name: </label>
-            <input type="hidden" name="id" value="${param.id}"/>
-            <input size="50" type="text" id="name" name="name" value="${fn:escapeXml(ticketBean.name)}"/>
+            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="table" value="name"/>
+            <input size="50" type="text" id="name" name="text" value="${fn:escapeXml(ticketBean.name)}"/>
             <input type="submit" value="Change Name" name="update"/>
         </form>
 

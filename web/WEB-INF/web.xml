@@ -201,6 +201,14 @@
         <url-pattern>/tickets/StatusChangeHandler</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>TicketTextUpdateHandler</servlet-name>
+        <servlet-class>com.stackframe.sarariman.tickets.TextUpdateHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TicketTextUpdateHandler</servlet-name>
+        <url-pattern>/tickets/TextUpdateHandler</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>TicketsAssignmentHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.tickets.AssignmentHandler</servlet-class>
     </servlet>
