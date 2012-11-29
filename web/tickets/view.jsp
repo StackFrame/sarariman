@@ -153,6 +153,7 @@
         </form>
 
         <p>
+            Created: ${ticket.created}<br/>
             Employee Creator: ${directory.byNumber[ticket.employee_creator].displayName}<br/>
             <c:if test="${ticket.has_creator_location}">
                 <c:url var="mapURL" value="https://maps.google.com/maps">

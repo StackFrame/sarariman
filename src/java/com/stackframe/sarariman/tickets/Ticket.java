@@ -386,19 +386,48 @@ public class Ticket {
         return details;
     }
 
+    private Detail getCreationDetail() throws SQLException {
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator FROM ticket WHERE id = ?");
+            try {
+                query.setInt(1, id);
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    resultSet.next();
+                    Timestamp created = resultSet.getTimestamp("created");
+                    // FIXME: Handle case of no employee_creator when we support external creators.
+                    int employeeID = resultSet.getInt("employee_creator");
+                    Employee employee = getDirectory().getByNumber().get(employeeID);
+                    return new Detail(created, employee, "created by " + employee.getDisplayName());
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     public List<Detail> getHistory() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
+
+        details.add(getCreationDetail());
         details.addAll(getNameDetails());
         details.addAll(getAssignmentDetails());
         details.addAll(getDescriptionDetails());
         details.addAll(getStatusDetails());
         details.addAll(getCommentDetails());
+
         Collections.sort(details, new Comparator<Detail>() {
             public int compare(Detail o1, Detail o2) {
                 return o1.timestamp.compareTo(o2.timestamp);
             }
 
         });
+
         return details;
     }
 
