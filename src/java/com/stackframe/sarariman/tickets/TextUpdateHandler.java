@@ -94,9 +94,9 @@ public class TextUpdateHandler extends HttpServlet {
             update(ticket, table, text, updater.getNumber());
             Ticket ticketBean = new Ticket();
             ticketBean.setId(ticket);
-            if (table.equals("name")) {
+            if (table.equals("description")) {
                 sendDescriptionChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
-            } else if (table.equals("description")) {
+            } else if (table.equals("name")) {
                 sendNameChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("comment")) {
                 sendCommentEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
