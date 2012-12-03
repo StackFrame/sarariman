@@ -42,7 +42,7 @@
     </head>
     <body>
         <%@include file="../header.jsp" %>
-        <h1>Ticket ${param.id}: ${fn:escapeXml(ticketBean.name)}</h1>
+        <h1>Ticket ${ticket_id}: ${fn:escapeXml(ticketBean.name)}</h1>
 
         <form method="POST" action="TextUpdateHandler">
             <label for="name">Name: </label>
