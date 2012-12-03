@@ -70,9 +70,7 @@
                 <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket"/>
                 <jsp:setProperty name="ticketBean" property="id" value="${ticket.id}"/>
 
-                <c:url var="ticketViewURL" value="view">
-                    <c:param name="id" value="${ticket.id}"/>
-                </c:url>
+                <c:url var="ticketViewURL" value="${ticket.id}"/>
 
                 <c:set var="skip" value="false"/>
 

@@ -429,12 +429,20 @@
         <url-pattern>/events/view</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>viewTickets</servlet-name>
+        <jsp-file>/tickets/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>viewTickets</servlet-name>
+        <url-pattern>/tickets/</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>viewTicket</servlet-name>
         <jsp-file>/tickets/view.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>viewTicket</servlet-name>
-        <url-pattern>/tickets/view</url-pattern>
+        <url-pattern>/tickets/*</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>uninvoicedprojects</servlet-name>

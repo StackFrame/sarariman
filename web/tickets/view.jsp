@@ -9,23 +9,25 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
+<c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
+
 <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
     SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP
     FROM ticket
     WHERE id = ?
-    <sql:param value="${param.id}"/>
+    <sql:param value="${ticket_id}"/>
 </sql:query>
 <c:set var="ticket" value="${ticketResultSet.rows[0]}"/>
 
 <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket">
-    <jsp:setProperty name="ticketBean" property="id" value="${param.id}"/>
+    <jsp:setProperty name="ticketBean" property="id" value="${ticket_id}"/>
 </jsp:useBean>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
-        <title>Ticket ${param.id}: ${fn:escapeXml(ticketBean.name)}</title>
+        <title>Ticket ${ticket_id}: ${fn:escapeXml(ticketBean.name)}</title>
 
         <!-- TinyMCE -->
         <script type="text/javascript" src="../tiny_mce/tiny_mce.js"></script>
@@ -44,7 +46,7 @@
 
         <form method="POST" action="TextUpdateHandler">
             <label for="name">Name: </label>
-            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="ticket" value="${ticket_id}"/>
             <input type="hidden" name="table" value="name"/>
             <input size="50" type="text" id="name" name="text" value="${fn:escapeXml(ticketBean.name)}"/>
             <input type="submit" value="Change Name" name="update"/>
@@ -63,7 +65,7 @@
                         </c:if>
                     </c:forEach>
                 </select>
-                <input type="hidden" name="id" value="${param.id}"/>
+                <input type="hidden" name="id" value="${ticket_id}"/>
                 <input type="submit" value="Change Status"/>
             </form>
         </p>
@@ -75,11 +77,11 @@
                     SELECT description FROM ticket_description WHERE ticket = ?
                     ORDER BY updated DESC
                     LIMIT 1
-                    <sql:param value="${param.id}"/>
+                    <sql:param value="${ticket_id}"/>
                 </sql:query>
                 ${fn:escapeXml(descriptionResultSet.rows[0].description)}
             </textarea>
-            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="ticket" value="${ticket_id}"/>
             <input type="hidden" name="table" value="description"/>
             <input type="submit" value="Update Description" name="update"/>
         </form>
@@ -91,7 +93,7 @@
                     ${assignee.displayName}
                     <form method="POST" action="AssignmentHandler">
                         <input type="hidden" name="assignee" value="${assignee.number}"/>
-                        <input type="hidden" name="id" value="${param.id}"/>
+                        <input type="hidden" name="id" value="${ticket_id}"/>
                         <input type="hidden" name="assignment" value="-1"/>
                         <input type="submit" value="Unassign"/>
                     </form>
@@ -105,7 +107,7 @@
                     <!-- FIXME: There must be a smarter way to do this instead of running this query for each employee. -->
                     <sql:query dataSource="jdbc/sarariman" var="sumResultSet">
                         SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE ticket = ? AND assignee = ?
-                        <sql:param value="${param.id}"/>
+                        <sql:param value="${ticket_id}"/>
                         <sql:param value="${e.value.number}"/>
                     </sql:query>
                     <c:if test="${sumResultSet.rows[0].sum ne 1 and e.value.active}">
@@ -113,7 +115,7 @@
                     </c:if>
                 </c:forEach>
             </select>
-            <input type="hidden" name="id" value="${param.id}"/>
+            <input type="hidden" name="id" value="${ticket_id}"/>
             <input type="hidden" name="assignment" value="1"/>
             <input type="submit" value="Add Assignee"/>
         </form>
@@ -121,7 +123,7 @@
         <form method="POST" action="TextUpdateHandler">
             <label for="comment">Comment: </label>
             <textarea cols="80" rows="10" name="text" id="comment"></textarea>
-            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="ticket" value="${ticket_id}"/>
             <input type="hidden" name="table" value="comment"/>
             <input type="submit" value="Add Comment" name="update"/>
         </form>
@@ -132,7 +134,7 @@
                 <li>${watcher.displayName}
                     <form method="POST" action="WatchHandler">
                         <input type="hidden" name="watcher" value="${watcher.number}"/>
-                        <input type="hidden" name="ticket" value="${param.id}"/>
+                        <input type="hidden" name="ticket" value="${ticket_id}"/>
                         <input type="hidden" name="watch" value="false"/>
                         <input type="submit" value="Remove"/>
                     </form>
@@ -147,7 +149,7 @@
                     </c:if>
                 </c:forEach>
             </select>
-            <input type="hidden" name="ticket" value="${param.id}"/>
+            <input type="hidden" name="ticket" value="${ticket_id}"/>
             <input type="hidden" name="watch" value="true"/>
             <input type="submit" value="Add Watcher"/>
         </form>
