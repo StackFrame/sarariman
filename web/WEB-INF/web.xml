@@ -437,6 +437,22 @@
         <url-pattern>/tickets/</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>createTicket</servlet-name>
+        <jsp-file>/tickets/create.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createTicket</servlet-name>
+        <url-pattern>/tickets/create</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>handleTicketCreate</servlet-name>
+        <jsp-file>/tickets/handleCreate.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>handleTicketCreate</servlet-name>
+        <url-pattern>/tickets/handleCreate</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>viewTicket</servlet-name>
         <jsp-file>/tickets/view.jsp</jsp-file>
     </servlet>

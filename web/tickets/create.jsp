@@ -28,7 +28,7 @@
         <%@include file="../header.jsp" %>
         <h1>Create a Ticket</h1>
 
-        <form method="POST" action="handleCreate.jsp">
+        <form method="POST" action="handleCreate">
             <p>
                 <label for="name">Name: </label>
                 <input size="50" type="text" id="name" name="name"/><br/>

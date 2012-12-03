@@ -24,7 +24,7 @@
             FROM ticket
         </sql:query>
 
-        <a href="create.jsp">Create a Ticket</a>
+        <a href="create">Create a Ticket</a>
         <br/>
         <br/>
 
