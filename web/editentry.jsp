@@ -148,7 +148,7 @@
                     <td>${directory.byNumber[entry.employee].userName}</td>
                     <td>${entry.remote_address}</td>
                     <td>${directory.byNumber[entry.remote_user].userName}</td>
-                    <td>${entry.reason}</td>
+                    <td>${fn:escapeXml(entry.reason)}</td>
                 </tr>
             </c:forEach>
         </table>
