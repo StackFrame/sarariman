@@ -63,6 +63,7 @@
                 <th>Name</th>
                 <th>Status</th>
                 <th>Creator</th>
+                <th>Assignee</th>
             </tr>
             <c:forEach var="ticket" items="${tickets.all}">
                 <c:url var="ticketViewURL" value="${ticket.id}"/>
@@ -90,6 +91,21 @@
                         <td><a href="${ticketViewURL}">${fn:escapeXml(ticket.name)}</a></td>
                         <td><a href="${ticketViewURL}">${ticket.status}</a></td>
                         <td>${ticket.employeeCreator.displayName}</td>
+                        <td>
+                            <c:set var="assignees" value="${ticket.assignees}"/>
+                            <c:choose>
+                                <c:when test="${fn:length(assignees) == 1}">
+                                    ${assignees[0].displayName}
+                                </c:when>
+                                <c:otherwise>
+                                    <ul>
+                                        <c:forEach var="assignee" items="${assignees}">
+                                            <li>${assignee.displayName}</li>
+                                        </c:forEach>
+                                    </ul>                                    
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                     </tr>
                 </c:if>
             </c:forEach>
