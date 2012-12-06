@@ -198,32 +198,6 @@ public abstract class AbstractTicket implements Ticket {
     }
 
     @Override
-    public Employee getEmployeeCreator() throws SQLException {
-        Connection connection = openConnection();
-        try {
-            PreparedStatement query = connection.prepareStatement("SELECT employee_creator FROM ticket WHERE id = ?");
-            try {
-                query.setInt(1, getId());
-                ResultSet resultSet = query.executeQuery();
-                try {
-                    boolean hasEmployeeCreator = resultSet.first();
-                    if (!hasEmployeeCreator) {
-                        return null;
-                    } else {
-                        return getDirectory().getByNumber().get(resultSet.getInt("employee_creator"));
-                    }
-                } finally {
-                    resultSet.close();
-                }
-            } finally {
-                query.close();
-            }
-        } finally {
-            connection.close();
-        }
-    }
-
-    @Override
     public List<Detail> getHistory() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         details.add(getCreationDetail());
