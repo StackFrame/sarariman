@@ -27,6 +27,8 @@ public interface Ticket {
 
     InetAddress getCreatorIPAddress();
 
+    Collection<String> getStatusTypes() throws SQLException;
+
     Employee getEmployeeCreator();
 
     List<Detail> getHistory() throws SQLException;

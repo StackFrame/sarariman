@@ -48,12 +48,9 @@
             Status: ${ticketBean.status}
             <form method="POST" action="StatusChangeHandler">
                 <select name="status" id="status">
-                    <sql:query dataSource="jdbc/sarariman" var="statusTypeResultSet">
-                        SELECT name FROM ticket_status_type
-                    </sql:query>
-                    <c:forEach var="row" items="${statusTypeResultSet.rows}">
-                        <c:if test="${row.name ne ticketBean.status}">
-                            <option value="${row.name}">${row.name}</option>
+                    <c:forEach var="type" items="${ticketBean.statusTypes}">
+                        <c:if test="${type ne ticketBean.status}">
+                            <option value="${type}">${type}</option>
                         </c:if>
                     </c:forEach>
                 </select>
