@@ -59,7 +59,10 @@
 
         <table class="altrows">
             <tr>
-                <th>#</th><th>Name</th><th>Status</th>
+                <th>#</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Creator</th>
             </tr>
             <c:forEach var="ticket" items="${tickets.all}">
                 <c:url var="ticketViewURL" value="${ticket.id}"/>
@@ -86,6 +89,7 @@
                         <td><a href="${ticketViewURL}">${ticket.id}</a></td>
                         <td><a href="${ticketViewURL}">${fn:escapeXml(ticket.name)}</a></td>
                         <td><a href="${ticketViewURL}">${ticket.status}</a></td>
+                        <td>${ticket.employeeCreator.displayName}</td>
                     </tr>
                 </c:if>
             </c:forEach>
