@@ -16,13 +16,15 @@ import java.util.List;
  */
 public interface Ticket {
 
-    Timestamp getCreated() throws SQLException;
+    Timestamp getCreated();
 
     Collection<Employee> getAssignees() throws SQLException;
 
-    Location getCreatorLocation() throws SQLException;
+    Location getCreatorLocation();
 
-    Employee getEmployeeCreator() throws SQLException;
+    String getCreatorUserAgent();
+
+    Employee getEmployeeCreator();
 
     List<Detail> getHistory() throws SQLException;
 

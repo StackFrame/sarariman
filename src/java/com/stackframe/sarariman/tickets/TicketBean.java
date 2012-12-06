@@ -21,6 +21,7 @@ public class TicketBean extends AbstractTicket {
     private Timestamp created;
     private Employee employeeCreator;
     private Location creatorLocation;
+    private String creatorUserAgent;
 
     @Override
     public int getId() {
@@ -31,7 +32,7 @@ public class TicketBean extends AbstractTicket {
         this.id = id;
         Connection connection = openConnection();
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude FROM ticket WHERE id = ?");
+            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent FROM ticket WHERE id = ?");
             try {
                 query.setInt(1, id);
                 ResultSet resultSet = query.executeQuery();
@@ -50,6 +51,8 @@ public class TicketBean extends AbstractTicket {
                             double longitude = resultSet.getDouble("creator_longitude");
                             creatorLocation = new Location(latitude, longitude);
                         }
+
+                        creatorUserAgent = resultSet.getString("creator_user_agent");
                     } else {
                         throw new NoSuchTicketException(id);
                     }
@@ -64,16 +67,20 @@ public class TicketBean extends AbstractTicket {
         }
     }
 
-    public Timestamp getCreated() throws SQLException {
+    public Timestamp getCreated() {
         return created;
     }
 
-    public Employee getEmployeeCreator() throws SQLException {
+    public Employee getEmployeeCreator() {
         return employeeCreator;
     }
 
     public Location getCreatorLocation() {
         return creatorLocation;
+    }
+
+    public String getCreatorUserAgent() {
+        return creatorUserAgent;
     }
 
 }

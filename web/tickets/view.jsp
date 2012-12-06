@@ -12,7 +12,7 @@
 <c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
 
 <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-    SELECT creator_user_agent, creator_IP
+    SELECT creator_IP
     FROM ticket
     WHERE id = ?
     <sql:param value="${ticket_id}"/>
@@ -164,7 +164,7 @@
                 Location: <a href="${mapURL}">${ticketBean.creatorLocation.latitude},${ticketBean.creatorLocation.longitude}</a><br/>
             </c:if>
             Creator IP: ${fn:escapeXml(ticket.creator_IP)}<br/>
-            Creator User Agent: ${fn:escapeXml(ticket.creator_user_agent)}
+            Creator User Agent: ${fn:escapeXml(ticketBean.creatorUserAgent)}
         </p>
 
         <h2>History</h2>
