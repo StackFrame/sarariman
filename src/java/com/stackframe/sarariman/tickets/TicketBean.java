@@ -26,26 +26,26 @@ public class TicketBean extends AbstractTicket {
         return id;
     }
 
-    public void setId(int id) throws SQLException {
+    public void setId(int id) throws SQLException, NoSuchTicketException {
         this.id = id;
         Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator FROM ticket WHERE id = ?");
             try {
-                query.setInt(1, getId());
+                query.setInt(1, id);
                 ResultSet resultSet = query.executeQuery();
                 try {
                     if (resultSet.first()) {
                         created = resultSet.getTimestamp("created");
                         int employeeCreatorID = resultSet.getInt("employee_creator");
-                        System.err.println("employeeCreatorID="+employeeCreatorID);
+                        System.err.println("employeeCreatorID=" + employeeCreatorID);
                         if (resultSet.wasNull()) {
                             employeeCreator = null;
                         } else {
                             employeeCreator = getDirectory().getByNumber().get(employeeCreatorID);
                         }
                     } else {
-                        throw new SQLException("no such ticket");
+                        throw new NoSuchTicketException(id);
                     }
                 } finally {
                     resultSet.close();

@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2012 StackFrame, LLC
+ * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
 
@@ -21,7 +21,7 @@ public class TicketImpl extends AbstractTicket {
     private final Timestamp created;
     private final Employee employeeCreator;
 
-    public TicketImpl(int id) throws SQLException {
+    public TicketImpl(int id) throws SQLException, NoSuchTicketException {
         this.id = id;
         Connection connection = openConnection();
         try {
@@ -39,7 +39,7 @@ public class TicketImpl extends AbstractTicket {
                             employeeCreator = getDirectory().getByNumber().get(employeeCreatorID);
                         }
                     } else {
-                        throw new SQLException("no such ticket");
+                        throw new NoSuchTicketException(id);
                     }
                 } finally {
                     resultSet.close();
