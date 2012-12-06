@@ -15,4 +15,6 @@ public interface Tickets {
 
     Collection<String> getStatusTypes() throws SQLException;
 
+    Collection<Ticket> getAll() throws SQLException;
+
 }

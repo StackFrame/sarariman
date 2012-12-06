@@ -53,4 +53,32 @@ public class TicketsImpl implements Tickets {
         return result;
     }
 
+    public Collection<Ticket> getAll() throws SQLException {
+        Collection<Ticket> result = new ArrayList<Ticket>();
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT id FROM ticket");
+            try {
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    while (resultSet.next()) {
+                        try {
+                            result.add(new TicketImpl(resultSet.getInt("id")));
+                        } catch (NoSuchTicketException nste) {
+                            throw new AssertionError(nste);
+                        }
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+
+        return result;
+    }
+
 }

@@ -4,7 +4,6 @@
 --%>
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
@@ -21,11 +20,6 @@
     <body onload="altRows()">
         <%@include file="../header.jsp" %>
         <h1>Tickets</h1>
-
-        <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-            SELECT id
-            FROM ticket
-        </sql:query>
 
         <a href="create">Create a Ticket</a>
         <br/>
@@ -67,25 +61,22 @@
             <tr>
                 <th>#</th><th>Name</th><th>Status</th>
             </tr>
-            <c:forEach var="ticket" items="${ticketResultSet.rows}">
-                <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.TicketBean"/>
-                <jsp:setProperty name="ticketBean" property="id" value="${ticket.id}"/>
-
+            <c:forEach var="ticket" items="${tickets.all}">
                 <c:url var="ticketViewURL" value="${ticket.id}"/>
 
                 <c:set var="skip" value="false"/>
 
-                <c:if test="${not empty param.status and param.status ne ticketBean.status}">
+                <c:if test="${not empty param.status and param.status ne ticket.status}">
                     <c:set var="skip" value="true"/>
                 </c:if>
 
-                <c:if test="${not empty param.notStatus and param.notStatus eq ticketBean.status}">
+                <c:if test="${not empty param.notStatus and param.notStatus eq ticket.status}">
                     <c:set var="skip" value="true"/>
                 </c:if>
 
                 <c:if test="${not empty param.assignee}">
                     <c:set var="assigneeEmployee" value="${directory.byNumber[param.assignee]}"/>
-                    <c:if test="${not sarariman:contains(ticketBean.assignees, assigneeEmployee)}">
+                    <c:if test="${not sarariman:contains(ticket.assignees, assigneeEmployee)}">
                         <c:set var="skip" value="true"/>
                     </c:if>
                 </c:if>
@@ -93,8 +84,8 @@
                 <c:if test="${not skip}">
                     <tr>
                         <td><a href="${ticketViewURL}">${ticket.id}</a></td>
-                        <td><a href="${ticketViewURL}">${fn:escapeXml(ticketBean.name)}</a></td>
-                        <td><a href="${ticketViewURL}">${ticketBean.status}</a></td>
+                        <td><a href="${ticketViewURL}">${fn:escapeXml(ticket.name)}</a></td>
+                        <td><a href="${ticketViewURL}">${ticket.status}</a></td>
                     </tr>
                 </c:if>
             </c:forEach>
