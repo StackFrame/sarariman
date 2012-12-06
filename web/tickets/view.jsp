@@ -95,14 +95,9 @@
 
         <form method="POST" action="AssignmentHandler">
             <select name="assignee" id="assignee">
+                <c:set var="assignees" value="${ticketBean.assignees}"/>
                 <c:forEach var="e" items="${directory.byUserName}">
-                    <!-- FIXME: There must be a smarter way to do this instead of running this query for each employee. -->
-                    <sql:query dataSource="jdbc/sarariman" var="sumResultSet">
-                        SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE ticket = ? AND assignee = ?
-                        <sql:param value="${ticket_id}"/>
-                        <sql:param value="${e.value.number}"/>
-                    </sql:query>
-                    <c:if test="${sumResultSet.rows[0].sum ne 1 and e.value.active}">
+                    <c:if test="${e.value.active and !sarariman:contains(assignees, e.value)}">
                         <option value="${e.value.number}">${e.value.displayName}</option>
                     </c:if>
                 </c:forEach>
