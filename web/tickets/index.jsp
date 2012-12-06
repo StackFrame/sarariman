@@ -67,7 +67,7 @@
                 <th>#</th><th>Name</th><th>Status</th>
             </tr>
             <c:forEach var="ticket" items="${ticketResultSet.rows}">
-                <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket"/>
+                <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.TicketBean"/>
                 <jsp:setProperty name="ticketBean" property="id" value="${ticket.id}"/>
 
                 <c:url var="ticketViewURL" value="${ticket.id}"/>

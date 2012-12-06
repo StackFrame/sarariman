@@ -19,7 +19,7 @@
 </sql:query>
 <c:set var="ticket" value="${ticketResultSet.rows[0]}"/>
 
-<jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.Ticket">
+<jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.TicketBean">
     <jsp:setProperty name="ticketBean" property="id" value="${ticket_id}"/>
 </jsp:useBean>
 

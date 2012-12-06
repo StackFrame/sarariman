@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -72,8 +70,7 @@ public class StatusChangeHandler extends HttpServlet {
             String messageBody = String.format("%s changed the status of ticket %d to %s.\n\nGo to %s to view.", employee.getDisplayName(), ticket, status, request.getHeader("Referer"));
             String messageSubject = String.format("ticket %d: new status: %s", ticket, status);
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-            Ticket ticketBean = new Ticket();
-            ticketBean.setId(ticket);
+            Ticket ticketBean = new TicketImpl(ticket);
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(ticketBean.getStakeholders()), null, messageSubject, messageBody);
 
             // FIXME: If external_creator_email is set, send to it.

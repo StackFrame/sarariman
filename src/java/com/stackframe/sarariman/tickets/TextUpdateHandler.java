@@ -90,10 +90,9 @@ public class TextUpdateHandler extends HttpServlet {
         String text = request.getParameter("text");
         Employee updater = (Employee)request.getAttribute("user");
         try {
-            // FIXME: Check table name before update to defend against injection.
+            // FIXME: Check table name before update to defend against SQL injection attack.
             update(ticket, table, text, updater.getNumber());
-            Ticket ticketBean = new Ticket();
-            ticketBean.setId(ticket);
+            Ticket ticketBean = new TicketImpl(ticket);
             String viewTicketURL = request.getHeader("Referer");
             if (table.equals("description")) {
                 sendDescriptionChangeEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
