@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.tickets;
 
 import com.stackframe.sarariman.Employee;
+import java.net.InetAddress;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -23,6 +24,8 @@ public interface Ticket {
     Location getCreatorLocation();
 
     String getCreatorUserAgent();
+
+    InetAddress getCreatorIPAddress();
 
     Employee getEmployeeCreator();
 

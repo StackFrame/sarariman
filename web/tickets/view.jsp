@@ -11,14 +11,6 @@
 
 <c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
 
-<sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-    SELECT creator_IP
-    FROM ticket
-    WHERE id = ?
-    <sql:param value="${ticket_id}"/>
-</sql:query>
-<c:set var="ticket" value="${ticketResultSet.rows[0]}"/>
-
 <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.TicketBean">
     <jsp:setProperty name="ticketBean" property="id" value="${ticket_id}"/>
 </jsp:useBean>
@@ -163,7 +155,7 @@
                 </c:url>
                 Location: <a href="${mapURL}">${ticketBean.creatorLocation.latitude},${ticketBean.creatorLocation.longitude}</a><br/>
             </c:if>
-            Creator IP: ${fn:escapeXml(ticket.creator_IP)}<br/>
+            Creator IP: ${fn:escapeXml(ticketBean.creatorIPAddress)}<br/>
             Creator User Agent: ${fn:escapeXml(ticketBean.creatorUserAgent)}
         </p>
 
