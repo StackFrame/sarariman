@@ -246,8 +246,11 @@ public abstract class AbstractTicket implements Ticket {
                 query.setInt(1, getId());
                 ResultSet resultSet = query.executeQuery();
                 try {
-                    resultSet.first();
-                    return resultSet.getString("description");
+                    if (resultSet.first()) {
+                        return resultSet.getString("description");
+                    } else {
+                        return null;
+                    }
                 } finally {
                     resultSet.close();
                 }
