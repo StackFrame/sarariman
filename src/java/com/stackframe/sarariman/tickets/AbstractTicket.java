@@ -350,30 +350,6 @@ public abstract class AbstractTicket implements Ticket {
         return details;
     }
 
-    public Collection<String> getStatusTypes() throws SQLException {
-        Collection<String> result = new ArrayList<String>();
-        Connection connection = openConnection();
-        try {
-            PreparedStatement query = connection.prepareStatement("SELECT name FROM ticket_status_type");
-            try {
-                ResultSet resultSet = query.executeQuery();
-                try {
-                    while (resultSet.next()) {
-                        result.add(resultSet.getString("name"));
-                    }
-                } finally {
-                    resultSet.close();
-                }
-            } finally {
-                query.close();
-            }
-        } finally {
-            connection.close();
-        }
-
-        return result;
-    }
-
     @Override
     public Collection<Employee> getWatchers() throws SQLException {
         Collection<Employee> result = new ArrayList<Employee>();

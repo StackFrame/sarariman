@@ -10,6 +10,7 @@
 
 <c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
 
+<jsp:useBean id="tickets" class="com.stackframe.sarariman.tickets.TicketsImpl"/>
 <jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.TicketBean">
     <jsp:setProperty name="ticketBean" property="id" value="${ticket_id}"/>
 </jsp:useBean>
@@ -47,7 +48,7 @@
             Status: ${ticketBean.status}
             <form method="POST" action="StatusChangeHandler">
                 <select name="status" id="status">
-                    <c:forEach var="type" items="${ticketBean.statusTypes}">
+                    <c:forEach var="type" items="${tickets.statusTypes}">
                         <c:if test="${type ne ticketBean.status}">
                             <option value="${type}">${type}</option>
                         </c:if>

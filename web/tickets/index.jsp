@@ -9,6 +9,8 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
+<jsp:useBean id="tickets" class="com.stackframe.sarariman.tickets.TicketsImpl"/>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -40,25 +42,23 @@
                 </c:forEach>
             </select>
 
-            <sql:query dataSource="jdbc/sarariman" var="statusTypeResultSet">
-                SELECT name FROM ticket_status_type
-            </sql:query>
-
             <label for="status">Status:</label>
             <select name="status" id="status">
                 <option value="" <c:if test="${empty param.status}">selected="selected"</c:if>></option>
-                <c:forEach var="row" items="${statusTypeResultSet.rows}">
-                    <option value="${row.name}" <c:if test="${param.status eq row.name}">selected="selected"</c:if>>${row.name}</option>
+                <c:forEach var="type" items="${tickets.statusTypes}">
+                    <option value="${type}" <c:if test="${param.status eq type}">selected="selected"</c:if>>${type}</option>
                 </c:forEach>
             </select>
 
             <label for="notStatus">Not Status:</label>
             <select name="notStatus" id="notStatus">
                 <option value="" <c:if test="${empty param.notStatus}">selected="selected"</c:if>></option>
-                <c:forEach var="row" items="${statusTypeResultSet.rows}">
-                    <option value="${row.name}" <c:if test="${param.notStatus eq row.name}">selected="selected"</c:if>>${row.name}</option>
+                <c:forEach var="type" items="${tickets.statusTypes}">
+                    <option value="${type}" <c:if test="${param.notStatus eq type}">selected="selected"</c:if>>${type}</option>
                 </c:forEach>
             </select>
+
+            <!-- FIXME: Use some JavaScript to make these pickers exclusive. -->
 
             <input type="submit" value="Search"/>
         </form>
