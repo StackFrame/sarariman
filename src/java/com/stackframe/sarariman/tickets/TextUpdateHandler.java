@@ -94,12 +94,13 @@ public class TextUpdateHandler extends HttpServlet {
             update(ticket, table, text, updater.getNumber());
             Ticket ticketBean = new Ticket();
             ticketBean.setId(ticket);
+            String viewTicketURL = request.getHeader("Referer");
             if (table.equals("description")) {
-                sendDescriptionChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
+                sendDescriptionChangeEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("name")) {
-                sendNameChangeEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
+                sendNameChangeEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("comment")) {
-                sendCommentEmail(ticket, updater, text, request.getHeader("Referer"), EmailDispatcher.addresses(ticketBean.getStakeholders()));
+                sendCommentEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else {
                 throw new IllegalArgumentException("invalid table: " + table);
             }
