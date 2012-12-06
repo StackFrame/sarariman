@@ -27,6 +27,30 @@ import javax.sql.DataSource;
  */
 public abstract class AbstractTicket implements Ticket {
 
+    public Timestamp getCreated() throws SQLException {
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT created FROM ticket WHERE id = ?");
+            try {
+                query.setInt(1, getId());
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    if (resultSet.first()) {
+                        return resultSet.getTimestamp("created");
+                    } else {
+                        throw new SQLException("no such ticket");
+                    }
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     @Override
     public Collection<Employee> getAssignees() throws SQLException {
         Collection<Employee> result = new ArrayList<Employee>();
@@ -236,6 +260,7 @@ public abstract class AbstractTicket implements Ticket {
             public int compare(Detail o1, Detail o2) {
                 return o1.getTimestamp().compareTo(o2.getTimestamp());
             }
+
         });
         return details;
     }
@@ -387,5 +412,5 @@ public abstract class AbstractTicket implements Ticket {
             throw new RuntimeException(e);
         }
     }
-    
+
 }

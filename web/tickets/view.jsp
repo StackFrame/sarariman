@@ -12,7 +12,7 @@
 <c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
 
 <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-    SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP
+    SELECT employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP
     FROM ticket
     WHERE id = ?
     <sql:param value="${ticket_id}"/>
@@ -155,7 +155,7 @@
         </form>
 
         <p>
-            Created: ${ticket.created}<br/>
+            Created: ${ticketBean.created}<br/>
             Employee Creator: ${directory.byNumber[ticket.employee_creator].displayName}<br/>
             <c:if test="${ticket.has_creator_location}">
                 <c:url var="mapURL" value="https://maps.google.com/maps">

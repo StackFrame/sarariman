@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface Ticket {
 
+    Timestamp getCreated() throws SQLException;
+
     Collection<Employee> getAssignees() throws SQLException;
 
     Employee getEmployeeCreator() throws SQLException;
