@@ -37,6 +37,8 @@ public interface Ticket {
 
     String getName() throws SQLException;
 
+    String getDescription() throws SQLException;
+
     Collection<Employee> getStakeholders() throws SQLException;
 
     String getStatus() throws SQLException;

@@ -237,6 +237,28 @@ public abstract class AbstractTicket implements Ticket {
         }
     }
 
+    @Override
+    public String getDescription() throws SQLException {
+        Connection connection = openConnection();
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT description FROM ticket_description WHERE ticket = ? ORDER BY updated DESC LIMIT 1");
+            try {
+                query.setInt(1, getId());
+                ResultSet resultSet = query.executeQuery();
+                try {
+                    resultSet.first();
+                    return resultSet.getString("description");
+                } finally {
+                    resultSet.close();
+                }
+            } finally {
+                query.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     protected List<Detail> getNameDetails() throws SQLException {
         List<Detail> details = new ArrayList<Detail>();
         Connection connection = openConnection();

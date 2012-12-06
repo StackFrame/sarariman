@@ -4,7 +4,6 @@
 --%>
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
@@ -62,13 +61,7 @@
         <form method="POST" action="TextUpdateHandler">
             <label for="description">Description: </label>
             <textarea cols="80" rows="10" name="text" id="description">
-                <sql:query dataSource="jdbc/sarariman" var="descriptionResultSet">
-                    SELECT description FROM ticket_description WHERE ticket = ?
-                    ORDER BY updated DESC
-                    LIMIT 1
-                    <sql:param value="${ticket_id}"/>
-                </sql:query>
-                ${fn:escapeXml(descriptionResultSet.rows[0].description)}
+                ${fn:escapeXml(ticketBean.description)}
             </textarea>
             <input type="hidden" name="ticket" value="${ticket_id}"/>
             <input type="hidden" name="table" value="description"/>
