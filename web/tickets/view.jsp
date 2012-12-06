@@ -155,7 +155,13 @@
                 </c:url>
                 Location: <a href="${mapURL}">${ticketBean.creatorLocation.latitude},${ticketBean.creatorLocation.longitude}</a><br/>
             </c:if>
-            Creator IP: ${fn:escapeXml(ticketBean.creatorIPAddress.hostAddress)}<br/>
+
+            Creator IP:
+            <a href="http://domaintz.com/tools/overview/${ticketBean.creatorIPAddress.hostAddress}">
+                ${ticketBean.creatorIPAddress.hostAddress}
+            </a>
+            <br/>
+
             Creator User Agent: ${fn:escapeXml(ticketBean.creatorUserAgent)}
         </p>
 
