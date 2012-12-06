@@ -155,7 +155,7 @@
                 </c:url>
                 Location: <a href="${mapURL}">${ticketBean.creatorLocation.latitude},${ticketBean.creatorLocation.longitude}</a><br/>
             </c:if>
-            Creator IP: ${fn:escapeXml(ticketBean.creatorIPAddress)}<br/>
+            Creator IP: ${fn:escapeXml(ticketBean.creatorIPAddress.hostAddress)}<br/>
             Creator User Agent: ${fn:escapeXml(ticketBean.creatorUserAgent)}
         </p>
 
