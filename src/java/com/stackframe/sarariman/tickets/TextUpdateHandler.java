@@ -105,6 +105,8 @@ public class TextUpdateHandler extends HttpServlet {
             }
 
             response.sendRedirect(request.getHeader("Referer"));
+        } catch (NoSuchTicketException nste) {
+            throw new ServletException(nste);
         } catch (SQLException se) {
             throw new ServletException(se);
         }

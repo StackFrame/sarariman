@@ -12,7 +12,7 @@
 <c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
 
 <sql:query dataSource="jdbc/sarariman" var="ticketResultSet">
-    SELECT has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP
+    SELECT creator_user_agent, creator_IP
     FROM ticket
     WHERE id = ?
     <sql:param value="${ticket_id}"/>
@@ -157,11 +157,11 @@
         <p>
             Created: ${ticketBean.created}<br/>
             Employee Creator: ${ticketBean.employeeCreator.displayName}<br/>
-            <c:if test="${ticket.has_creator_location}">
+            <c:if test="${!empty ticketBean.creatorLocation}">
                 <c:url var="mapURL" value="https://maps.google.com/maps">
-                    <c:param name="q" value="${ticket.creator_latitude},${ticket.creator_longitude}"/>
+                    <c:param name="q" value="${ticketBean.creatorLocation.latitude},${ticketBean.creatorLocation.longitude}"/>
                 </c:url>
-                Location: <a href="${mapURL}">${ticket.creator_latitude},${ticket.creator_longitude}</a><br/>
+                Location: <a href="${mapURL}">${ticketBean.creatorLocation.latitude},${ticketBean.creatorLocation.longitude}</a><br/>
             </c:if>
             Creator IP: ${fn:escapeXml(ticket.creator_IP)}<br/>
             Creator User Agent: ${fn:escapeXml(ticket.creator_user_agent)}

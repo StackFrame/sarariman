@@ -76,6 +76,8 @@ public class StatusChangeHandler extends HttpServlet {
             // FIXME: If external_creator_email is set, send to it.
 
             response.sendRedirect(request.getHeader("Referer"));
+        } catch (NoSuchTicketException nste) {
+            throw new ServletException(nste);
         } catch (SQLException se) {
             throw new ServletException(se);
         }

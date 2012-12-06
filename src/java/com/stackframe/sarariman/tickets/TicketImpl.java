@@ -20,23 +20,34 @@ public class TicketImpl extends AbstractTicket {
     private final int id;
     private final Timestamp created;
     private final Employee employeeCreator;
+    private final Location creatorLocation;
 
     public TicketImpl(int id) throws SQLException, NoSuchTicketException {
         this.id = id;
         Connection connection = openConnection();
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator FROM ticket WHERE id = ?");
+            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude FROM ticket WHERE id = ?");
             try {
                 query.setInt(1, id);
                 ResultSet resultSet = query.executeQuery();
                 try {
                     if (resultSet.first()) {
                         created = resultSet.getTimestamp("created");
+
                         int employeeCreatorID = resultSet.getInt("employee_creator");
                         if (resultSet.wasNull()) {
                             employeeCreator = null;
                         } else {
                             employeeCreator = getDirectory().getByNumber().get(employeeCreatorID);
+                        }
+
+                        boolean hasCreatorLocation = resultSet.getBoolean("has_creator_location");
+                        if (hasCreatorLocation) {
+                            double latitude = resultSet.getDouble("creator_latitude");
+                            double longitude = resultSet.getDouble("creator_longitude");
+                            creatorLocation = new Location(latitude, longitude);
+                        } else {
+                            creatorLocation = null;
                         }
                     } else {
                         throw new NoSuchTicketException(id);
@@ -62,6 +73,10 @@ public class TicketImpl extends AbstractTicket {
 
     public Employee getEmployeeCreator() {
         return employeeCreator;
+    }
+
+    public Location getCreatorLocation() {
+        return creatorLocation;
     }
 
 }

@@ -20,6 +20,8 @@ public interface Ticket {
 
     Collection<Employee> getAssignees() throws SQLException;
 
+    Location getCreatorLocation() throws SQLException;
+
     Employee getEmployeeCreator() throws SQLException;
 
     List<Detail> getHistory() throws SQLException;

@@ -20,6 +20,7 @@ public class TicketBean extends AbstractTicket {
     private int id;
     private Timestamp created;
     private Employee employeeCreator;
+    private Location creatorLocation;
 
     @Override
     public int getId() {
@@ -30,19 +31,24 @@ public class TicketBean extends AbstractTicket {
         this.id = id;
         Connection connection = openConnection();
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator FROM ticket WHERE id = ?");
+            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude FROM ticket WHERE id = ?");
             try {
                 query.setInt(1, id);
                 ResultSet resultSet = query.executeQuery();
                 try {
                     if (resultSet.first()) {
                         created = resultSet.getTimestamp("created");
+
                         int employeeCreatorID = resultSet.getInt("employee_creator");
-                        System.err.println("employeeCreatorID=" + employeeCreatorID);
-                        if (resultSet.wasNull()) {
-                            employeeCreator = null;
-                        } else {
+                        if (!resultSet.wasNull()) {
                             employeeCreator = getDirectory().getByNumber().get(employeeCreatorID);
+                        }
+
+                        boolean hasCreatorLocation = resultSet.getBoolean("has_creator_location");
+                        if (hasCreatorLocation) {
+                            double latitude = resultSet.getDouble("creator_latitude");
+                            double longitude = resultSet.getDouble("creator_longitude");
+                            creatorLocation = new Location(latitude, longitude);
                         }
                     } else {
                         throw new NoSuchTicketException(id);
@@ -64,6 +70,10 @@ public class TicketBean extends AbstractTicket {
 
     public Employee getEmployeeCreator() throws SQLException {
         return employeeCreator;
+    }
+
+    public Location getCreatorLocation() {
+        return creatorLocation;
     }
 
 }
