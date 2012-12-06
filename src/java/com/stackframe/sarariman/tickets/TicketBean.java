@@ -17,17 +17,15 @@ import java.sql.Timestamp;
 public class TicketBean extends AbstractTicket {
 
     private int id;
+    private Timestamp created;
 
     @Override
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(int id) throws SQLException {
         this.id = id;
-    }
-
-    public Timestamp getCreated() throws SQLException {
         Connection connection = openConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT created FROM ticket WHERE id = ?");
@@ -36,7 +34,7 @@ public class TicketBean extends AbstractTicket {
                 ResultSet resultSet = query.executeQuery();
                 try {
                     if (resultSet.first()) {
-                        return resultSet.getTimestamp("created");
+                        created = resultSet.getTimestamp("created");
                     } else {
                         throw new SQLException("no such ticket");
                     }
@@ -49,6 +47,10 @@ public class TicketBean extends AbstractTicket {
         } finally {
             connection.close();
         }
+    }
+
+    public Timestamp getCreated() throws SQLException {
+        return created;
     }
 
 }
