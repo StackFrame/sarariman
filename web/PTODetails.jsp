@@ -20,7 +20,7 @@
 <%
     Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     Employee user = (Employee)request.getAttribute("user");
-    Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
+    Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber(), true);
     pageContext.setAttribute("reports", reports);
     request.setAttribute("employeeParam", Integer.parseInt(request.getParameter("employee")));
 %>
