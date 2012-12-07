@@ -149,6 +149,14 @@
         <servlet-class>com.stackframe.sarariman.ContactController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DeductPTOHandler</servlet-name>
+        <servlet-class>com.stackframe.sarariman.DeductPTOHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeductPTOHandler</servlet-name>
+        <url-pattern>/DeductPTOHandler</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>InvitationHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.events.InvitationHandler</servlet-class>
     </servlet>

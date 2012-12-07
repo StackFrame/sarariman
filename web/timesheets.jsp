@@ -51,6 +51,13 @@
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
+        <c:if test="${user.administrator}">
+            <c:url var="deductPTOLink" value="deductPTO.jsp">
+                <c:param name="week" value="${thisWeekStart}"/>
+            </c:url>
+            <a href="${deductPTOLink}">Deduct PTO</a>
+        </c:if>        
+
         <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
         <%
