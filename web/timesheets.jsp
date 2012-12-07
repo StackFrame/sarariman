@@ -56,7 +56,9 @@
         <%
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
             Employee user = (Employee)request.getAttribute("user");
-            Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
+            String showInactiveParam = request.getParameter("showInactive");
+            boolean showInactive = showInactiveParam != null && showInactiveParam.equals("on");
+            Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber(), showInactive);
             pageContext.setAttribute("reports", reports);
         %>
 
