@@ -81,6 +81,15 @@ public interface OrganizationHierarchy {
      */
     Collection<Integer> getReports(int employee);
 
+    /**
+     * Get a list of all reports (direct and indirect) of an employee at this time.
+     *
+     * @param employee the ID of the employee to find reports of
+     * @param inactive whether to return inactive employees
+     * @return a list of direct reports
+     */
+    Collection<Integer> getReports(int employee, boolean inactive);
+
     interface Node {
 
         int id();

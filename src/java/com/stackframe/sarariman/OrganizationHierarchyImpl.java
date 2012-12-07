@@ -85,7 +85,7 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         return getChainsOfCommand(employee, now());
     }
 
-    public Collection<Integer> getDirectReports(int employee, Date date) {
+    public Collection<Integer> getDirectReports(int employee, Date date, boolean includeInactive) {
         Collection<Integer> managers = new ArrayList<Integer>();
         try {
             Connection connection = connectionFactory.openConnection();
@@ -101,7 +101,7 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
                         while (rs.next()) {
                             int employeeNumber = rs.getInt("employee");
                             Employee e = directory.getByNumber().get(employeeNumber);
-                            if (e.isActive()) {
+                            if (includeInactive || e.isActive()) {
                                 managers.add(employeeNumber);
                             }
                         }
@@ -121,23 +121,39 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         return managers;
     }
 
-    public Collection<Integer> getDirectReports(int employee) {
-        return getDirectReports(employee, now());
+    public Collection<Integer> getDirectReports(int employee, Date date) {
+        return getDirectReports(employee, date, false);
     }
 
-    public Collection<Integer> getReports(int employee, Date date) {
+    public Collection<Integer> getDirectReports(int employee, boolean includeInactive) {
+        return getDirectReports(employee, now(), includeInactive);
+    }
+
+    public Collection<Integer> getDirectReports(int employee) {
+        return getDirectReports(employee, now(), false);
+    }
+
+    public Collection<Integer> getReports(int employee, Date date, boolean includeInactive) {
         Collection<Integer> result = new HashSet<Integer>();
-        Collection<Integer> toAdd = getDirectReports(employee, date);
+        Collection<Integer> toAdd = getDirectReports(employee, date, includeInactive);
         for (int e : toAdd) {
             result.add(e);
-            result.addAll(getReports(e, date));
+            result.addAll(getReports(e, date, includeInactive));
         }
 
         return result;
     }
 
+    public Collection<Integer> getReports(int employee, Date date) {
+        return getReports(employee, date, false);
+    }
+
+    public Collection<Integer> getReports(int employee, boolean includeInactive) {
+        return getReports(employee, now(), includeInactive);
+    }
+
     public Collection<Integer> getReports(int employee) {
-        return getReports(employee, now());
+        return getReports(employee, now(), false);
     }
 
     public static class EmployeeNode implements Node {
