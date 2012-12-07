@@ -7,7 +7,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -36,7 +35,6 @@
                     <sql:param value="${employee.number}"/>
                     <sql:param value="${week}"/>
                 </sql:query>
-                <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
                 <c:set var="used" value="${-resultSetUsed.rows[0].amount}"/>
                 <tr>
                     <td>${employee.fullName}</td>
