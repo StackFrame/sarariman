@@ -35,6 +35,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
     private final Collection<Extension> extensions = new ArrayList<Extension>();
+    private final Holidays holidays = new HolidaysImpl(this);
     private OrganizationHierarchy organizationHierarchy;
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
@@ -150,6 +151,10 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         }
         
         return result;
+    }
+
+    public Holidays getHolidays() {
+        return holidays;
     }
 
     /**
