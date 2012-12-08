@@ -5,42 +5,26 @@
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>PTO Usage</title>
+        <title>Holidays</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <!-- FIXME: error if param.week is not a Saturday -->
-
-    <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
-
     <body onload="altRows()">
         <%@include file="header.jsp" %>
 
-        <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
+        <h1>Holidays</h1>
 
-        <h1>PTO usage for the week of ${thisWeekStart}</h1>
-
-        <table class="altrows" id="timesheets">
-            <tr><th>Employee</th><th>Used</th></tr>
-            <c:forEach var="employeeEntry" items="${directory.byUserName}">
-                <c:set var="employee" value="${employeeEntry.value}"/>
-                <sql:query dataSource="jdbc/sarariman" var="resultSetUsed">
-                    SELECT sum(amount) AS amount FROM paid_time_off WHERE employee=? AND effective=? AND amount < 0
-                    <sql:param value="${employee.number}"/>
-                    <sql:param value="${week}"/>
-                </sql:query>
-                <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
-                <c:set var="used" value="${-resultSetUsed.rows[0].amount}"/>
+        <table class="altrows" id="holidays">
+            <tr><th>Date</th><th>Holiday</th></tr>
+            <c:forEach var="holiday" items="${sarariman.holidays.all}">
                 <tr>
-                    <td>${employee.fullName}</td>
-                    <td class="duration"><fmt:formatNumber value="${used}" minFractionDigits="2"/></td>
+                    <td>${holiday.date}</td>
+                    <td>${holiday.description}</td>
                 </tr>
             </c:forEach>
         </table>
