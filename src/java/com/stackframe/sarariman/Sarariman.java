@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  * @author mcculley
  */
 public class Sarariman implements ServletContextListener, ConnectionFactory {
-    
+
     private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
@@ -42,34 +42,34 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private CronJobs cronJobs;
     private String logoURL;
     private String mountPoint;
-    
+
     public String getVersion() {
         return Version.version;
     }
-    
+
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
         Properties props = new Properties();
         String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
             Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
-        
+
         for (String s : propNames) {
             props.put(s, envContext.lookup(s));
         }
-        
+
         return props;
     }
-    
+
     private static Properties lookupMailProperties(Context envContext) throws NamingException {
         Properties props = new Properties();
         String[] propNames = new String[]{"mail.from", "mail.smtp.host", "mail.smtp.port"};
-        
+
         for (String s : propNames) {
             props.put(s, envContext.lookup(s));
         }
-        
+
         return props;
     }
-    
+
     public Connection openConnection() {
         try {
             DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
@@ -78,78 +78,78 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             throw new RuntimeException(e);
         }
     }
-    
+
     public Directory getDirectory() {
         return directory;
     }
-    
+
     public EmailDispatcher getEmailDispatcher() {
         return emailDispatcher;
     }
-    
+
     public Collection<Employee> getApprovers() {
         return approvers;
     }
-    
+
     public Collection<Employee> getInvoiceManagers() {
         return invoiceManagers;
     }
-    
+
     public Collection<Employee> getTimesheetManagers() {
         return timesheetManagers;
     }
-    
+
     public Map<Long, Customer> getCustomers() throws SQLException {
         return Customer.getCustomers(this);
     }
-    
+
     public Map<Long, Project> getProjects() throws SQLException {
         return Project.getProjects(this);
     }
-    
+
     public Collection<Task> getTasks() throws SQLException {
         return Task.getTasks(this);
     }
-    
+
     public Collection<Employee> getAdministrators() {
         return administrators;
     }
-    
+
     public String getLogoURL() {
         return logoURL;
     }
-    
+
     public String getMountPoint() {
         return mountPoint;
     }
-    
+
     public Collection<LaborCategoryAssignment> getProjectBillRates() {
         return projectBillRates;
     }
-    
+
     public Map<Long, LaborCategory> getLaborCategories() {
         Map<Long, LaborCategory> result = new LinkedHashMap<Long, LaborCategory>();
         for (LaborCategory lc : laborCategories) {
             result.put(lc.getId(), lc);
         }
-        
+
         return result;
     }
-    
+
     public Collection<Extension> getExtensions() {
         return extensions;
     }
-    
+
     public OrganizationHierarchy getOrganizationHierarchy() {
         return organizationHierarchy;
     }
-    
+
     public Collection<Employee> employees(Collection<Integer> ids) {
         Collection<Employee> result = new ArrayList<Employee>();
         for (int id : ids) {
             result.add(directory.getByNumber().get(id));
         }
-        
+
         return result;
     }
 
@@ -167,7 +167,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     public static boolean contains(Collection<?> coll, Object o) {
         return coll.contains(o);
     }
-    
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -184,13 +184,13 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
-        
+
         cronJobs = new CronJobs(this, directory, emailDispatcher);
-        
+
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", this);
         servletContext.setAttribute("directory", directory);
-        
+
         cronJobs.start();
         String hostname;
         try {
@@ -198,7 +198,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         } catch (UnknownHostException uhe) {
             hostname = "unknown host";
         }
-        
+
         for (Employee employee : directory.getByUserName().values()) {
             if (employee.isAdministrator()) {
                 String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname, mountPoint);
@@ -206,10 +206,10 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             }
         }
     }
-    
+
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         cronJobs.stop();
     }
-    
+
 }
