@@ -531,7 +531,12 @@
             </c:if>
         </p>
 
-        <h2>Upcoming Holidays</h2>
+        <jsp:useBean id="date" class="java.util.Date" />
+        <c:set var="year" value="${date.year + 1900}" />
+        <c:url var="holidaysURL" value="holidays.jsp">
+            <c:param name="year" value="${year}"/>
+        </c:url>
+        <h2><a href="${holidaysURL}">Upcoming Holidays</a></h2>
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT * FROM holidays WHERE date >= DATE(NOW()) ORDER BY date
         </sql:query>
