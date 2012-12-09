@@ -38,21 +38,22 @@ public class WeeknightTask extends TimerTask {
         }
 
         java.util.Date todayDate = today.getTime();
-        Date week = new Date(DateUtils.weekStart(todayDate).getTime());
-        for (Employee employee : directory.getByUserName().values()) {
-            if (!employee.isActive()) {
-                continue;
-            }
+        try {
+            boolean isHoliday = sarariman.getHolidays().isHoliday(todayDate);
+            Date week = new Date(DateUtils.weekStart(todayDate).getTime());
+            for (Employee employee : directory.getByUserName().values()) {
+                if (!employee.isActive()) {
+                    continue;
+                }
 
-            Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
-            try {
+                Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
                 if (!timesheet.isSubmitted()) {
                     Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
                     Collection<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
                     if (dayOfWeek == Calendar.FRIDAY) {
                         String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
-                    } else {
+                    } else if (!isHoliday) {
                         double hoursRecorded = timesheet.getHours(new Date(todayDate.getTime()));
                         if (hoursRecorded == 0.0 && employee.isFulltime()) {
                             String message = "Please record your time if you worked today at " + sarariman.getMountPoint() + ".";
@@ -60,9 +61,9 @@ public class WeeknightTask extends TimerTask {
                         }
                     }
                 }
-            } catch (SQLException se) {
-                logger.log(Level.SEVERE, "could not get hours for " + today, se);
             }
+        } catch (SQLException se) {
+            logger.log(Level.SEVERE, "Had SQL trouble.", se);
         }
     }
 
