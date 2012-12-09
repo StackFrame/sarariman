@@ -34,7 +34,7 @@ class HolidaysImpl implements Holidays {
             try {
                 ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays ORDER BY date");
                 try {
-                    ImmutableSortedSet.Builder b = ImmutableSortedSet.naturalOrder();
+                    ImmutableSortedSet.Builder<Holiday> b = ImmutableSortedSet.naturalOrder();
                     while (rs.next()) {
                         Date date = rs.getDate("date");
                         String description = rs.getString("description");
@@ -75,7 +75,7 @@ class HolidaysImpl implements Holidays {
     }
 
     public SortedSet<Integer> getYears() throws SQLException {
-        ImmutableSortedSet.Builder b = ImmutableSortedSet.naturalOrder();
+        ImmutableSortedSet.Builder<Integer> b = ImmutableSortedSet.naturalOrder();
         Function<Holiday, Integer> getYear = new Function<Holiday, Integer>() {
             public Integer apply(Holiday h) {
                 return h.getDate().getYear() + 1900;
