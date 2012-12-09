@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -51,8 +52,24 @@ class HolidaysImpl implements Holidays {
         }
     }
 
-    public boolean isHoliday(Date date) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean isHoliday(Date date) throws SQLException {
+        Connection connection = connectionFactory.openConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?");
+            try {
+                statement.setDate(1, new java.sql.Date(date.getTime()));
+                ResultSet rs = statement.executeQuery();
+                try {
+                    return rs.first();
+                } finally {
+                    rs.close();
+                }
+            } finally {
+                statement.close();
+            }
+        } finally {
+            connection.close();
+        }
     }
 
 }
