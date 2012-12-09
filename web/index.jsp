@@ -538,7 +538,7 @@
         </c:url>
         <h2><a href="${holidaysURL}">Upcoming Holidays</a></h2>
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT * FROM holidays WHERE date >= DATE(NOW()) ORDER BY date
+            SELECT * FROM holidays WHERE date >= DATE(NOW()) AND date < DATE_ADD(NOW(), INTERVAL 6 MONTH) ORDER BY date
         </sql:query>
         <table>
             <tr><th>Date</th><th>Holiday</th></tr>
