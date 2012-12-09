@@ -4,14 +4,19 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSortedSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  *
@@ -70,6 +75,18 @@ class HolidaysImpl implements Holidays {
         } finally {
             connection.close();
         }
+    }
+
+    public SortedSet<Integer> getYears() throws SQLException {
+        ImmutableSortedSet.Builder b = ImmutableSortedSet.naturalOrder();
+        Function<Holiday, Integer> getYear = new Function<Holiday, Integer>() {
+            public Integer apply(Holiday h) {
+                return h.getDate().getYear() + 1900;
+            }
+
+        };
+        b.addAll(Collections2.transform(getAll(), getYear));
+        return b.build();
     }
 
 }
