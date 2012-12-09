@@ -20,7 +20,7 @@
 
     <exec executable="./mkversion.sh"/>
 
-    <javac srcdir="src/java" includes="com/**" destdir="${bin_dir}" source="1.5" debug="true">
+    <javac srcdir="src/java" includes="com/**" destdir="${bin_dir}" source="1.6" debug="true">
       <classpath refid="compile.class.path" />
       <compilerarg value="-Xlint:all,-serial"/>
     </javac>
