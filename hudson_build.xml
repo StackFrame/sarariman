@@ -11,6 +11,7 @@
     <pathelement path="lib/iText-2.0.8.jar" />
     <pathelement path="lib/joda-time-1.6.2.jar" />
     <pathelement path="lib/joda-time-jsptags-1.0.2.jar" />
+    <pathelement path="lib/guava-13.0.1.jar" />
   </path>
 
   <target name="default" description="Compile and build WAR." >
