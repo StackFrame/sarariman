@@ -20,14 +20,25 @@
 
         <h1><c:if test="${not empty param.year}">${param.year} </c:if>Holidays</h1>
 
+
+        <form action="holidays.jsp" method="GET">
+            <select name="year">
+                <option <c:if test="${empty param.year}">selected="selected"</c:if>></option>
+                <c:forEach var="year" items="${sarariman.holidays.years}">
+                    <option value="${year}" <c:if test="${year eq param.year}">selected="selected"</c:if>>${year}</option>
+                </c:forEach>
+            </select>
+            <input type="submit" name="get" value="Get"/>
+        </form>
+
         <table class="altrows" id="holidays">
             <tr><th>Date</th><th>Holiday</th></tr>
             <c:forEach var="holiday" items="${sarariman.holidays.all}">
                 <c:if test="${empty param.year or fn:startsWith(holiday.date, param.year)}">
-                <tr>
-                    <td>${holiday.date}</td>
-                    <td>${holiday.description}</td>
-                </tr>
+                    <tr>
+                        <td>${holiday.date}</td>
+                        <td>${holiday.description}</td>
+                    </tr>
                 </c:if>
             </c:forEach>
         </table>
