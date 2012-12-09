@@ -12,10 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -30,22 +27,22 @@ class HolidaysImpl implements Holidays {
         this.connectionFactory = connectionFactory;
     }
 
-    public List<Holiday> getAll() throws SQLException {
+    public SortedSet<Holiday> getAll() throws SQLException {
         Connection connection = connectionFactory.openConnection();
         try {
             Statement statement = connection.createStatement();
             try {
                 ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays ORDER BY date");
                 try {
-                    List<Holiday> holidays = new ArrayList<Holiday>();
+                    ImmutableSortedSet.Builder b = ImmutableSortedSet.naturalOrder();
                     while (rs.next()) {
                         Date date = rs.getDate("date");
                         String description = rs.getString("description");
                         Holiday holiday = new HolidayImpl(date, description);
-                        holidays.add(holiday);
+                        b.add(holiday);
                     }
 
-                    return holidays;
+                    return b.build();
                 } finally {
                     rs.close();
                 }

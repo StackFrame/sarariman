@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author mcculley
  */
-public interface Holiday {
+public interface Holiday extends Comparable<Holiday> {
 
     Date getDate();
 

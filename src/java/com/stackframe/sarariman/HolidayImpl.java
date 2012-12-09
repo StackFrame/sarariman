@@ -28,4 +28,8 @@ public class HolidayImpl implements Holiday {
         return description;
     }
 
+    public int compareTo(Holiday t) {
+        return date.compareTo(t.getDate());
+    }
+
 }

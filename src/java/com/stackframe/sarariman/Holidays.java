@@ -6,7 +6,6 @@ package com.stackframe.sarariman;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -15,7 +14,7 @@ import java.util.SortedSet;
  */
 public interface Holidays {
 
-    List<Holiday> getAll() throws SQLException;
+    SortedSet<Holiday> getAll() throws SQLException;
 
     boolean isHoliday(Date date) throws SQLException;
 
