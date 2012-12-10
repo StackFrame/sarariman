@@ -22,13 +22,13 @@
 
 
         <form action="holidays.jsp" method="GET">
-            <select name="year">
-                <option <c:if test="${empty param.year}">selected="selected"</c:if>></option>
+            <label for="year">Year: </label>
+            <select id="year" name="year" onchange="this.form.submit();">
+                <option value="" <c:if test="${empty param.year}">selected="selected"</c:if>>All</option>
                 <c:forEach var="year" items="${sarariman.holidays.years}">
                     <option value="${year}" <c:if test="${year eq param.year}">selected="selected"</c:if>>${year}</option>
                 </c:forEach>
             </select>
-            <input type="submit" name="get" value="Get"/>
         </form>
 
         <table class="altrows" id="holidays">
