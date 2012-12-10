@@ -4,13 +4,18 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSortedSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -20,7 +25,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
-import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 
 /**
@@ -33,6 +37,12 @@ public class LDAPDirectory implements Directory {
     private final DirContext context;
     private final Map<Object, Employee> byNumber = new LinkedHashMap<Object, Employee>();
     private final Map<String, Employee> byUserName = new LinkedHashMap<String, Employee>();
+    private final Function<Integer, Employee> employeeIDToEmployee = new Function<Integer, Employee>() {
+        public Employee apply(Integer f) {
+            return byNumber.get(f);
+        }
+
+    };
 
     public class EmployeeImpl implements Employee {
 
@@ -106,6 +116,18 @@ public class LDAPDirectory implements Directory {
 
         public int getAge() {
             return DateUtils.yearsBetween(birthdate.toDateMidnight(), new Date());
+        }
+
+        public SortedSet<Employee> getReports() {
+            Collection<Integer> reportIDs = sarariman.getOrganizationHierarchy().getReports(number);
+            Collection<Employee> reports = Collections2.transform(reportIDs, employeeIDToEmployee);
+            Comparator<Employee> fullNameComparator = new Comparator<Employee>() {
+                public int compare(Employee t, Employee t1) {
+                    return t.getFullName().compareTo(t1.getFullName());
+                }
+
+            };
+            return ImmutableSortedSet.copyOf(fullNameComparator, reports);
         }
 
         @Override

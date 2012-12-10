@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2012 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
+import java.util.SortedSet;
 import javax.mail.internet.InternetAddress;
 import org.joda.time.LocalDate;
 
@@ -37,4 +38,5 @@ public interface Employee {
 
     String getDisplayName();
 
+    SortedSet<Employee> getReports();
 }
