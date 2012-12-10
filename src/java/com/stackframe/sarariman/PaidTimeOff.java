@@ -4,15 +4,15 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  *
@@ -20,17 +20,15 @@ import java.util.Map;
  */
 public class PaidTimeOff {
 
-    private static Collection<Employee> employeesToCredit(Sarariman sarariman) {
-        Directory directory = sarariman.getDirectory();
-        Map<String, Employee> employeesByUserName = directory.getByUserName();
-        Collection<Employee> result = new ArrayList<Employee>();
-        for (Employee employee : employeesByUserName.values()) {
-            if (employee.isActive() && employee.isFulltime()) {
-                result.add(employee);
-            }
+    private static final Predicate<Employee> activeFulltime = new Predicate<Employee>() {
+        public boolean apply(Employee e) {
+            return e.isActive() && e.isFulltime();
         }
 
-        return result;
+    };
+
+    private static Collection<Employee> employeesToCredit(Sarariman sarariman) {
+        return Collections2.filter(sarariman.getDirectory().getByUserName().values(), activeFulltime);
     }
 
     private static void creditPaidTimeOff(Connection connection, double amount, Employee employee, Date effective, String source, String comment) throws SQLException {
