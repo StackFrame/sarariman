@@ -21,6 +21,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
 import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -41,10 +42,10 @@ public class LDAPDirectory implements Directory {
         private final boolean fulltime;
         private final boolean active;
         private final String email;
-        private final DateMidnight birthdate;
+        private final LocalDate birthdate;
         private final String displayName;
 
-        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, DateMidnight birthdate, String displayName) {
+        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName) {
             this.fullName = fullName;
             this.userName = userName;
             this.number = number;
@@ -99,12 +100,12 @@ public class LDAPDirectory implements Directory {
             return sarariman.getInvoiceManagers().contains(this);
         }
 
-        public DateMidnight getBirthdate() {
+        public LocalDate getBirthdate() {
             return birthdate;
         }
 
         public int getAge() {
-            return DateUtils.yearsBetween(birthdate, new Date());
+            return DateUtils.yearsBetween(birthdate.toDateMidnight(), new Date());
         }
 
         @Override
@@ -163,7 +164,7 @@ public class LDAPDirectory implements Directory {
                 boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
-                DateMidnight birthdate = new DateMidnight(attributes.get("birthdate").getAll().next().toString());
+                LocalDate birthdate = new LocalDate(attributes.get("birthdate").getAll().next().toString());
                 tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName));
             }
 
