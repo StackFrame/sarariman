@@ -79,9 +79,6 @@ public class PaidTimeOff {
 
             connection.commit();
             connection.setAutoCommit(true);
-
-            sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "PTO updated",
-                    "Paid time off was updated for all active fulltime employees.");
         } finally {
             connection.close();
         }
