@@ -29,6 +29,7 @@
                     <option value="${year}" <c:if test="${year eq param.year}">selected="selected"</c:if>>${year}</option>
                 </c:forEach>
             </select>
+            <noscript><input type="submit" value="Submit"/></noscript>
         </form>
 
         <table class="altrows" id="holidays">
