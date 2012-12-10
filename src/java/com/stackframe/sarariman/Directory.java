@@ -21,14 +21,14 @@ public interface Directory {
     Map<Object, Employee> getByNumber();
 
     /**
-     * Retrieves a Map of Employees with usernamees as the keys.
+     * Retrieves a Map of Employees with usernames as the keys.
      *
      * @return a Map of Employees with the username as the key
      */
     Map<String, Employee> getByUserName();
 
     /**
-     * Synchronized this directory against the backing store.
+     * Synchronize this directory against the backing store.
      */
     void reload();
 
