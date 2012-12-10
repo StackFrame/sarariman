@@ -31,7 +31,7 @@ public class PaidTimeOff {
         return Collections2.filter(sarariman.getDirectory().getByUserName().values(), activeFulltime);
     }
 
-    private static void creditPaidTimeOff(Connection connection, double amount, Employee employee, Date effective, String source, String comment) throws SQLException {
+    private static void creditPaidTimeOff(Sarariman sarariman, Connection connection, double amount, Employee employee, Date effective, String source, String comment) throws SQLException {
         PreparedStatement checkQuery = connection.prepareStatement("SELECT * FROM paid_time_off WHERE employee=? AND effective=? AND source=?");
         try {
             checkQuery.setInt(1, employee.getNumber());
@@ -52,6 +52,8 @@ public class PaidTimeOff {
                         if (rowCount != 1) {
                             throw new AssertionError("Expected there to be 1 row");
                         }
+
+                        sarariman.getEmailDispatcher().send(employee.getEmail(), null, "PTO updated", "Paid time off was updated: " + comment);
                     } finally {
                         addPTO.close();
                     }
@@ -72,7 +74,7 @@ public class PaidTimeOff {
         try {
             connection.setAutoCommit(false);
             for (Employee employee : employeesToCredit) {
-                creditPaidTimeOff(connection, perWeek, employee, weekStart, source, "credit for week of " + weekStart);
+                creditPaidTimeOff(sarariman, connection, perWeek, employee, weekStart, source, "credit for week of " + weekStart);
             }
 
             connection.commit();
@@ -132,14 +134,11 @@ public class PaidTimeOff {
         try {
             connection.setAutoCommit(false);
             for (Employee employee : employeesToCredit) {
-                creditPaidTimeOff(connection, 8.00, employee, day, source, "credit for holiday: " + holidayName);
+                creditPaidTimeOff(sarariman, connection, 8.00, employee, day, source, "credit for holiday: " + holidayName);
             }
 
             connection.commit();
             connection.setAutoCommit(true);
-
-            sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "holiday PTO updated",
-                    "Holiday paid time off was updated for all active fulltime employees.");
         } finally {
             connection.close();
         }
