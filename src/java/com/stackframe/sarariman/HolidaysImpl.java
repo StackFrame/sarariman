@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.SortedSet;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -38,7 +39,7 @@ class HolidaysImpl implements Holidays {
                     while (rs.next()) {
                         Date date = rs.getDate("date");
                         String description = rs.getString("description");
-                        Holiday holiday = new HolidayImpl(date, description);
+                        Holiday holiday = new HolidayImpl(new LocalDate(date), description);
                         b.add(holiday);
                     }
 
@@ -78,7 +79,7 @@ class HolidaysImpl implements Holidays {
         ImmutableSortedSet.Builder<Integer> b = ImmutableSortedSet.naturalOrder();
         Function<Holiday, Integer> getYear = new Function<Holiday, Integer>() {
             public Integer apply(Holiday h) {
-                return h.getDate().getYear() + 1900;
+                return h.getDate().getYear();
             }
 
         };
