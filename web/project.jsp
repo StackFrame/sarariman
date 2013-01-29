@@ -263,8 +263,8 @@
             <c:if test="${!empty lineItems}">
                 <table class="altrows" id="line_items">
                     <caption>Line Items</caption>
-                    <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="3">Expended</th><th rowspan="2"></th></tr>
-                    <tr><th>Start</th><th>End</th><th>Hours</th><th>Dollars</th><th>Remaining</th></tr>
+                    <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="4">Expended</th><th rowspan="2"></th></tr>
+                    <tr><th>Start</th><th>End</th><th>Hours</th><th>Dollars</th><th>%</th><th>Remaining</th></tr>
                     <c:set var="fundedTotal" value="0.0"/>
                     <c:set var="expendedHoursTotal" value="0.0"/>
                     <c:set var="expendedDollarsTotal" value="0.0"/>
@@ -293,6 +293,7 @@
                             <c:set var="expendedCost" value="${resultSet.rows[0].costTotal}"/>
                             <td class="duration"><fmt:formatNumber value="${expendedDuration}" minFractionDigits="2"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
+                            <td class="percentage"><fmt:formatNumber value="${expendedCost / lineItem.funded}" type="percent"/></td>
                             <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
                             <c:set var="expendedHoursTotal" value="${expendedHoursTotal + expendedDuration}"/>
 
@@ -318,6 +319,7 @@
                         <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal}"/></td>
                         <td class="duration"><fmt:formatNumber value="${expendedHoursTotal}" minFractionDigits="2"/></td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
+                        <td class="percentage"><fmt:formatNumber value="${expendedDollarsTotal / fundedTotal}" type="percent"/></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
                         <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - expendedDollarsTotal}"/></td>
                         <td></td>
                     </tr>
@@ -449,9 +451,15 @@
                                 <c:param name="id" value="${entry.employee.number}"/>
                             </c:url>
                             <td><a href="${link}">${entry.employee.fullName}</a></td>
-                            <td>${laborCategory.name}</td>
+                            <c:url var="assignmentURL" value="laborcategoryassignment.jsp">
+                                <c:param name="id" value="${entry.id}"/>
+                            </c:url>
+                            <td><a href="${assignmentURL}">${laborCategory.name}</a></td>
                             <td>${entry.periodOfPerformanceStart}</td>
                             <td>${entry.periodOfPerformanceEnd}</td>
+                            <c:if test="${entry.periodOfPerformanceStart lt laborCategory.periodOfPerformanceStart or entry.periodOfPerformanceEnd gt laborCategory.periodOfPerformanceEnd}">
+                                <td class="error">Labor Category Period of Performance is not valid!</td>
+                            </c:if>
                         </tr>
                     </c:if>
                 </c:forEach>
