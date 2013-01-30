@@ -12,16 +12,22 @@ import java.util.Date;
  */
 public class LaborCategoryAssignment {
 
+    private final long id;
     private final long laborCategory;
     private final Employee employee;
     private final Date periodOfPerformanceStart;
     private final Date periodOfPerformanceEnd;
 
-    public LaborCategoryAssignment(long laborCategory, Employee employee, Date periodOfPerformanceStart, Date periodOfPerformanceEnd) {
+    public LaborCategoryAssignment(long id, long laborCategory, Employee employee, Date periodOfPerformanceStart, Date periodOfPerformanceEnd) {
+        this.id = id;
         this.laborCategory = laborCategory;
         this.employee = employee;
         this.periodOfPerformanceStart = periodOfPerformanceStart;
         this.periodOfPerformanceEnd = periodOfPerformanceEnd;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Employee getEmployee() {
@@ -42,8 +48,8 @@ public class LaborCategoryAssignment {
 
     @Override
     public String toString() {
-        return "{employee=" + employee + ",laborCategory=" + laborCategory + ",popStart=" + periodOfPerformanceStart + ",popEnd=" +
-                periodOfPerformanceEnd + "}";
+        return "{id=" + id + ",employee=" + employee + ",laborCategory=" + laborCategory + ",popStart=" + periodOfPerformanceStart + ",popEnd="
+                + periodOfPerformanceEnd + "}";
     }
 
 }

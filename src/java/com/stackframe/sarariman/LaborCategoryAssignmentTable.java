@@ -35,7 +35,7 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
                 try {
                     while (resultSet.next()) {
                         int employeeNumber = resultSet.getInt("employee");
-                        LaborCategoryAssignment value = new LaborCategoryAssignment(resultSet.getInt("labor_category"), sarariman.getDirectory().getByNumber().get(employeeNumber), resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
+                        LaborCategoryAssignment value = new LaborCategoryAssignment(resultSet.getInt("id"), resultSet.getInt("labor_category"), sarariman.getDirectory().getByNumber().get(employeeNumber), resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
                         rates.add(value);
                     }
                 } finally {
@@ -47,7 +47,6 @@ public class LaborCategoryAssignmentTable extends AbstractCollection<LaborCatego
             }
             final Iterator<LaborCategoryAssignment> iterator = rates.iterator();
             return new Iterator<LaborCategoryAssignment>() {
-
                 public boolean hasNext() {
                     return iterator.hasNext();
                 }
