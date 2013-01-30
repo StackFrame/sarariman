@@ -628,6 +628,13 @@
             </c:if>
         </p>
 
+        <h2>Reports</h2>
+        <ol>
+            <c:forEach var="report" items="${user.reports}">
+                <li><a href="employee?id=${report.number}">${report.fullName}</a></li>
+            </c:forEach>
+        </ol>
+        
         <%@include file="footer.jsp" %>
     </body>
 </html>
