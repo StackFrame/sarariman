@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import java.sql.Connection;
 import java.sql.Date;
@@ -20,15 +19,8 @@ import java.util.Collection;
  */
 public class PaidTimeOff {
 
-    private static final Predicate<Employee> activeFulltime = new Predicate<Employee>() {
-        public boolean apply(Employee e) {
-            return e.isActive() && e.isFulltime();
-        }
-
-    };
-
     private static Collection<Employee> employeesToCredit(Sarariman sarariman) {
-        return Collections2.filter(sarariman.getDirectory().getByUserName().values(), activeFulltime);
+        return Collections2.filter(sarariman.getDirectory().getByUserName().values(), Utilities.activeFulltime);
     }
 
     private static void creditPaidTimeOff(Sarariman sarariman, Connection connection, double amount, Employee employee, Date effective, String source, String comment) throws SQLException {
