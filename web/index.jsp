@@ -51,6 +51,8 @@
     <body onload="altRows()">
         <a href="tools">Tools</a>
 
+        <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
+
         <sql:query dataSource="jdbc/sarariman" var="averageEntry">
             SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average
             FROM hours
@@ -65,6 +67,29 @@
                 <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
             </c:choose>
         </p>
+
+        <h2>Todo</h2>
+        <ol>
+            <c:if test="${isBoss}">
+                <li>
+                    Global Audits
+                    <ol>
+                        <c:forEach var="audit" items="${sarariman.globalAudits}">
+                            <li>
+                                ${audit.displayName}
+                                <ol>
+                                    <c:forEach var="result" items="${audit.results}">
+                                        <c:if test="${not result.okay}">
+                                            <li class="error">${result.type}: ${result.message}</li>
+                                        </c:if>
+                                    </c:forEach>
+                                </ol>
+                            </li>
+                        </c:forEach>
+                    </ol>
+                </li>
+            </c:if>
+        </ol>
 
         <h2>Tickets</h2>
         <ul>
@@ -634,7 +659,7 @@
                 <li><a href="employee?id=${report.number}">${report.fullName}</a></li>
             </c:forEach>
         </ol>
-        
+
         <%@include file="footer.jsp" %>
     </body>
 </html>
