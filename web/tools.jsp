@@ -29,6 +29,7 @@
             <c:if test="${user.administrator}">
                 <li><a href="administrators">Administrators</a></li>
                 <li><a href="approvers">Approvers</a></li>
+                <li><a href="globalAudits.jsp">Global Audits</a></li>
                 <li><a href="invoices">Invoices</a></li>
                 <li><a href="invoicemanagers">Invoice Managers</a></li>
                 <li><a href="uninvoicedprojects">Uninvoiced Projects</a></li>
