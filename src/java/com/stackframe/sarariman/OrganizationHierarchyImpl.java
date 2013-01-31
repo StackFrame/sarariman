@@ -243,6 +243,23 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         return getOrgChart(now());
     }
 
+    public Collection<Integer> getBosses(Date date) {
+        Collection<EmployeeNode> employees = getEmployees(date);
+        Collection<Integer> bosses = new ArrayList<Integer>();
+        for (EmployeeNode employee : employees) {
+            Collection<Integer> managers = getManagers(employee.id, date);
+            if (managers.isEmpty()) {
+                bosses.add(employee.id);
+            }
+        }
+
+        return bosses;
+    }
+
+    public Collection<Integer> getBosses() {
+        return getBosses(now());
+    }
+
     private static Date now() {
         return new Date(new java.util.Date().getTime());
     }

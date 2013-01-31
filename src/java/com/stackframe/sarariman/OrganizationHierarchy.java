@@ -113,4 +113,19 @@ public interface OrganizationHierarchy {
      */
     Collection<Node> getOrgChart();
 
+    /**
+     * Get a list of all bosses on a given date.
+     *
+     * @param date the date
+     * @return a list of bosses
+     */
+    Collection<Integer> getBosses(Date date);
+
+    /**
+     * Get a list of all bosses at this time.
+     *
+     * @return a list of bosses
+     */
+    Collection<Integer> getBosses();
+
 }
