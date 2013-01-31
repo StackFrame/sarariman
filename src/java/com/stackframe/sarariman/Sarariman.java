@@ -157,6 +157,21 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return holidays;
     }
 
+    public Collection<Audit> getGlobalAudits() {
+        Collection<Audit> c = new ArrayList<Audit>();
+        c.add(new OrgChartGlobalAudit(this));
+        return c;
+    }
+
+    public boolean isBoss(Employee employee) throws SQLException {
+        Collection<Integer> bossIDs = organizationHierarchy.getBosses();
+        return bossIDs.contains(employee.getNumber());
+    }
+
+    public static boolean isBoss(Sarariman sarariman, Employee employee) throws SQLException {
+        return sarariman.isBoss(employee);
+    }
+
     /**
      * Make contains visible to the tag library.
      *
