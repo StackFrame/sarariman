@@ -89,22 +89,26 @@
                     </ol>
                 </li>
             </c:if>
-        </ol>
 
-        <h2>Tickets</h2>
-        <ul>
-            <li>        
+            <li>
                 <c:url var="myTicketsURL" value="tickets/">
                     <c:param name="assignee" value="${user.number}"/>
                     <c:param name="notStatus" value="closed"/>
                 </c:url>
                 <a href="${fn:escapeXml(myTicketsURL)}">My Unclosed Tickets</a>
+                <ol>
+                    <jsp:useBean id="tickets" class="com.stackframe.sarariman.tickets.TicketsImpl"/>
+                    <c:forEach var="ticket" items="${tickets.all}">
+                        <c:if test="${sarariman:contains(ticket.assignees, user) and ticket.status ne 'closed'}">
+                            <c:url var="ticketViewURL" value="tickets/${ticket.id}"/>
+                            <li><a href="${ticketViewURL}">${fn:escapeXml(ticket.name)}</a></li>
+                        </c:if>
+                    </c:forEach>
+                </ol>
             </li>
-            <li>        
-                <c:url var="ticketsURL" value="tickets/"/>
-                <a href="${fn:escapeXml(ticketsURL)}">All Tickets</a>
-            </li>
-        </ul>
+        </ol>
+
+        <p><a href="tickets/">All Tickets</a></p>
 
         <c:choose>
             <c:when test="${!empty param.week}">
