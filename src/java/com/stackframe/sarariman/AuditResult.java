@@ -30,4 +30,5 @@ public class AuditResult {
         return type == AuditResultType.okay;
     }
 
+    // FIXME: Consider making message HTML and/or adding a link attribute.
 }
