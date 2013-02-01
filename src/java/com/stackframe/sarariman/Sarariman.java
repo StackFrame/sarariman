@@ -160,6 +160,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
+        c.add(new ContactsGlobalAudit(this));
         return c;
     }
 
