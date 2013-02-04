@@ -72,8 +72,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-            </form>
+                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+                </form>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -293,7 +293,14 @@
                             <c:set var="expendedCost" value="${resultSet.rows[0].costTotal}"/>
                             <td class="duration"><fmt:formatNumber value="${expendedDuration}" minFractionDigits="2"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
-                            <td class="percentage"><fmt:formatNumber value="${expendedCost / lineItem.funded}" type="percent"/></td>
+                            <c:choose>
+                                <c:when test="${lineItem.funded lt 0.1}">
+                                    <td>NaN</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="percentage"><fmt:formatNumber value="${expendedCost / lineItem.funded}" type="percent"/></td>                                    
+                                </c:otherwise>
+                            </c:choose>
                             <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
                             <c:set var="expendedHoursTotal" value="${expendedHoursTotal + expendedDuration}"/>
 
@@ -310,9 +317,9 @@
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                </form>
-                            </td>
-                        </tr>
+                                    </form>
+                                </td>
+                            </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
@@ -341,9 +348,9 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                            </form>
-                        </td>
-                    </tr>
+                                </form>
+                            </td>
+                        </tr>
                 </c:forEach>
             </table>
 
