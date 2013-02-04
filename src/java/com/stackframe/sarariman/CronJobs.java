@@ -70,6 +70,12 @@ class CronJobs {
         timer.schedule(new TimerTask() {
             public void run() {
                 directory.reload();
+                try {
+                    sarariman.getDirectorySynchronizer().synchronize(directory, sarariman);
+                } catch (Exception e) {
+                    // FIXME: log
+                    System.err.println("Trouble synchronizing directory with database: " + e);
+                }
             }
 
         }, ONE_HOUR, ONE_HOUR);

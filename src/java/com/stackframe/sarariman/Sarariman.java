@@ -36,6 +36,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
     private final Collection<Extension> extensions = new ArrayList<Extension>();
     private final Holidays holidays = new HolidaysImpl(this);
+    private final DirectorySynchronizer directorySynchronizer = new DirectorySynchronizerImpl();
     private OrganizationHierarchy organizationHierarchy;
     private LDAPDirectory directory;
     private EmailDispatcher emailDispatcher;
@@ -184,6 +185,10 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return coll.contains(o);
     }
 
+    DirectorySynchronizer getDirectorySynchronizer() {
+        return directorySynchronizer;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -191,6 +196,13 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             Context envContext = (Context)initContext.lookup("java:comp/env");
             Properties directoryProperties = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(directoryProperties), this);
+            try {
+                directorySynchronizer.synchronize(directory, this);
+            } catch (Exception e) {
+                // FIXME: log
+                System.err.println("Trouble synchronizing directory with database: " + e);
+            }
+
             initContext.rebind("sarariman.directory", directory);
             organizationHierarchy = new OrganizationHierarchyImpl(this, directory);
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
