@@ -27,7 +27,7 @@
         <%@include file="header.jsp" %>
 
         <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
-
+        
         <c:if test="${user.administrator || isManager || isCostManager}">
             <form method="POST" action="projectController">
                 <input type="hidden" name="action" value="update"/>
@@ -377,7 +377,7 @@
             </table>
         </c:if>
 
-        <c:if test="${isManager || user.administrator}">
+        <c:if test="${isManager || user.administrator || isCostManager}">
 
             <c:set var="projectBillRates" value="${sarariman.projectBillRates}"/>
             <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
