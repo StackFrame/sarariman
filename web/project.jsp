@@ -418,7 +418,7 @@
                                 <c:set var="expendedDuration" value="${resultSet.rows[0].durationTotal}"/>
                                 <c:set var="expendedCost" value="${resultSet.rows[0].costTotal}"/>
 
-                                <td class="duration">${expendedDuration}</td> <!-- FIXME: use formatNumber to get commas -->
+                                <td class="duration"><fmt:formatNumber minFractionDigits="2" value="${expendedDuration}"/></td>
                                 <td class="currency"><fmt:formatNumber type="currency" value="${expendedCost}"/></td>
                                 <c:set var="expendedLaborTotal" value="${expendedLaborTotal + expendedCost}"/>
 
