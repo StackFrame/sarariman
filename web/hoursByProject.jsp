@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -7,30 +7,30 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<sql:query dataSource="jdbc/sarariman" var="resultSet">
-    SELECT project FROM project_managers WHERE employee=? AND project=?
-    <sql:param value="${user.number}"/>
-    <sql:param value="${param.project}"/>
-</sql:query>
-<c:set var="isManager" value="${resultSet.rowCount == 1}"/>
+<fmt:parseNumber var="project_id" value="${param.project}"/>
+<c:set var="project" value="${sarariman.projects[project_id]}"/>
 
-<c:if test="${!(user.administrator || isManager)}">
+<c:set var="isManager" value="${sarariman:isManager(user, project)}"/>
+<c:set var="isCostManager" value="${sarariman:isCostManager(user, project)}"/>
+
+<c:if test="${!(user.administrator || isManager || isCostManager)}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<fmt:parseNumber var="project" value="${param.project}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Hours for project ${task}</title>
+        <title>Hours for ${fn:escapeXml(project.name)}</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
     <body onload ="altRows()">
         <%@include file="header.jsp" %>
 
-        <h1>Hours for project ${task}</h1>
+        <h1>Hours for ${fn:escapeXml(project.name)}</h1>
         <sql:query dataSource="jdbc/sarariman" var="result">
             SELECT h.task, h.date, h.employee, h.duration, h.description
             FROM hours AS h
@@ -38,7 +38,7 @@
             JOIN projects AS p ON t.project = p.id
             WHERE p.id = ?
             ORDER BY h.date DESC
-            <sql:param value="${project}"/>
+            <sql:param value="${project_id}"/>
         </sql:query>
         <table class="altrows" id="hours">
             <tr><th>Date</th><th>Task</th><th>Employee</th><th>Duration</th><th>Description</th></tr>
@@ -48,12 +48,16 @@
                     <td>${row.date}</td>
                     <td class="task">${row.task}</td>
                     <td>${directory.byNumber[row.employee].fullName}</td>
-                    <td class="duration">${row.duration}</td>
+                    <td class="duration"><fmt:formatNumber value="${row.duration}" minFractionDigits="2"/></td>
                     <td>${row.description}</td>
                 </tr>
-                <c:set var="total" value="${total+row.duration}"/>
+                <c:set var="total" value="${total + row.duration}"/>
             </c:forEach>
-            <tr><td colspan="3">Total</td><td class="duration">${total}</td><td></td></tr>
+            <tr>
+                <td colspan="3">Total</td>
+                <td class="duration"><fmt:formatNumber value="${total}" minFractionDigits="2"/></td>
+                <td></td>
+            </tr>
         </table>
         <%@include file="footer.jsp" %>
     </body>
