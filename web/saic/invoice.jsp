@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -10,7 +10,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<c:if test="${!(user.administrator || user.invoiceManager || isProjectManager)}">
+<c:if test="${!(user.administrator || user.invoiceManager || isProjectManager || isCostManager)}">
     <jsp:forward page="../unauthorized"/>
 </c:if>
 

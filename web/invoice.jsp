@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -28,7 +28,9 @@
 </sql:query>
 <c:set var="isProjectManager" value="${resultSet.rowCount != 0}" scope="request"/>
 
-<c:if test="${!(user.administrator || user.invoiceManager || isProjectManager)}">
+<c:set var="isCostManager" value="${sarariman:isCostManager(user, project)}" scope="request"/>
+
+<c:if test="${!(user.administrator || user.invoiceManager || isProjectManager || isCostManager)}">
     <jsp:forward page="unauthorized"/>
 </c:if>
 
