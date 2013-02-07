@@ -54,10 +54,10 @@ class DirectorySynchronizerImpl implements DirectorySynchronizer {
     }
 
     public void synchronize(Directory directory, ConnectionFactory connectionFactory) throws Exception {
-        System.err.println("Synchronizing the database with the directory.");
         Set<Integer> employeeIDs = getEmployeeIDs(connectionFactory);
         for (Employee employee : directory.getByUserName().values()) {
             if (!employeeIDs.contains(employee.getNumber())) {
+                // FIXME: Log this.
                 System.err.println("Adding employee " + employee.getDisplayName());
                 add(employee, connectionFactory);
             }
