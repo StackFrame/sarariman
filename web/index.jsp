@@ -75,16 +75,18 @@
                     Global Audits
                     <ol>
                         <c:forEach var="audit" items="${sarariman.globalAudits}">
-                            <li>
-                                ${audit.displayName}
-                                <ol>
-                                    <c:forEach var="result" items="${audit.results}">
-                                        <c:if test="${not result.okay}">
-                                            <li class="error">${result.type}: ${result.message}</li>
-                                        </c:if>
-                                    </c:forEach>
-                                </ol>
-                            </li>
+                            <c:if test="${not empty audit.results}">
+                                <li>
+                                    ${audit.displayName}
+                                    <ol>
+                                        <c:forEach var="result" items="${audit.results}">
+                                            <c:if test="${not result.okay}">
+                                                <li class="error">${result.type}: ${result.message}</li>
+                                            </c:if>
+                                        </c:forEach>
+                                    </ol>
+                                </li>
+                            </c:if>
                         </c:forEach>
                     </ol>
                 </li>
