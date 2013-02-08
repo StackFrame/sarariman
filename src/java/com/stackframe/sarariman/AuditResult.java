@@ -26,9 +26,5 @@ public class AuditResult {
         return message;
     }
 
-    public boolean isOkay() {
-        return type == AuditResultType.okay;
-    }
-
     // FIXME: Consider making message HTML and/or adding a link attribute.
 }

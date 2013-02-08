@@ -23,9 +23,7 @@
                     ${audit.displayName}
                     <ol>
                         <c:forEach var="result" items="${audit.results}">
-                            <c:if test="${not result.okay}">
-                                <li class="error">${result.type}: ${result.message}</li>
-                            </c:if>
+                            <li class="error">${result.type}: ${result.message}</li>
                         </c:forEach>
                     </ol>
                 </li>
