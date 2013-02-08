@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -83,13 +83,16 @@
             <h2>Employees assigned to this project with no hours this week</h2>
             <ul>
                 <c:forEach var="row" items="${noHoursResult.rows}">
-                    <li>${directory.byNumber[row.employee].fullName}</li>
+                    <c:set var="employee" value="${directory.byNumber[row.employee]}"/>
+                    <c:if test="${employee.active}">
+                        <li>${employee.fullName}</li>
+                    </c:if>
                 </c:forEach>
             </ul>
         </c:if>
 
         <c:if test="${fn:contains(sarariman.timesheetManagers, user)}">
-<!-- FIXME: Use chain of command. -->
+            <!-- FIXME: Use chain of command. -->
             <p>Email will go to:</p>
             <sql:query dataSource="jdbc/sarariman" var="emailResult">
                 SELECT c.name, c.email
@@ -101,9 +104,9 @@
             </sql:query>
             <ul>
                 <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
-            </ul>
+                </ul>
 
-            <form action="${pageContext.request.contextPath}/PDFTimesheetBuilder" method="POST">
+                <form action="${pageContext.request.contextPath}/PDFTimesheetBuilder" method="POST">
                 <c:forEach var="row" items="${result.rows}">
                     <c:url var="pdf" value="timereport">
                         <c:param name="project" value="${param.project}"/>
