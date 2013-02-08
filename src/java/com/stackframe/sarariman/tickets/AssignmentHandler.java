@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
@@ -7,6 +7,7 @@ package com.stackframe.sarariman.tickets;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -54,14 +55,14 @@ public class AssignmentHandler extends HttpServlet {
         }
     }
 
-    private void sendEmail(int assigneeID, Employee assignor, int ticket, String referer, int assignment) {
+    private void sendEmail(int assigneeID, Employee assignor, int ticket, URL ticketURL, int assignment) {
         String messageBody;
         String messageSubject;
         if (assignment == 1) {
-            messageBody = String.format("%s assigned ticket %d to you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, referer);
+            messageBody = String.format("%s assigned ticket %d to you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, ticketURL);
             messageSubject = String.format("ticket %d: assigned", ticket);
         } else if (assignment == -1) {
-            messageBody = String.format("%s unassigned ticket %d from you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, referer);
+            messageBody = String.format("%s unassigned ticket %d from you.\n\nGo to %s to view.", assignor.getDisplayName(), ticket, ticketURL);
             messageSubject = String.format("ticket %d: unassigned", ticket);
         } else {
             throw new AssertionError("unexpected assignment value: " + assignment);
@@ -92,7 +93,9 @@ public class AssignmentHandler extends HttpServlet {
         try {
             assign(ticket, assigneeID, assignor.getNumber(), assignment);
             if (assigneeID != assignor.getNumber()) {
-                sendEmail(assigneeID, assignor, ticket, request.getHeader("Referer"), assignment);
+                Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+                URL ticketURL = sarariman.getTicketURL(ticket);
+                sendEmail(assigneeID, assignor, ticket, ticketURL, assignment);
             }
 
             response.sendRedirect(request.getHeader("Referer"));

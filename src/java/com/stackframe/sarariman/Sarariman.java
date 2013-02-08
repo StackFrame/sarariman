@@ -1,10 +1,13 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.tickets.Ticket;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -187,6 +190,18 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
 
     DirectorySynchronizer getDirectorySynchronizer() {
         return directorySynchronizer;
+    }
+
+    public URL getTicketURL(int ticketID) {
+        try {
+            return new URL(getMountPoint() + "tickets/" + ticketID);
+        } catch (MalformedURLException mue) {
+            throw new AssertionError(mue);
+        }
+    }
+
+    public URL getTicketURL(Ticket ticket) {
+        return getTicketURL(ticket.getId());
     }
 
     public void contextInitialized(ServletContextEvent sce) {

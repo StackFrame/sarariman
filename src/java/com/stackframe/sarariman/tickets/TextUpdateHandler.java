@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
@@ -8,6 +8,7 @@ import com.stackframe.sarariman.EmailDispatcher;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -53,24 +54,21 @@ public class TextUpdateHandler extends HttpServlet {
         }
     }
 
-    private void sendNameChangeEmail(int ticket, Employee updater, String name, String viewURL, Collection<InternetAddress> to) {
+    private void sendNameChangeEmail(int ticket, Sarariman sarariman, Employee updater, String name, URL viewURL, Collection<InternetAddress> to) {
         String messageSubject = String.format("ticket %d name changed to \"%s\"", ticket, name);
         String messageBody = String.format("%s changed the name of ticket %d to \"%s\".\n\nGo to %s to view.", updater.getDisplayName(), ticket, name, viewURL);
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
-    private void sendDescriptionChangeEmail(int ticket, Employee updater, String description, String viewURL, Collection<InternetAddress> to) {
+    private void sendDescriptionChangeEmail(int ticket, Sarariman sarariman, Employee updater, String description, URL viewURL, Collection<InternetAddress> to) {
         String messageSubject = String.format("ticket %d: description changed", ticket);
         String messageBody = String.format("%s changed the description of ticket %d (%s) to:\n\n%s", updater.getDisplayName(), ticket, viewURL, description);
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
-    private void sendCommentEmail(int ticket, Employee updater, String comment, String viewURL, Collection<InternetAddress> to) {
+    private void sendCommentEmail(int ticket, Sarariman sarariman, Employee updater, String comment, URL viewURL, Collection<InternetAddress> to) {
         String messageSubject = String.format("ticket %d: commented", ticket);
         String messageBody = String.format("%s commented on ticket %d (%s):\n\n%s", updater.getDisplayName(), ticket, viewURL, comment);
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
@@ -93,13 +91,14 @@ public class TextUpdateHandler extends HttpServlet {
             // FIXME: Check table name before update to defend against SQL injection attack.
             update(ticket, table, text, updater.getNumber());
             Ticket ticketBean = new TicketImpl(ticket);
-            String viewTicketURL = request.getHeader("Referer");
+            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+            URL viewTicketURL = sarariman.getTicketURL(ticketBean);
             if (table.equals("description")) {
-                sendDescriptionChangeEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
+                sendDescriptionChangeEmail(ticket, sarariman, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("name")) {
-                sendNameChangeEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
+                sendNameChangeEmail(ticket, sarariman, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("comment")) {
-                sendCommentEmail(ticket, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
+                sendCommentEmail(ticket, sarariman, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else {
                 throw new IllegalArgumentException("invalid table: " + table);
             }

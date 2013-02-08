@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
@@ -8,6 +8,7 @@ import com.stackframe.sarariman.EmailDispatcher;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -67,10 +68,11 @@ public class StatusChangeHandler extends HttpServlet {
         Employee employee = (Employee)request.getAttribute("user");
         try {
             updateStatus(ticket, status, employee.getNumber());
-            String messageBody = String.format("%s changed the status of ticket %d to %s.\n\nGo to %s to view.", employee.getDisplayName(), ticket, status, request.getHeader("Referer"));
-            String messageSubject = String.format("ticket %d: new status: %s", ticket, status);
-            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
             Ticket ticketBean = new TicketImpl(ticket);
+            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+            URL ticketURL = sarariman.getTicketURL(ticketBean);
+            String messageBody = String.format("%s changed the status of ticket %d to %s.\n\nGo to %s to view.", employee.getDisplayName(), ticket, status, ticketURL);
+            String messageSubject = String.format("ticket %d: new status: %s", ticket, status);
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(ticketBean.getStakeholders()), null, messageSubject, messageBody);
 
             // FIXME: If external_creator_email is set, send to it.
