@@ -4,6 +4,9 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.stackframe.reflect.ReflectionUtils;
 import com.stackframe.sarariman.tickets.Ticket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -116,14 +119,8 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     }
 
     public Collection<Employee> getAdministrators() {
-        Collection<Employee> c = new ArrayList<Employee>();
-        for (Employee employee : directory.getByUserName().values()) {
-            if (employee.isAdministrator()) {
-                c.add(employee);
-            }
-        }
-
-        return c;
+        Predicate<Employee> isAdministrator = ReflectionUtils.predicateForProperty(Employee.class, "administrator");
+        return Collections2.filter(directory.getByUserName().values(), isAdministrator);
     }
 
     public String getLogoURL() {
