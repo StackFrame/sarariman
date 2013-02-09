@@ -12,7 +12,7 @@
     <pathelement path="lib/joda-time-1.6.2.jar" />
     <pathelement path="lib/joda-time-jsptags-1.0.2.jar" />
     <pathelement path="lib/guava-13.0.1.jar" />
-    <pathelement path="../StackFrameCommon/StackFrameCommon.jar" />
+    <pathelement path="lib/StackFrameCommon.jar" />
   </path>
 
   <target name="default" description="Compile and build WAR." >
@@ -20,6 +20,8 @@
     <mkdir dir="${bin_dir}" />
 
     <exec executable="./mkversion.sh"/>
+
+    <copy file="../StackFrameCommon/StackFrameCommon.jar" todir="lib"/>
 
     <javac srcdir="src/java" includes="com/**" destdir="${bin_dir}" source="1.6" debug="true">
       <classpath refid="compile.class.path" />
@@ -29,7 +31,6 @@
     <war destfile="sarariman.war" webxml="web/WEB-INF/web.xml">
       <classes dir="build/WEB-INF/classes" />
       <fileset dir="web" />
-      <fileset file="../StackFrameCommon/StackFrameCommon.jar" />
       <lib dir="lib" />
       <webinf dir="web/WEB-INF" />
       <metainf file="${contextPath}" />
