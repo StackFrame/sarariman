@@ -27,7 +27,6 @@
             <li><a href="scheduledVacation">Scheduled Vacation</a></li>
             <li><a href="stats">Stats</a></li>
             <c:if test="${user.administrator}">
-                <li><a href="administrators">Administrators</a></li>
                 <li><a href="approvers">Approvers</a></li>
                 <li><a href="globalAudits.jsp">Global Audits</a></li>
                 <li><a href="invoices">Invoices</a></li>
