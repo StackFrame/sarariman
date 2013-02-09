@@ -437,6 +437,14 @@
         <url-pattern>/events/view</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>employeeController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.EmployeeController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>employeeController</servlet-name>
+        <url-pattern>/employeeController</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>viewTickets</servlet-name>
         <jsp-file>/tickets/index.jsp</jsp-file>
     </servlet>
