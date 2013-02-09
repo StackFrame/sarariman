@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -74,8 +74,9 @@
                 </li>
             </ul>
 
-            Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>
-            Age: ${directory.byNumber[param.id].age}
+            Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
+            Age: ${employee.age} <br/>
+            Administrator: ${employee.administrator}
 
             <h2>Direct Rate</h2>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">

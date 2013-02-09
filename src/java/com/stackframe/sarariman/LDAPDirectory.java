@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -7,6 +7,10 @@ package com.stackframe.sarariman;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -99,7 +103,28 @@ public class LDAPDirectory implements Directory {
         }
 
         public boolean isAdministrator() {
-            return sarariman.getAdministrators().contains(this);
+            System.err.println("entering isAdministrator");
+            Connection connection = sarariman.openConnection();
+            try {
+                try {
+                    PreparedStatement s = connection.prepareStatement("SELECT administrator FROM employee WHERE id = ?");
+                    try {
+                        s.setInt(1, number);
+                        ResultSet rs = s.executeQuery();
+                        try {
+                            return rs.first() && rs.getBoolean("administrator");
+                        } finally {
+                            rs.close();
+                        }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException se) {
+                throw new RuntimeException(se);
+            }
         }
 
         public boolean isApprover() {
