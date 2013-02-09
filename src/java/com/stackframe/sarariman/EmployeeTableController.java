@@ -31,7 +31,8 @@ public class EmployeeTableController extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP
+     * <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -51,9 +52,7 @@ public class EmployeeTableController extends HttpServlet {
         Employee employee = sarariman.getDirectory().getByNumber().get(id);
         Collection<Employee> employeeCollection;
         String table = request.getParameter("table");
-        if (table.equals("administrators")) {
-            employeeCollection = sarariman.getAdministrators();
-        } else if (table.equals("approvers")) {
+        if (table.equals("approvers")) {
             employeeCollection = sarariman.getApprovers();
         } else if (table.equals("invoiceManagers")) {
             employeeCollection = sarariman.getInvoiceManagers();
@@ -77,7 +76,7 @@ public class EmployeeTableController extends HttpServlet {
         response.sendRedirect(request.getHeader("Referer"));
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description
