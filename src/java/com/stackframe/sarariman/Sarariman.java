@@ -34,7 +34,6 @@ import javax.sql.DataSource;
  */
 public class Sarariman implements ServletContextListener, ConnectionFactory {
 
-    private final Collection<Employee> administrators = new EmployeeTable(this, "administrators");
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
     private final Collection<Employee> timesheetManagers = new EmployeeTable(this, "timesheet_managers");
