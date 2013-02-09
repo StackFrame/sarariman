@@ -103,7 +103,6 @@ public class LDAPDirectory implements Directory {
         }
 
         public boolean isAdministrator() {
-            System.err.println("entering isAdministrator");
             Connection connection = sarariman.openConnection();
             try {
                 try {
@@ -116,6 +115,27 @@ public class LDAPDirectory implements Directory {
                         } finally {
                             rs.close();
                         }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException se) {
+                throw new RuntimeException(se);
+            }
+        }
+
+        public void setAdministrator(boolean administrator) {
+            Connection connection = sarariman.openConnection();
+            try {
+                try {
+                    PreparedStatement s = connection.prepareStatement("UPDATE employee SET administrator = ? WHERE id = ?");
+                    try {
+                        s.setBoolean(1, administrator);
+                        s.setInt(2, number);
+                        int rowCount = s.executeUpdate();
+                        assert rowCount == 1;
                     } finally {
                         s.close();
                     }
