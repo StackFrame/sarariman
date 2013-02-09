@@ -56,8 +56,18 @@
 
         <!-- FIXME: Need a section with labor category assignments. -->
 
+        <h2>Info</h2>
+        <form action="employeeController" method="POST">
+            <input type="hidden" name="employee" value="${employee.number}"/>
+            <input type="hidden" name="action" value="setAdministrator"/>
+            <label for="administrator">Administrator:</label>
+            <input type="checkbox" id="administrator" name="administrator"
+                   <c:if test="${employee.administrator}">checked="checked"</c:if>
+                   <c:if test="${not user.administrator}">disabled="true"</c:if>
+                   onchange="this.form.submit();"/>
+        </form>
+
         <c:if test="${user.administrator}">
-            <h2>Info</h2>
             <ul>
                 <li>
                     <c:url var="myTicketsURL" value="tickets/">
@@ -76,7 +86,6 @@
 
             Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
             Age: ${employee.age} <br/>
-            Administrator: ${employee.administrator}
 
             <h2>Direct Rate</h2>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
