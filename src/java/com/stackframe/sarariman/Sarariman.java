@@ -116,7 +116,14 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     }
 
     public Collection<Employee> getAdministrators() {
-        return administrators;
+        Collection<Employee> c = new ArrayList<Employee>();
+        for (Employee employee : directory.getByUserName().values()) {
+            if (employee.isAdministrator()) {
+                c.add(employee);
+            }
+        }
+
+        return c;
     }
 
     public String getLogoURL() {
@@ -242,11 +249,9 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             hostname = "unknown host";
         }
 
-        for (Employee employee : directory.getByUserName().values()) {
-            if (employee.isAdministrator()) {
-                String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname, mountPoint);
-                emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
-            }
+        for (Employee employee : getAdministrators()) {
+            String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname, mountPoint);
+            emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
         }
     }
 
