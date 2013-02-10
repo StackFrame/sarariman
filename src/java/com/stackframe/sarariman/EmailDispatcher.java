@@ -82,6 +82,8 @@ public class EmailDispatcher {
 
                     msg.setSubject(subject);
                     msg.setHeader("X-Mailer", "Sarariman");
+                    msg.setHeader("Auto-Submitted", "auto-generated");
+                    msg.setHeader("X-Auto-Response-Suppress", "OOF, DR, RN, NRN");
 
                     BodyPart messageBodyPart = new MimeBodyPart();
                     messageBodyPart.setText(body);
