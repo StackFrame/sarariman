@@ -40,9 +40,17 @@ public class ProjectOrgChartAudit implements Audit {
         try {
             Connection connection = connectionFactory.openConnection();
             try {
-                PreparedStatement p = connection.prepareStatement("SELECT project_managers.employee AS manager, hours.employee, hours.date FROM hours JOIN tasks ON hours.task = tasks.id JOIN project_managers ON project_managers.project = tasks.project WHERE hours.date >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND tasks.project = ?;");
+                PreparedStatement p = connection.prepareStatement(
+                        "SELECT project_managers.employee AS manager, hours.employee, hours.date "
+                        + "FROM hours "
+                        + "JOIN tasks ON hours.task = tasks.id "
+                        + "JOIN project_managers ON project_managers.project = tasks.project "
+                        + "WHERE hours.date >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND tasks.project = ? "
+                        + "AND project_managers.employee != hours.employee "
+                        + "AND hours.employee NOT IN (SELECT employee FROM project_managers WHERE project = ?)");
                 try {
                     p.setInt(1, project);
+                    p.setInt(2, project);
                     ResultSet rs = p.executeQuery();
                     try {
                         Set<Integer> missing = new HashSet<Integer>();
@@ -50,11 +58,11 @@ public class ProjectOrgChartAudit implements Audit {
                             int manager = rs.getInt("manager");
                             int employee = rs.getInt("employee");
                             Date date = rs.getDate("date");
-                            if (employee != manager) {
-                                Collection<Integer> orgChartManagers = organizationHierarchy.getManagers(employee, date);
-                                if (!orgChartManagers.contains(manager)) {
-                                    missing.add(employee);
-                                }
+                            Collection<Integer> orgChartManagers = organizationHierarchy.getManagers(employee, date);
+                            if (orgChartManagers.contains(manager)) {
+                                missing.remove(employee);
+                            } else {
+                                missing.add(employee);
                             }
                         }
 
