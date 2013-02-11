@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -266,6 +267,12 @@ public class Project {
             ps.close();
             connection.close();
         }
+    }
+
+    public Collection<Audit> getAudits() {
+        Collection<Audit> c = new ArrayList<Audit>();
+        c.add(new ProjectOrgChartAudit((int)id, sarariman, sarariman.getOrganizationHierarchy(), sarariman.getDirectory()));
+        return c;
     }
 
     public void delete() throws SQLException {

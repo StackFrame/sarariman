@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -27,7 +27,7 @@
         <%@include file="header.jsp" %>
 
         <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
-        
+
         <c:if test="${user.administrator || isManager || isCostManager}">
             <form method="POST" action="projectController">
                 <input type="hidden" name="action" value="update"/>
@@ -72,8 +72,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                </form>
+                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -90,6 +90,20 @@
                 </c:forEach>
             </ul>
         </c:if>
+
+        <h2>Audits</h2>
+        <ol>
+            <c:forEach var="audit" items="${project.audits}">
+                <li>
+                    ${audit.displayName}
+                    <ol>
+                        <c:forEach var="auditResult" items="${audit.results}">
+                            <li>${auditResult.message}</li>
+                        </c:forEach>
+                    </ol>
+                </li>    
+            </c:forEach>
+        </ol>
 
         <c:if test="${user.administrator || isCostManager}">
             <sql:query dataSource="jdbc/sarariman" var="result">
@@ -317,9 +331,9 @@
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                    </form>
-                                </td>
-                            </tr>
+                                </form>
+                            </td>
+                        </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
@@ -348,9 +362,9 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                                </form>
-                            </td>
-                        </tr>
+                            </form>
+                        </td>
+                    </tr>
                 </c:forEach>
             </table>
 
