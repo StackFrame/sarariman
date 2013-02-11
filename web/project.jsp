@@ -94,14 +94,17 @@
         <h2>Audits</h2>
         <ol>
             <c:forEach var="audit" items="${project.audits}">
-                <li>
-                    ${audit.displayName}
-                    <ol>
-                        <c:forEach var="auditResult" items="${audit.results}">
-                            <li>${auditResult.message}</li>
-                        </c:forEach>
-                    </ol>
-                </li>    
+                <c:set var="auditResults" value="${audit.results}"/>
+                <c:if test="${not empty auditResults}">
+                    <li>
+                        ${audit.displayName}
+                        <ol>
+                            <c:forEach var="auditResult" items="${auditResults}">
+                                <li class="error">${auditResult.message}</li>
+                            </c:forEach>
+                        </ol>
+                    </li>
+                </c:if>
             </c:forEach>
         </ol>
 
