@@ -68,6 +68,8 @@
             </c:choose>
         </p>
 
+        <c:set var="relatedProjects" value="${user.relatedProjects}"/>
+
         <h2>Todo</h2>
         <ol>
             <c:if test="${isBoss}">
@@ -89,6 +91,42 @@
                     </ol>
                 </li>
             </c:if>
+
+            <li>
+                Projects
+                <ol>
+                    <c:forEach var="project_id" items="${relatedProjects}">
+                        <c:set var="project" value="${sarariman.projects[project_id]}"/>
+                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <c:url var="projectLink" value="project">
+                            <c:param name="id" value="${project_id}"/>
+                        </c:url>
+                        <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
+                        <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
+                        <c:if test="${isProjectManager or isProjectCostManager}">
+                            <li>
+                                <a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                                <ol>
+
+                                    <c:forEach var="audit" items="${project.audits}">
+                                        <c:set var="auditResults" value="${audit.results}"/>
+                                        <c:if test="${not empty auditResults}">
+                                            <li>
+                                                ${audit.displayName}
+                                                <ol>
+                                                    <c:forEach var="result" items="${auditResults}">
+                                                        <li class="error">${result.message}</li>
+                                                    </c:forEach>
+                                                </ol>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
+                                </ol>
+                            </li>
+                        </c:if>
+                    </c:forEach>
+                </ol>
+            </li>
 
             <li>
                 <c:url var="myTicketsURL" value="tickets/">
@@ -491,7 +529,6 @@
             </p>
         </c:if>
 
-        <c:set var="relatedProjects" value="${user.relatedProjects}"/>
         <h2>Projects</h2>
         <ul>
             <c:forEach var="project_id" items="${relatedProjects}">
