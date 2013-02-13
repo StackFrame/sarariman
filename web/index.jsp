@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -491,42 +491,18 @@
             </p>
         </c:if>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT pm.project
-            FROM project_managers AS pm
-            JOIN projects AS p ON pm.project = p.id
-            WHERE pm.employee = ? AND
-            p.active = TRUE
-            UNION
-            SELECT pm.project
-            FROM project_cost_managers AS pm
-            JOIN projects AS p ON pm.project = p.id
-            WHERE pm.employee = ? AND
-            p.active = TRUE
-            UNION
-            SELECT DISTINCT(p.id) AS project
-            FROM projects AS p
-            JOIN tasks AS t ON t.project = p.id
-            JOIN task_assignments AS ta ON ta.task=t.id
-            WHERE ta.employee = ? AND
-            p.active = TRUE
-            <sql:param value="${employeeNumber}"/>
-            <sql:param value="${employeeNumber}"/>
-            <sql:param value="${employeeNumber}"/>
-        </sql:query>
-        <c:if test="${resultSet.rowCount != 0}">
-            <h2>Projects</h2>
-            <ul>
-                <c:forEach var="mapping_row" items="${resultSet.rows}">
-                    <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <c:url var="link" value="project">
-                        <c:param name="id" value="${mapping_row.project}"/>
-                    </c:url>
-                    <li><a href="${link}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a></li>
-                </c:forEach>
-            </ul>
-        </c:if>
+        <c:set var="relatedProjects" value="${user.relatedProjects}"/>
+        <h2>Projects</h2>
+        <ul>
+            <c:forEach var="project_id" items="${relatedProjects}">
+                <c:set var="project" value="${sarariman.projects[project_id]}"/>
+                <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                <c:url var="projectLink" value="project">
+                    <c:param name="id" value="${project_id}"/>
+                </c:url>
+                <li><a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a></li>
+            </c:forEach>
+        </ul>
 
         <h2 id="events">Events</h2>
         <p>

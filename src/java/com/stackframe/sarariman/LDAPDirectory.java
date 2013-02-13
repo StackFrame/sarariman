@@ -147,6 +147,54 @@ public class LDAPDirectory implements Directory {
             }
         }
 
+        public Iterable<Long> getRelatedProjects() {
+            Connection connection = sarariman.openConnection();
+            try {
+                try {
+                    PreparedStatement s = connection.prepareStatement("SELECT pm.project "
+                            + "FROM project_managers AS pm "
+                            + "JOIN projects AS p ON pm.project = p.id "
+                            + "WHERE pm.employee = ? AND "
+                            + "p.active = TRUE "
+                            + "UNION "
+                            + "SELECT pm.project "
+                            + "FROM project_cost_managers AS pm "
+                            + "JOIN projects AS p ON pm.project = p.id "
+                            + "WHERE pm.employee = ? AND "
+                            + "p.active = TRUE "
+                            + "UNION "
+                            + "SELECT DISTINCT(p.id) AS project "
+                            + "FROM projects AS p "
+                            + "JOIN tasks AS t ON t.project = p.id "
+                            + "JOIN task_assignments AS ta ON ta.task=t.id "
+                            + "WHERE ta.employee = ? AND "
+                            + "p.active = TRUE");
+                    try {
+                        s.setInt(1, number);
+                        s.setInt(2, number);
+                        s.setInt(3, number);
+                        ResultSet rs = s.executeQuery();
+                        try {
+                            Collection<Long> c = new ArrayList<Long>();
+                            while (rs.next()) {
+                                c.add(rs.getLong("project"));
+                            }
+
+                            return c;
+                        } finally {
+                            rs.close();
+                        }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException se) {
+                throw new RuntimeException(se);
+            }
+        }
+
         public boolean isApprover() {
             return sarariman.getApprovers().contains(this);
         }

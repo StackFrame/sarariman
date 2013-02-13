@@ -25,7 +25,7 @@ public interface Employee {
     InternetAddress getEmail();
 
     boolean isAdministrator();
-    
+
     void setAdministrator(boolean administrator);
 
     boolean isApprover();
@@ -41,4 +41,7 @@ public interface Employee {
     String getDisplayName();
 
     SortedSet<Employee> getReports();
+
+    Iterable<Long> getRelatedProjects(); // FIXME: Get rid of stupid map from Long and make this Integer (or Project).
+
 }
