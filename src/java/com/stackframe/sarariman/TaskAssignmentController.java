@@ -84,21 +84,25 @@ public class TaskAssignmentController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Employee user = (Employee)request.getAttribute("user");
-        if (!user.isAdministrator()) {
-            response.sendError(401);
-            return;
-        }
-
-        Action action = Action.valueOf(request.getParameter("action"));
+        int taskID = Integer.parseInt(request.getParameter("task"));
         try {
+            Task task = Task.getTask(sarariman, taskID);
+            Project project = task.getProject();
+            boolean isManager = Project.isManager(user, project);
+            boolean isCostManager = Project.isCostManager(user, project);
+            if (!(user.isAdministrator() || isManager || isCostManager)) {
+                response.sendError(401);
+                return;
+            }
+
+            Action action = Action.valueOf(request.getParameter("action"));
             int employee = Integer.parseInt(request.getParameter("employee"));
-            int task = Integer.parseInt(request.getParameter("task"));
             switch (action) {
                 case add:
-                    createAssignment(employee, task);
+                    createAssignment(employee, taskID);
                     break;
                 case delete:
-                    deleteAssignment(employee, task);
+                    deleteAssignment(employee, taskID);
                     break;
                 default:
                     response.sendError(500);
@@ -106,7 +110,6 @@ public class TaskAssignmentController extends HttpServlet {
             }
 
             response.sendRedirect(request.getHeader("Referer"));
-            return;
         } catch (Exception e) {
             throw new IOException(e);
         }
