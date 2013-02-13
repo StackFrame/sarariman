@@ -70,8 +70,7 @@
 
         <c:set var="relatedProjects" value="${user.relatedProjects}"/>
 
-        <h2>Todo</h2>
-        <ol>
+        <ul>
             <c:if test="${isBoss}">
                 <li>
                     Global Audits
@@ -97,16 +96,16 @@
                 Projects
                 <ol>
                     <c:forEach var="project_id" items="${relatedProjects}">
-                        <c:set var="project" value="${sarariman.projects[project_id]}"/>
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                        <c:url var="projectLink" value="project">
-                            <c:param name="id" value="${project_id}"/>
-                        </c:url>
-                        <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
-                        <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
-                        <c:if test="${isProjectManager or isProjectCostManager}">
-                            <li>
-                                <a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                        <li>
+                            <c:set var="project" value="${sarariman.projects[project_id]}"/>
+                            <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                            <c:url var="projectLink" value="project">
+                                <c:param name="id" value="${project_id}"/>
+                            </c:url>
+                            <a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                            <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
+                            <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
+                            <c:if test="${isProjectManager or isProjectCostManager}">
                                 <ol>
                                     <c:forEach var="audit" items="${project.audits}">
                                         <c:set var="auditResults" value="${audit.results}"/>
@@ -122,8 +121,8 @@
                                         </c:if>
                                     </c:forEach>
                                 </ol>
-                            </li>
-                        </c:if>
+                            </c:if>
+                        </li>
                     </c:forEach>
                 </ol>
             </li>
@@ -144,7 +143,7 @@
                     </c:forEach>
                 </ol>
             </li>
-        </ol>
+        </ul>
 
         <p><a href="tickets/">All Tickets</a></p>
 
@@ -528,18 +527,6 @@
                 <a href="${PTOLink}">history</a>
             </p>
         </c:if>
-
-        <h2>Projects</h2>
-        <ul>
-            <c:forEach var="project_id" items="${relatedProjects}">
-                <c:set var="project" value="${sarariman.projects[project_id]}"/>
-                <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                <c:url var="projectLink" value="project">
-                    <c:param name="id" value="${project_id}"/>
-                </c:url>
-                <li><a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a></li>
-            </c:forEach>
-        </ul>
 
         <h2 id="events">Events</h2>
         <p>
