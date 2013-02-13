@@ -77,11 +77,12 @@
                     Global Audits
                     <ol>
                         <c:forEach var="audit" items="${sarariman.globalAudits}">
-                            <c:if test="${not empty audit.results}">
+                            <c:set var="auditResults" value="${audit.results}"/>
+                            <c:if test="${not empty auditResults}">
                                 <li>
                                     ${audit.displayName}
                                     <ol>
-                                        <c:forEach var="result" items="${audit.results}">
+                                        <c:forEach var="result" items="${auditResults}">
                                             <li class="error">${result.type}: ${result.message}</li>
                                         </c:forEach>
                                     </ol>
@@ -107,7 +108,6 @@
                             <li>
                                 <a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
                                 <ol>
-
                                     <c:forEach var="audit" items="${project.audits}">
                                         <c:set var="auditResults" value="${audit.results}"/>
                                         <c:if test="${not empty auditResults}">
