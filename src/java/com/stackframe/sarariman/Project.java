@@ -276,17 +276,19 @@ public class Project {
         return c;
     }
 
-    static Date getPoPEnd(int project, ConnectionFactory connectionFactory) throws SQLException {
+    static PeriodOfPerformance getPoP(int project, ConnectionFactory connectionFactory) throws SQLException {
         Connection connection = connectionFactory.openConnection();
         try {
-            PreparedStatement s = connection.prepareStatement("SELECT pop_end FROM projects WHERE id = ?");
+            PreparedStatement s = connection.prepareStatement("SELECT pop_start, pop_end FROM projects WHERE id = ?");
             try {
                 s.setInt(1, project);
                 ResultSet r = s.executeQuery();
                 try {
                     boolean hasRow = r.next();
                     assert hasRow;
-                    return r.getDate("pop_end");
+                    Date pop_start = r.getDate("pop_start");
+                    Date pop_end = r.getDate("pop_end");
+                    return new PeriodOfPerformance(pop_start, pop_end);
                 } finally {
                     r.close();
                 }

@@ -4,10 +4,10 @@
  */
 package com.stackframe.sarariman;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  *
@@ -29,9 +29,9 @@ public class ProjectPeriodOfPerformanceAudit implements Audit {
 
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
-        Date now = new Date(System.currentTimeMillis());
+        Date now = new Date();
         try {
-            Date PoPEnd = Project.getPoPEnd(project, connectionFactory);
+            Date PoPEnd = Project.getPoP(project, connectionFactory).getEnd();
             if (now.compareTo(PoPEnd) > 0) {
                 c.add(new AuditResult(AuditResultType.error, "beyond period of performance"));
             }
