@@ -138,6 +138,10 @@ public class Project {
         return invoiceText;
     }
 
+    static Collection<LineItem> getLineItems(int project, ConnectionFactory connectionFactory) throws SQLException {
+        return LineItem.getLineItems(connectionFactory, project);
+    }
+
     public Collection<LineItem> getLineItems() throws SQLException {
         return LineItem.getLineItems(sarariman, id);
     }
@@ -306,6 +310,7 @@ public class Project {
         c.add(new ProjectOrgChartAudit((int)id, sarariman, sarariman.getOrganizationHierarchy(), sarariman.getDirectory()));
         c.add(new ProjectPeriodOfPerformanceAudit((int)id, sarariman));
         c.add(new ProjectFundingAudit((int)id, sarariman));
+        c.add(new ProjectLineItemAudit((int)id, sarariman));
         return c;
     }
 
