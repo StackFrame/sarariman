@@ -111,12 +111,19 @@
                                         <c:set var="auditResults" value="${audit.results}"/>
                                         <c:if test="${not empty auditResults}">
                                             <li>
-                                                ${audit.displayName}
-                                                <ol>
-                                                    <c:forEach var="result" items="${auditResults}">
-                                                        <li class="error">${result.message}</li>
-                                                    </c:forEach>
-                                                </ol>
+                                                <c:choose>
+                                                    <c:when test="${fn:length(auditResults) == 1}">
+                                                        <span class="error">${auditResults[0].message}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        ${audit.displayName}
+                                                        <ol>
+                                                            <c:forEach var="result" items="${auditResults}">
+                                                                <li class="error">${result.message}</li>
+                                                            </c:forEach>
+                                                        </ol>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </li>
                                         </c:if>
                                     </c:forEach>
