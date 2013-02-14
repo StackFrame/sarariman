@@ -4,10 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,33 +27,11 @@ public class ProjectPeriodOfPerformanceAudit implements Audit {
         return "Project Period of Performance";
     }
 
-    private Date getPoPEnd() throws SQLException {
-        Connection connection = connectionFactory.openConnection();
-        try {
-            PreparedStatement s = connection.prepareStatement("SELECT pop_end FROM projects WHERE id = ?");
-            try {
-                s.setInt(1, project);
-                ResultSet r = s.executeQuery();
-                try {
-                    boolean hasRow = r.next();
-                    assert hasRow;
-                    return r.getDate("pop_end");
-                } finally {
-                    r.close();
-                }
-            } finally {
-                s.close();
-            }
-        } finally {
-            connection.close();
-        }
-    }
-
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         Date now = new Date(System.currentTimeMillis());
         try {
-            Date PoPEnd = getPoPEnd();
+            Date PoPEnd = Project.getPoPEnd(project, connectionFactory);
             if (now.compareTo(PoPEnd) > 0) {
                 c.add(new AuditResult(AuditResultType.error, "beyond period of performance"));
             }

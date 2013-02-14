@@ -276,6 +276,28 @@ public class Project {
         return c;
     }
 
+    static Date getPoPEnd(int project, ConnectionFactory connectionFactory) throws SQLException {
+        Connection connection = connectionFactory.openConnection();
+        try {
+            PreparedStatement s = connection.prepareStatement("SELECT pop_end FROM projects WHERE id = ?");
+            try {
+                s.setInt(1, project);
+                ResultSet r = s.executeQuery();
+                try {
+                    boolean hasRow = r.next();
+                    assert hasRow;
+                    return r.getDate("pop_end");
+                } finally {
+                    r.close();
+                }
+            } finally {
+                s.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     public void delete() throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("DELETE FROM projects WHERE id=?");
