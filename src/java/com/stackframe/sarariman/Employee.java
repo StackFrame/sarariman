@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.SortedSet;
 import javax.mail.internet.InternetAddress;
 import org.joda.time.LocalDate;
@@ -43,5 +45,9 @@ public interface Employee {
     SortedSet<Employee> getReports();
 
     Iterable<Long> getRelatedProjects(); // FIXME: Get rid of stupid map from Long and make this Integer (or Project).
+
+    BigDecimal getDirectRate();
+
+    BigDecimal getDirectRate(Date date);
 
 }

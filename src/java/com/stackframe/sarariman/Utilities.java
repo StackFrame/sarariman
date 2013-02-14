@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  *
@@ -17,12 +18,25 @@ public class Utilities {
     }
 
     /**
-     * A Predicate that matches for active full time employees.
+     * A Predicate that matches for active employees.
      */
-    public static final Predicate<Employee> activeFulltime = new Predicate<Employee>() {
+    public static final Predicate<Employee> active = new Predicate<Employee>() {
         public boolean apply(Employee e) {
-            return e.isActive() && e.isFulltime();
+            return e.isActive();
         }
 
     };
+    /**
+     * A Predicate that matches for full time employees.
+     */
+    public static final Predicate<Employee> fulltime = new Predicate<Employee>() {
+        public boolean apply(Employee e) {
+            return e.isFulltime();
+        }
+
+    };
+    /**
+     * A Predicate that matches for active full time employees.
+     */
+    public static final Predicate<Employee> activeFulltime = Predicates.and(active, fulltime);
 }

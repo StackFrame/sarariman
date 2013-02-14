@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -221,6 +222,65 @@ public class LDAPDirectory implements Directory {
 
             };
             return ImmutableSortedSet.copyOf(fullNameComparator, reports);
+        }
+
+        public BigDecimal getDirectRate() {
+            try {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? ORDER BY effective DESC LIMIT 1");
+                    try {
+                        s.setInt(1, number);
+                        ResultSet r = s.executeQuery();
+                        try {
+                            boolean hasRow = r.first();
+                            if (hasRow) {
+                                return r.getBigDecimal("rate");
+                            } else {
+                                return null;
+                            }
+                        } finally {
+                            r.close();
+                        }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public BigDecimal getDirectRate(java.sql.Date date) {
+            try {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? AND effective <= ? ORDER BY effective DESC LIMIT 1");
+                    try {
+                        s.setInt(1, number);
+                        s.setDate(2, date);
+                        ResultSet r = s.executeQuery();
+                        try {
+                            boolean hasRow = r.first();
+                            if (hasRow) {
+                                return r.getBigDecimal("rate");
+                            } else {
+                                return null;
+                            }
+                        } finally {
+                            r.close();
+                        }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
