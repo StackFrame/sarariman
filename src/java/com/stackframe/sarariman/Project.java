@@ -272,6 +272,7 @@ public class Project {
     public Collection<Audit> getAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new ProjectOrgChartAudit((int)id, sarariman, sarariman.getOrganizationHierarchy(), sarariman.getDirectory()));
+        c.add(new ProjectPeriodOfPerformanceAudit((int)id, sarariman));
         return c;
     }
 
