@@ -25,7 +25,7 @@
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
-
+        
         <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
 
         <c:if test="${user.administrator || isManager || isCostManager}">
@@ -72,8 +72,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-            </form>
+                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+                </form>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -334,9 +334,9 @@
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                </form>
-                            </td>
-                        </tr>
+                                    </form>
+                                </td>
+                            </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
@@ -349,6 +349,7 @@
                     </tr>
                 </table>
                 <c:if test="${fundedTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
+                <c:if test="${project.expended != expendedDollarsTotal}"><p class="error">Project expended amount does not match line item expended.</p></c:if>
             </c:if>                
         </c:if>
 
@@ -365,9 +366,9 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                            </form>
-                        </td>
-                    </tr>
+                                </form>
+                            </td>
+                        </tr>
                 </c:forEach>
             </table>
 
