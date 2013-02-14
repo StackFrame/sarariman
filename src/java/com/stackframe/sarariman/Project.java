@@ -269,11 +269,66 @@ public class Project {
         }
     }
 
+    public BigDecimal getExpended() throws SQLException {
+        return getExpended((int)id, sarariman);
+    }
+
+    static BigDecimal getExpended(int project, ConnectionFactory connectionFactory) throws SQLException {
+        Connection connection = connectionFactory.openConnection();
+        try {
+            PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal "
+                    + "FROM hours AS h "
+                    + "JOIN tasks AS t on h.task = t.id "
+                    + "JOIN projects AS p on p.id = t.project "
+                    + "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) "
+                    + "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)"
+                    + "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0");
+            try {
+                s.setInt(1, project);
+                ResultSet r = s.executeQuery();
+                try {
+                    boolean hasRow = r.next();
+                    assert hasRow;
+                    return r.getBigDecimal("costTotal");
+                } finally {
+                    r.close();
+                }
+            } finally {
+                s.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     public Collection<Audit> getAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new ProjectOrgChartAudit((int)id, sarariman, sarariman.getOrganizationHierarchy(), sarariman.getDirectory()));
         c.add(new ProjectPeriodOfPerformanceAudit((int)id, sarariman));
+        c.add(new ProjectFundingAudit((int)id, sarariman));
         return c;
+    }
+
+    static BigDecimal getFunded(int project, ConnectionFactory connectionFactory) throws SQLException {
+        Connection connection = connectionFactory.openConnection();
+        try {
+            PreparedStatement s = connection.prepareStatement("SELECT funded FROM projects WHERE id = ?");
+            try {
+                s.setInt(1, project);
+                ResultSet r = s.executeQuery();
+                try {
+                    boolean hasRow = r.next();
+                    assert hasRow;
+                    return r.getBigDecimal("funded");
+                } finally {
+                    r.close();
+                }
+            } finally {
+                s.close();
+            }
+        } finally {
+            connection.close();
+        }
     }
 
     static PeriodOfPerformance getPoP(int project, ConnectionFactory connectionFactory) throws SQLException {
