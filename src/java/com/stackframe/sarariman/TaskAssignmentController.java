@@ -88,11 +88,18 @@ public class TaskAssignmentController extends HttpServlet {
         try {
             Task task = Task.getTask(sarariman, taskID);
             Project project = task.getProject();
-            boolean isManager = Project.isManager(user, project);
-            boolean isCostManager = Project.isCostManager(user, project);
-            if (!(user.isAdministrator() || isManager || isCostManager)) {
-                response.sendError(401);
-                return;
+            if (project == null) {
+                if (!user.isAdministrator()) {
+                    response.sendError(401);
+                    return;
+                }
+            } else {
+                boolean isManager = Project.isManager(user, project);
+                boolean isCostManager = Project.isCostManager(user, project);
+                if (!(user.isAdministrator() || isManager || isCostManager)) {
+                    response.sendError(401);
+                    return;
+                }
             }
 
             Action action = Action.valueOf(request.getParameter("action"));
