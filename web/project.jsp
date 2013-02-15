@@ -455,7 +455,7 @@
                                 <c:set var="invoicedDuration" value="${resultSet.rows[0].durationTotal}"/>
                                 <c:set var="invoicedCost" value="${resultSet.rows[0].costTotal}"/>
 
-                                <td class="duration">${invoicedDuration}</td> <!-- FIXME: use formatNumber to get commas -->
+                                <td class="duration"><fmt:formatNumber minFractionDigits="2" value="${invoicedDuration}"/></td>
                                 <td class="currency"><fmt:formatNumber type="currency" value="${invoicedCost}"/></td>
                                 <c:set var="invoicedLaborTotal" value="${invoicedLaborTotal + invoicedCost}"/>
 
