@@ -558,12 +558,23 @@
                 <h2>Cumulative</h2>
                 <table class="altrows">
                     <tr>
-                        <td>Invoiced:</td><td><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
-                        <td>Remaining from invoiced:</td><td><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>
+                        <th></th>
+                        <th colspan="2">Billed</th>
+                        <th colspan="2">Remaining</th>
                     </tr>
                     <tr>
-                        <td>Expended:</td><td><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
-                        <td>Remaining from expended:</td><td><fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></td>
+                        <td>Invoiced</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
+                        <td class="percentage"><fmt:formatNumber type="percent" value="${invoicedTotal / project.funded}"/></td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>
+                        <td class="percentage"><fmt:formatNumber type="percent" value="${(project.funded - invoicedTotal) / project.funded}"/></td>
+                    </tr>
+                    <tr>
+                        <td>Expended</td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
+                        <td class="percentage"><fmt:formatNumber type="percent" value="${expendedTotal / project.funded}"/></td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></td>
+                        <td class="percentage"><fmt:formatNumber type="percent" value="${(project.funded - expendedTotal) / project.funded}"/></td>
                     </tr>
                 </table>
             </c:if>
