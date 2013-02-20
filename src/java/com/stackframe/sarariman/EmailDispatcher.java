@@ -1,16 +1,17 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
-import java.util.ArrayList;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.stackframe.reflect.ReflectionUtils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -58,8 +59,8 @@ public class EmailDispatcher {
         port = (Integer)properties.get("mail.smtp.port");
     }
 
-    private void submit(final InternetAddress from, final Collection<InternetAddress> to, final Collection<InternetAddress> cc, final String subject,
-            final String body, final Collection<MimeBodyPart> attachments, final Runnable postSendAction) {
+    private void submit(final InternetAddress from, final Iterable<InternetAddress> to, final Iterable<InternetAddress> cc, final String subject,
+            final String body, final Iterable<MimeBodyPart> attachments, final Runnable postSendAction) {
         executor.execute(new Runnable() {
 
             public void run() {
@@ -124,59 +125,55 @@ public class EmailDispatcher {
         });
     }
 
-    public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
+    public void send(Iterable<InternetAddress> to, Iterable<InternetAddress> cc, String subject, String body) {
         submit(defaultFrom, to, cc, subject, body, null, null);
     }
 
-    public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
+    public void send(InternetAddress to, Iterable<InternetAddress> cc, String subject, String body) {
         submit(defaultFrom, Collections.singleton(to), cc, subject, body, null, null);
     }
 
-    public void send(Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
-            Collection<MimeBodyPart> attachments) {
+    public void send(Iterable<InternetAddress> to, Iterable<InternetAddress> cc, String subject, String body,
+            Iterable<MimeBodyPart> attachments) {
         submit(defaultFrom, to, cc, subject, body, attachments, null);
     }
 
-    public void send(InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
-            Collection<MimeBodyPart> attachments) {
+    public void send(InternetAddress to, Iterable<InternetAddress> cc, String subject, String body,
+            Iterable<MimeBodyPart> attachments) {
         submit(defaultFrom, Collections.singleton(to), cc, subject, body, attachments, null);
     }
 
-    public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body) {
+    public void send(InternetAddress from, Iterable<InternetAddress> to, Iterable<InternetAddress> cc, String subject, String body) {
         submit(from, to, cc, subject, body, null, null);
     }
 
-    public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body) {
+    public void send(InternetAddress from, InternetAddress to, Iterable<InternetAddress> cc, String subject, String body) {
         submit(from, Collections.singleton(to), cc, subject, body, null, null);
     }
 
-    public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
-            Collection<MimeBodyPart> attachments) {
+    public void send(InternetAddress from, Iterable<InternetAddress> to, Iterable<InternetAddress> cc, String subject, String body,
+            Iterable<MimeBodyPart> attachments) {
         submit(from, to, cc, subject, body, attachments, null);
     }
 
-    public void send(InternetAddress from, Collection<InternetAddress> to, Collection<InternetAddress> cc, String subject, String body,
-            Collection<MimeBodyPart> attachments, Runnable postSendAction) {
+    public void send(InternetAddress from, Iterable<InternetAddress> to, Iterable<InternetAddress> cc, String subject, String body,
+            Iterable<MimeBodyPart> attachments, Runnable postSendAction) {
         submit(from, to, cc, subject, body, attachments, postSendAction);
     }
 
-    public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
+    public void send(InternetAddress from, InternetAddress to, Iterable<InternetAddress> cc, String subject, String body,
             Collection<MimeBodyPart> attachments) {
         submit(from, Collections.singleton(to), cc, subject, body, attachments, null);
     }
 
-    public void send(InternetAddress from, InternetAddress to, Collection<InternetAddress> cc, String subject, String body,
-            Collection<MimeBodyPart> attachments, Runnable postSendAction) {
+    public void send(InternetAddress from, InternetAddress to, Iterable<InternetAddress> cc, String subject, String body,
+            Iterable<MimeBodyPart> attachments, Runnable postSendAction) {
         submit(from, Collections.singleton(to), cc, subject, body, attachments, postSendAction);
     }
 
-    public static Collection<InternetAddress> addresses(Collection<Employee> employees) {
-        List<InternetAddress> addresses = new ArrayList<InternetAddress>();
-        for (Employee employee : employees) {
-            addresses.add(employee.getEmail());
-        }
-
-        return addresses;
+    public static Iterable<InternetAddress> addresses(Iterable<Employee> employees) {
+        Function<Employee, InternetAddress> f = ReflectionUtils.functionForProperty("email");
+        return Iterables.transform(employees, f);
     }
 
 }
