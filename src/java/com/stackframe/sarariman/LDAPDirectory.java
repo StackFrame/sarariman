@@ -7,6 +7,8 @@ package com.stackframe.sarariman;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,8 +61,9 @@ public class LDAPDirectory implements Directory {
         private final String email;
         private final LocalDate birthdate;
         private final String displayName;
+        private final Range<java.sql.Date> periodOfService;
 
-        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName) {
+        public EmployeeImpl(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService) {
             this.fullName = fullName;
             this.userName = userName;
             this.number = number;
@@ -69,6 +72,7 @@ public class LDAPDirectory implements Directory {
             this.email = email;
             this.birthdate = birthdate;
             this.displayName = displayName;
+            this.periodOfService = periodOfService;
         }
 
         public String getFullName() {
@@ -101,6 +105,10 @@ public class LDAPDirectory implements Directory {
             } catch (AddressException ae) {
                 throw new RuntimeException("could not construct an email address", ae);
             }
+        }
+
+        public Iterable<Range<java.sql.Date>> getPeriodsOfService() {
+            return Collections.singletonList(periodOfService);
         }
 
         public boolean isAdministrator() {
@@ -210,6 +218,16 @@ public class LDAPDirectory implements Directory {
 
         public int getAge() {
             return DateUtils.yearsBetween(birthdate.toDateMidnight(), new Date());
+        }
+
+        public boolean active(java.sql.Date date) {
+            for (Range<java.sql.Date> r : getPeriodsOfService()) {
+                if (r.contains(date)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public SortedSet<Employee> getReports() {
@@ -329,7 +347,7 @@ public class LDAPDirectory implements Directory {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
-                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName"});
+                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName", "hiredate"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -340,7 +358,11 @@ public class LDAPDirectory implements Directory {
                 boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
                 LocalDate birthdate = new LocalDate(attributes.get("birthdate").getAll().next().toString());
-                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName));
+                System.err.println("Looking at employee " + name);
+                LocalDate hiredate = new LocalDate(attributes.get("hiredate").getAll().next().toString());
+                Range<java.sql.Date> periodOfService = Ranges.atLeast(new java.sql.Date(hiredate.toDateMidnight().toDate().getTime()));
+                System.err.println("range=" + periodOfService);
+                tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName, periodOfService));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {
