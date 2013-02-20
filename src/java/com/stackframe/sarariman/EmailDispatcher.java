@@ -8,7 +8,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.stackframe.reflect.ReflectionUtils;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -162,7 +161,7 @@ public class EmailDispatcher {
     }
 
     public void send(InternetAddress from, InternetAddress to, Iterable<InternetAddress> cc, String subject, String body,
-            Collection<MimeBodyPart> attachments) {
+            Iterable<MimeBodyPart> attachments) {
         submit(from, Collections.singleton(to), cc, subject, body, attachments, null);
     }
 
