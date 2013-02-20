@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2010 StackFrame, LLC
+ * Copyright (C) 2010-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 import java.util.Date;
 
 /**
@@ -20,12 +22,21 @@ public class PeriodOfPerformance {
         this.end = end;
     }
 
+    public PeriodOfPerformance(Range<Date> range) {
+        this.start = range.lowerEndpoint();
+        this.end = range.upperEndpoint();
+    }
+
     public Date getEnd() {
         return end;
     }
 
     public Date getStart() {
         return start;
+    }
+
+    public Range<Date> asRange() {
+        return Ranges.closed(start, end);
     }
 
     @Override
