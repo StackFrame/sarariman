@@ -358,10 +358,8 @@ public class LDAPDirectory implements Directory {
                 boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
                 LocalDate birthdate = new LocalDate(attributes.get("birthdate").getAll().next().toString());
-                System.err.println("Looking at employee " + name);
                 LocalDate hiredate = new LocalDate(attributes.get("hiredate").getAll().next().toString());
                 Range<java.sql.Date> periodOfService = Ranges.atLeast(new java.sql.Date(hiredate.toDateMidnight().toDate().getTime()));
-                System.err.println("range=" + periodOfService);
                 tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName, periodOfService));
             }
 
