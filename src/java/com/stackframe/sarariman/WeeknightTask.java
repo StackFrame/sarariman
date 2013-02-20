@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -49,7 +49,7 @@ public class WeeknightTask extends TimerTask {
                 Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), week);
                 if (!timesheet.isSubmitted()) {
                     Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
-                    Collection<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
+                    Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
                     if (dayOfWeek == Calendar.FRIDAY) {
                         String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
