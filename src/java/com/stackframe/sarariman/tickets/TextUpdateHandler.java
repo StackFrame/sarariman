@@ -54,19 +54,19 @@ public class TextUpdateHandler extends HttpServlet {
         }
     }
 
-    private void sendNameChangeEmail(int ticket, Sarariman sarariman, Employee updater, String name, URL viewURL, Collection<InternetAddress> to) {
+    private void sendNameChangeEmail(int ticket, Sarariman sarariman, Employee updater, String name, URL viewURL, Iterable<InternetAddress> to) {
         String messageSubject = String.format("ticket %d name changed to \"%s\"", ticket, name);
         String messageBody = String.format("%s changed the name of ticket %d to \"%s\".\n\nGo to %s to view.", updater.getDisplayName(), ticket, name, viewURL);
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
-    private void sendDescriptionChangeEmail(int ticket, Sarariman sarariman, Employee updater, String description, URL viewURL, Collection<InternetAddress> to) {
+    private void sendDescriptionChangeEmail(int ticket, Sarariman sarariman, Employee updater, String description, URL viewURL, Iterable<InternetAddress> to) {
         String messageSubject = String.format("ticket %d: description changed", ticket);
         String messageBody = String.format("%s changed the description of ticket %d (%s) to:\n\n%s", updater.getDisplayName(), ticket, viewURL, description);
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
     }
 
-    private void sendCommentEmail(int ticket, Sarariman sarariman, Employee updater, String comment, URL viewURL, Collection<InternetAddress> to) {
+    private void sendCommentEmail(int ticket, Sarariman sarariman, Employee updater, String comment, URL viewURL, Iterable<InternetAddress> to) {
         String messageSubject = String.format("ticket %d: commented", ticket);
         String messageBody = String.format("%s commented on ticket %d (%s):\n\n%s", updater.getDisplayName(), ticket, viewURL, comment);
         sarariman.getEmailDispatcher().send(to, null, messageSubject, messageBody);
