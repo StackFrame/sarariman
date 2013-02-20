@@ -221,13 +221,7 @@ public class LDAPDirectory implements Directory {
         }
 
         public boolean active(java.sql.Date date) {
-            for (Range<java.sql.Date> r : getPeriodsOfService()) {
-                if (r.contains(date)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return Utilities.contains(getPeriodsOfService(), date);
         }
 
         public SortedSet<Employee> getReports() {
