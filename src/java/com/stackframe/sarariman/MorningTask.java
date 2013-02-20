@@ -39,6 +39,10 @@ public class MorningTask extends TimerTask {
                 continue;
             }
 
+            if (!employee.active(prevWeek)) {
+                continue;
+            }
+            
             Timesheet timesheet = new Timesheet(sarariman, employee.getNumber(), prevWeek);
             try {
                 if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
