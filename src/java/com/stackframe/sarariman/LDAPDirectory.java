@@ -9,6 +9,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
+import com.stackframe.collect.RangeUtilities;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -221,7 +222,7 @@ public class LDAPDirectory implements Directory {
         }
 
         public boolean active(java.sql.Date date) {
-            return Utilities.contains(getPeriodsOfService(), date);
+            return RangeUtilities.contains(getPeriodsOfService(), date);
         }
 
         public SortedSet<Employee> getReports() {
