@@ -76,11 +76,18 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return props;
     }
 
+    public DataSource getDataSource() {
+        try {
+            return (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
+        } catch (NamingException namingException) {
+            throw new RuntimeException(namingException);
+        }
+    }
+
     public Connection openConnection() {
         try {
-            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            return source.getConnection();
-        } catch (Exception e) {
+            return getDataSource().getConnection();
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
