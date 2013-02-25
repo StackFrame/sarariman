@@ -664,12 +664,15 @@
             </c:if>
         </p>
 
-        <h2>Reports</h2>
-        <ol>
-            <c:forEach var="report" items="${user.reports}">
-                <li><a href="employee?id=${report.number}">${report.fullName}</a></li>
-            </c:forEach>
-        </ol>
+        <c:set var="reports" value="${user.reports}"/>
+        <c:if test="${not empty reports}">
+            <h2>Reports</h2>
+            <ol>
+                <c:forEach var="report" items="${reports}">
+                    <li><a href="employee?id=${report.number}">${report.fullName}</a></li>
+                </c:forEach>
+            </ol>
+        </c:if>
 
         <%@include file="footer.jsp" %>
     </body>
