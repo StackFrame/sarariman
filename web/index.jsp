@@ -667,6 +667,7 @@
         <c:set var="reports" value="${user.reports}"/>
         <c:if test="${not empty reports}">
             <h2>Reports</h2>
+            <a href="activity">Recent timesheet activity for your reports</a>
             <ol>
                 <c:forEach var="report" items="${reports}">
                     <li><a href="employee?id=${report.number}">${report.fullName}</a></li>
