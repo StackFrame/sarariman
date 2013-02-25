@@ -10,12 +10,10 @@
 <%@page import="com.google.common.collect.Lists"%>
 <%@page import="com.google.common.collect.Range" %>
 <%@page import="com.google.common.collect.Ranges"%>
+<%@page import="com.stackframe.sarariman.AccessControlUtilities" %>
 <%@page import="com.stackframe.sarariman.Employee" %>
-<%@page import="com.stackframe.sarariman.Project" %>
 <%@page import="com.stackframe.sarariman.Sarariman" %>
-<%@page import="com.stackframe.sarariman.Task" %>
 <%@page import="com.stackframe.sarariman.TimesheetEntry" %>
-<%@page import="java.sql.SQLException" %>
 <%@page import="java.util.Calendar" %>
 <%@page import="java.util.Date" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -36,17 +34,7 @@
                 return false;
             }
 
-            try {
-                Task task = Task.getTask(sarariman, entry.getTask());
-                Project project = task.getProject();
-                if (project == null) {
-                    return sarariman.isBoss(user);
-                } else {
-                    return project.isManager(user) || project.isCostManager(user);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            return AccessControlUtilities.entryVisibleToUser(sarariman, entry, user);
         }
 
     };
