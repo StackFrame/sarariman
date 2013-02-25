@@ -32,7 +32,6 @@ class TimesheetEntriesImpl implements TimesheetEntries {
             Connection connection = dataSource.getConnection();
             try {
                 String dateRangeExpression = RangeUtilities.toSQL("date", dateRange);
-                System.err.println("dateRangeExpression="+dateRangeExpression);
                 PreparedStatement s = connection.prepareStatement(String.format("SELECT * FROM hours WHERE %s ORDER BY DATE DESC", dateRangeExpression));
                 try {
                     ResultSet r = s.executeQuery();
