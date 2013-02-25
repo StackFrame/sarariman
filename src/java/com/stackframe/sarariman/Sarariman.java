@@ -48,6 +48,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private CronJobs cronJobs;
     private String logoURL;
     private String mountPoint;
+    private TimesheetEntries timesheetEntries;
 
     public String getVersion() {
         return Version.version;
@@ -215,6 +216,10 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return getTicketURL(ticket.getId());
     }
 
+    public TimesheetEntries getTimesheetEntries() {
+        return timesheetEntries;
+    }
+    
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -235,6 +240,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
+            timesheetEntries = new TimesheetEntriesImpl(getDataSource());
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
