@@ -39,32 +39,35 @@ public class Project {
 
     public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects ORDER BY name");
         try {
-            ResultSet resultSet = ps.executeQuery();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects ORDER BY name");
             try {
-                Map<Long, Project> map = new LinkedHashMap<Long, Project>();
-                while (resultSet.next()) {
-                    long id = resultSet.getLong("id");
-                    String name = resultSet.getString("name");
-                    long customer = resultSet.getLong("customer");
-                    String contract = resultSet.getString("contract_number");
-                    String subcontract = resultSet.getString("subcontract_number");
-                    BigDecimal funded = resultSet.getBigDecimal("funded");
-                    BigDecimal previouslyBilled = resultSet.getBigDecimal("previously_billed");
-                    long terms = resultSet.getLong("terms");
-                    PeriodOfPerformance pop = new PeriodOfPerformance(resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
-                    BigDecimal odc_fee = resultSet.getBigDecimal("odc_fee");
-                    boolean active = resultSet.getBoolean("active");
-                    String invoiceText = resultSet.getString("invoice_text");
-                    map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText));
+                ResultSet resultSet = ps.executeQuery();
+                try {
+                    Map<Long, Project> map = new LinkedHashMap<Long, Project>();
+                    while (resultSet.next()) {
+                        long id = resultSet.getLong("id");
+                        String name = resultSet.getString("name");
+                        long customer = resultSet.getLong("customer");
+                        String contract = resultSet.getString("contract_number");
+                        String subcontract = resultSet.getString("subcontract_number");
+                        BigDecimal funded = resultSet.getBigDecimal("funded");
+                        BigDecimal previouslyBilled = resultSet.getBigDecimal("previously_billed");
+                        long terms = resultSet.getLong("terms");
+                        PeriodOfPerformance pop = new PeriodOfPerformance(resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
+                        BigDecimal odc_fee = resultSet.getBigDecimal("odc_fee");
+                        boolean active = resultSet.getBoolean("active");
+                        String invoiceText = resultSet.getString("invoice_text");
+                        map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText));
+                    }
+                    return map;
+                } finally {
+                    resultSet.close();
                 }
-                return map;
             } finally {
-                resultSet.close();
+                ps.close();
             }
         } finally {
-            ps.close();
             connection.close();
         }
     }
