@@ -116,28 +116,31 @@ public class Task {
 
     public static Task getTask(Sarariman sarariman, int id) throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT name, billable, line_item, active, project "
-                + "FROM tasks "
-                + "WHERE id = ?");
-        ps.setLong(1, id);
         try {
-            ResultSet resultSet = ps.executeQuery();
+            PreparedStatement ps = connection.prepareStatement("SELECT name, billable, line_item, active, project "
+                    + "FROM tasks "
+                    + "WHERE id = ?");
+            ps.setLong(1, id);
             try {
-                if (resultSet.next()) {
-                    String task_name = resultSet.getString("name");
-                    boolean billable = resultSet.getBoolean("billable");
-                    int lineItem = resultSet.getInt("line_item");
-                    boolean active = resultSet.getBoolean("active");
-                    Project project = Project.getProjects(sarariman).get(resultSet.getLong("project"));
-                    return new Task(id, task_name, billable, lineItem, active, project);
-                }
+                ResultSet resultSet = ps.executeQuery();
+                try {
+                    if (resultSet.next()) {
+                        String task_name = resultSet.getString("name");
+                        boolean billable = resultSet.getBoolean("billable");
+                        int lineItem = resultSet.getInt("line_item");
+                        boolean active = resultSet.getBoolean("active");
+                        Project project = Project.getProjects(sarariman).get(resultSet.getLong("project"));
+                        return new Task(id, task_name, billable, lineItem, active, project);
+                    }
 
-                return null;
+                    return null;
+                } finally {
+                    resultSet.close();
+                }
             } finally {
-                resultSet.close();
+                ps.close();
             }
         } finally {
-            ps.close();
             connection.close();
         }
     }
