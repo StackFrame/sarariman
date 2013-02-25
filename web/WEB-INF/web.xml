@@ -157,6 +157,14 @@
         <url-pattern>/DeductPTOHandler</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>TimesheetActivity</servlet-name>
+        <jsp-file>/activity.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TimesheetActivity</servlet-name>
+        <url-pattern>/activity</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>InvitationHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.events.InvitationHandler</servlet-class>
     </servlet>
