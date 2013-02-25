@@ -15,6 +15,14 @@ public class AccessControlUtilities {
     private AccessControlUtilities() {
     }
 
+    /**
+     * Determines if a timesheet entry should be visible to a specified user.
+     *
+     * @param sarariman the instance of Sarariman to use to get data
+     * @param entry the TimesheetEntry to test
+     * @param user the Employee to test
+     * @return 
+     */
     public static boolean entryVisibleToUser(Sarariman sarariman, TimesheetEntry entry, Employee user) {
         try {
             Task task = Task.getTask(sarariman, entry.getTask());
