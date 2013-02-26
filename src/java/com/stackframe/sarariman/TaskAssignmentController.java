@@ -86,7 +86,7 @@ public class TaskAssignmentController extends HttpServlet {
         Employee user = (Employee)request.getAttribute("user");
         int taskID = Integer.parseInt(request.getParameter("task"));
         try {
-            Task task = Task.getTask(sarariman, taskID);
+            Task task = Task.getTask(sarariman.getDataSource(), sarariman.getDirectory(), sarariman.getOrganizationHierarchy(), taskID);
             Project project = task.getProject();
             if (project == null) {
                 if (!user.isAdministrator()) {

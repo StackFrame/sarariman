@@ -11,6 +11,7 @@
 <%@page import="com.google.common.collect.Range" %>
 <%@page import="com.google.common.collect.Ranges"%>
 <%@page import="com.stackframe.sarariman.AccessControlUtilities" %>
+<%@page import="com.stackframe.sarariman.Directory" %>
 <%@page import="com.stackframe.sarariman.Employee" %>
 <%@page import="com.stackframe.sarariman.Sarariman" %>
 <%@page import="com.stackframe.sarariman.TimesheetEntry" %>
@@ -22,6 +23,7 @@
 <%
     final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     final Employee user = (Employee)request.getAttribute("user");
+    final Directory directory = (Directory)request.getAttribute("directory");
     Calendar beginning = Calendar.getInstance();
     int days = 7;
     beginning.add(Calendar.DAY_OF_MONTH, -days);
@@ -34,7 +36,7 @@
                 return false;
             }
 
-            return AccessControlUtilities.entryVisibleToUser(sarariman, entry, user);
+            return AccessControlUtilities.entryVisibleToUser(sarariman.getDataSource(), entry, user, sarariman.getOrganizationHierarchy(), directory);
         }
 
     };

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import javax.sql.DataSource;
 
 /**
  *
@@ -16,11 +17,11 @@ import java.util.Date;
 public class ProjectPeriodOfPerformanceAudit implements Audit {
 
     private final int project;
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
 
-    public ProjectPeriodOfPerformanceAudit(int project, ConnectionFactory connectionFactory) {
+    public ProjectPeriodOfPerformanceAudit(int project, DataSource dataSource) {
         this.project = project;
-        this.connectionFactory = connectionFactory;
+        this.dataSource = dataSource;
     }
 
     public String getDisplayName() {
@@ -31,7 +32,7 @@ public class ProjectPeriodOfPerformanceAudit implements Audit {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         Date now = new Date();
         try {
-            Date PoPEnd = Project.getPoP(project, connectionFactory).getEnd();
+            Date PoPEnd = Project.getPoP(project, dataSource).getEnd();
             if (now.compareTo(PoPEnd) > 0) {
                 c.add(new AuditResult(AuditResultType.error, "beyond period of performance"));
             }

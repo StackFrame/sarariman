@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 /**
  *
@@ -18,17 +19,19 @@ public class AccessControlUtilities {
     /**
      * Determines if a timesheet entry should be visible to a specified user.
      *
-     * @param sarariman the instance of Sarariman to use to get data
+     * @param dataSource the DataSource to use to get data
      * @param entry the TimesheetEntry to test
      * @param user the Employee to test
-     * @return 
+     * @param organizationHierarchy the OrganizationHierarchy
+     * @param directory the Directory
+     * @return <code>true</code> if entry should be visible to user
      */
-    public static boolean entryVisibleToUser(Sarariman sarariman, TimesheetEntry entry, Employee user) {
+    public static boolean entryVisibleToUser(DataSource dataSource, TimesheetEntry entry, Employee user, OrganizationHierarchy organizationHierarchy, Directory directory) {
         try {
-            Task task = Task.getTask(sarariman, entry.getTask());
+            Task task = Task.getTask(dataSource, directory, organizationHierarchy, entry.getTask());
             Project project = task.getProject();
             if (project == null) {
-                return sarariman.isBoss(user);
+                return Sarariman.isBoss(organizationHierarchy, user);
             } else {
                 return project.isManager(user) || project.isCostManager(user);
             }

@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
+import javax.sql.DataSource;
 
 /**
  *
@@ -35,10 +36,12 @@ public class Project {
     private final PeriodOfPerformance pop;
     private final boolean active;
     private final String invoiceText;
-    private final Sarariman sarariman;
+    private final DataSource dataSource;
+    private final Directory directory;
+    private final OrganizationHierarchy organizationHierarchy;
 
-    public static Map<Long, Project> getProjects(Sarariman sarariman) throws SQLException {
-        Connection connection = sarariman.openConnection();
+    public static Map<Long, Project> getProjects(DataSource dataSource, Directory directory, OrganizationHierarchy organizationHierarchy) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM projects ORDER BY name");
             try {
@@ -58,7 +61,7 @@ public class Project {
                         BigDecimal odc_fee = resultSet.getBigDecimal("odc_fee");
                         boolean active = resultSet.getBoolean("active");
                         String invoiceText = resultSet.getString("invoice_text");
-                        map.put(id, new Project(sarariman, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText));
+                        map.put(id, new Project(dataSource, directory, organizationHierarchy, id, name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText));
                     }
                     return map;
                 } finally {
@@ -72,9 +75,11 @@ public class Project {
         }
     }
 
-    Project(Sarariman sarariman, long id, String name, long customer, String contract, String subcontract, BigDecimal funded,
+    Project(DataSource dataSource, Directory directory, OrganizationHierarchy organizationHierarchy, long id, String name, long customer, String contract, String subcontract, BigDecimal funded,
             BigDecimal previouslyBilled, long terms, PeriodOfPerformance pop, BigDecimal odc_fee, boolean active, String invoiceText) {
-        this.sarariman = sarariman;
+        this.dataSource = dataSource;
+        this.directory = directory;
+        this.organizationHierarchy = organizationHierarchy;
         this.id = id;
         this.name = name;
         this.customer = customer;
@@ -118,7 +123,7 @@ public class Project {
     }
 
     public Collection<Task> getTasks() throws SQLException {
-        return Task.getTasks(sarariman, this);
+        return Task.getTasks(dataSource, this);
     }
 
     public long getTerms() {
@@ -141,16 +146,16 @@ public class Project {
         return invoiceText;
     }
 
-    static Collection<LineItem> getLineItems(int project, ConnectionFactory connectionFactory) throws SQLException {
-        return LineItem.getLineItems(connectionFactory, project);
+    static Collection<LineItem> getLineItems(int project, DataSource dataSource) throws SQLException {
+        return LineItem.getLineItems(dataSource, project);
     }
 
     public Collection<LineItem> getLineItems() throws SQLException {
-        return LineItem.getLineItems(sarariman, id);
+        return LineItem.getLineItems(dataSource, id);
     }
 
     public Collection<Date> getDaysBilled() throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = dataSource.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date "
                 + "FROM hours AS h "
                 + "JOIN tasks AS t on h.task = t.id "
@@ -178,7 +183,7 @@ public class Project {
     }
 
     public boolean isManager(Employee employee) throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_managers WHERE employee=? AND project=?");
             try {
@@ -199,7 +204,7 @@ public class Project {
     }
 
     public boolean isCostManager(Employee employee) throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_cost_managers WHERE employee=? AND project=?");
             try {
@@ -219,9 +224,9 @@ public class Project {
         return project.isCostManager(employee);
     }
 
-    public static Project create(Sarariman sarariman, String name, Long customer, Date pop_start, Date pop_end, String contract,
+    public static Project create(DataSource dataSource, Directory directory, OrganizationHierarchy organizationHierarchy, String name, Long customer, Date pop_start, Date pop_end, String contract,
             String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active, String invoiceText) throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = dataSource.getConnection();
         PreparedStatement ps = connection.prepareStatement("INSERT INTO projects (name, customer, pop_start, pop_end, contract_number, subcontract_number, funded, previously_billed, terms, odc_fee, active, invoice_text) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         try {
             ps.setString(1, name);
@@ -241,7 +246,7 @@ public class Project {
             try {
                 rs.next();
                 PeriodOfPerformance pop = new PeriodOfPerformance(pop_start, pop_end);
-                return new Project(sarariman, rs.getLong(1), name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText);
+                return new Project(dataSource, directory, organizationHierarchy, rs.getLong(1), name, customer, contract, subcontract, funded, previouslyBilled, terms, pop, odc_fee, active, invoiceText);
             } finally {
                 rs.close();
             }
@@ -253,7 +258,7 @@ public class Project {
 
     public void update(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract,
             BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active, String invoiceText) throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = dataSource.getConnection();
         PreparedStatement ps = connection.prepareStatement("UPDATE projects SET name=?, customer=?, pop_start=?, pop_end=?, contract_number=?, subcontract_number=?, funded=?, previously_billed=?, terms=?, odc_fee=?, active=?, invoice_text=? WHERE id=?");
         try {
             ps.setString(1, name);
@@ -277,11 +282,11 @@ public class Project {
     }
 
     public BigDecimal getExpended() throws SQLException {
-        return getExpended((int)id, sarariman);
+        return getExpended((int)id, dataSource);
     }
 
-    static BigDecimal getExpended(int project, ConnectionFactory connectionFactory) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    static BigDecimal getExpended(int project, DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal "
                     + "FROM hours AS h "
@@ -310,15 +315,15 @@ public class Project {
 
     public Collection<Audit> getAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
-        c.add(new ProjectOrgChartAudit((int)id, sarariman, sarariman.getOrganizationHierarchy(), sarariman.getDirectory()));
-        c.add(new ProjectPeriodOfPerformanceAudit((int)id, sarariman));
-        c.add(new ProjectFundingAudit((int)id, sarariman));
-        c.add(new ProjectLineItemAudit((int)id, sarariman));
+        c.add(new ProjectOrgChartAudit((int)id, dataSource, organizationHierarchy, directory));
+        c.add(new ProjectPeriodOfPerformanceAudit((int)id, dataSource));
+        c.add(new ProjectFundingAudit((int)id, dataSource));
+        c.add(new ProjectLineItemAudit((int)id, dataSource));
         return c;
     }
 
-    static BigDecimal getFunded(int project, ConnectionFactory connectionFactory) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    static BigDecimal getFunded(int project, DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement s = connection.prepareStatement("SELECT funded FROM projects WHERE id = ?");
             try {
@@ -339,8 +344,8 @@ public class Project {
         }
     }
 
-    static PeriodOfPerformance getPoP(int project, ConnectionFactory connectionFactory) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    static PeriodOfPerformance getPoP(int project, DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement s = connection.prepareStatement("SELECT pop_start, pop_end FROM projects WHERE id = ?");
             try {
@@ -364,7 +369,7 @@ public class Project {
     }
 
     public void delete() throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = dataSource.getConnection();
         PreparedStatement ps = connection.prepareStatement("DELETE FROM projects WHERE id=?");
         try {
             ps.setLong(1, id);

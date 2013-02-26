@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import javax.sql.DataSource;
 
 /**
  *
@@ -21,13 +22,13 @@ import java.util.Set;
 public class ProjectOrgChartAudit implements Audit {
 
     private final int project;
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
     private final OrganizationHierarchy organizationHierarchy;
     private final Directory directory;
 
-    public ProjectOrgChartAudit(int project, ConnectionFactory connectionFactory, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public ProjectOrgChartAudit(int project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
         this.project = project;
-        this.connectionFactory = connectionFactory;
+        this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
         this.directory = directory;
     }
@@ -38,7 +39,7 @@ public class ProjectOrgChartAudit implements Audit {
 
     public Collection<AuditResult> getResults() {
         try {
-            Connection connection = connectionFactory.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement p = connection.prepareStatement(
                         "SELECT project_managers.employee AS manager, hours.employee, hours.date "

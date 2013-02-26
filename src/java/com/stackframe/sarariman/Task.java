@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import javax.sql.DataSource;
 
 /**
  *
@@ -114,8 +115,8 @@ public class Task {
         }
     }
 
-    public static Task getTask(Sarariman sarariman, int id) throws SQLException {
-        Connection connection = sarariman.openConnection();
+    public static Task getTask(DataSource dataSource, Directory directory, OrganizationHierarchy organizationHierarchy, int id) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT name, billable, line_item, active, project "
                     + "FROM tasks "
@@ -129,7 +130,7 @@ public class Task {
                         boolean billable = resultSet.getBoolean("billable");
                         int lineItem = resultSet.getInt("line_item");
                         boolean active = resultSet.getBoolean("active");
-                        Project project = Project.getProjects(sarariman).get(resultSet.getLong("project"));
+                        Project project = Project.getProjects(dataSource, directory, organizationHierarchy).get(resultSet.getLong("project"));
                         return new Task(id, task_name, billable, lineItem, active, project);
                     }
 
@@ -145,8 +146,8 @@ public class Task {
         }
     }
 
-    public static Collection<Task> getTasks(Sarariman sarariman, Project project) throws SQLException {
-        Connection connection = sarariman.openConnection();
+    public static Collection<Task> getTasks(DataSource dataSource, Project project) throws SQLException {
+        Connection connection = dataSource.getConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id, t.name AS task_name, t.billable, t.active, t.line_item "
                 + "FROM tasks AS t "
                 + "WHERE t.project = ?");

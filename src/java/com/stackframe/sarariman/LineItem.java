@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.sql.DataSource;
 
 /**
  *
@@ -24,10 +25,10 @@ public class LineItem {
     private final long project;
     private final BigDecimal funded;
     private final PeriodOfPerformance pop;
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
 
-    public static Collection<LineItem> getLineItems(ConnectionFactory connectionFactory, long project) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    public static Collection<LineItem> getLineItems(DataSource dataSource, long project) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM line_items WHERE project=? ORDER BY id");
             ps.setLong(1, project);
@@ -40,7 +41,7 @@ public class LineItem {
                         String description = resultSet.getString("description");
                         BigDecimal funded = resultSet.getBigDecimal("funded");
                         PeriodOfPerformance pop = new PeriodOfPerformance(resultSet.getDate("pop_start"), resultSet.getDate("pop_end"));
-                        lineItems.add(new LineItem(connectionFactory, id, description, project, funded, pop));
+                        lineItems.add(new LineItem(dataSource, id, description, project, funded, pop));
                     }
 
                     return lineItems;
@@ -55,8 +56,8 @@ public class LineItem {
         }
     }
 
-    LineItem(ConnectionFactory connectionFactory, long id, String description, long project, BigDecimal funded, PeriodOfPerformance pop) {
-        this.connectionFactory = connectionFactory;
+    LineItem(DataSource dataSource, long id, String description, long project, BigDecimal funded, PeriodOfPerformance pop) {
+        this.dataSource = dataSource;
         this.id = id;
         this.description = description;
         this.project = project;
@@ -84,8 +85,8 @@ public class LineItem {
         return pop;
     }
 
-    public static LineItem create(ConnectionFactory connectionFactory, Long id, String description, Long project, Date pop_start, Date pop_end, BigDecimal funded) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    public static LineItem create(DataSource dataSource, Long id, String description, Long project, Date pop_start, Date pop_end, BigDecimal funded) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO line_items (id, description, project, pop_start, pop_end, funded) VALUES(?, ?, ?, ?, ?, ?)");
             try {
@@ -97,7 +98,7 @@ public class LineItem {
                 ps.setBigDecimal(6, funded);
                 ps.executeUpdate();
                 PeriodOfPerformance pop = new PeriodOfPerformance(pop_start, pop_end);
-                return new LineItem(connectionFactory, id, description, project, funded, pop);
+                return new LineItem(dataSource, id, description, project, funded, pop);
             } finally {
                 ps.close();
             }
@@ -107,7 +108,7 @@ public class LineItem {
     }
 
     public void update(String description, Long project, Date pop_start, Date pop_end, BigDecimal funded) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE line_items SET description=?, project=?, pop_start=?, pop_end=?, funded=? WHERE id=?");
             try {
@@ -126,7 +127,7 @@ public class LineItem {
     }
 
     public void delete() throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM line_items WHERE id=?");
             try {

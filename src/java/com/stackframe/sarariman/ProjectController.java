@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -63,7 +63,7 @@ public class ProjectController extends HttpServlet {
                 case create:
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    project = Project.create(sarariman, name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
+                    project = Project.create(sarariman.getDataSource(), sarariman.getDirectory(), sarariman.getOrganizationHierarchy(), name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
                             null, null, new BigDecimal(0), new BigDecimal(0), 0, new BigDecimal(0), true, null);
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));

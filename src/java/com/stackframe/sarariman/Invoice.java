@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -171,7 +171,7 @@ public class Invoice {
 
     public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, int task_id, Date date, double duration) throws SQLException {
         // FIXME: Need to look at date ranges of both the category and the assignment.
-        Task task = Task.getTask(sarariman, task_id);
+        Task task = Task.getTask(sarariman.getDataSource(), sarariman.getDirectory(), sarariman.getOrganizationHierarchy(), task_id);
         for (LaborCategoryAssignment projectBillRate : projectBillRates) {
             LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
             Employee billRateEmployee = projectBillRate.getEmployee();

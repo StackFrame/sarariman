@@ -118,7 +118,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     }
 
     public Map<Long, Project> getProjects() throws SQLException {
-        return Project.getProjects(this);
+        return Project.getProjects(getDataSource(), directory, organizationHierarchy);
     }
 
     public Collection<Task> getTasks() throws SQLException {
@@ -180,9 +180,13 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return c;
     }
 
-    public boolean isBoss(Employee employee) throws SQLException {
+    public static boolean isBoss(OrganizationHierarchy organizationHierarchy, Employee employee) throws SQLException {
         Collection<Integer> bossIDs = organizationHierarchy.getBosses();
         return bossIDs.contains(employee.getNumber());
+    }
+
+    public boolean isBoss(Employee employee) throws SQLException {
+        return isBoss(organizationHierarchy, employee);
     }
 
     public static boolean isBoss(Sarariman sarariman, Employee employee) throws SQLException {
@@ -219,7 +223,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     public TimesheetEntries getTimesheetEntries() {
         return timesheetEntries;
     }
-    
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {

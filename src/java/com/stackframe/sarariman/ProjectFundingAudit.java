@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.sql.DataSource;
 
 /**
  *
@@ -16,11 +17,11 @@ import java.util.Collection;
 public class ProjectFundingAudit implements Audit {
 
     private final int project;
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
 
-    public ProjectFundingAudit(int project, ConnectionFactory connectionFactory) {
+    public ProjectFundingAudit(int project, DataSource dataSource) {
         this.project = project;
-        this.connectionFactory = connectionFactory;
+        this.dataSource = dataSource;
     }
 
     public String getDisplayName() {
@@ -30,8 +31,8 @@ public class ProjectFundingAudit implements Audit {
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         try {
-            BigDecimal funded = Project.getFunded(project, connectionFactory);
-            BigDecimal expended = Project.getExpended(project, connectionFactory);
+            BigDecimal funded = Project.getFunded(project, dataSource);
+            BigDecimal expended = Project.getExpended(project, dataSource);
             if (expended != null && funded != null && expended.compareTo(funded) > 0) {
                 c.add(new AuditResult(AuditResultType.error, "expended exceeds funded"));
             }

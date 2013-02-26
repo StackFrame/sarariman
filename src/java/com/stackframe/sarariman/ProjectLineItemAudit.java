@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.sql.DataSource;
 
 /**
  *
@@ -18,11 +19,11 @@ import java.util.Collection;
 public class ProjectLineItemAudit implements Audit {
     
     private final int project;
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
     
-    public ProjectLineItemAudit(int project, ConnectionFactory connectionFactory) {
+    public ProjectLineItemAudit(int project, DataSource dataSource) {
         this.project = project;
-        this.connectionFactory = connectionFactory;
+        this.dataSource = dataSource;
     }
     
     public String getDisplayName() {
@@ -31,7 +32,7 @@ public class ProjectLineItemAudit implements Audit {
     
     private Collection<Integer> tasksWithNoLineItem() throws SQLException {
         Collection<Integer> c = new ArrayList<Integer>();
-        Connection connection = connectionFactory.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement s = connection.prepareStatement("SELECT id FROM tasks WHERE line_item IS NULL AND project = ?");
             try {
@@ -57,7 +58,7 @@ public class ProjectLineItemAudit implements Audit {
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         try {
-            Collection<LineItem> lineItems = Project.getLineItems(project, connectionFactory);
+            Collection<LineItem> lineItems = Project.getLineItems(project, dataSource);
             boolean hasLineItems = !lineItems.isEmpty();
             if (hasLineItems) {
                 Collection<Integer> tasksWithNoLineItem = tasksWithNoLineItem();
