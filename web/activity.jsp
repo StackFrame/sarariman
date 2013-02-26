@@ -66,6 +66,7 @@
                 <th>Duration</th>
                 <th>Task</th>
                 <th>Project</th>
+                <th>Client</th>
                 <th>Description</th>
             </tr>
             <c:forEach var="entry" items="${entries}">
@@ -90,9 +91,12 @@
                             <td>
                                 ${fn:escapeXml(project.name)}
                             </td>
+                            <td>
+                                ${fn:escapeXml(project.client.name)}
+                            </td>
                         </c:when>
                         <c:otherwise>
-                            <td colspan="2">
+                            <td colspan="3">
                                 <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
                             </td>
                         </c:otherwise>
