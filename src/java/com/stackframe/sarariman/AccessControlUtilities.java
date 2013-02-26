@@ -4,6 +4,9 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tasks.TaskFinder;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 
@@ -28,7 +31,7 @@ public class AccessControlUtilities {
      */
     public static boolean entryVisibleToUser(DataSource dataSource, TimesheetEntry entry, Employee user, OrganizationHierarchy organizationHierarchy, Directory directory) {
         try {
-            Task task = Task.getTask(dataSource, directory, organizationHierarchy, entry.getTask());
+            Task task = new TaskFinder(dataSource, entry.getTask()).getTask();
             Project project = task.getProject();
             if (project == null) {
                 return Sarariman.isBoss(organizationHierarchy, user);

@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.projects;
 
+import com.stackframe.sarariman.Employee;
+
 /**
  *
  * @author mcculley
@@ -15,5 +17,9 @@ public interface Project {
     String getName();
 
     void setName(String name);
+
+    boolean isManager(Employee employee);
+
+    boolean isCostManager(Employee employee);
 
 }

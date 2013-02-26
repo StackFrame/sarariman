@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.projects;
 
+import com.stackframe.sarariman.Employee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,6 +67,56 @@ public class ProjectImpl implements Project {
                     assert numRows == 1;
                 } finally {
                     s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public boolean isManager(Employee employee) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_managers WHERE employee=? AND project=?");
+                try {
+                    ps.setInt(1, employee.getNumber());
+                    ps.setLong(2, id);
+                    ResultSet rs = ps.executeQuery();
+                    try {
+                        return rs.first();
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public boolean isCostManager(Employee employee) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_cost_managers WHERE employee=? AND project=?");
+                try {
+                    ps.setInt(1, employee.getNumber());
+                    ps.setLong(2, id);
+                    ResultSet rs = ps.executeQuery();
+                    try {
+                        return rs.first();
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
                 connection.close();
