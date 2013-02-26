@@ -4,6 +4,9 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tasks.TaskFinder;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -86,7 +89,7 @@ public class TaskAssignmentController extends HttpServlet {
         Employee user = (Employee)request.getAttribute("user");
         int taskID = Integer.parseInt(request.getParameter("task"));
         try {
-            Task task = Task.getTask(sarariman.getDataSource(), sarariman.getDirectory(), sarariman.getOrganizationHierarchy(), taskID);
+            Task task = new TaskFinder(sarariman.getDataSource(), taskID).getTask();
             Project project = task.getProject();
             if (project == null) {
                 if (!user.isAdministrator()) {
@@ -94,8 +97,8 @@ public class TaskAssignmentController extends HttpServlet {
                     return;
                 }
             } else {
-                boolean isManager = Project.isManager(user, project);
-                boolean isCostManager = Project.isCostManager(user, project);
+                boolean isManager = project.isManager(user);
+                boolean isCostManager = project.isCostManager(user);
                 if (!(user.isAdministrator() || isManager || isCostManager)) {
                     response.sendError(401);
                     return;
