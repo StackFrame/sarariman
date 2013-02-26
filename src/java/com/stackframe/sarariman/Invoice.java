@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tasks.TaskFinder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -171,7 +173,7 @@ public class Invoice {
 
     public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, int task_id, Date date, double duration) throws SQLException {
         // FIXME: Need to look at date ranges of both the category and the assignment.
-        Task task = Task.getTask(sarariman.getDataSource(), sarariman.getDirectory(), sarariman.getOrganizationHierarchy(), task_id);
+        Task task = new TaskFinder(sarariman.getDataSource(), task_id).getTask();
         for (LaborCategoryAssignment projectBillRate : projectBillRates) {
             LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
             Employee billRateEmployee = projectBillRate.getEmployee();
