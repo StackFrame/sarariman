@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.tasks;
 
+import com.stackframe.sarariman.projects.Project;
+
 /**
  *
  * @author mcculley
@@ -21,8 +23,8 @@ public interface Task {
     boolean isActive();
     void setActive(boolean active);
 
-    int getProject();
-    void setProject(int project);
+    Project getProject();
+    void setProject(Project project);
 
     int getLineItem();
     void setLineItem(int lineItem);

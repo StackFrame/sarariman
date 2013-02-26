@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.tasks;
 
+import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.projects.ProjectImpl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -169,7 +171,7 @@ class TaskImpl implements Task {
         }
     }
 
-    public int getProject() {
+    public Project getProject() {
         try {
             Connection connection = dataSource.getConnection();
             try {
@@ -180,7 +182,12 @@ class TaskImpl implements Task {
                     try {
                         boolean hasRow = r.first();
                         assert hasRow;
-                        return r.getInt("project");
+                        int project_id = r.getInt("project");
+                        if (project_id == 0) {
+                            return null;
+                        } else {
+                            return new ProjectImpl(project_id, dataSource);
+                        }
                     } finally {
                         r.close();
                     }
@@ -195,13 +202,13 @@ class TaskImpl implements Task {
         }
     }
 
-    public void setProject(int project) {
+    public void setProject(Project project) {
         try {
             Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement s = connection.prepareStatement("UPDATE tasks SET project = ? WHERE id = ?");
                 try {
-                    s.setInt(1, project);
+                    s.setInt(1, project.getId());
                     s.setInt(2, id);
                     int numRows = s.executeUpdate();
                     assert numRows == 1;

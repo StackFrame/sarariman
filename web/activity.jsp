@@ -65,6 +65,7 @@
                 <th>Employee</th>
                 <th>Duration</th>
                 <th>Task</th>
+                <th>Project</th>
                 <th>Description</th>
             </tr>
             <c:forEach var="entry" items="${entries}">
@@ -77,10 +78,17 @@
                             <jsp:setProperty name="taskFinder" property="dataSource" value="${sarariman.dataSource}"/>
                         </jsp:useBean>
                         <jsp:setProperty name="taskFinder" property="id" value="${entry.task}"/>
+                        <c:set var="task" value="${taskFinder.task}"/>
                         <c:url var="taskURL" value="task">
                             <c:param name="task_id" value="${entry.task}"/>
                         </c:url>
-                        <a href="${taskURL}">${fn:escapeXml(taskFinder.task.name)}</a>
+                        <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
+                    </td>
+                    <td>
+                        <c:set var="project" value="${task.project}"/>
+                        <c:if test="${not empty project}">
+                            ${fn:escapeXml(project.name)}
+                        </c:if>
                     </td>
                     <td>${entry.description}</td>
                 </tr>
