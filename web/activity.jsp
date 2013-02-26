@@ -89,10 +89,16 @@
                                 <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
                             </td>
                             <td>
-                                ${fn:escapeXml(project.name)}
+                                <c:url var="projectURL" value="project">
+                                    <c:param name="id" value="${project.id}"/>
+                                </c:url>
+                                <a href="${projectURL}">${fn:escapeXml(project.name)}</a>
                             </td>
                             <td>
-                                ${fn:escapeXml(project.client.name)}
+                                <c:url var="clientURL" value="customer">
+                                    <c:param name="id" value="${project.client.id}"/>
+                                </c:url>
+                                <a href="${clientURL}">${fn:escapeXml(project.client.name)}</a>
                             </td>
                         </c:when>
                         <c:otherwise>
