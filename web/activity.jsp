@@ -73,23 +73,30 @@
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
                     <td>${directory.byNumber[entry.employee].displayName}</td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <td>
-                        <jsp:useBean id="taskFinder" class="com.stackframe.sarariman.tasks.TaskFinder">
-                            <jsp:setProperty name="taskFinder" property="dataSource" value="${sarariman.dataSource}"/>
-                        </jsp:useBean>
-                        <jsp:setProperty name="taskFinder" property="id" value="${entry.task}"/>
-                        <c:set var="task" value="${taskFinder.task}"/>
-                        <c:url var="taskURL" value="task">
-                            <c:param name="task_id" value="${entry.task}"/>
-                        </c:url>
-                        <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
-                    </td>
-                    <td>
-                        <c:set var="project" value="${task.project}"/>
-                        <c:if test="${not empty project}">
-                            ${fn:escapeXml(project.name)}
-                        </c:if>
-                    </td>
+                    <jsp:useBean id="taskFinder" class="com.stackframe.sarariman.tasks.TaskFinder">
+                        <jsp:setProperty name="taskFinder" property="dataSource" value="${sarariman.dataSource}"/>
+                    </jsp:useBean>
+                    <jsp:setProperty name="taskFinder" property="id" value="${entry.task}"/>
+                    <c:set var="task" value="${taskFinder.task}"/>
+                    <c:url var="taskURL" value="task">
+                        <c:param name="task_id" value="${entry.task}"/>
+                    </c:url>
+                    <c:set var="project" value="${task.project}"/>
+                    <c:choose>
+                        <c:when test="${not empty project}">
+                            <td>
+                                <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
+                            </td>
+                            <td>
+                                ${fn:escapeXml(project.name)}
+                            </td>
+                        </c:when>
+                        <c:otherwise>
+                            <td colspan="2">
+                                <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
                     <td>${entry.description}</td>
                 </tr>
             </c:forEach>
