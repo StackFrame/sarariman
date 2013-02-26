@@ -36,6 +36,8 @@
                 return false;
             }
 
+            // FIXME: Consider allowing PTO into the view.
+
             return AccessControlUtilities.entryVisibleToUser(sarariman.getDataSource(), entry, user, sarariman.getOrganizationHierarchy(), directory);
         }
 
@@ -68,7 +70,7 @@
                 <tr>
                     <td>${entry.date}</td>
                     <td>${directory.byNumber[entry.employee].displayName}</td>
-                    <td>${fn:escapeXml(entry.duration)}</td>
+                    <td class="duration">${fn:escapeXml(entry.duration)}</td>
                     <td>${entry.task}</td>
                     <td>${entry.description}</td>
                 </tr>
