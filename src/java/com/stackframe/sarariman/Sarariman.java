@@ -244,7 +244,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
-            timesheetEntries = new TimesheetEntriesImpl(getDataSource());
+            timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

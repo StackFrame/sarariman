@@ -14,13 +14,13 @@ import java.util.Date;
 public class TimesheetEntryImpl implements TimesheetEntry {
 
     private final int task;
-    private final int employee;
+    private final Employee employee;
     private final Date date;
     private final BigDecimal duration;
     private final int serviceAgreement;
     private final String description;
 
-    public TimesheetEntryImpl(int task, int employee, Date date, BigDecimal duration, int serviceAgreement, String description) {
+    public TimesheetEntryImpl(int task, Employee employee, Date date, BigDecimal duration, int serviceAgreement, String description) {
         this.task = task;
         this.employee = employee;
         this.date = date;
@@ -37,7 +37,7 @@ public class TimesheetEntryImpl implements TimesheetEntry {
         return task;
     }
 
-    public int getEmployee() {
+    public Employee getEmployee() {
         return employee;
     }
 

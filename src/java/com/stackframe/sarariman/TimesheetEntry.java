@@ -15,7 +15,7 @@ public interface TimesheetEntry {
 
     int getTask();
 
-    int getEmployee();
+    Employee getEmployee();
 
     Date getDate();
 

@@ -33,7 +33,7 @@
 
     Predicate<TimesheetEntry> visible = new Predicate<TimesheetEntry>() {
         public boolean apply(TimesheetEntry entry) {
-            if (entry.getEmployee() == user.getNumber()) {
+            if (entry.getEmployee() == user) {
                 return false;
             }
 
@@ -74,9 +74,9 @@
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
                     <td>
                         <c:url var="employeeURL" value="employee">
-                            <c:param name="id" value="${entry.employee}"/>
+                            <c:param name="id" value="${entry.employee.number}"/>
                         </c:url>
-                        <a href="${employeeURL}">${directory.byNumber[entry.employee].displayName}</a>
+                        <a href="${employeeURL}">${entry.employee.displayName}</a>
                     </td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
                     <jsp:useBean id="taskFinder" class="com.stackframe.sarariman.tasks.TaskFinder">

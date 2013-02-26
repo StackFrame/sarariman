@@ -22,9 +22,11 @@ import javax.sql.DataSource;
 class TimesheetEntriesImpl implements TimesheetEntries {
 
     private final DataSource dataSource;
+    private final Directory directory;
 
-    TimesheetEntriesImpl(DataSource dataSource) {
+    TimesheetEntriesImpl(DataSource dataSource, Directory directory) {
         this.dataSource = dataSource;
+        this.directory = directory;
     }
 
     public Iterable<TimesheetEntry> getEntries(Range<Date> dateRange) {
@@ -39,7 +41,8 @@ class TimesheetEntriesImpl implements TimesheetEntries {
                         ImmutableList.Builder<TimesheetEntry> builder = ImmutableList.builder();
                         while (r.next()) {
                             int task = r.getInt("task");
-                            int employee = r.getInt("employee");
+                            int employeeNumber = r.getInt("employee");
+                            Employee employee = directory.getByNumber().get(employeeNumber);
                             Date date = r.getDate("date");
                             BigDecimal duration = r.getBigDecimal("duration");
                             int service_agreement = r.getInt("service_agreement");
