@@ -18,6 +18,7 @@
 <%@page import="java.util.Calendar" %>
 <%@page import="java.util.Date" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%
@@ -68,10 +69,10 @@
             </tr>
             <c:forEach var="entry" items="${entries}">
                 <tr>
-                    <td>${entry.date}</td>
+                    <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
                     <td>${directory.byNumber[entry.employee].displayName}</td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <td>${entry.task}</td>
+                    <td class="task">${entry.task}</td>
                     <td>${entry.description}</td>
                 </tr>
             </c:forEach>
