@@ -10,6 +10,8 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 import com.stackframe.collect.RangeUtilities;
+import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tasks.TaskImpl;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -293,6 +295,45 @@ public class LDAPDirectory implements Directory {
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
+            }
+        }
+
+        public Iterable<Task> getTasks() {
+            try {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement ps = connection.prepareStatement(
+                            "SELECT t.id AS task_id, t.name AS task_name, t.active AS task_active, t.line_item, "
+                            + "p.id AS project_id "
+                            + "FROM tasks AS t "
+                            + "JOIN task_assignments AS a ON a.task = t.id "
+                            + "LEFT OUTER JOIN projects AS p ON t.project = p.id "
+                            + "LEFT OUTER JOIN customers AS c ON c.id = p.customer "
+                            + "WHERE employee = ? AND t.active = TRUE AND "
+                            + "(p.active = TRUE OR p.active IS NULL) AND (c.active = TRUE OR c.active IS NULL) "
+                            + "ORDER BY t.billable, t.id");
+                    try {
+                        ps.setInt(1, number);
+                        ResultSet resultSet = ps.executeQuery();
+                        try {
+                            Collection<Task> list = new ArrayList<Task>();
+                            while (resultSet.next()) {
+                                int id = resultSet.getInt("task_id");
+                                list.add(new TaskImpl(id, sarariman.getDataSource()));
+                            }
+
+                            return list;
+                        } finally {
+                            resultSet.close();
+                        }
+                    } finally {
+                        ps.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException se) {
+                throw new RuntimeException(se);
             }
         }
 

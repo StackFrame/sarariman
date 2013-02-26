@@ -16,12 +16,12 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-class TaskImpl implements Task {
+public class TaskImpl implements Task {
 
     private final int id;
     private final DataSource dataSource;
 
-    TaskImpl(int id, DataSource dataSource) {
+    public TaskImpl(int id, DataSource dataSource) {
         this.id = id;
         this.dataSource = dataSource;
     }

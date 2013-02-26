@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
+import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.SortedSet;
@@ -24,9 +25,9 @@ public interface Employee {
     int getNumber();
 
     boolean isFulltime();
-    
+
     Iterable<Range<Date>> getPeriodsOfService();
-    
+
     boolean active(Date date);
 
     InternetAddress getEmail();
@@ -54,5 +55,7 @@ public interface Employee {
     BigDecimal getDirectRate();
 
     BigDecimal getDirectRate(Date date);
+
+    Iterable<Task> getTasks();
 
 }

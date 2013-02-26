@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.projects;
 
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.clients.Client;
 
 /**
  *
@@ -21,5 +22,9 @@ public interface Project {
     boolean isManager(Employee employee);
 
     boolean isCostManager(Employee employee);
+
+    Client getClient();
+
+    void setClient(Client client);
 
 }

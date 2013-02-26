@@ -5,6 +5,8 @@
 package com.stackframe.sarariman.projects;
 
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.clients.Client;
+import com.stackframe.sarariman.clients.ClientImpl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -117,6 +119,59 @@ public class ProjectImpl implements Project {
                     }
                 } finally {
                     ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Client getClient() {
+
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT customer FROM projects WHERE id = ?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        int client_id = r.getInt("customer");
+                        if (client_id == 0) {
+                            return null;
+                        } else {
+                            return new ClientImpl(client_id, dataSource);
+                        }
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public void setClient(Client client) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("UPDATE projects SET customer = ? WHERE id = ?");
+                try {
+                    s.setInt(1, client.getId());
+                    s.setInt(2, id);
+                    int numRows = s.executeUpdate();
+                    assert numRows == 1;
+                } finally {
+                    s.close();
                 }
             } finally {
                 connection.close();

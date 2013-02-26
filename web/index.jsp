@@ -276,17 +276,10 @@
                     <label for="task">Task:</label>
                     <select name="task" id="task" onchange="enable('submit');">
                         <option selected="true"></option>
-                        <c:forEach var="task" items="${sarariman:billableTasks(sarariman, user)}">
+                        <c:forEach var="task" items="${user.tasks}">
                             <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
                                 <c:if test="${!empty task.project}">
-                                    - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
-                                </c:if>
-                            </option>
-                        </c:forEach>
-                        <c:forEach var="task" items="${sarariman:unbillableTasks(sarariman, user)}">
-                            <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
-                                <c:if test="${!empty task.project}">
-                                    - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
+                                    - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(task.project.client.name)}
                                 </c:if>
                             </option>
                         </c:forEach>
