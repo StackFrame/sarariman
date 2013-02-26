@@ -72,7 +72,12 @@
             <c:forEach var="entry" items="${entries}">
                 <tr>
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
-                    <td>${directory.byNumber[entry.employee].displayName}</td>
+                    <td>
+                        <c:url var="employeeURL" value="employee">
+                            <c:param name="id" value="${entry.employee}"/>
+                        </c:url>
+                        <a href="${employeeURL}">${directory.byNumber[entry.employee].displayName}</a>
+                    </td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
                     <jsp:useBean id="taskFinder" class="com.stackframe.sarariman.tasks.TaskFinder">
                         <jsp:setProperty name="taskFinder" property="dataSource" value="${sarariman.dataSource}"/>
