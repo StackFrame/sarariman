@@ -72,11 +72,15 @@
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
                     <td>${directory.byNumber[entry.employee].displayName}</td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <td class="task">
+                    <td>
+                        <jsp:useBean id="taskFinder" class="com.stackframe.sarariman.tasks.TaskFinder">
+                            <jsp:setProperty name="taskFinder" property="dataSource" value="${sarariman.dataSource}"/>
+                        </jsp:useBean>
+                        <jsp:setProperty name="taskFinder" property="id" value="${entry.task}"/>
                         <c:url var="taskURL" value="task">
                             <c:param name="task_id" value="${entry.task}"/>
                         </c:url>
-                        <a href="${taskURL}">${entry.task}</a>
+                        <a href="${taskURL}">${fn:escapeXml(taskFinder.task.name)}</a>
                     </td>
                     <td>${entry.description}</td>
                 </tr>
