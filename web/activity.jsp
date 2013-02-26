@@ -72,7 +72,12 @@
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
                     <td>${directory.byNumber[entry.employee].displayName}</td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <td class="task">${entry.task}</td>
+                    <td class="task">
+                        <c:url var="taskURL" value="task">
+                            <c:param name="task_id" value="${entry.task}"/>
+                        </c:url>
+                        <a href="${taskURL}">${entry.task}</a>
+                    </td>
                     <td>${entry.description}</td>
                 </tr>
             </c:forEach>
