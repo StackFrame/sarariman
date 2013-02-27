@@ -13,7 +13,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-    <fmt:parseNumber var="project_id" value="${param.id}" integerOnly="true"/>
+    <fmt:parseNumber var="project_id" value="${param.id}"/>
     <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
     <c:set var="isManager" value="${sarariman:isManager(user, project)}"/>
     <c:set var="isCostManager" value="${sarariman:isCostManager(user, project)}"/>
