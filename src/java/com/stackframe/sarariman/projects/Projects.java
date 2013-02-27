@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public interface Projects {
 
+    Iterable<Project> getAll();
+
     Map<? extends Number, Project> getMap();
 
     Project create(String name, Long customer, Date pop_start, Date pop_end, String contract, String subcontract, BigDecimal funded,

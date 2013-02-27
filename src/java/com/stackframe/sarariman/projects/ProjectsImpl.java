@@ -9,6 +9,7 @@ import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.OrganizationHierarchy;
 import java.math.BigDecimal;
@@ -18,6 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import javax.sql.DataSource;
@@ -39,8 +42,9 @@ public class ProjectsImpl implements Projects {
     }
 
     public Map<? extends Number, Project> getMap() {
-        // FIXME: Need to handle both Long and Integer
-        Set<? extends Number> keys = ContiguousSet.create(Range.closed(1L, Long.MAX_VALUE), DiscreteDomain.longs());        
+        Set<? extends Number> longKeys = ContiguousSet.create(Range.greaterThan(0L), DiscreteDomain.longs());
+        Set<? extends Number> intKeys = ContiguousSet.create(Range.greaterThan(0), DiscreteDomain.integers());
+        Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Project> f = new Function<Number, Project>() {
             public Project apply(Number n) {
                 return new ProjectImpl(n.intValue(), dataSource, organizationHierarchy, directory);
@@ -48,6 +52,34 @@ public class ProjectsImpl implements Projects {
 
         };
         return Maps.asMap(keys, f);
+    }
+
+    public Iterable<Project> getAll() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                Statement s = connection.createStatement();
+                try {
+                    ResultSet r = s.executeQuery("SELECT id FROM projects");
+                    try {
+                        Collection<Project> c = new ArrayList<Project>();
+                        while (r.next()) {
+                            c.add(new ProjectImpl(r.getInt("id"), dataSource, organizationHierarchy, directory));
+                        }
+
+                        return c;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
     }
 
     public Project create(String name, Long customer, Date pop_start, Date pop_end, String contract,
