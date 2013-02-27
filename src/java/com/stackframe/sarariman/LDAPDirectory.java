@@ -10,6 +10,8 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 import com.stackframe.collect.RangeUtilities;
+import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.projects.ProjectImpl;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.TaskImpl;
 import java.math.BigDecimal;
@@ -159,7 +161,7 @@ public class LDAPDirectory implements Directory {
             }
         }
 
-        public Iterable<Long> getRelatedProjects() {
+        public Iterable<Project> getRelatedProjects() {
             Connection connection = sarariman.openConnection();
             try {
                 try {
@@ -187,9 +189,10 @@ public class LDAPDirectory implements Directory {
                         s.setInt(3, number);
                         ResultSet rs = s.executeQuery();
                         try {
-                            Collection<Long> c = new ArrayList<Long>();
+                            Collection<Project> c = new ArrayList<Project>();
                             while (rs.next()) {
-                                c.add(rs.getLong("project"));
+                                int project_id = rs.getInt("project");
+                                c.add(new ProjectImpl(project_id, sarariman.getDataSource(), sarariman.getOrganizationHierarchy(), LDAPDirectory.this));
                             }
 
                             return c;
@@ -319,7 +322,7 @@ public class LDAPDirectory implements Directory {
                             Collection<Task> list = new ArrayList<Task>();
                             while (resultSet.next()) {
                                 int id = resultSet.getInt("task_id");
-                                list.add(new TaskImpl(id, sarariman.getDataSource()));
+                                list.add(new TaskImpl(id, sarariman.getDataSource(), sarariman.getOrganizationHierarchy(), LDAPDirectory.this));
                             }
 
                             return list;

@@ -7,6 +7,12 @@ package com.stackframe.sarariman;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.stackframe.reflect.ReflectionUtils;
+import com.stackframe.sarariman.clients.Clients;
+import com.stackframe.sarariman.clients.ClientsImpl;
+import com.stackframe.sarariman.projects.Projects;
+import com.stackframe.sarariman.projects.ProjectsImpl;
+import com.stackframe.sarariman.tasks.Tasks;
+import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.tickets.Ticket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -49,6 +55,9 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private String logoURL;
     private String mountPoint;
     private TimesheetEntries timesheetEntries;
+    private Projects projects;
+    private Tasks tasks;
+    private Clients clients;
 
     public String getVersion() {
         return Version.version;
@@ -117,12 +126,8 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return Customer.getCustomers(this);
     }
 
-    public Map<Long, Project> getProjects() throws SQLException {
-        return Project.getProjects(getDataSource(), directory, organizationHierarchy);
-    }
-
-    public Collection<Task> getTasks() throws SQLException {
-        return Task.getTasks(this);
+    public Clients getClients() {
+        return clients;
     }
 
     public Collection<Employee> getAdministrators() {
@@ -224,6 +229,14 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return timesheetEntries;
     }
 
+    public Projects getProjects() {
+        return projects;
+    }
+
+    public Tasks getTasks() {
+        return tasks;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -245,6 +258,9 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
             timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory);
+            projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory);
+            tasks = new TasksImpl(getDataSource(), organizationHierarchy, directory);
+            clients = new ClientsImpl(getDataSource());
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

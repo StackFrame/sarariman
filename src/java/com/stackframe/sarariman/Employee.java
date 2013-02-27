@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
+import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -50,7 +51,7 @@ public interface Employee {
 
     SortedSet<Employee> getReports();
 
-    Iterable<Long> getRelatedProjects(); // FIXME: Get rid of stupid map from Long and make this Integer (or Project).
+    Iterable<Project> getRelatedProjects();
 
     BigDecimal getDirectRate();
 

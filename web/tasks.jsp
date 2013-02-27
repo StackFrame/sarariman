@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -37,9 +37,8 @@
                     SELECT * FROM projects
                 </sql:query>
                 <c:forEach var="project_row" items="${project_rows.rows}">
-                    <c:set var="project" value="${sarariman.projects[project_row.id]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <option value="${project_row.id}">${fn:escapeXml(project_row.name)} - ${fn:escapeXml(customer.name)}</option>
+                    <c:set var="project" value="${sarariman.projects.map[project_row.id]}"/>
+                    <option value="${project_row.id}">${fn:escapeXml(project_row.name)} - ${fn:escapeXml(project.client.name)}</option>
                 </c:forEach>
             </select><br/>
             <label for="billable">Billable: </label>
@@ -56,13 +55,12 @@
         <h2>Tasks</h2>
         <table class="altrows" id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
-            <c:set var="customers" value="${sarariman.customers}"/>
-            <c:forEach var="task" items="${sarariman.tasks}">
+            <c:forEach var="task" items="${sarariman.tasks.all}">
                 <tr>
                     <td><a href="task?task_id=${task.id}">${task.id}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
                     <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.name)}</a></td>
-                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(customers[task.project.customer].name)}</a></td>
+                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.client.name)}</a></td>
                 </tr>
             </c:forEach>
         </table>

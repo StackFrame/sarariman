@@ -13,8 +13,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-    <fmt:parseNumber var="project_id" value="${param.id}"/>
-    <c:set var="project" value="${sarariman.projects[project_id]}"/>
+    <fmt:parseNumber var="project_id" value="${param.id}" integerOnly="true"/>
+    <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
     <c:set var="isManager" value="${sarariman:isManager(user, project)}"/>
     <c:set var="isCostManager" value="${sarariman:isCostManager(user, project)}"/>
 
@@ -36,10 +36,10 @@
                 <label for="name">Name: </label>
                 <input type="text" size="40" id="name" name="name" value="${fn:escapeXml(project.name)}"/><br/>
 
-                <label for="customer">Customer: </label>
+                <label for="customer">Client: </label>
                 <select id="customer" name="customer">
-                    <c:forEach var="entry" items="${sarariman.customers}">
-                        <option value="${entry.key}" <c:if test="${entry.key == project.customer}">selected="selected"</c:if>>${fn:escapeXml(entry.value.name)}</option>
+                    <c:forEach var="client" items="${sarariman.clients.all}">
+                        <option value="${client.id}" <c:if test="${client.id == project.client.id}">selected="selected"</c:if>>${fn:escapeXml(client.name)}</option>
                     </c:forEach>
                 </select><br/>
 
@@ -64,10 +64,10 @@
                 </c:if>
 
                 <label for="pop_start">Period of Performance Start: </label>
-                <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${project.pop.start}" pattern="yyyy-MM-dd"/>"/>
+                <input type="text" id="pop_start" name="pop_start" value="<fmt:formatDate value="${project.poP.start}" pattern="yyyy-MM-dd"/>"/>
 
                 <label for="pop_end">End: </label>
-                <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${project.pop.end}" pattern="yyyy-MM-dd"/>"/><br/>
+                <input type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${project.poP.end}" pattern="yyyy-MM-dd"/>"/><br/>
 
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>

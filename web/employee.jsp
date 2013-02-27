@@ -171,12 +171,11 @@
             <h2>Projects Managed</h2>
             <ul>
                 <c:forEach var="mapping_row" items="${resultSet.rows}">
-                    <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <c:set var="project" value="${sarariman.projects.map[mapping_row.project]}"/>
                     <c:url var="link" value="project">
                         <c:param name="id" value="${mapping_row.project}"/>
                     </c:url>
-                    <li><a href="${link}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a></li>
+                    <li><a href="${link}">${fn:escapeXml(project.name)} - ${fn:escapeXml(project.client.name)}</a></li>
                 </c:forEach>
             </ul>
         </c:if>
@@ -186,32 +185,23 @@
             <input type="hidden" name="employee" value="${param.id}"/>
             <input type="hidden" name="action" value="delete"/>
             <ul>
-                <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                    SELECT a.task, t.name, t.project
-                    FROM task_assignments AS a
-                    JOIN tasks AS t ON t.id = a.task
-                    WHERE a.employee=?
-                    <sql:param value="${param.id}"/>
-                </sql:query>
-                <c:forEach var="mapping_row" items="${resultSet.rows}">
+                <c:forEach var="task" items="${user.tasks}">
                     <c:url var="link" value="task">
-                        <c:param name="task_id" value="${mapping_row.task}"/>
+                        <c:param name="task_id" value="${task.id}"/>
                     </c:url>
-                    <c:if test="${!empty mapping_row.project}">
-                        <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                        <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
-                        <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
+                    <c:if test="${not empty task.project}">
+                        <c:set var="isProjectManager" value="${sarariman:isManager(user, task.project)}"/>
+                        <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, task.project)}"/>
                     </c:if>
-                    <c:if test="${empty mapping_row.project || isProjectManager || isProjectCostManager || user.administrator}">
+                    <c:if test="${empty task.project || isProjectManager || isProjectCostManager || user.administrator}">
                         <li>
-                            <a href="${link}">${fn:escapeXml(mapping_row.name)} (${mapping_row.task})
-                                <c:if test="${!empty mapping_row.project}">
-                                    - ${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}
+                            <a href="${link}">${fn:escapeXml(task.name)} (${task.id})
+                                <c:if test="${not empty task.project}">
+                                    - ${fn:escapeXml(task.project.name)} - ${fn:escapeXml(task.project.client.name)}
                                 </c:if>
                             </a>
                             <c:if test="${isProjectManager || isProjectCostManager || user.administrator}">
-                                <button type="submit" name="task" value="${mapping_row.task}">X</button>
+                                <button type="submit" name="task" value="${task.id}">X</button>
                             </c:if>
                         </li>
                     </c:if>
@@ -238,8 +228,7 @@
                 <c:forEach var="row" items="${resultSet.rows}">
                     <!-- FIXME: Add customer name. -->
                     <c:if test="${!empty row.project}">
-                        <c:set var="project" value="${sarariman.projects[row.project]}"/>
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <c:set var="project" value="${sarariman.projects.map[row.project]}"/>
                         <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
                         <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
                     </c:if>
@@ -266,12 +255,11 @@
                         <c:param name="task_id" value="${mapping_row.task}"/>
                     </c:url>
                     <c:if test="${!empty mapping_row.project}">
-                        <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <c:set var="project" value="${sarariman.projects.map[mapping_row.project]}"/>
                     </c:if>
                     <li><a href="${link}">${fn:escapeXml(mapping_row.name)} (${mapping_row.task})
                             <c:if test="${!empty mapping_row.project}">
-                                - ${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}
+                                - ${fn:escapeXml(project.name)} - ${fn:escapeXml(project.client.name)}
                             </c:if>
                         </a>
                     </li>

@@ -95,12 +95,11 @@
             <li>
                 Projects
                 <ol>
-                    <c:forEach var="project_id" items="${relatedProjects}">
+                    <c:forEach var="project" items="${relatedProjects}">
                         <li>
-                            <c:set var="project" value="${sarariman.projects[project_id]}"/>
-                            <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                            <c:set var="customer" value="${project.client}"/>
                             <c:url var="projectLink" value="project">
-                                <c:param name="id" value="${project_id}"/>
+                                <c:param name="id" value="${project.id}"/>
                             </c:url>
                             <a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
                             <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>

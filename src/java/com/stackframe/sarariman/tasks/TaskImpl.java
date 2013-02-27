@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.tasks;
 
+import com.stackframe.sarariman.Directory;
+import com.stackframe.sarariman.OrganizationHierarchy;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.projects.ProjectImpl;
 import java.sql.Connection;
@@ -20,10 +22,14 @@ public class TaskImpl implements Task {
 
     private final int id;
     private final DataSource dataSource;
+    private final OrganizationHierarchy organizationHierarchy;
+    private final Directory directory;
 
-    public TaskImpl(int id, DataSource dataSource) {
+    public TaskImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
         this.id = id;
         this.dataSource = dataSource;
+        this.organizationHierarchy = organizationHierarchy;
+        this.directory = directory;
     }
 
     public int getId() {
@@ -186,7 +192,7 @@ public class TaskImpl implements Task {
                         if (project_id == 0) {
                             return null;
                         } else {
-                            return new ProjectImpl(project_id, dataSource);
+                            return new ProjectImpl(project_id, dataSource, organizationHierarchy, directory);
                         }
                     } finally {
                         r.close();

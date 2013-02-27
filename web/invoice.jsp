@@ -19,7 +19,7 @@
     <sql:param value="${param.invoice}"/>
 </sql:query>
 <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
-<c:set var="project" value="${sarariman.projects[invoice_info.project]}"/>
+<c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
 
 <sql:query dataSource="jdbc/sarariman" var="resultSet">
     SELECT project FROM project_managers WHERE employee=? AND project=?

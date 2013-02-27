@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.clients.ClientImpl;
+import com.stackframe.sarariman.projects.Project;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -63,27 +65,32 @@ public class ProjectController extends HttpServlet {
                 case create:
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    project = Project.create(sarariman.getDataSource(), sarariman.getDirectory(), sarariman.getOrganizationHierarchy(), name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
+                    project = sarariman.getProjects().create(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
                             null, null, new BigDecimal(0), new BigDecimal(0), 0, new BigDecimal(0), true, null);
                     id = project.getId();
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case update:
                     id = Long.parseLong(request.getParameter("id"));
-                    project = sarariman.getProjects().get(id);
+                    project = sarariman.getProjects().getMap().get(id);
                     pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
                     pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_end")).getTime());
-                    project.update(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
-                            request.getParameter("contract"), request.getParameter("subcontract"),
-                            new BigDecimal(request.getParameter("funded")),
-                            new BigDecimal(request.getParameter("previously_billed")),
-                            Long.parseLong(request.getParameter("terms")),
-                            new BigDecimal(request.getParameter("odc_fee")), "on".equals(request.getParameter("active")), null);
+                    project.setName(name);
+                    project.setClient(new ClientImpl(Integer.parseInt(request.getParameter("customer")), sarariman.getDataSource()));
+                    project.setPoP(new PeriodOfPerformance(pop_start, pop_end));
+                    project.setContract(request.getParameter("contract"));
+                    project.setSubcontract(request.getParameter("subcontract"));
+                    project.setFunded(new BigDecimal(request.getParameter("funded")));
+                    project.setPreviouslyBilled(new BigDecimal(request.getParameter("previously_billed")));
+                    project.setODCFee(new BigDecimal(request.getParameter("odc_fee")));
+                    project.setTerms(Integer.parseInt(request.getParameter("terms")));
+                    project.setActive("on".equals(request.getParameter("active")));
+                    // FIMXE: Add setInvoiceText() and add it to form.
                     response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("project?id={0}", id)));
                     return;
                 case delete:
                     id = Long.parseLong(request.getParameter("id"));
-                    project = sarariman.getProjects().get(id);
+                    project = sarariman.getProjects().getMap().get(id);
                     project.delete();
                     response.sendRedirect(response.encodeRedirectURL("projects"));
                     return;

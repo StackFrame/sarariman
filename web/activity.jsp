@@ -79,11 +79,7 @@
                         <a href="${employeeURL}">${entry.employee.displayName}</a>
                     </td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <jsp:useBean id="taskFinder" class="com.stackframe.sarariman.tasks.TaskFinder">
-                        <jsp:setProperty name="taskFinder" property="dataSource" value="${sarariman.dataSource}"/>
-                    </jsp:useBean>
-                    <jsp:setProperty name="taskFinder" property="id" value="${entry.task}"/>
-                    <c:set var="task" value="${taskFinder.task}"/>
+                    <c:set var="task" value="${sarariman.tasks.map[entry.task]}"/>
                     <c:url var="taskURL" value="task">
                         <c:param name="task_id" value="${entry.task}"/>
                     </c:url>

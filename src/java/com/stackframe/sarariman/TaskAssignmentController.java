@@ -6,7 +6,7 @@ package com.stackframe.sarariman;
 
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
-import com.stackframe.sarariman.tasks.TaskFinder;
+import com.stackframe.sarariman.tasks.TaskImpl;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -89,7 +89,7 @@ public class TaskAssignmentController extends HttpServlet {
         Employee user = (Employee)request.getAttribute("user");
         int taskID = Integer.parseInt(request.getParameter("task"));
         try {
-            Task task = new TaskFinder(sarariman.getDataSource(), taskID).getTask();
+            Task task = new TaskImpl(taskID, sarariman.getDataSource(), sarariman.getOrganizationHierarchy(), sarariman.getDirectory());
             Project project = task.getProject();
             if (project == null) {
                 if (!user.isAdministrator()) {

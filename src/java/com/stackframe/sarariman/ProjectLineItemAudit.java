@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.projects.ProjectImpl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,19 +18,23 @@ import javax.sql.DataSource;
  * @author mcculley
  */
 public class ProjectLineItemAudit implements Audit {
-    
+
     private final int project;
     private final DataSource dataSource;
-    
-    public ProjectLineItemAudit(int project, DataSource dataSource) {
+    private final OrganizationHierarchy organizationHierarchy;
+    private final Directory directory;
+
+    public ProjectLineItemAudit(int project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
         this.project = project;
         this.dataSource = dataSource;
+        this.organizationHierarchy = organizationHierarchy;
+        this.directory = directory;
     }
-    
+
     public String getDisplayName() {
         return "Project Line Item";
     }
-    
+
     private Collection<Integer> tasksWithNoLineItem() throws SQLException {
         Collection<Integer> c = new ArrayList<Integer>();
         Connection connection = dataSource.getConnection();
@@ -51,14 +56,14 @@ public class ProjectLineItemAudit implements Audit {
         } finally {
             connection.close();
         }
-        
+
         return c;
     }
-    
+
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         try {
-            Collection<LineItem> lineItems = Project.getLineItems(project, dataSource);
+            Collection<LineItem> lineItems = new ProjectImpl(project, dataSource, organizationHierarchy, directory).getLineItems();
             boolean hasLineItems = !lineItems.isEmpty();
             if (hasLineItems) {
                 Collection<Integer> tasksWithNoLineItem = tasksWithNoLineItem();
@@ -69,8 +74,8 @@ public class ProjectLineItemAudit implements Audit {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        
+
         return c;
     }
-    
+
 }
