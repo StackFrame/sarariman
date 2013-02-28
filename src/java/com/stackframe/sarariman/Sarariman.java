@@ -122,10 +122,6 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
         return timesheetManagers;
     }
 
-    public Map<Long, Customer> getCustomers() throws SQLException {
-        return Customer.getCustomers(this);
-    }
-
     public Clients getClients() {
         return clients;
     }

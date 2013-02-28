@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -14,8 +14,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <fmt:parseNumber var="project_id" value="${param.project}"/>
-    <c:set var="project" value="${sarariman.projects[project_id]}"/>
-    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+    <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
+    <c:set var="customer" value="${project.client}"/>
     <head>
         <style type="text/css">
             @media screen, print {

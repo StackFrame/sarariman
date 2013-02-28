@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -12,7 +12,7 @@
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 
 <fmt:parseNumber var="project_id" value="${param.project}"/>
-<c:set var="project" value="${sarariman.projects[project_id]}"/>
+<c:set var="project" value="${sarariman.projects.map[project_id]}"/>
 <c:if test="${!sarariman:isCostManager(user, project)}">
     <jsp:forward page="unauthorized"/>
 </c:if>
@@ -20,10 +20,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
-    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Uninvoiced time for ${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)}</title>
+        <title>Uninvoiced time for ${fn:escapeXml(project.client.name)} - ${fn:escapeXml(project.name)}</title>
         <script type="text/javascript" src="utilities.js"/>
 
         <!-- jQuery -->
@@ -45,12 +44,12 @@
         <%@include file="header.jsp" %>
 
         <!-- FIXME: Add customer and project hyperlinks. -->
-        <c:url var="customerLink" value="customer"><c:param name="id" value="${customer.id}"/></c:url>
+        <c:url var="customerLink" value="customer"><c:param name="id" value="${project.client.id}"/></c:url>
         <c:url var="projectLink" value="project"><c:param name="id" value="${param.project}"/></c:url>
-        <h1>Uninvoiced time for <a href="${customerLink}">${fn:escapeXml(customer.name)}</a> - <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
+        <h1>Uninvoiced time for <a href="${customerLink}">${fn:escapeXml(project.client.name)}</a> - <a href="${projectLink}">${fn:escapeXml(project.name)}</a></h1>
 
         <c:if test="${user.administrator && !empty param.create}">
-            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, customer, project, param.pop_start,
+            <c:set var="createdInvoice" value="${sarariman:createInvoice(sarariman, project.client, project, param.pop_start,
                                                  param.pop_end, pageContext.request.parameterMap, paramValues.addToInvoiceEmployee,
                                                  paramValues.addToInvoiceTask, paramValues.addToInvoiceDate, paramValues.addToInvoiceService)}"/>
             <p>Created <a href="invoice?invoice=${createdInvoice.id}">invoice ${createdInvoice.id}</a> with selected entries.</p>

@@ -139,7 +139,7 @@
 
         <h1>Invoice</h1>
 
-        <c:set var="customer" value="${sarariman.customers[invoice_info.customer]}"/>
+        <c:set var="customer" value="${sarariman.clients.map[invoice_info.customer]}"/>
         <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
         <fmt:formatDate var="due" value="${invoice_info.due}"/>
         <fmt:formatDate var="received" value="${invoice_info.payment_received}"/>

@@ -467,7 +467,7 @@
 
             <table class="altrows" id="rates">
                 <caption>Labor Category Assignments</caption>
-                <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th></tr>
+                <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th><th>Rate</th></tr>
                 <c:forEach var="entry" items="${sarariman.projectBillRates}">
                     <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
                     <c:if test="${laborCategory.project == project.id}">
@@ -482,6 +482,7 @@
                             <td><a href="${assignmentURL}">${laborCategory.name}</a></td>
                             <td>${entry.periodOfPerformanceStart}</td>
                             <td>${entry.periodOfPerformanceEnd}</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${laborCategory.rate}"/></td>
                             <c:if test="${entry.periodOfPerformanceStart lt laborCategory.periodOfPerformanceStart or entry.periodOfPerformanceEnd gt laborCategory.periodOfPerformanceEnd}">
                                 <td class="error">Labor Category Period of Performance is not valid!</td>
                             </c:if>

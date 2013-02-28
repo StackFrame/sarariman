@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -84,11 +84,8 @@
 
             <label for="project">Project: </label>
             <select id="project" name="project">
-                <sql:query dataSource="jdbc/sarariman" var="projects">
-                    SELECT * FROM projects
-                </sql:query>
-                <c:forEach var="project" items="${projects.rows}">
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                <c:forEach var="project" items="${sarariman.projects.all}">
+                    <c:set var="customer" value="${project.client}"/>
                     <option value="${project.id}" <c:if test="${laborcategory.project == project.id}">selected="selected"</c:if>>${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</option>
                 </c:forEach>
             </select><br/>

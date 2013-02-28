@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.base.Preconditions;
+import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.TaskImpl;
@@ -35,7 +37,8 @@ public class Invoice {
         this.sarariman = sarariman;
     }
 
-    public static Invoice create(Sarariman sarariman, Customer customer, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates, String[] billedServices) throws SQLException, ParseException {
+    public static Invoice create(Sarariman sarariman, Client client, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates, String[] billedServices) throws SQLException, ParseException {
+        Preconditions.checkNotNull(client);
         if (employees == null) {
             employees = new String[0];
         }
@@ -60,11 +63,11 @@ public class Invoice {
 
             PreparedStatement createInvoice = connection.prepareStatement("INSERT INTO invoice_info (sent, customer, project, pop_start, pop_end, description) VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             createInvoice.setDate(1, new Date(new java.util.Date().getTime()));
-            createInvoice.setLong(2, customer.getId());
+            createInvoice.setLong(2, client.getId());
             createInvoice.setLong(3, project.getId());
             createInvoice.setDate(4, new Date(dateFormat.parse(popStart).getTime()));
             createInvoice.setDate(5, new Date(dateFormat.parse(popEnd).getTime()));
-            createInvoice.setString(6, "invoice for " + customer.getName() + " - " + project.getName());
+            createInvoice.setString(6, "invoice for " + client.getName() + " - " + project.getName());
             int createdRowCount = createInvoice.executeUpdate();
             assert createdRowCount == 1;
             ResultSet keys = createInvoice.getGeneratedKeys();

@@ -75,4 +75,23 @@ public class ClientImpl implements Client {
         }
     }
 
+    public void delete() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM customers WHERE id=?");
+                try {
+                    ps.setLong(1, id);
+                    ps.executeUpdate();
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
 }

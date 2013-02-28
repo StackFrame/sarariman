@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.clients;
 
+import java.util.Map;
+
 /**
  *
  * @author mcculley
@@ -11,5 +13,9 @@ package com.stackframe.sarariman.clients;
 public interface Clients {
 
     Iterable<Client> getAll();
+
+    Map<? extends Number, Client> getMap();
+
+    Client create(String name);
 
 }

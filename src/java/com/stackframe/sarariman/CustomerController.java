@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.clients.Client;
+import com.stackframe.sarariman.clients.Clients;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.MessageFormat;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +33,8 @@ public class CustomerController extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP
+     * <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -49,37 +51,34 @@ public class CustomerController extends HttpServlet {
 
         String name = request.getParameter("name");
         Action action = Action.valueOf(request.getParameter("action"));
-        try {
-            long id;
-            Customer customer;
-            switch (action) {
-                case create:
-                    customer = Customer.create(sarariman, name);
-                    id = customer.getId();
-                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
-                    return;
-                case update:
-                    id = Long.parseLong(request.getParameter("id"));
-                    customer = sarariman.getCustomers().get(id);
-                    customer.update(name);
-                    response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
-                    return;
-                case delete:
-                    id = Long.parseLong(request.getParameter("id"));
-                    customer = sarariman.getCustomers().get(id);
-                    customer.delete();
-                    response.sendRedirect(response.encodeRedirectURL("customers"));
-                    return;
-                default:
-                    response.sendError(500);
-                    return;
-            }
-        } catch (SQLException se) {
-            throw new IOException(se);
+        long id;
+        Clients clients = sarariman.getClients();
+        Client customer;
+        switch (action) {
+            case create:
+                customer = clients.create(name);
+                id = customer.getId();
+                response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
+                return;
+            case update:
+                id = Long.parseLong(request.getParameter("id"));
+                customer = clients.getMap().get(id);
+                customer.setName(name);
+                response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("customer?id={0}", id)));
+                return;
+            case delete:
+                id = Long.parseLong(request.getParameter("id"));
+                customer = clients.getMap().get(id);
+                customer.delete();
+                response.sendRedirect(response.encodeRedirectURL("customers"));
+                return;
+            default:
+                response.sendError(500);
+                return;
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description

@@ -16,4 +16,6 @@ public interface Client {
 
     void setName(String name);
 
+    void delete();
+
 }

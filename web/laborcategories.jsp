@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -33,12 +33,8 @@
 
                 <label for="project">Project: </label>
                 <select id="project" name="project">
-                    <sql:query dataSource="jdbc/sarariman" var="projects">
-                        SELECT * FROM projects
-                    </sql:query>
-                    <c:forEach var="project" items="${projects.rows}">
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                        <option value="${project.id}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</option>
+                    <c:forEach var="project" items="${sarariman.projects.all}">
+                        <option value="${project.id}">${fn:escapeXml(project.name)} - ${fn:escapeXml(project.client.name)}</option>
                     </c:forEach>
                 </select><br/>
 
@@ -56,12 +52,12 @@
         </div>
 
         <table class="altrows" id="categories">
-            <tr><th>Project</th><th>Customer</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
+            <tr><th>Project</th><th>Client</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.laborCategories}">
                 <tr>
-                    <td><a href="laborcategory?id=${entry.key}">${fn:escapeXml(sarariman.projects[entry.value.project].name)}</a></td>
-                    <c:set var="customer" value="${sarariman.customers[sarariman.projects[entry.value.project].customer]}"/>
-                    <td><a href="laborcategory?id=${entry.key}">${fn:escapeXml(customer.name)}</a></td>
+                    <td><a href="laborcategory?id=${entry.key}">${fn:escapeXml(sarariman.projects.map[entry.value.project].name)}</a></td>
+                    <c:set var="client" value="${sarariman.projects.map[entry.value.project].client}"/>
+                    <td><a href="laborcategory?id=${entry.key}">${fn:escapeXml(client.name)}</a></td>
                     <td><a href="laborcategory?id=${entry.key}">${entry.value.name}</a></td>
                     <td class="currency"><a href="laborcategory?id=${entry.key}">$${entry.value.rate}</a></td>
                     <td><a href="laborcategory?id=${entry.key}">${entry.value.periodOfPerformanceStart}</a></td>
