@@ -5,7 +5,6 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 import java.util.Date;
 
 /**
@@ -36,7 +35,7 @@ public class PeriodOfPerformance {
     }
 
     public Range<Date> asRange() {
-        return Ranges.closed(start, end);
+        return Range.closed(start, end);
     }
 
     @Override
