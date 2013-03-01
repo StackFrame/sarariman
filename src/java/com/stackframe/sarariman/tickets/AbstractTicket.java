@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
@@ -19,13 +19,14 @@ import java.util.HashSet;
 import java.util.List;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
 
 /**
  *
  * @author mcculley
  */
 public abstract class AbstractTicket implements Ticket {
+
+    // FIXME: Eliminate this class. It was necessary when we had a bean implementation of Ticket.
 
     @Override
     public Collection<Employee> getAssignees() throws SQLException {
@@ -379,13 +380,6 @@ public abstract class AbstractTicket implements Ticket {
         return result;
     }
 
-    protected Connection openConnection() throws SQLException {
-        try {
-            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            return source.getConnection();
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    protected abstract Connection openConnection() throws SQLException;
 
 }

@@ -26,9 +26,16 @@ public class TicketImpl extends AbstractTicket {
     private final Location creatorLocation;
     private final String creatorUserAgent;
     private final InetAddress creatorIP;
+    private final DataSource dataSource;
+
+    @Override
+    protected Connection openConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
 
     public TicketImpl(int id, DataSource dataSource) throws SQLException, NoSuchTicketException {
         this.id = id;
+        this.dataSource = dataSource;
         Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP FROM ticket WHERE id = ?");
