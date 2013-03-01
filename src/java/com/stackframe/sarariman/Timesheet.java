@@ -1,15 +1,15 @@
 /*
- * Copyright (C) 2009 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -45,9 +45,9 @@ public class Timesheet {
     public double getRegularHours() throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total " +
-                "FROM hours " +
-                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
+                "SELECT SUM(hours.duration) AS total "
+                + "FROM hours "
+                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
@@ -74,9 +74,9 @@ public class Timesheet {
     public double getTotalHours() throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total " +
-                "FROM hours " +
-                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                "SELECT SUM(hours.duration) AS total "
+                + "FROM hours "
+                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
@@ -113,9 +113,9 @@ public class Timesheet {
 
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT duration, date " +
-                "FROM hours " +
-                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                "SELECT duration, date "
+                + "FROM hours "
+                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
@@ -146,9 +146,9 @@ public class Timesheet {
     private double getHours(int task) throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total " +
-                "FROM hours " +
-                "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
+                "SELECT SUM(hours.duration) AS total "
+                + "FROM hours "
+                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, week);
@@ -374,6 +374,7 @@ public class Timesheet {
     }
 
     public boolean submit() {
+        // FIXME: Check that no day has more than 24 hours.
         try {
             Connection connection = sarariman.openConnection();
             PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
@@ -386,7 +387,7 @@ public class Timesheet {
                     return false;
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
-// FIXME: Add URL to timesheet.
+                    // FIXME: Add URL to timesheet.
                     sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getApprovers()), null,
                             "timesheet submitted",
                             "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
