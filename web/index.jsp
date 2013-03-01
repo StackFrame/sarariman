@@ -266,7 +266,7 @@
         <c:if test="${!timesheet.submitted}">
             <div id="recordTime">
                 <h2>Record time worked</h2>
-                <form action="${request.requestURI}" method="post">
+                <form action="TimesheetEntryHandler" method="post">
                     <label for="date">Date:</label>
                     <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
                     <input size="10" type="text" name="date" id="date" value="${now}"/>
