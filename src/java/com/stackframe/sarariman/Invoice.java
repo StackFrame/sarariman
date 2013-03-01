@@ -56,8 +56,8 @@ public class Invoice {
             System.err.println("mismatched lengths");
         }
 
-        Connection connection = sarariman.openConnection();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Connection connection = sarariman.openConnection();
         try {
             connection.setAutoCommit(false);
 
