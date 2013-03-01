@@ -38,7 +38,7 @@ public class ProjectFundingAudit implements Audit {
         Project p = new ProjectImpl(project, dataSource, organizationHierarchy, directory);
         BigDecimal funded = p.getFunded();
         BigDecimal expended = p.getExpended();
-        if (expended != null && funded != null && expended.compareTo(funded) > 0) {
+        if (expended != null && funded != null && funded.compareTo(BigDecimal.ZERO) > 0 && expended.compareTo(funded) > 0) {
             c.add(new AuditResult(AuditResultType.error, "expended exceeds funded"));
         }
 
