@@ -558,61 +558,43 @@
             <c:if test="${isCostManager}">
                 <h2>Cumulative</h2>
                 <table class="altrows">
-                    <tr>
-                        <th></th>
-                        <th colspan="2">Billed</th>
-                        <th colspan="2">Remaining</th>
-                    </tr>
-                    <tr>
-                        <td>Invoiced</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
-                        <td class="percentage">
-                            <c:choose>
-                                <c:when test="${project.funded lt 0.1}">
-                                    NaN
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatNumber type="percent" value="${invoicedTotal / project.funded}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>
-                        <td class="percentage">
-                            <c:choose>
-                                <c:when test="${project.funded lt 0.1}">
-                                    NaN
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatNumber type="percent" value="${(project.funded - invoicedTotal) / project.funded}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Expended</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
-                        <td class="percentage">
-                            <c:choose>
-                                <c:when test="${project.funded lt 0.1}">
-                                    NaN
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatNumber type="percent" value="${expendedTotal / project.funded}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></td>
-                        <td class="percentage">
-                            <c:choose>
-                                <c:when test="${project.funded lt 0.1}">
-                                    NaN
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatNumber type="percent" value="${(project.funded - expendedTotal) / project.funded}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
+                    <c:choose>
+                        <c:when test="${project.funded lt 0.1}"> <!-- FIXME: This should check for a funding limit. -->
+                            <tr>
+                                <th></th>
+                                <th>Billed</th>
+                            </tr>
+                            <tr>
+                                <td>Invoiced</td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Expended</td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
+                            </tr>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <th></th>
+                                <th colspan="2">Billed</th>
+                                <th colspan="2">Remaining</th>
+                            </tr>
+                            <tr>
+                                <td>Invoiced</td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
+                                <td class="percentage"><fmt:formatNumber type="percent" value="${invoicedTotal / project.funded}"/></td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>
+                                <td class="percentage"><fmt:formatNumber type="percent" value="${(project.funded - invoicedTotal) / project.funded}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Expended</td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
+                                <td class="percentage"><fmt:formatNumber type="percent" value="${expendedTotal / project.funded}"/></td>
+                                <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></td>
+                                <td class="percentage"><fmt:formatNumber type="percent" value="${(project.funded - expendedTotal) / project.funded}"/></td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
                 </table>
             </c:if>
 
