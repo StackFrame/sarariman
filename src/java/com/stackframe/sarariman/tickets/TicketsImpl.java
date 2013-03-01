@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
@@ -10,8 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
@@ -20,18 +18,15 @@ import javax.sql.DataSource;
  */
 public class TicketsImpl implements Tickets {
 
-    protected Connection openConnection() throws SQLException {
-        try {
-            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            return source.getConnection();
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
+    private final DataSource dataSource;
+
+    public TicketsImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public Collection<String> getStatusTypes() throws SQLException {
         Collection<String> result = new ArrayList<String>();
-        Connection connection = openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT name FROM ticket_status_type");
             try {
@@ -55,7 +50,7 @@ public class TicketsImpl implements Tickets {
 
     public Collection<Ticket> getAll() throws SQLException {
         Collection<Ticket> result = new ArrayList<Ticket>();
-        Connection connection = openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT id FROM ticket");
             try {

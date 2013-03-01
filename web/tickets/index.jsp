@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2012 StackFrame, LLC
+  Copyright (C) 2012-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -8,7 +8,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<jsp:useBean id="tickets" class="com.stackframe.sarariman.tickets.TicketsImpl"/>
+<c:set var="tickets" value="${sarariman.tickets}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

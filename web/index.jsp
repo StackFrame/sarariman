@@ -140,8 +140,7 @@
                 </c:url>
                 <a href="${fn:escapeXml(myTicketsURL)}">My Unclosed Tickets</a>
                 <ol>
-                    <jsp:useBean id="tickets" class="com.stackframe.sarariman.tickets.TicketsImpl"/>
-                    <c:forEach var="ticket" items="${tickets.all}">
+                    <c:forEach var="ticket" items="${sarariman.tickets.all}">
                         <c:if test="${sarariman:contains(ticket.assignees, user) and ticket.status ne 'closed'}">
                             <c:url var="ticketViewURL" value="tickets/${ticket.id}"/>
                             <li><a href="${ticketViewURL}">${fn:escapeXml(ticket.name)}</a></li>

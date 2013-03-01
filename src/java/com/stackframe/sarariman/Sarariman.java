@@ -14,6 +14,8 @@ import com.stackframe.sarariman.projects.ProjectsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.tickets.Ticket;
+import com.stackframe.sarariman.tickets.Tickets;
+import com.stackframe.sarariman.tickets.TicketsImpl;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,6 +60,7 @@ public class Sarariman implements ServletContextListener {
     private Projects projects;
     private Tasks tasks;
     private Clients clients;
+    private Tickets tickets;
 
     public String getVersion() {
         return Version.version;
@@ -233,6 +236,10 @@ public class Sarariman implements ServletContextListener {
         return tasks;
     }
 
+    public Tickets getTickets() {
+        return tickets;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -257,6 +264,7 @@ public class Sarariman implements ServletContextListener {
             projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory);
             tasks = new TasksImpl(getDataSource(), organizationHierarchy, directory);
             clients = new ClientsImpl(getDataSource());
+            tickets = new TicketsImpl(getDataSource());
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
