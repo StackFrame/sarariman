@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,13 +20,12 @@ import javax.sql.DataSource;
  */
 public class DeductPTOHandler extends HttpServlet {
 
-    private Connection openConnection() throws SQLException {
-        try {
-            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            return source.getConnection();
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
+    private DataSource dataSource;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        dataSource = ((Sarariman)getServletContext().getAttribute("sarariman")).getDataSource();
     }
 
     private void deduct(String week, String[] employeeIDs, String[] PTOValues) throws SQLException {
