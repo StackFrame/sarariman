@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import static com.google.common.base.Preconditions.*;
 import com.stackframe.sarariman.tasks.Task;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,14 +36,7 @@ public class TimesheetEntryHandler extends HttpServlet {
 
     private void recordEntry(Connection connection, Employee employee, Task task, Date date, String description, BigDecimal duration) throws SQLException {
         // FIXME: Check that the entry does not already exist.
-        // FIXME: Check that the employee is the user or is authorized to make changes on behalf of user.
-        // FIXME: Check that the task is active.
         // FIXME: Check that the task is assigned to the employee.
-        // FIXME: Check that the duration is greater than 0.
-        // FIXME: Check that the duration is less than or equal to 24.0 hours.
-        // FIXME: Check that the date is not in the future unless it is PTO.
-        // FIXME: Check that the timesheet is not already submitted.
-        // FIXME: Check that description is not empty.
         PreparedStatement s = connection.prepareStatement("INSERT INTO hours (employee, task, date, description, duration) VALUES(?, ?, ?, ?, ?)");
         try {
             s.setInt(1, employee.getNumber());
@@ -80,6 +74,11 @@ public class TimesheetEntryHandler extends HttpServlet {
 
     private void recordAndLogEntry(Employee employee, Task task, Date date, String reason, String remoteHost, Employee user,
             BigDecimal duration, String description) throws SQLException {
+        if (employee.getNumber() != user.getNumber()) {
+            // FIXME: Add support for administrators to modify entries on behalf of users.
+            throw new IllegalArgumentException("submitter must be user");
+        }
+
         Connection connection = sarariman.getDataSource().getConnection();
         try {
             connection.setAutoCommit(false);
@@ -90,6 +89,28 @@ public class TimesheetEntryHandler extends HttpServlet {
         } finally {
             connection.close();
         }
+    }
+
+    private void validate(BigDecimal duration, Date date, Task task, Employee employee) throws SQLException {
+        // FIXME: Check that the duration has acceptable fractional part.
+        if (duration.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("duration must be greater than 0");
+        }
+
+        if (duration.compareTo(BigDecimal.valueOf(24)) > 0) {
+            throw new IllegalArgumentException("duration must be less than one day");
+        }
+
+        Date now = new Date();
+        final int PTOtask = 5;
+        if (date.after(now) && task.getId() != PTOtask) {
+            throw new IllegalArgumentException("Cannot record non-PTO time in the future.");
+        }
+        
+        checkArgument(task.isActive());
+        Date weekStart = DateUtils.weekStart(date);
+        Timesheet timesheet = Timesheet.lookup(sarariman, employee.getNumber(), weekStart);
+        checkArgument(!timesheet.isSubmitted());
     }
 
     /**
@@ -104,15 +125,20 @@ public class TimesheetEntryHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String dateParam = request.getParameter("date");
+        checkArgument(checkNotNull(dateParam).length() > 0);
         String durationParam = request.getParameter("duration");
+        checkArgument(checkNotNull(durationParam).length() > 0);
         String taskParam = request.getParameter("task");
+        checkArgument(checkNotNull(taskParam).length() > 0);
         String descriptionParam = request.getParameter("description");
+        checkArgument(checkNotNull(descriptionParam).length() > 0);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Employee user = (Employee)request.getAttribute("user");
+        Employee user = (Employee)checkNotNull(request.getAttribute("user"));
         BigDecimal duration = new BigDecimal(durationParam); // FIXME: Check for valid fraction.
         Task task = sarariman.getTasks().getMap().get(Integer.parseInt(taskParam)); // FIXME: Check that task is valid.
         try {
             Date date = dateFormat.parse(dateParam);
+            validate(duration, date, task, user);
             recordAndLogEntry(user, task, date, "Entry created.", request.getRemoteHost().toString(), user, duration,
                     descriptionParam);
         } catch (ParseException pe) {
