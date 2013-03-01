@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import javax.sql.DataSource;
 
 /**
  *
@@ -26,9 +27,9 @@ public class TicketImpl extends AbstractTicket {
     private final String creatorUserAgent;
     private final InetAddress creatorIP;
 
-    public TicketImpl(int id) throws SQLException, NoSuchTicketException {
+    public TicketImpl(int id, DataSource dataSource) throws SQLException, NoSuchTicketException {
         this.id = id;
-        Connection connection = openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP FROM ticket WHERE id = ?");
             try {

@@ -5,14 +5,13 @@
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <c:set var="ticket_id" value="${fn:substring(pageContext.request.pathInfo, 1, -1)}"/>
-
-<jsp:useBean id="ticketBean" class="com.stackframe.sarariman.tickets.TicketBean">
-    <jsp:setProperty name="ticketBean" property="id" value="${ticket_id}"/>
-</jsp:useBean>
+<fmt:parseNumber var="ticket_number" value="${ticket_id}"/>
+<c:set var="ticketBean" value="${sarariman.tickets.map[ticket_number]}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

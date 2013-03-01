@@ -86,7 +86,7 @@ public class TextUpdateHandler extends HttpServlet {
         try {
             // FIXME: Check table name before update to defend against SQL injection attack.
             update(ticket, table, text, updater.getNumber());
-            Ticket ticketBean = new TicketImpl(ticket);
+            Ticket ticketBean = new TicketImpl(ticket, dataSource);
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
             URL viewTicketURL = sarariman.getTicketURL(ticketBean);
             if (table.equals("description")) {
