@@ -157,6 +157,14 @@
         <url-pattern>/DeductPTOHandler</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>TimesheetEntryHandler</servlet-name>
+        <servlet-class>com.stackframe.sarariman.TimesheetEntryHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TimesheetEntryHandler</servlet-name>
+        <url-pattern>/TimesheetEntryHandler</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>TimesheetActivity</servlet-name>
         <jsp-file>/activity.jsp</jsp-file>
     </servlet>
