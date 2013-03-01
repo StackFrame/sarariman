@@ -20,6 +20,12 @@ import javax.sql.DataSource;
  */
 public class ContactsImpl implements Contacts {
 
+    private final DataSource dataSource;
+
+    public ContactsImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     protected static Connection openConnection() throws SQLException {
         try {
             DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
@@ -38,7 +44,7 @@ public class ContactsImpl implements Contacts {
                 try {
                     Collection<Contact> result = new ArrayList<Contact>();
                     while (resultSet.next()) {
-                        result.add(new ContactImpl(resultSet.getInt("id")));
+                        result.add(new ContactImpl(resultSet.getInt("id"), dataSource));
                     }
 
                     return result;

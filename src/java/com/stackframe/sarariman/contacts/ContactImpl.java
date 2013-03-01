@@ -8,8 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
+import javax.sql.DataSource;
 
 /**
  *
@@ -17,10 +16,12 @@ import java.util.Collection;
  */
 class ContactImpl implements Contact {
 
-    private int id;
+    private final int id;
+    private final DataSource dataSource;
 
-    ContactImpl(int id) {
+    public ContactImpl(int id, DataSource dataSource) {
         this.id = id;
+        this.dataSource = dataSource;
     }
 
     public int getId() {
@@ -28,7 +29,7 @@ class ContactImpl implements Contact {
     }
 
     public String getName() throws SQLException {
-        Connection connection = ContactsImpl.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT name FROM contacts WHERE id=?");
             try {

@@ -75,7 +75,7 @@ public class ContactsGlobalAudit implements Audit {
     }
 
     private Collection<Contact> orphanedContacts() throws SQLException {
-        Contacts contacts = new ContactsImpl();
+        Contacts contacts = new ContactsImpl(sarariman.getDataSource());
         Map<Integer, Contact> map = new HashMap<Integer, Contact>();
         for (Contact contact : contacts.getAll()) {
             map.put(contact.getId(), contact);

@@ -30,7 +30,7 @@ public class DeductPTOHandler extends HttpServlet {
 
     private void deduct(String week, String[] employeeIDs, String[] PTOValues) throws SQLException {
         int numRows = employeeIDs.length;
-        Connection connection = openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             connection.setAutoCommit(false);
             for (int i = 0; i < numRows; i++) {
