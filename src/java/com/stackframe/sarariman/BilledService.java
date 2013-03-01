@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 StackFrame, LLC
+ * Copyright (C) 2011-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -96,52 +96,58 @@ public class BilledService implements Comparable<BilledService> {
     }
 
     public static BilledService lookup(Sarariman sarariman, int id) throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE id=?");
+        Connection connection = sarariman.getDataSource().getConnection();
         try {
-            ps.setInt(1, id);
-            ResultSet resultSet = ps.executeQuery();
+            PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE id=?");
             try {
-                if (resultSet.next()) {
-                    int serviceAgreement = resultSet.getInt("service_agreement");
-                    DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
-                    DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
-                    String invoice = resultSet.getString("invoice");
-                    return new BilledService(id, serviceAgreement, popStart, popEnd, invoice);
-                } else {
-                    return null;
+                ps.setInt(1, id);
+                ResultSet resultSet = ps.executeQuery();
+                try {
+                    if (resultSet.next()) {
+                        int serviceAgreement = resultSet.getInt("service_agreement");
+                        DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
+                        DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
+                        String invoice = resultSet.getString("invoice");
+                        return new BilledService(id, serviceAgreement, popStart, popEnd, invoice);
+                    } else {
+                        return null;
+                    }
+                } finally {
+                    resultSet.close();
                 }
             } finally {
-                resultSet.close();
+                ps.close();
             }
         } finally {
-            ps.close();
             connection.close();
         }
     }
 
     public static List<BilledService> lookupByServiceAgreement(Sarariman sarariman, int serviceAgreement) throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE service_agreement=?");
+        Connection connection = sarariman.getDataSource().getConnection();
         try {
-            ps.setInt(1, serviceAgreement);
-            ResultSet resultSet = ps.executeQuery();
+            PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE service_agreement=?");
             try {
-                List<BilledService> billedServices = new ArrayList<BilledService>();
-                while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
-                    DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
-                    String invoice = resultSet.getString("invoice");
-                    billedServices.add(new BilledService(id, serviceAgreement, popStart, popEnd, invoice));
-                }
+                ps.setInt(1, serviceAgreement);
+                ResultSet resultSet = ps.executeQuery();
+                try {
+                    List<BilledService> billedServices = new ArrayList<BilledService>();
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
+                        DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
+                        String invoice = resultSet.getString("invoice");
+                        billedServices.add(new BilledService(id, serviceAgreement, popStart, popEnd, invoice));
+                    }
 
-                return billedServices;
+                    return billedServices;
+                } finally {
+                    resultSet.close();
+                }
             } finally {
-                resultSet.close();
+                ps.close();
             }
         } finally {
-            ps.close();
             connection.close();
         }
     }
