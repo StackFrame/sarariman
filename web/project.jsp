@@ -25,7 +25,7 @@
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
-        
+
         <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
 
         <c:if test="${user.administrator || isManager || isCostManager}">
@@ -72,8 +72,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                </form>
+                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -334,9 +334,9 @@
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                    </form>
-                                </td>
-                            </tr>
+                                </form>
+                            </td>
+                        </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
@@ -366,9 +366,9 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                                </form>
-                            </td>
-                        </tr>
+                            </form>
+                        </td>
+                    </tr>
                 </c:forEach>
             </table>
 
@@ -566,16 +566,52 @@
                     <tr>
                         <td>Invoiced</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${invoicedTotal}"/></td>
-                        <td class="percentage"><fmt:formatNumber type="percent" value="${invoicedTotal / project.funded}"/></td>
+                        <td class="percentage">
+                            <c:choose>
+                                <c:when test="${project.funded lt 0.1}">
+                                    NaN
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatNumber type="percent" value="${invoicedTotal / project.funded}"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - invoicedTotal}"/></td>
-                        <td class="percentage"><fmt:formatNumber type="percent" value="${(project.funded - invoicedTotal) / project.funded}"/></td>
+                        <td class="percentage">
+                            <c:choose>
+                                <c:when test="${project.funded lt 0.1}">
+                                    NaN
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatNumber type="percent" value="${(project.funded - invoicedTotal) / project.funded}"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                     </tr>
                     <tr>
                         <td>Expended</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${expendedTotal}"/></td>
-                        <td class="percentage"><fmt:formatNumber type="percent" value="${expendedTotal / project.funded}"/></td>
+                        <td class="percentage">
+                            <c:choose>
+                                <c:when test="${project.funded lt 0.1}">
+                                    NaN
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatNumber type="percent" value="${expendedTotal / project.funded}"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${project.funded - expendedTotal}"/></td>
-                        <td class="percentage"><fmt:formatNumber type="percent" value="${(project.funded - expendedTotal) / project.funded}"/></td>
+                        <td class="percentage">
+                            <c:choose>
+                                <c:when test="${project.funded lt 0.1}">
+                                    NaN
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatNumber type="percent" value="${(project.funded - expendedTotal) / project.funded}"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                     </tr>
                 </table>
             </c:if>
