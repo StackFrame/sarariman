@@ -10,8 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
@@ -26,17 +24,8 @@ public class ContactsImpl implements Contacts {
         this.dataSource = dataSource;
     }
 
-    protected static Connection openConnection() throws SQLException {
-        try {
-            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            return source.getConnection();
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public Collection<Contact> getAll() throws SQLException {
-        Connection connection = openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT id FROM contacts");
             try {
