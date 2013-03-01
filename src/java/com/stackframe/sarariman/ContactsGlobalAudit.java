@@ -35,7 +35,7 @@ public class ContactsGlobalAudit implements Audit {
     }
 
     private Set<Integer> projectTimesheetContacts() throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = sarariman.getDataSource().getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_timesheet_contacts");
             try {
@@ -55,7 +55,7 @@ public class ContactsGlobalAudit implements Audit {
     }
 
     private Set<Integer> projectInvoiceContacts() throws SQLException {
-        Connection connection = sarariman.openConnection();
+        Connection connection = sarariman.getDataSource().getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_invoice_contacts");
             try {
