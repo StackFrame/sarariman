@@ -34,15 +34,6 @@ public class ContactsGlobalAudit implements Audit {
         return "Contacts";
     }
 
-    private static Set<Integer> ids(Collection<Contact> contacts) {
-        ImmutableSet.Builder<Integer> setBuilder = ImmutableSet.<Integer>builder();
-        for (Contact contact : contacts) {
-            setBuilder.add(contact.getId());
-        }
-
-        return setBuilder.build();
-    }
-
     private Set<Integer> projectTimesheetContacts() throws SQLException {
         Connection connection = sarariman.openConnection();
         try {
