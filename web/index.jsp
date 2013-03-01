@@ -249,7 +249,6 @@
             <c:set var="totalHours" value="0.0"/>
             <c:set var="totalRegular" value="0.0"/>
             <c:set var="totalPTO" value="0.0"/>
-            <c:set var="totalHoliday" value="0.0"/>
             <table class="altrows" id="hours">
                 <tr><th rowspan="2">Date</th><th colspan="2">Task</th><th rowspan="2">Project</th><th rowspan="2">Customer</th><th rowspan="2">Duration</th><th rowspan="2">Description</th>
                     <c:if test="${!timesheet.submitted}">
@@ -288,9 +287,6 @@
                             <c:when test="${entry.task == 5}">
                                 <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                             </c:when>
-                            <c:when test="${entry.task == 4}">
-                                <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
-                            </c:when>
                             <c:otherwise>
                                 <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
                             </c:otherwise>
@@ -305,11 +301,6 @@
                 <tr>
                     <td colspan="5"><b>Total Regular</b></td>
                     <td class="duration"><b>${totalRegular}</b></td>
-                    <td colspan="2"></td>
-                </tr>
-                <tr>
-                    <td colspan="5"><b>Total Holiday</b></td>
-                    <td class="duration"><b>${totalHoliday}</b></td>
                     <td colspan="2"></td>
                 </tr>
                 <tr>
