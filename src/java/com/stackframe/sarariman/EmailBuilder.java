@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 StackFrame, LLC
+ * Copyright (C) 2010-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class EmailBuilder extends HttpServlet {
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
+    /**
+     * Handles the HTTP
+     * <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -99,21 +101,27 @@ public class EmailBuilder extends HttpServlet {
         final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
 
         Runnable postSendAction = new Runnable() {
-
             public void run() {
-                Connection connection = sarariman.openConnection();
                 try {
-                    PreparedStatement ps = connection.prepareStatement("INSERT INTO invoice_email_log (invoice, sender) VALUES(?, ?)");
+                    Connection connection = sarariman.getDataSource().getConnection();
                     try {
-                        ps.setInt(1, invoiceNumber);
-                        ps.setInt(2, employee);
-                        ps.executeUpdate();
-                    } finally {
-                        ps.close();
-                        connection.close();
+                        try {
+                            PreparedStatement ps = connection.prepareStatement("INSERT INTO invoice_email_log (invoice, sender) VALUES(?, ?)");
+                            try {
+                                ps.setInt(1, invoiceNumber);
+                                ps.setInt(2, employee);
+                                ps.executeUpdate();
+                            } finally {
+                                ps.close();
+                            }
+                        } finally {
+                            connection.close();
+                        }
+                    } catch (SQLException se) {
+                        throw new RuntimeException(se);
                     }
-                } catch (SQLException se) {
-                    throw new RuntimeException(se);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
 
@@ -154,8 +162,9 @@ public class EmailBuilder extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
