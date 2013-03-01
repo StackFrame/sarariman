@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.SortedSet;
+import javax.sql.DataSource;
 import org.joda.time.LocalDate;
 
 /**
@@ -22,14 +23,14 @@ import org.joda.time.LocalDate;
  */
 class HolidaysImpl implements Holidays {
 
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
 
-    HolidaysImpl(ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
+    HolidaysImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public SortedSet<Holiday> getAll() throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             Statement statement = connection.createStatement();
             try {
@@ -56,7 +57,7 @@ class HolidaysImpl implements Holidays {
     }
 
     public boolean isHoliday(Date date) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?");
             try {

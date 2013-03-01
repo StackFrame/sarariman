@@ -38,7 +38,7 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class Sarariman implements ServletContextListener, ConnectionFactory {
+public class Sarariman implements ServletContextListener {
 
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
@@ -46,7 +46,7 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
     private final Collection<Extension> extensions = new ArrayList<Extension>();
-    private final Holidays holidays = new HolidaysImpl(this);
+    private final Holidays holidays = new HolidaysImpl(getDataSource());
     private final DirectorySynchronizer directorySynchronizer = new DirectorySynchronizerImpl();
     private OrganizationHierarchy organizationHierarchy;
     private LDAPDirectory directory;
@@ -241,14 +241,14 @@ public class Sarariman implements ServletContextListener, ConnectionFactory {
             Properties directoryProperties = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(directoryProperties), this);
             try {
-                directorySynchronizer.synchronize(directory, this);
+                directorySynchronizer.synchronize(directory, getDataSource());
             } catch (Exception e) {
                 // FIXME: log
                 System.err.println("Trouble synchronizing directory with database: " + e);
             }
 
             initContext.rebind("sarariman.directory", directory);
-            organizationHierarchy = new OrganizationHierarchyImpl(this, directory);
+            organizationHierarchy = new OrganizationHierarchyImpl(getDataSource(), directory);
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");

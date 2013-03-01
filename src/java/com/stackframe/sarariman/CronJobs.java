@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 StackFrame, LLC
+ * Copyright (C) 2010-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -71,7 +71,7 @@ class CronJobs {
             public void run() {
                 directory.reload();
                 try {
-                    sarariman.getDirectorySynchronizer().synchronize(directory, sarariman);
+                    sarariman.getDirectorySynchronizer().synchronize(directory, sarariman.getDataSource());
                 } catch (Exception e) {
                     // FIXME: log
                     System.err.println("Trouble synchronizing directory with database: " + e);

@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import javax.sql.DataSource;
+
 /**
  * Synchronizes a Directory with a database.
  *
@@ -16,6 +18,6 @@ interface DirectorySynchronizer {
      *
      * @throws Exception
      */
-    void synchronize(Directory directory, ConnectionFactory connectionFactory) throws Exception;
+    void synchronize(Directory directory, DataSource dataSource) throws Exception;
 
 }

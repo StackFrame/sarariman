@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.sql.DataSource;
 
 /**
  *
@@ -22,18 +23,18 @@ import java.util.Set;
  */
 public class OrganizationHierarchyImpl implements OrganizationHierarchy {
 
-    private final ConnectionFactory connectionFactory;
+    private final DataSource dataSource;
     private final Directory directory;
 
-    public OrganizationHierarchyImpl(ConnectionFactory connectionFactory, Directory directory) {
-        this.connectionFactory = connectionFactory;
+    public OrganizationHierarchyImpl(DataSource dataSource, Directory directory) {
+        this.dataSource = dataSource;
         this.directory = directory;
     }
 
     public Collection<Integer> getManagers(int employee, Date date) {
         Collection<Integer> managers = new ArrayList<Integer>();
         try {
-            Connection connection = connectionFactory.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement("SELECT manager FROM organization_hierarchy WHERE employee=? AND ((begin <= ? AND end >= ?) OR (begin <= ? AND end IS NULL));");
                 try {
@@ -88,7 +89,7 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
     public Collection<Integer> getDirectReports(int employee, Date date, boolean includeInactive) {
         Collection<Integer> managers = new ArrayList<Integer>();
         try {
-            Connection connection = connectionFactory.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement("SELECT employee FROM organization_hierarchy WHERE manager=? AND ((begin <= ? AND end >= ?) OR (begin <= ? AND end IS NULL));");
                 try {
@@ -184,7 +185,7 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
         Collection<EmployeeNode> employees = new ArrayList<EmployeeNode>();
         Set<Integer> ids = new HashSet<Integer>();
         try {
-            Connection connection = connectionFactory.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement("SELECT employee, manager FROM organization_hierarchy WHERE ((begin <= ? AND end >= ?) OR (begin <= ? AND end IS NULL));");
                 try {

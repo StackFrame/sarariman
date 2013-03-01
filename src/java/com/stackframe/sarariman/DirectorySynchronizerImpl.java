@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Set;
+import javax.sql.DataSource;
 
 /**
  *
@@ -17,8 +18,8 @@ import java.util.Set;
  */
 class DirectorySynchronizerImpl implements DirectorySynchronizer {
 
-    private Set<Integer> getEmployeeIDs(ConnectionFactory connectionFactory) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    private Set<Integer> getEmployeeIDs(DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT id FROM employee");
             try {
@@ -37,8 +38,8 @@ class DirectorySynchronizerImpl implements DirectorySynchronizer {
         }
     }
 
-    private void add(Employee employee, ConnectionFactory connectionFactory) throws SQLException {
-        Connection connection = connectionFactory.openConnection();
+    private void add(Employee employee, DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO employee(id) VALUES(?)");
             try {
@@ -53,13 +54,13 @@ class DirectorySynchronizerImpl implements DirectorySynchronizer {
         }
     }
 
-    public void synchronize(Directory directory, ConnectionFactory connectionFactory) throws Exception {
-        Set<Integer> employeeIDs = getEmployeeIDs(connectionFactory);
+    public void synchronize(Directory directory, DataSource dataSource) throws Exception {
+        Set<Integer> employeeIDs = getEmployeeIDs(dataSource);
         for (Employee employee : directory.getByUserName().values()) {
             if (!employeeIDs.contains(employee.getNumber())) {
                 // FIXME: Log this.
                 System.err.println("Adding employee " + employee.getDisplayName());
-                add(employee, connectionFactory);
+                add(employee, dataSource);
             }
         }
     }
