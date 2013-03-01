@@ -12,8 +12,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,17 +24,16 @@ import javax.sql.DataSource;
  */
 public class StatusChangeHandler extends HttpServlet {
 
-    private Connection openConnection() throws SQLException {
-        try {
-            DataSource source = (DataSource)new InitialContext().lookup("java:comp/env/jdbc/sarariman");
-            return source.getConnection();
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
+    private DataSource dataSource;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        dataSource = ((Sarariman)getServletContext().getAttribute("sarariman")).getDataSource();
     }
 
     private void updateStatus(int ticket, String status, int employee) throws SQLException {
-        Connection connection = openConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO ticket_status (ticket, status, employee) VALUES(?, ?, ?)");
             try {
