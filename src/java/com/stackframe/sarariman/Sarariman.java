@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.stackframe.reflect.ReflectionUtils;
@@ -205,6 +206,7 @@ public class Sarariman implements ServletContextListener {
      * @return whether or not coll contains o
      */
     public static boolean contains(Collection<?> coll, Object o) {
+        checkNotNull(coll);
         return coll.contains(o);
     }
 
