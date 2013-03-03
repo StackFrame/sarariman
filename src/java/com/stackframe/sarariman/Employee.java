@@ -59,4 +59,6 @@ public interface Employee {
 
     Iterable<Task> getTasks();
 
+    BigDecimal getPaidTimeOff();
+
 }

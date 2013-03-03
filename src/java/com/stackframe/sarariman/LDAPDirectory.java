@@ -345,6 +345,34 @@ public class LDAPDirectory implements Directory {
             return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
         }
 
+        public BigDecimal getPaidTimeOff() {
+            try {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement s = connection.prepareStatement("SELECT SUM(amount) AS total "
+                            + "FROM paid_time_off "
+                            + "WHERE employee = ?");
+                    try {
+                        s.setInt(1, number);
+                        ResultSet r = s.executeQuery();
+                        try {
+                            boolean hasRow = r.first();
+                            assert hasRow;
+                            return r.getBigDecimal("total");
+                        } finally {
+                            r.close();
+                        }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (obj == null) {
