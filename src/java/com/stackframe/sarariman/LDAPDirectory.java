@@ -373,6 +373,36 @@ public class LDAPDirectory implements Directory {
             }
         }
 
+        public BigDecimal getRecentEntryLatency() {
+            // FIXME: This needs to be parameterized and/or moved elsewhere
+            try {
+                Connection connection = sarariman.openConnection();
+                try {
+                    PreparedStatement s = connection.prepareStatement("SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average "
+                            + "FROM hours "
+                            + "JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date "
+                            + "WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+                    try {
+                        s.setInt(1, number);
+                        ResultSet r = s.executeQuery();
+                        try {
+                            boolean hasRow = r.first();
+                            assert hasRow;
+                            return r.getBigDecimal("average");
+                        } finally {
+                            r.close();
+                        }
+                    } finally {
+                        s.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (obj == null) {

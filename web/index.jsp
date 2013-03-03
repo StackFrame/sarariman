@@ -53,15 +53,8 @@
 
         <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
 
-        <sql:query dataSource="jdbc/sarariman" var="averageEntry">
-            SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average
-            FROM hours
-            JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date
-            WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)
-            <sql:param value="${employeeNumber}"/>
-        </sql:query>
-        <c:set var="good" value="${averageEntry.rows[0].average < 0.25}"/>
         <p>
+            <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
             <c:choose>
                 <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when> 
                 <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
