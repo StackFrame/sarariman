@@ -14,8 +14,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <fmt:parseNumber var="project_id" value="${param.project}"/>
-    <c:set var="project" value="${sarariman.projects[project_id]}"/>
-    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+    <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
+    <c:set var="customer" value="${project.client}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</title>
@@ -55,7 +55,8 @@
                     <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a>
                     <a href="${fn:escapeXml(pdf)}">[PDF]</a>
                     <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
-                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, row.employee, startDay)}"/>
+                    <c:set var="week" value="${du:week(startDay)}"/>
+                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, row.employee, week)}"/>
                     <c:if test="${!timesheet.approved}">
                         <span class="error">This timesheet is not yet approved.</span>
                     </c:if>
