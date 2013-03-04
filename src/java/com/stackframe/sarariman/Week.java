@@ -29,7 +29,7 @@ public class Week implements Comparable<Week> {
         start.set(Calendar.HOUR_OF_DAY, 0);
         start.set(Calendar.MINUTE, 0);
         start.set(Calendar.SECOND, 0);
-        start.set(Calendar.MILLISECOND, 0);        
+        start.set(Calendar.MILLISECOND, 0);
     }
 
     private static Calendar calendar(Date d) {
@@ -44,6 +44,12 @@ public class Week implements Comparable<Week> {
 
     public Calendar getStart() {
         return (Calendar)start.clone();
+    }
+
+    public Calendar getEnd() {
+        Calendar c = (Calendar)start.clone();
+        c.add(Calendar.DATE, 6);
+        return c;
     }
 
     public Week getNext() {
@@ -85,5 +91,4 @@ public class Week implements Comparable<Week> {
         }
 
     };
-
 }
