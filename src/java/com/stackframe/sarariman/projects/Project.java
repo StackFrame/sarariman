@@ -80,6 +80,8 @@ public interface Project {
 
     Collection<Task> getTasks();
 
+    Iterable<Employee> getAdministrativeAssistants();
+
     void delete();
 
 }

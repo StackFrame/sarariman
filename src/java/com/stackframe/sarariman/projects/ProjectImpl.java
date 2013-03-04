@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.projects;
 
+import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
@@ -728,6 +729,38 @@ public class ProjectImpl implements Project {
                         }
 
                         return list;
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Iterable<Employee> getAdministrativeAssistants() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement("SELECT assistant "
+                        + "FROM project_administrative_assistants "
+                        + "WHERE project = ?");
+                ps.setInt(1, id);
+                try {
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
+                        while (resultSet.next()) {
+                            int task_id = resultSet.getInt("assistant");
+                            listBuilder.add(directory.getByNumber().get(task_id));
+                        }
+
+                        return listBuilder.build();
                     } finally {
                         resultSet.close();
                     }

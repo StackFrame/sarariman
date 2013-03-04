@@ -72,8 +72,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-            </form>
+                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+                </form>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -157,6 +157,19 @@
                 <li><a href="${link}">${directory.byNumber[row.employee].fullName}</a></li>
             </c:forEach>
         </ul>
+
+        <c:set var="assistants" value="${project.administrativeAssistants}"/>
+        <c:if test="${not empty assistants}">
+            <h2>Administrative Assistants</h2>
+            <ul>
+                <c:forEach var="assistant" items="${assistants}">
+                    <c:url var="link" value="employee">
+                        <c:param name="id" value="${assistant.number}"/>
+                    </c:url>
+                    <li><a href="${link}">${assistant.displayName}</a></li>
+                </c:forEach>
+            </ul>
+        </c:if>
 
         <c:if test="${isManager || isCostManager}">
             <h2>Timesheet Contacts</h2>
@@ -334,9 +347,9 @@
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                </form>
-                            </td>
-                        </tr>
+                                    </form>
+                                </td>
+                            </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
@@ -366,9 +379,9 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                            </form>
-                        </td>
-                    </tr>
+                                </form>
+                            </td>
+                        </tr>
                 </c:forEach>
             </table>
 
