@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2010 StackFrame, LLC
+  Copyright (C) 2010-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -29,14 +29,15 @@
     <body>
         <%@include file="header.jsp" %>
 
-        <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
-        <fmt:formatDate var="prevWeek" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+        <fmt:parseDate var="weekParam" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+        <c:set var="week" value="${du:week(weekParam)}"/>
+        <fmt:formatDate var="prevWeek" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
         <c:url var="prevWeekURL" value="${request.requestURI}">
             <c:param name="employee" value="${param.employee}"/>
             <c:param name="week" value="${prevWeek}"/>
         </c:url>
         <a href="${fn:escapeXml(prevWeekURL)}">${prevWeek}</a>
-        <fmt:formatDate var="nextWeek" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+        <fmt:formatDate var="nextWeek" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
         <c:url var="nextWeekURL" value="${request.requestURI}">
             <c:param name="employee" value="${param.employee}"/>
             <c:param name="week" value="${nextWeek}"/>
@@ -59,8 +60,8 @@
         </sql:query>
 
         <c:forEach var="row" items="${resultSet.rows}">
-            <p>Hours billed ${row.durationTotal}.<br/>
-                Total billed <fmt:formatNumber type="currency" value="${row.costTotal}"/>.
+            <p>Hours billed: ${row.durationTotal}.<br/>
+                Total billed: <fmt:formatNumber type="currency" value="${row.costTotal}"/>.
             </p>
         </c:forEach>
 
