@@ -89,20 +89,6 @@ public class DateUtils {
         return startDate.getTime();
     }
 
-    public static Date nextWeek(Date date) {
-        Calendar startDate = Calendar.getInstance();
-        startDate.setTime(date);
-        startDate.add(Calendar.DATE, 7);
-        return startDate.getTime();
-    }
-
-    public static Date prevWeek(Date date) {
-        Calendar startDate = Calendar.getInstance();
-        startDate.setTime(date);
-        startDate.add(Calendar.DATE, -7);
-        return startDate.getTime();
-    }
-
     public static int daysBetween(Date start, Date end) {
         DateTime x = new DateTime(start);
         DateTime y = new DateTime(end);

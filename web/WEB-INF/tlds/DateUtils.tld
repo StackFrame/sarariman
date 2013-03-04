@@ -39,16 +39,6 @@
         <function-signature>java.util.Date addDays(java.util.Date, int)</function-signature>
     </function>
     <function>
-        <name>nextWeek</name>
-        <function-class>com.stackframe.sarariman.DateUtils</function-class>
-        <function-signature>java.util.Date nextWeek(java.util.Date)</function-signature>
-    </function>
-    <function>
-        <name>prevWeek</name>
-        <function-class>com.stackframe.sarariman.DateUtils</function-class>
-        <function-signature>java.util.Date prevWeek(java.util.Date)</function-signature>
-    </function>
-    <function>
         <name>daysBetween</name>
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
         <function-signature>int daysBetween(java.util.Date, java.util.Date)</function-signature>
