@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -47,17 +47,18 @@
 
         <c:choose>
             <c:when test="${!empty param.week}">
-                <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+                <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+                <c:set var="week" value="${du:week(parsedWeek)}"/>
             </c:when>
             <c:otherwise>
-                <c:set var="week" value="${du:weekStart(du:now())}"/>
+                <c:set var="week" value="${du:week(du:now())}"/>
             </c:otherwise>
         </c:choose>
 
         <form action="${request.requestURI}" method="get">
-            <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${prevWeekString}"/>
-            <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
             <input type="hidden" name="employee" value="${employee.number}"/>
         </form>
@@ -68,12 +69,12 @@
                     <option value="${e.value.number}" <c:if test="${e.value.number == employee.number}">selected="selected"</c:if>>${e.value.fullName}</option>
                 </c:forEach>
             </select>
-            <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="weekString" value="${week.start.time}" pattern="yyyy-MM-dd"/>
             <input type="hidden" name="week" value="${weekString}"/>
             <input type="submit" value="Retrieve"/>
         </form>
 
-        <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
+        <fmt:formatDate var="thisWeekStart" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
 
         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
         <c:if test="${user.administrator}">
@@ -112,12 +113,10 @@
         <c:set var="totalUnbillable" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
         <c:set var="totalHoliday" value="0.0"/>
-        <c:set var="projects" value="${sarariman.projects}"/>
-        <c:set var="customers" value="${sarariman.customers}"/>
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
-                <c:set var="project" value="${projects[entry.project]}"/>
+                <c:set var="project" value="${sarariman.projects.map[entry.project]}"/>
                 <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project)) || sarariman:contains(reports, employee.number)}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
@@ -127,7 +126,7 @@
                         </c:url>
                         <td><a href="${fn:escapeXml(taskLink)}">${fn:escapeXml(entry.name)}</a></td>
                         <td class="task"><a href="${fn:escapeXml(taskLink)}">${entry.task}</a></td>
-                        <c:set var="customer" value="${customers[project.customer]}"/>
+                        <c:set var="customer" value="${project.client}"/>
                         <c:url var="projectLink" value="project">
                             <c:param name="id" value="${entry.project}"/>
                         </c:url>
@@ -137,7 +136,7 @@
                             </c:if>
                         </td>
                         <c:url var="customerLink" value="customer">
-                            <c:param name="id" value="${project.customer}"/>
+                            <c:param name="id" value="${project.client.id}"/>
                         </c:url>
                         <td>
                             <c:if test="${!empty customer}">
@@ -212,9 +211,9 @@
 
             <table class="altrows" id="summary">
                 <caption>Summary</caption>
-                <tr><th>Customer</th><th>Project</th><th>Hours</th></tr>
+                <tr><th>Client</th><th>Project</th><th>Hours</th></tr>
                 <c:forEach var="entry" items="${customerEntries.rows}">
-                    <c:set var="customer" value="${customers[entry.id]}"/>
+                    <c:set var="customer" value="${sarariman.clients.map[entry.id]}"/>
                     <c:if test="${user.administrator || user.invoiceManager || sarariman:contains(reports, employee.number)}">
                         <sql:query dataSource="jdbc/sarariman" var="projectEntries">
                             SELECT DISTINCT(projects.id)
@@ -238,7 +237,7 @@
                                 </c:if>
                             </td>
                             <td>
-                                <c:set var="project" value="${projects[projectEntries.rows[0].id]}"/>
+                                <c:set var="project" value="${sarariman.projects.map[projectEntries.rows[0].id]}"/>
                                 <c:url var="projectLink" value="project">
                                     <c:param name="id" value="${projectEntries.rows[0].id}"/>
                                 </c:url>
