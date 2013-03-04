@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -54,7 +54,8 @@ public class TimesheetController extends HttpServlet {
         try {
             Date date = dateFormat.parse(request.getParameter("week"));
             Action action = Action.valueOf(request.getParameter("action"));
-            Timesheet timesheet = Timesheet.lookup(sarariman, employeeNumber, date);
+            Week week = DateUtils.week(date);
+            Timesheet timesheet = Timesheet.lookup(sarariman, employeeNumber, week);
             switch (action) {
                 case Approve:
                     timesheet.approve(user);

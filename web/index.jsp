@@ -147,10 +147,11 @@
 
         <c:choose>
             <c:when test="${!empty param.week}">
-                <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+                <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+                <c:set var="week" value="${du:week(parsedWeek)}"/>
             </c:when>
             <c:otherwise>
-                <c:set var="week" value="${du:weekStart(du:now())}"/>
+                <c:set var="week" value="${du:week(du:now())}"/>
             </c:otherwise>
         </c:choose>
 
@@ -188,7 +189,7 @@
                     <br/>
                     <label for="description">Description:</label><br/>
                     <textarea cols="80" rows="10" name="description" id="description"></textarea>
-                    <fmt:formatDate var="weekString" value="${week}" type="date" pattern="yyyy-MM-dd" />
+                    <fmt:formatDate var="weekString" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
                     <input type="hidden" name="week" value="${weekString}"/><br/>
                     <input type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
                 </form>
@@ -198,15 +199,15 @@
         <div id="weekNavigation">
             <h2>Navigate to another week</h2>
             <form action="${request.requestURI}" method="post">
-                <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+                <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
                 <input type="submit" name="week" value="${prevWeekString}"/>
-                <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+                <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
                 <input type="submit" name="week" value="${nextWeekString}"/>
             </form>
         </div>
 
         <div id="sheetView">
-            <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
+            <fmt:formatDate var="thisWeekStart" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
 
             <h2>Timesheet for the week of ${thisWeekStart}</h2>
 
@@ -227,7 +228,6 @@
 
             <br/>
 
-            <!-- FIXME: Can I do the nextWeek part in SQL? -->
             <sql:query dataSource="jdbc/sarariman" var="entries">
                 SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name AS task_name, projects.name AS project_name, customers.name AS customer_name
                 FROM hours INNER JOIN tasks ON hours.task = tasks.id

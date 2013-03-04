@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -25,6 +25,10 @@ public class DateUtils {
 
     public static Date now() {
         return new Date();
+    }
+
+    public static Week week(Date date) {
+        return new Week(weekStart(date));
     }
 
     public static Date weekStart(Date date) {

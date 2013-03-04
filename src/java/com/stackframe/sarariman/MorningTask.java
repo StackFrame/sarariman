@@ -32,14 +32,14 @@ public class MorningTask extends TimerTask {
 
     public void run() {
         Calendar today = Calendar.getInstance();
-        Date prevWeek = new Date(DateUtils.prevWeek(DateUtils.weekStart(today.getTime())).getTime());
+        Week prevWeek = DateUtils.week(today.getTime()).getPrevious();
         // Check to see if last week's timesheet was submitted.
         for (Employee employee : directory.getByUserName().values()) {
             if (!employee.isActive()) {
                 continue;
             }
 
-            if (!employee.active(prevWeek)) {
+            if (!employee.active(new Date(prevWeek.getStart().getTime().getTime()))) {
                 continue;
             }
             

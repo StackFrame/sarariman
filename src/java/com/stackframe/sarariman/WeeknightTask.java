@@ -40,7 +40,7 @@ public class WeeknightTask extends TimerTask {
         java.util.Date todayDate = today.getTime();
         try {
             boolean isHoliday = sarariman.getHolidays().isHoliday(todayDate);
-            Date week = new Date(DateUtils.weekStart(todayDate).getTime());
+            Week week = DateUtils.week(DateUtils.weekStart(todayDate));
             for (Employee employee : directory.getByUserName().values()) {
                 if (!employee.isActive()) {
                     continue;

@@ -11,7 +11,7 @@
     <function>
         <name>timesheet</name>
         <function-class>com.stackframe.sarariman.Timesheet</function-class>
-        <function-signature>com.stackframe.sarariman.Timesheet lookup(com.stackframe.sarariman.Sarariman, int, java.util.Date)</function-signature>
+        <function-signature>com.stackframe.sarariman.Timesheet lookup(com.stackframe.sarariman.Sarariman, int, com.stackframe.sarariman.Week)</function-signature>
     </function>
     <function>
         <name>approveTimesheet</name>

@@ -9,6 +9,11 @@
         <function-signature>java.util.Date now()</function-signature>
     </function>
     <function>
+        <name>week</name>
+        <function-class>com.stackframe.sarariman.DateUtils</function-class>
+        <function-signature>com.stackframe.sarariman.Week week(java.util.Date)</function-signature>
+    </function>
+    <function>
         <name>weekStart</name>
         <function-class>com.stackframe.sarariman.DateUtils</function-class>
         <function-signature>java.util.Date weekStart(java.util.Date)</function-signature>

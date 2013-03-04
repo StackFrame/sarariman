@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -29,17 +28,17 @@ public class Timesheet {
     private static final int PTOTask = 5;
     private final Sarariman sarariman;
     private final int employeeNumber;
-    private final Date week;
+    private final Week week;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public Timesheet(Sarariman sarariman, int employeeNumber, Date week) {
+    public Timesheet(Sarariman sarariman, int employeeNumber, Week week) {
         this.sarariman = sarariman;
         this.employeeNumber = employeeNumber;
         this.week = week;
     }
 
-    public static Timesheet lookup(Sarariman sarariman, int employeeNumber, java.util.Date week) {
-        return new Timesheet(sarariman, employeeNumber, new Date(week.getTime()));
+    public static Timesheet lookup(Sarariman sarariman, int employeeNumber, Week week) {
+        return new Timesheet(sarariman, employeeNumber, week);
     }
 
     public double getRegularHours() throws SQLException {
@@ -50,8 +49,8 @@ public class Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, week);
-            ps.setDate(3, week);
+            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
             ps.setInt(4, holidayTask);
             ps.setInt(5, PTOTask);
             ResultSet resultSet = ps.executeQuery();
@@ -79,8 +78,8 @@ public class Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, week);
-            ps.setDate(3, week);
+            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
             ResultSet resultSet = ps.executeQuery();
             try {
                 if (!resultSet.first()) {
@@ -101,16 +100,11 @@ public class Timesheet {
     public Map<Calendar, BigDecimal> getHoursByDay() throws SQLException {
         Map<Calendar, BigDecimal> map = new LinkedHashMap<Calendar, BigDecimal>();
         for (int i = 0; i < 7; i++) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.set(week.getYear() + 1900, week.getMonth(), week.getDate());
-            calendar.set(Calendar.HOUR, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
+            Calendar calendar = week.getStart();
             calendar.add(Calendar.DATE, i);
             map.put(calendar, new BigDecimal(0));
         }
-
+        
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT duration, date "
@@ -118,18 +112,14 @@ public class Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, week);
-            ps.setDate(3, week);
+            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
             ResultSet resultSet = ps.executeQuery();
             try {
                 while (resultSet.next()) {
                     Date date = resultSet.getDate("date");
-                    Calendar calendar = new GregorianCalendar();
-                    calendar.set(date.getYear() + 1900, date.getMonth(), date.getDate());
-                    calendar.set(Calendar.HOUR, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
+                    Calendar calendar = (Calendar)week.getStart().clone();
+                    calendar.setTime(date);
                     BigDecimal duration = resultSet.getBigDecimal("duration");
                     map.put(calendar, map.get(calendar).add(duration));
                 }
@@ -151,8 +141,8 @@ public class Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, week);
-            ps.setDate(3, week);
+            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
             ps.setInt(4, task);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -206,7 +196,7 @@ public class Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, week);
+            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -224,7 +214,7 @@ public class Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT approver FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, week);
+            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -247,7 +237,7 @@ public class Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT approved_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, week);
+            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -269,7 +259,7 @@ public class Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, week);
+            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -291,7 +281,7 @@ public class Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, week);
+            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -316,7 +306,7 @@ public class Timesheet {
             try {
                 ps.setInt(1, user.getNumber());
                 ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                ps.setDate(3, week);
+                ps.setDate(3, new Date(week.getStart().getTime().getTime()));
                 ps.setInt(4, employeeNumber);
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
@@ -347,7 +337,7 @@ public class Timesheet {
             Connection connection = sarariman.openConnection();
             PreparedStatement ps = connection.prepareStatement("DELETE FROM timecards WHERE date=? AND employee=?");
             try {
-                ps.setDate(1, week);
+                ps.setDate(1, new Date(week.getStart().getTime().getTime()));
                 ps.setInt(2, employeeNumber);
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
@@ -380,7 +370,7 @@ public class Timesheet {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
             try {
                 ps.setInt(1, employeeNumber);
-                ps.setDate(2, week);
+                ps.setDate(2, new Date(week.getStart().getTime().getTime()));
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
                     logger.severe("submit for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
