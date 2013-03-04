@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -26,19 +26,20 @@
 
         <c:choose>
             <c:when test="${!empty param.week}">
-                <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+                <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+                <c:set var="week" value="${du:week(parsedWeek)}"/>
             </c:when>
             <c:otherwise>
-                <c:set var="week" value="${du:weekStart(du:now())}"/>
+                <c:set var="week" value="${du:week(du:now())}"/>
             </c:otherwise>
         </c:choose>
 
         <!-- FIXME: This is lame and could be made better with a date picker. -->
 
         <form action="${request.requestURI}" method="get">
-            <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${prevWeekString}"/>
-            <fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
             <c:if test="${param.showInactive == 'on'}"><input type="hidden" name="showInactive" value="on"/></c:if>
         </form>
@@ -49,7 +50,7 @@
             <input type="checkbox" name="showInactive" id="showInactive" <c:if test="${param.showInactive == 'on'}">checked="checked"</c:if> /><input type="submit" value="Update"/>
         </form>
 
-        <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
+        <fmt:formatDate var="thisWeekStart" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
 
         <c:if test="${user.administrator}">
             <c:url var="deductPTOLink" value="deductPTO.jsp">
