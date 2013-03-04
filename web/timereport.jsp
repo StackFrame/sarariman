@@ -99,11 +99,12 @@
             Employee: ${directory.byNumber[param.employee].fullName}<br/>
             Week: ${param.week}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
-            Customer: ${fn:escapeXml(customer.name)}
+            Client: ${fn:escapeXml(customer.name)}
         </p>
 
         <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
-        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.employee, startDay)}"/>
+        <c:set var="week" value="${du:week(startDay)}"/>
+        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.employee, week)}"/>
         <c:if test="${!timesheet.approved}">
             <p class="error">This timesheet is not yet approved.</p>
         </c:if>
