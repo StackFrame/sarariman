@@ -86,7 +86,7 @@
             </c:otherwise>
         </c:choose>
 
-        <c:set var="pop_end" value="${du:weekEnd(du:prevWeek(du:weekStart(du:now())))}"/>
+        <c:set var="pop_end" value="${du:week(du:now()).previous.end.time}"/>
 
         <!-- FIXME: Need task picker. -->
         <!-- FIXME: Add subtotal by task. -->
