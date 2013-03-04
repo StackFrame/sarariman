@@ -559,7 +559,7 @@
                 <h2>Cumulative</h2>
                 <table class="altrows">
                     <c:choose>
-                        <c:when test="${project.funded lt 0.1}"> <!-- FIXME: This should check for a funding limit. -->
+                        <c:when test="${empty project.funded or project.funded lt 0.1}"> <!-- FIXME: This should check for a funding limit. -->
                             <tr>
                                 <th></th>
                                 <th>Billed</th>
