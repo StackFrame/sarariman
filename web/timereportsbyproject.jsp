@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -16,10 +16,11 @@
 
     <c:choose>
         <c:when test="${!empty param.week}">
-            <c:set var="week" value="${param.week}"/>
+            <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+            <c:set var="week" value="${du:week(parsedWeek)}"/>
         </c:when>
         <c:otherwise>
-            <fmt:formatDate var="week" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
+            <c:set var="week" value="${du:week(du:now())}"/>
         </c:otherwise>
     </c:choose>
 
@@ -34,10 +35,9 @@
         <h1>Projects - ${week}</h1>
 
         <form action="${request.requestURI}" method="get">
-            <fmt:parseDate var="weekValue" value="${week}" pattern="yyyy-MM-dd"/>
-            <fmt:formatDate var="prevWeekString" value="${du:prevWeek(weekValue)}" type="date" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${prevWeekString}"/>
-            <fmt:formatDate var="nextWeekString" value="${du:nextWeek(weekValue)}" type="date" pattern="yyyy-MM-dd"/>
+            <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
             <input type="submit" name="week" value="${nextWeekString}"/>
         </form>
 
@@ -49,19 +49,19 @@
             JOIN customers AS c ON c.id = p.customer
             WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.duration > 0
             ORDER BY p.id ASC
-            <sql:param value="${week}"/>
-            <sql:param value="${week}"/>
+            <sql:param value="${week.start.time}"/>
+            <sql:param value="${week.start.time}"/>
         </sql:query>
         <ul>
             <c:forEach var="row" items="${result.rows}">
-                <c:set var="project" value="${sarariman.projects[row.id]}"/>
+                <c:set var="project" value="${sarariman.projects.map[row.id]}"/>
                 <c:if test="${sarariman:isManager(user, project) || sarariman:isCostManager(user, project) || user.administrator}">
                     <c:url var="target" value="projecttimereports">
                         <c:param name="project" value="${row.id}"/>
                         <c:param name="week" value="${week}"/>
                     </c:url>
                     <li>
-                        <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                        <c:set var="customer" value="${project.client}"/>
                         <a href="${fn:escapeXml(target)}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
                     </li>
                 </c:if>
