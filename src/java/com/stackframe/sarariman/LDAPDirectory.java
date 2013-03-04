@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
@@ -37,6 +38,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
+import javax.sql.DataSource;
 import org.joda.time.LocalDate;
 
 /**
@@ -46,6 +48,7 @@ import org.joda.time.LocalDate;
 public class LDAPDirectory implements Directory {
 
     private final Sarariman sarariman;
+    private final DataSource dataSource;
     private final DirContext context;
     private final Map<Object, Employee> byNumber = new LinkedHashMap<Object, Employee>();
     private final Map<String, Employee> byUserName = new LinkedHashMap<String, Employee>();
@@ -403,6 +406,38 @@ public class LDAPDirectory implements Directory {
             }
         }
 
+        public Iterable<Employee> getAdministrativeAssistants() {
+            try {
+                Connection connection = dataSource.getConnection();
+                try {
+                    PreparedStatement ps = connection.prepareStatement("SELECT assistant "
+                            + "FROM individual_administrative_assistants "
+                            + "WHERE employee = ?");
+                    ps.setInt(1, number);
+                    try {
+                        ResultSet resultSet = ps.executeQuery();
+                        try {
+                            ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
+                            while (resultSet.next()) {
+                                int task_id = resultSet.getInt("assistant");
+                                listBuilder.add(getByNumber().get(task_id));
+                            }
+
+                            return listBuilder.build();
+                        } finally {
+                            resultSet.close();
+                        }
+                    } finally {
+                        ps.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+            } catch (SQLException se) {
+                throw new RuntimeException(se);
+            }
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (obj == null) {
@@ -430,6 +465,7 @@ public class LDAPDirectory implements Directory {
     public LDAPDirectory(DirContext context, Sarariman sarariman) {
         this.context = context;
         this.sarariman = sarariman;
+        this.dataSource = sarariman.getDataSource();
         load();
     }
 

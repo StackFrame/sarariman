@@ -60,8 +60,10 @@ public interface Employee {
     Iterable<Task> getTasks();
 
     BigDecimal getPaidTimeOff();
-    
+
     // FIXME: This needs to be parameterized and/or moved elsewhere
     BigDecimal getRecentEntryLatency();
+
+    Iterable<Employee> getAdministrativeAssistants();
 
 }

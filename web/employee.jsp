@@ -41,6 +41,19 @@
             </ul>
         </c:if>   
 
+        <c:set var="assistants" value="${employee.administrativeAssistants}"/>
+        <c:if test="${not empty assistants}">
+            <h2>Administrative Assistants</h2>
+            <ul>
+                <c:forEach var="assistant" items="${assistants}">
+                    <c:url var="link" value="employee">
+                        <c:param name="id" value="${assistant.number}"/>
+                    </c:url>
+                    <li><a href="${link}">${assistant.displayName}</a></li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
         <%
             Collection<Integer> directReports = sarariman.getOrganizationHierarchy().getDirectReports(employee.getNumber());
             pageContext.setAttribute("directReports", directReports);
@@ -65,8 +78,8 @@
             <input type="checkbox" id="administrator" name="administrator"
                    <c:if test="${employee.administrator}">checked="checked"</c:if>
                    <c:if test="${not user.administrator}">disabled="true"</c:if>
-                   onchange="this.form.submit();"/>
-        </form>
+                       onchange="this.form.submit();"/>
+            </form>
 
         <c:if test="${user.administrator}">
             <ul>
