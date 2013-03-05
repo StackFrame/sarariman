@@ -380,9 +380,8 @@
                 </tr>
                 <c:forEach var="task" items="${project.tasks}">
                     <tr>
-                        <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
-                        <td><a href="${link}">${task.id}</a></td>
-                        <td><a href="${link}">${fn:escapeXml(task.name)}</a></td>
+                        <td><a href="${task.URL}">${task.id}</a></td>
+                        <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
                         <c:if test="${!empty lineItems}">
                             <td class="line_item">${task.lineItem}</td>
                         </c:if>
@@ -412,8 +411,7 @@
                         <!-- FIXME: Join rows with the same task together. -->
                         <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
                         <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
-                        <c:url var="link" value="task"><c:param name="task_id" value="${row.id}"/></c:url>
-                        <td><a href="${link}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
+                        <td><a href="${sarariman.tasks.map[row.id].URL}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
                     </tr>
                 </c:forEach>
             </table>
