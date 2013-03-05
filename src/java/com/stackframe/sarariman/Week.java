@@ -70,6 +70,15 @@ public class Week implements Comparable<Week> {
 
     @Override
     public String toString() {
+        return getName();
+    }
+
+    /**
+     * Get the name of the week. We consider the ISO 8601 form of the first day of the week (Saturday) to be the name.
+     *
+     * @return the name of the week
+     */
+    public String getName() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(start.getTime());
     }
