@@ -198,7 +198,7 @@
             <input type="hidden" name="employee" value="${param.id}"/>
             <input type="hidden" name="action" value="delete"/>
             <ul>
-                <c:forEach var="task" items="${user.tasks}">
+                <c:forEach var="task" items="${employee.tasks}">
                     <c:url var="link" value="task">
                         <c:param name="task_id" value="${task.id}"/>
                     </c:url>
