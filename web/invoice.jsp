@@ -277,7 +277,7 @@
             </c:forEach>
 
             <sql:query dataSource="jdbc/sarariman" var="expenseResultSet">
-                SELECT e.employee, e.date, e.cost, e.description
+                SELECT e.employee, e.date, e.cost, e.description, e.task
                 FROM expenses AS e
                 JOIN tasks AS t on t.id = e.task
                 WHERE e.invoice = ?
@@ -496,10 +496,15 @@
                         <caption>Expenses (ODC)</caption>
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Employee</th>
-                                <th>Description</th>
-                                <th>Cost</th>
+                                <th rowspan="2">Date</th>
+                                <th rowspan="2">Employee</th>
+                                <th colspan="2">Task</th>
+                                <th rowspan="2">Description</th>
+                                <th rowspan="2">Cost</th>
+                            </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -507,12 +512,14 @@
                                 <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                     <td>${row.date}</td>
                                     <td>${directory.byNumber[row.employee].fullName}</td>
+                                    <td>${row.task}</td>
+                                    <td>${fn:escapeXml(sarariman.tasks.map[row.task].name)}</td>
                                     <td>${fn:escapeXml(row.description)}</td>
                                     <td class="currency"><fmt:formatNumber type="currency" value="${row.cost}"/></td>
                                 </tr>
                             </c:forEach>
                             <tr>
-                                <td colspan="3"><strong>Total</strong></td>
+                                <td colspan="5"><strong>Total</strong></td>
                                 <td class="currency"><strong><fmt:formatNumber type="currency" value="${expensesTotal}"/></strong></td>
                             </tr>
                             <c:if test="${project.ODCFee > 0}">
