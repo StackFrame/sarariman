@@ -199,16 +199,13 @@
             <input type="hidden" name="action" value="delete"/>
             <ul>
                 <c:forEach var="task" items="${employee.tasks}">
-                    <c:url var="link" value="task">
-                        <c:param name="task_id" value="${task.id}"/>
-                    </c:url>
                     <c:if test="${not empty task.project}">
                         <c:set var="isProjectManager" value="${sarariman:isManager(user, task.project)}"/>
                         <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, task.project)}"/>
                     </c:if>
                     <!-- FIXME: Add ACL for viewing task assignment. Must be on same project, task, or be a manager or admin. -->
                     <li>
-                        <a href="${link}">${fn:escapeXml(task.name)} (${task.id})
+                        <a href="${task.URL}">${fn:escapeXml(task.name)} (${task.id})
                             <c:if test="${not empty task.project}">
                                 - ${fn:escapeXml(task.project.name)} - ${fn:escapeXml(task.project.client.name)}
                             </c:if>
@@ -263,13 +260,10 @@
                     <sql:param value="${param.id}"/>
                 </sql:query>
                 <c:forEach var="mapping_row" items="${resultSet.rows}">
-                    <c:url var="link" value="task">
-                        <c:param name="task_id" value="${mapping_row.task}"/>
-                    </c:url>
                     <c:if test="${!empty mapping_row.project}">
                         <c:set var="project" value="${sarariman.projects.map[mapping_row.project]}"/>
                     </c:if>
-                    <li><a href="${link}">${fn:escapeXml(mapping_row.name)} (${mapping_row.task})
+                    <li><a href="${sarariman.tasks.map[mapping_row.task].URL}">${fn:escapeXml(mapping_row.name)} (${mapping_row.task})
                             <c:if test="${!empty mapping_row.project}">
                                 - ${fn:escapeXml(project.name)} - ${fn:escapeXml(project.client.name)}
                             </c:if>
