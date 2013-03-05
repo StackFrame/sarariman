@@ -78,8 +78,8 @@
             <input type="checkbox" id="administrator" name="administrator"
                    <c:if test="${employee.administrator}">checked="checked"</c:if>
                    <c:if test="${not user.administrator}">disabled="true"</c:if>
-                       onchange="this.form.submit();"/>
-            </form>
+                   onchange="this.form.submit();"/>
+        </form>
 
         <c:if test="${user.administrator}">
             <ul>
@@ -206,18 +206,17 @@
                         <c:set var="isProjectManager" value="${sarariman:isManager(user, task.project)}"/>
                         <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, task.project)}"/>
                     </c:if>
-                    <c:if test="${empty task.project || isProjectManager || isProjectCostManager || user.administrator}">
-                        <li>
-                            <a href="${link}">${fn:escapeXml(task.name)} (${task.id})
-                                <c:if test="${not empty task.project}">
-                                    - ${fn:escapeXml(task.project.name)} - ${fn:escapeXml(task.project.client.name)}
-                                </c:if>
-                            </a>
-                            <c:if test="${isProjectManager || isProjectCostManager || user.administrator}">
-                                <button type="submit" name="task" value="${task.id}">X</button>
+                    <!-- FIXME: Add ACL for viewing task assignment. Must be on same project, task, or be a manager or admin. -->
+                    <li>
+                        <a href="${link}">${fn:escapeXml(task.name)} (${task.id})
+                            <c:if test="${not empty task.project}">
+                                - ${fn:escapeXml(task.project.name)} - ${fn:escapeXml(task.project.client.name)}
                             </c:if>
-                        </li>
-                    </c:if>
+                        </a>
+                        <c:if test="${isProjectManager || isProjectCostManager || user.administrator}">
+                            <button type="submit" name="task" value="${task.id}">X</button>
+                        </c:if>
+                    </li>
                 </c:forEach>
             </ul>
         </form>
