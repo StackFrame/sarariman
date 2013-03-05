@@ -10,8 +10,7 @@ import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
-import com.stackframe.sarariman.Directory;
-import com.stackframe.sarariman.OrganizationHierarchy;
+import com.stackframe.sarariman.projects.Projects;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,13 +28,17 @@ import javax.sql.DataSource;
 public class TasksImpl implements Tasks {
 
     private final DataSource dataSource;
-    private final OrganizationHierarchy organizationHierarchy;
-    private final Directory directory;
+    private final String mountPoint;
+    private final Projects projects;
 
-    public TasksImpl(DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public TasksImpl(DataSource dataSource, String mountPoint, Projects projects) {
         this.dataSource = dataSource;
-        this.organizationHierarchy = organizationHierarchy;
-        this.directory = directory;
+        this.mountPoint = mountPoint;
+        this.projects = projects;
+    }
+
+    public Task get(int id) {
+        return new TaskImpl(id, dataSource, mountPoint + "task", projects);
     }
 
     public Map<? extends Number, Task> getMap() {
@@ -44,7 +47,7 @@ public class TasksImpl implements Tasks {
         Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Task> f = new Function<Number, Task>() {
             public Task apply(Number f) {
-                return new TaskImpl(f.intValue(), dataSource, organizationHierarchy, directory);
+                return get(f.intValue());
             }
 
         };
@@ -61,7 +64,7 @@ public class TasksImpl implements Tasks {
                     try {
                         Collection<Task> c = new ArrayList<Task>();
                         while (r.next()) {
-                            c.add(new TaskImpl(r.getInt("id"), dataSource, organizationHierarchy, directory));
+                            c.add(get(r.getInt("id")));
                         }
 
                         return c;

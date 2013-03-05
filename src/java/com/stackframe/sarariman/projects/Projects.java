@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public interface Projects {
 
+    Project get(int id);
+
     Iterable<Project> getAll();
 
     Map<? extends Number, Project> getMap();

@@ -4,11 +4,12 @@
  */
 package com.stackframe.sarariman.tasks;
 
-import com.stackframe.sarariman.Directory;
-import com.stackframe.sarariman.OrganizationHierarchy;
 import com.stackframe.sarariman.projects.Project;
-import com.stackframe.sarariman.projects.ProjectImpl;
+import com.stackframe.sarariman.projects.Projects;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,14 +24,14 @@ public class TaskImpl implements Task {
 
     private final int id;
     private final DataSource dataSource;
-    private final OrganizationHierarchy organizationHierarchy;
-    private final Directory directory;
+    private final String servletPath;
+    private final Projects projects;
 
-    public TaskImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    TaskImpl(int id, DataSource dataSource, String servletPath, Projects projects) {
         this.id = id;
         this.dataSource = dataSource;
-        this.organizationHierarchy = organizationHierarchy;
-        this.directory = directory;
+        this.servletPath = servletPath;
+        this.projects = projects;
     }
 
     public int getId() {
@@ -193,7 +194,7 @@ public class TaskImpl implements Task {
                         if (project_id == 0) {
                             return null;
                         } else {
-                            return new ProjectImpl(project_id, dataSource, organizationHierarchy, directory);
+                            return projects.get(project_id);
                         }
                     } finally {
                         r.close();
@@ -437,6 +438,18 @@ public class TaskImpl implements Task {
 
     public BigDecimal getExpended() {
         return getExpendedLabor().add(getExpendedOtherDirectCosts());
+    }
+
+    public URL getURL() {
+        try {
+            return getURI().toURL();
+        } catch (MalformedURLException mue) {
+            throw new AssertionError(mue);
+        }
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%s?task_id=%d", servletPath, id));
     }
 
     @Override

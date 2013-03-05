@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.tasks;
 
+import com.stackframe.sarariman.Identifiable;
+import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.projects.Project;
 import java.math.BigDecimal;
 
@@ -11,7 +13,7 @@ import java.math.BigDecimal;
  *
  * @author mcculley
  */
-public interface Task {
+public interface Task extends Linkable, Identifiable {
 
     int getId();
 

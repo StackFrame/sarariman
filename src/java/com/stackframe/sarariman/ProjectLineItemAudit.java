@@ -4,7 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.projects.ProjectImpl;
+import com.stackframe.sarariman.projects.Projects;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,14 +21,12 @@ public class ProjectLineItemAudit implements Audit {
 
     private final int project;
     private final DataSource dataSource;
-    private final OrganizationHierarchy organizationHierarchy;
-    private final Directory directory;
+    private final Projects projects;
 
-    public ProjectLineItemAudit(int project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public ProjectLineItemAudit(int project, DataSource dataSource, Projects projects) {
         this.project = project;
         this.dataSource = dataSource;
-        this.organizationHierarchy = organizationHierarchy;
-        this.directory = directory;
+        this.projects = projects;
     }
 
     public String getDisplayName() {
@@ -63,7 +61,7 @@ public class ProjectLineItemAudit implements Audit {
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         try {
-            Collection<LineItem> lineItems = new ProjectImpl(project, dataSource, organizationHierarchy, directory).getLineItems();
+            Collection<LineItem> lineItems = projects.get(project).getLineItems();
             boolean hasLineItems = !lineItems.isEmpty();
             if (hasLineItems) {
                 Collection<Integer> tasksWithNoLineItem = tasksWithNoLineItem();

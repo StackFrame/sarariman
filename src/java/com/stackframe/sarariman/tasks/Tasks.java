@@ -12,6 +12,8 @@ import java.util.Map;
  */
 public interface Tasks {
 
+    Task get(int id);
+
     Iterable<Task> getAll();
 
     Map<? extends Number, Task> getMap();

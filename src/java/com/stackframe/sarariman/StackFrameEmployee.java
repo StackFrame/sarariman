@@ -11,9 +11,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.projects.Project;
-import com.stackframe.sarariman.projects.ProjectImpl;
 import com.stackframe.sarariman.tasks.Task;
-import com.stackframe.sarariman.tasks.TaskImpl;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -159,7 +157,7 @@ class StackFrameEmployee implements Employee {
                         Collection<Project> c = new ArrayList<Project>();
                         while (rs.next()) {
                             int project_id = rs.getInt("project");
-                            c.add(new ProjectImpl(project_id, sarariman.getDataSource(), sarariman.getOrganizationHierarchy(), directory));
+                            c.add(sarariman.getProjects().get(project_id));
                         }
                         return c;
                     } finally {
@@ -285,7 +283,7 @@ class StackFrameEmployee implements Employee {
                         Collection<Task> list = new ArrayList<Task>();
                         while (resultSet.next()) {
                             int id = resultSet.getInt("id");
-                            list.add(new TaskImpl(id, sarariman.getDataSource(), sarariman.getOrganizationHierarchy(), directory));
+                            list.add(sarariman.getTasks().get(id));
                         }
                         return list;
                     } finally {

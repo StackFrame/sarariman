@@ -263,8 +263,8 @@ public class Sarariman implements ServletContextListener {
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
             timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory);
-            projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory);
-            tasks = new TasksImpl(getDataSource(), organizationHierarchy, directory);
+            projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory, this);
+            tasks = new TasksImpl(getDataSource(), getMountPoint(), projects);
             clients = new ClientsImpl(getDataSource());
             tickets = new TicketsImpl(getDataSource());
         } catch (NamingException ne) {

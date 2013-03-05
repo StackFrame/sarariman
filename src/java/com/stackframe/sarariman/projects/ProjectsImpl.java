@@ -12,6 +12,7 @@ import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.OrganizationHierarchy;
+import com.stackframe.sarariman.Sarariman;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -34,11 +35,17 @@ public class ProjectsImpl implements Projects {
     private final DataSource dataSource;
     private final OrganizationHierarchy organizationHierarchy;
     private final Directory directory;
+    private final Sarariman sarariman;
 
-    public ProjectsImpl(DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public ProjectsImpl(DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Sarariman sarariman) {
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
         this.directory = directory;
+        this.sarariman = sarariman;
+    }
+
+    public Project get(int id) {
+        return new ProjectImpl(id, dataSource, organizationHierarchy, directory, sarariman.getTasks(), this);
     }
 
     public Map<? extends Number, Project> getMap() {
@@ -47,7 +54,7 @@ public class ProjectsImpl implements Projects {
         Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Project> f = new Function<Number, Project>() {
             public Project apply(Number n) {
-                return new ProjectImpl(n.intValue(), dataSource, organizationHierarchy, directory);
+                return get(n.intValue());
             }
 
         };
@@ -64,7 +71,7 @@ public class ProjectsImpl implements Projects {
                     try {
                         Collection<Project> c = new ArrayList<Project>();
                         while (r.next()) {
-                            c.add(new ProjectImpl(r.getInt("id"), dataSource, organizationHierarchy, directory));
+                            c.add(get(r.getInt("id")));
                         }
 
                         return c;
@@ -106,7 +113,7 @@ public class ProjectsImpl implements Projects {
                     ResultSet rs = ps.getGeneratedKeys();
                     try {
                         rs.next();
-                        return new ProjectImpl(rs.getInt(1), dataSource, organizationHierarchy, directory);
+                        return get(rs.getInt(1));
                     } finally {
                         rs.close();
                     }

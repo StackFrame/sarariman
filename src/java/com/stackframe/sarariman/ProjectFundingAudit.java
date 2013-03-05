@@ -5,11 +5,10 @@
 package com.stackframe.sarariman;
 
 import com.stackframe.sarariman.projects.Project;
-import com.stackframe.sarariman.projects.ProjectImpl;
+import com.stackframe.sarariman.projects.Projects;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.sql.DataSource;
 
 /**
  *
@@ -18,15 +17,11 @@ import javax.sql.DataSource;
 public class ProjectFundingAudit implements Audit {
 
     private final int project;
-    private final DataSource dataSource;
-    private final OrganizationHierarchy organizationHierarchy;
-    private final Directory directory;
+    private final Projects projects;
 
-    public ProjectFundingAudit(int project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public ProjectFundingAudit(int project, Projects projects) {
         this.project = project;
-        this.dataSource = dataSource;
-        this.organizationHierarchy = organizationHierarchy;
-        this.directory = directory;
+        this.projects = projects;
     }
 
     public String getDisplayName() {
@@ -35,7 +30,7 @@ public class ProjectFundingAudit implements Audit {
 
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
-        Project p = new ProjectImpl(project, dataSource, organizationHierarchy, directory);
+        Project p = projects.get(project);
         BigDecimal funded = p.getFunded();
         BigDecimal expended = p.getExpended();
         if (expended != null && funded != null && funded.compareTo(BigDecimal.ZERO) > 0 && expended.compareTo(funded) > 0) {

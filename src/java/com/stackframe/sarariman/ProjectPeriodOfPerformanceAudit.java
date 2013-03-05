@@ -4,11 +4,10 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.projects.ProjectImpl;
+import com.stackframe.sarariman.projects.Projects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import javax.sql.DataSource;
 
 /**
  *
@@ -17,15 +16,11 @@ import javax.sql.DataSource;
 public class ProjectPeriodOfPerformanceAudit implements Audit {
 
     private final int project;
-    private final DataSource dataSource;
-    private final OrganizationHierarchy organizationHierarchy;
-    private final Directory directory;
+    private final Projects projects;
 
-    public ProjectPeriodOfPerformanceAudit(int project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public ProjectPeriodOfPerformanceAudit(int project, Projects projects) {
         this.project = project;
-        this.dataSource = dataSource;
-        this.organizationHierarchy = organizationHierarchy;
-        this.directory = directory;
+        this.projects = projects;
     }
 
     public String getDisplayName() {
@@ -35,7 +30,7 @@ public class ProjectPeriodOfPerformanceAudit implements Audit {
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         Date now = new Date();
-        Date PoPEnd = new ProjectImpl(project, dataSource, organizationHierarchy, directory).getPoP().getEnd();
+        Date PoPEnd = projects.get(project).getPoP().getEnd();
         if (now.compareTo(PoPEnd) > 0) {
             c.add(new AuditResult(AuditResultType.error, "beyond period of performance"));
         }

@@ -18,7 +18,7 @@ import com.stackframe.sarariman.ProjectPeriodOfPerformanceAudit;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.clients.ClientImpl;
 import com.stackframe.sarariman.tasks.Task;
-import com.stackframe.sarariman.tasks.TaskImpl;
+import com.stackframe.sarariman.tasks.Tasks;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -40,12 +40,16 @@ public class ProjectImpl implements Project {
     private final DataSource dataSource;
     private final OrganizationHierarchy organizationHierarchy;
     private final Directory directory;
+    private final Tasks tasks;
+    private final Projects projects;
 
-    public ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
         this.directory = directory;
+        this.tasks = tasks;
+        this.projects = projects;
     }
 
     public int getId() {
@@ -630,9 +634,9 @@ public class ProjectImpl implements Project {
     public Collection<Audit> getAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new ProjectOrgChartAudit(id, dataSource, organizationHierarchy, directory));
-        c.add(new ProjectPeriodOfPerformanceAudit(id, dataSource, organizationHierarchy, directory));
-        c.add(new ProjectFundingAudit(id, dataSource, organizationHierarchy, directory));
-        c.add(new ProjectLineItemAudit(id, dataSource, organizationHierarchy, directory));
+        c.add(new ProjectPeriodOfPerformanceAudit(id, projects));
+        c.add(new ProjectFundingAudit(id, projects));
+        c.add(new ProjectLineItemAudit(id, dataSource, projects));
         return c;
     }
 
@@ -725,7 +729,7 @@ public class ProjectImpl implements Project {
                         Collection<Task> list = new ArrayList<Task>();
                         while (resultSet.next()) {
                             int task_id = resultSet.getInt("task_id");
-                            list.add(new TaskImpl(task_id, dataSource, organizationHierarchy, directory));
+                            list.add(tasks.get(task_id));
                         }
 
                         return list;
