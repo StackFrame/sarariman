@@ -135,10 +135,7 @@
                 <sql:param value="${project.id}"/>
             </sql:query>
             <c:forEach var="row" items="${result.rows}">
-                <c:url var="link" value="employee">
-                    <c:param name="id" value="${row.employee}"/>
-                </c:url>
-                <li><a href="${link}">${directory.byNumber[row.employee].fullName}</a></li>
+                <li><a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a></li>
             </c:forEach>
         </ul>
 
@@ -151,10 +148,7 @@
                 <sql:param value="${project.id}"/>
             </sql:query>
             <c:forEach var="row" items="${result.rows}">
-                <c:url var="link" value="employee">
-                    <c:param name="id" value="${row.employee}"/>
-                </c:url>
-                <li><a href="${link}">${directory.byNumber[row.employee].fullName}</a></li>
+                <li><a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a></li>
             </c:forEach>
         </ul>
 
@@ -163,10 +157,7 @@
             <h2>Administrative Assistants</h2>
             <ul>
                 <c:forEach var="assistant" items="${assistants}">
-                    <c:url var="link" value="employee">
-                        <c:param name="id" value="${assistant.number}"/>
-                    </c:url>
-                    <li><a href="${link}">${assistant.displayName}</a></li>
+                    <li><a href="${assistant.URL}">${assistant.displayName}</a></li>
                 </c:forEach>
             </ul>
         </c:if>
@@ -409,8 +400,7 @@
                 <c:forEach var="row" items="${resultSet.rows}">
                     <tr>
                         <!-- FIXME: Join rows with the same task together. -->
-                        <c:url var="link" value="employee"><c:param name="id" value="${row.employee}"/></c:url>
-                        <td><a href="${link}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
+                        <td><a href="${sarariman.directory.byNumber[row.employee].URL}">${sarariman.directory.byNumber[row.employee].fullName}</a></td>
                         <td><a href="${sarariman.tasks.map[row.id].URL}">${row.id}</a></td><td><a href="${link}">${fn:escapeXml(row.name)}</a></td>
                     </tr>
                 </c:forEach>
@@ -494,10 +484,7 @@
                     <c:set var="laborCategory" value="${sarariman.laborCategories[entry.laborCategory]}"/>
                     <c:if test="${laborCategory.project == project.id}">
                         <tr>
-                            <c:url var="link" value="employee">
-                                <c:param name="id" value="${entry.employee.number}"/>
-                            </c:url>
-                            <td><a href="${link}">${entry.employee.fullName}</a></td>
+                            <td><a href="${entry.employee.URL}">${entry.employee.fullName}</a></td>
                             <c:url var="assignmentURL" value="laborcategoryassignment.jsp">
                                 <c:param name="id" value="${entry.id}"/>
                             </c:url>

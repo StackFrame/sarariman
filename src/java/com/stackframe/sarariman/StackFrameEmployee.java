@@ -13,6 +13,7 @@ import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +33,7 @@ import org.joda.time.LocalDate;
  *
  * @author mcculley
  */
-class StackFrameEmployee implements Employee {
+class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     private final String fullName;
     private final String userName;
@@ -385,6 +386,10 @@ class StackFrameEmployee implements Employee {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%semployee?id=%d", sarariman.getMountPoint(), number));
     }
 
     @Override
