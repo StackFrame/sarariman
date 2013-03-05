@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -40,11 +40,8 @@
                         </c:url>
                         <a href="${fn:escapeXml(entryLink)}">${row.date}</a>
                     </td>
-                    <td>              
-                        <c:url var="taskLink" value="task">
-                            <c:param name="task_id" value="${row.task}"/>
-                        </c:url>
-                        <a href="${taskLink}">${fn:escapeXml(row.name)}</a>
+                    <td>
+                        <a href="${sarariman.tasks.map[row.task].URL}">${fn:escapeXml(row.name)}</a>
                     </td>
                 </tr>
             </c:forEach>
