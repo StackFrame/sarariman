@@ -148,6 +148,8 @@
 
             <br/>
 
+            <jsp:useBean id="taskTotals" class="java.util.HashMap" scope="page"/>
+
             <table class="altrows">
                 <caption>Labor</caption>
                 <thead>
@@ -171,11 +173,13 @@
                                     <c:param name="employee" value="${row.employee}"/>
                                 </c:url>
                                 <td>${directory.byNumber[row.employee].fullName}</td>
+                                <c:set var="task" value="${sarariman.tasks.map[row.task]}"/>
                                 <td>${row.task}</td>
                                 <td>${fn:escapeXml(row.name)}</td>
                                 <td><a href="${fn:escapeXml(timesheet)}">${row.date}</a></td>
                                 <td class="duration"><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
                                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
+                                <c:set var="cost" value="${costData.cost}"/>
                                 <c:set var="totalRecorded" value="${totalRecorded + costData.cost}"/> 
                                 <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                                 <td>
@@ -187,6 +191,16 @@
                                 <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
                                 <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
                                 <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
+                                <%
+                                    Object task = pageContext.getAttribute("task");
+                                    java.math.BigDecimal cost = (java.math.BigDecimal)pageContext.getAttribute("cost");
+                                    java.math.BigDecimal old = (java.math.BigDecimal)taskTotals.get(task);
+                                    if (old == null) {
+                                        taskTotals.put(task,  cost);
+                                    } else {
+                                        taskTotals.put(task,  old.add(cost));
+                                    }
+                                %>
                             </tr>
                         </c:if>
                     </c:forEach>
@@ -195,6 +209,31 @@
                     <tr><td colspan="5">Total Recorded</td><td class="currency"><fmt:formatNumber type="currency" value="${totalRecorded}"/></td><td></td></tr>
                 </tbody>
             </table>
+
+            <table class="altrows">
+                <caption>Total by Task</caption>
+                <thead>
+                    <tr>
+                        <th colspan="2">Task</th>
+                        <th rowspan="2">Total</th>
+                    </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- FIXME: Sort by task ID? -->
+                    <c:forEach var="row" items="${taskTotals}">
+                        <tr>
+                            <td>${row.key.id}</td>
+                            <td>${fn:escapeXml(row.key.name)}</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${row.value}"/></td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+
         </form>
 
         <%@include file="footer.jsp" %>
