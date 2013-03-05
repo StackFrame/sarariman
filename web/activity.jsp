@@ -39,7 +39,7 @@
 
             // FIXME: Consider allowing PTO into the view.
 
-            return AccessControlUtilities.entryVisibleToUser(sarariman.getDataSource(), entry, user, sarariman.getOrganizationHierarchy(), directory);
+            return AccessControlUtilities.entryVisibleToUser(sarariman.getDataSource(), entry, user, sarariman.getOrganizationHierarchy(), sarariman.getTasks());
         }
 
     };
@@ -80,14 +80,11 @@
                     </td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
                     <c:set var="task" value="${sarariman.tasks.map[entry.task]}"/>
-                    <c:url var="taskURL" value="task">
-                        <c:param name="task_id" value="${entry.task}"/>
-                    </c:url>
                     <c:set var="project" value="${task.project}"/>
                     <c:choose>
                         <c:when test="${not empty project}">
                             <td>
-                                <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
+                                <a href="${task.URL}">${fn:escapeXml(task.name)}</a>
                             </td>
                             <td>
                                 <c:url var="projectURL" value="project">
@@ -104,7 +101,7 @@
                         </c:when>
                         <c:otherwise>
                             <td colspan="3">
-                                <a href="${taskURL}">${fn:escapeXml(task.name)}</a>
+                                <a href="${task.URL}">${fn:escapeXml(task.name)}</a>
                             </td>
                         </c:otherwise>
                     </c:choose>
