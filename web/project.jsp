@@ -288,8 +288,8 @@
             </ul>
         </c:if>
 
+        <c:set var="lineItems" value="${project.lineItems}"/>
         <c:if test="${isCostManager}">
-            <c:set var="lineItems" value="${project.lineItems}"/>
             <c:if test="${!empty lineItems}">
                 <table class="altrows" id="line_items">
                     <caption>Line Items</caption>
@@ -369,13 +369,23 @@
         <c:if test="${isManager || isCostManager}">
             <table class="altrows" id="tasks">
                 <caption>Tasks</caption>
-                <tr><th>ID</th><th>Task</th><th>Line Item</th><th>Active</th><th>Expended</th></tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Task</th>
+                    <c:if test="${!empty lineItems}">
+                        <th>Line Item</th>
+                    </c:if>
+                    <th>Active</th>
+                    <th>Expended</th>
+                </tr>
                 <c:forEach var="task" items="${project.tasks}">
                     <tr>
                         <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
                         <td><a href="${link}">${task.id}</a></td>
                         <td><a href="${link}">${fn:escapeXml(task.name)}</a></td>
-                        <td class="line_item">${task.lineItem}</td>
+                        <c:if test="${!empty lineItems}">
+                            <td class="line_item">${task.lineItem}</td>
+                        </c:if>
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
