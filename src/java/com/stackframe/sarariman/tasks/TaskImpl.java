@@ -4,12 +4,11 @@
  */
 package com.stackframe.sarariman.tasks;
 
+import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.projects.Projects;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +19,7 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class TaskImpl implements Task {
+public class TaskImpl extends AbstractLinkable implements Task {
 
     private final int id;
     private final DataSource dataSource;
@@ -438,14 +437,6 @@ public class TaskImpl implements Task {
 
     public BigDecimal getExpended() {
         return getExpendedLabor().add(getExpendedOtherDirectCosts());
-    }
-
-    public URL getURL() {
-        try {
-            return getURI().toURL();
-        } catch (MalformedURLException mue) {
-            throw new AssertionError(mue);
-        }
     }
 
     public URI getURI() {
