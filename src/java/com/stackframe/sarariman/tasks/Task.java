@@ -45,4 +45,8 @@ public interface Task {
 
     BigDecimal getExpended();
 
+    BigDecimal getExpendedLabor();
+
+    BigDecimal getExpendedOtherDirectCosts();
+
 }

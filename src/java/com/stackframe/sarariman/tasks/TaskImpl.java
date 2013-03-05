@@ -371,7 +371,7 @@ public class TaskImpl implements Task {
         }
     }
 
-    public BigDecimal getExpended() {
+    public BigDecimal getExpendedLabor() {
         try {
             Connection connection = dataSource.getConnection();
             try {
@@ -402,6 +402,41 @@ public class TaskImpl implements Task {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public BigDecimal getExpendedOtherDirectCosts() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT SUM(cost) AS total FROM expenses WHERE task = ?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        BigDecimal total = r.getBigDecimal("total");
+                        if (total == null) {
+                            return BigDecimal.ZERO;
+                        } else {
+                            return total;
+                        }
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public BigDecimal getExpended() {
+        return getExpendedLabor().add(getExpendedOtherDirectCosts());
     }
 
     @Override
