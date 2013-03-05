@@ -72,8 +72,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                </form>
+                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="result">
@@ -347,9 +347,9 @@
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                    </form>
-                                </td>
-                            </tr>
+                                </form>
+                            </td>
+                        </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
@@ -369,7 +369,7 @@
         <c:if test="${isManager || isCostManager}">
             <table class="altrows" id="tasks">
                 <caption>Tasks</caption>
-                <tr><th>ID</th><th>Task</th><th>Line Item</th><th>Active</th></tr>
+                <tr><th>ID</th><th>Task</th><th>Line Item</th><th>Active</th><th>Expended</th></tr>
                 <c:forEach var="task" items="${project.tasks}">
                     <tr>
                         <c:url var="link" value="task"><c:param name="task_id" value="${task.id}"/></c:url>
@@ -379,9 +379,10 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                                </form>
-                            </td>
-                        </tr>
+                            </form>
+                        </td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${task.expended}"/></td>
+                    </tr>
                 </c:forEach>
             </table>
 
