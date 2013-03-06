@@ -3,7 +3,6 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page import="java.util.Collection,com.stackframe.sarariman.Sarariman,com.stackframe.sarariman.Employee"%>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -21,13 +20,6 @@
             <c:set var="employee" value="${user}"/>
         </c:otherwise>
     </c:choose>
-
-    <%
-        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-        Employee user = (Employee)request.getAttribute("user");
-        Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber());
-        pageContext.setAttribute("reports", reports);
-    %>
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
@@ -56,10 +48,8 @@
         </c:choose>
 
         <form action="${request.requestURI}" method="get">
-            <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
-            <input type="submit" name="week" value="${prevWeekString}"/>
-            <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
-            <input type="submit" name="week" value="${nextWeekString}"/>
+            <input type="submit" name="week" value="${week.previous.name}"/>
+            <input type="submit" name="week" value="${week.next.name}"/>
             <input type="hidden" name="employee" value="${employee.number}"/>
         </form>
         <form>
@@ -69,17 +59,14 @@
                     <option value="${e.value.number}" <c:if test="${e.value.number == employee.number}">selected="selected"</c:if>>${e.value.fullName}</option>
                 </c:forEach>
             </select>
-            <fmt:formatDate var="weekString" value="${week.start.time}" pattern="yyyy-MM-dd"/>
-            <input type="hidden" name="week" value="${weekString}"/>
+            <input type="hidden" name="week" value="${week.name}"/>
             <input type="submit" value="Retrieve"/>
         </form>
-
-        <fmt:formatDate var="thisWeekStart" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
 
         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
         <c:if test="${user.administrator}">
             <form method="post" action="timesheetController">
-                <input type="hidden" value="${thisWeekStart}" name="week"/>
+                <input type="hidden" value="${week.name}" name="week"/>
                 <input type="hidden" value="${employee.number}" name="employee"/>
                 <c:if test="${!timesheet.approved}">
                     <input type="submit" name="action" value="Approve" <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
@@ -90,10 +77,7 @@
         </c:if>
 
         <!-- FIXME: Make this render without hyperlink in printable page? -->
-        <c:url var="employeeLink" value="employee">
-            <c:param name="id" value="${employee.number}"/>
-        </c:url>
-        <h2>Timesheet for <a href="${employeeLink}">${employee.fullName}</a> for the week of ${thisWeekStart}</h2>
+        <h2>Timesheet for <a href="${employee.URL}">${employee.fullName}</a> for the week of ${week.name}</h2>
         <c:if test="${!timesheet.approved}">
             <p class="error">This timesheet is not yet approved.</p>
         </c:if>
@@ -106,7 +90,7 @@
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${employee.timesheets[week].entries}">
-                <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project)) || sarariman:contains(reports, employee.number)}">
+                <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project)) || sarariman:contains(user.reports, employee)}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                         <td class="date">${entryDate}</td>
@@ -189,8 +173,8 @@
                 INNER JOIN customers ON projects.customer = customers.id
                 WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
                 <sql:param value="${employee.number}"/>
-                <sql:param value="${thisWeekStart}"/>
-                <sql:param value="${thisWeekStart}"/>
+                <sql:param value="${week.name}"/>
+                <sql:param value="${week.name}"/>
             </sql:query>
 
             <!-- FIXME: Add totals by task. -->
@@ -201,7 +185,7 @@
                 <tr><th>Client</th><th>Project</th><th>Hours</th></tr>
                 <c:forEach var="entry" items="${customerEntries.rows}">
                     <c:set var="customer" value="${sarariman.clients.map[entry.id]}"/>
-                    <c:if test="${user.administrator || user.invoiceManager || sarariman:contains(reports, employee.number)}">
+                    <c:if test="${user.administrator || user.invoiceManager || sarariman:contains(user.reports, employee)}">
                         <sql:query dataSource="jdbc/sarariman" var="projectEntries">
                             SELECT DISTINCT(projects.id)
                             FROM hours
@@ -210,8 +194,8 @@
                             INNER JOIN customers ON projects.customer = customers.id
                             WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND customers.id = ?
                             <sql:param value="${employee.number}"/>
-                            <sql:param value="${thisWeekStart}"/>
-                            <sql:param value="${thisWeekStart}"/>
+                            <sql:param value="${week.name}"/>
+                            <sql:param value="${week.name}"/>
                             <sql:param value="${entry.id}"/>
                         </sql:query>
                         <tr>
@@ -240,8 +224,8 @@
                                 INNER JOIN customers ON projects.customer = customers.id
                                 WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND customers.id = ? AND projects.id = ?
                                 <sql:param value="${employee.number}"/>
-                                <sql:param value="${thisWeekStart}"/>
-                                <sql:param value="${thisWeekStart}"/>
+                                <sql:param value="${week.name}"/>
+                                <sql:param value="${week.name}"/>
                                 <sql:param value="${entry.id}"/>
                                 <sql:param value="${projectEntries.rows[0].id}"/>
                             </sql:query>
@@ -266,8 +250,8 @@
                                     INNER JOIN customers ON projects.customer = customers.id
                                     WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND customers.id = ? AND projects.id = ?
                                     <sql:param value="${employee.number}"/>
-                                    <sql:param value="${thisWeekStart}"/>
-                                    <sql:param value="${thisWeekStart}"/>
+                                    <sql:param value="${week.name}"/>
+                                    <sql:param value="${week.name}"/>
                                     <sql:param value="${entry.id}"/>
                                     <sql:param value="${projectEntry.id}"/>
                                 </sql:query>
@@ -289,8 +273,8 @@
                 JOIN task_grouping_element AS e ON e.task = h.task
                 JOIN task_grouping_employee AS emp ON e.grouping = emp.grouping
                 WHERE h.duration > 0 AND h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND emp.employee = ?
-                <sql:param value="${thisWeekStart}"/>
-                <sql:param value="${thisWeekStart}"/>
+                <sql:param value="${week.name}"/>
+                <sql:param value="${week.name}"/>
                 <sql:param value="${employee.number}"/>
                 <sql:param value="${employee.number}"/>
             </sql:query>
@@ -321,8 +305,8 @@
                             JOIN task_grouping_element AS e ON e.task = h.task
                             JOIN task_grouping_employee AS emp ON e.grouping = emp.grouping
                             WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND emp.employee = ?
-                            <sql:param value="${thisWeekStart}"/>
-                            <sql:param value="${thisWeekStart}"/>
+                            <sql:param value="${week.name}"/>
+                            <sql:param value="${week.name}"/>
                             <sql:param value="${employee.number}"/>
                             <sql:param value="${employee.number}"/>
                         </sql:query>
@@ -336,8 +320,8 @@
                                 <sql:query dataSource="jdbc/sarariman" var="actualResult">
                                     SELECT SUM(h.duration) AS total FROM hours AS h
                                     WHERE h.date >= ? AND h.date < DATE_ADD(?, INTERVAL 7 DAY) AND h.employee = ? AND h.task = ?
-                                    <sql:param value="${thisWeekStart}"/>
-                                    <sql:param value="${thisWeekStart}"/>
+                                    <sql:param value="${week.name}"/>
+                                    <sql:param value="${week.name}"/>
                                     <sql:param value="${employee.number}"/>
                                     <sql:param value="${row.task}"/>
                                 </sql:query>
