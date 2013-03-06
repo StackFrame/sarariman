@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2012 StackFrame, LLC
+  Copyright (C) 2012-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -7,6 +7,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -15,21 +16,20 @@
         <title>Deduct PTO</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
-    <!-- FIXME: error if param.week is not a Saturday -->
 
     <c:choose>
         <c:when test="${!user.administrator}">
             <p>You are not authorized for this.</p>
         </c:when>
         <c:otherwise>
-            <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+            <!-- FIXME: Redirect if date is not a Saturday? -->
+            <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+            <c:set var="week" value="${du:week(parsedWeek)}"/>
 
             <body onload="altRows()">
                 <%@include file="header.jsp" %>
 
-                <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
-
-                <h1>Deduct PTO for the week of ${thisWeekStart}</h1>
+                <h1>Deduct PTO for the week of ${week.name}</h1>
 
                 <table class="altrows" id="timesheets">
                     <tr><th>Employee</th><th>PTO</th></tr>
@@ -47,7 +47,7 @@
                 </table>
 
                 <form action="DeductPTOHandler" method="POST">
-                    <input type="hidden" name="week" value="${thisWeekStart}"/>
+                    <input type="hidden" name="week" value="${week.name}"/>
                     <c:forEach var="employeeEntry" items="${directory.byUserName}">
                         <c:set var="employee" value="${employeeEntry.value}"/>
                         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
