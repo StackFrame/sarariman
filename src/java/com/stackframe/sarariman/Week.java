@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.DiscreteDomain;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +31,22 @@ public class Week implements Comparable<Week> {
         start.set(Calendar.MINUTE, 0);
         start.set(Calendar.SECOND, 0);
         start.set(Calendar.MILLISECOND, 0);
+    }
+
+    private static DateFormat ISO8601DateFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd");
+    }
+
+    private static Date parse(String name) {
+        try {
+            return ISO8601DateFormat().parse(name);
+        } catch (ParseException pe) {
+            throw new IllegalArgumentException(pe);
+        }
+    }
+
+    public Week(String name) {
+        this(parse(name));
     }
 
     private static Calendar calendar(Date d) {
@@ -97,6 +114,16 @@ public class Week implements Comparable<Week> {
         @Override
         public long distance(Week start, Week end) {
             return Weeks.weeksBetween(new DateTime(start.getStart()), new DateTime(end.getStart())).getWeeks();
+        }
+
+        @Override
+        public Week minValue() {
+            return new Week("2004-01-03"); // FIXME: Come up with non-arbitrary bound.
+        }
+
+        @Override
+        public Week maxValue() {
+            return new Week("2030-01-05"); // FIXME: Come up with non-arbitrary bound.
         }
 
     };
