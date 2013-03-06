@@ -98,16 +98,6 @@
             <p class="error">This timesheet is not yet approved.</p>
         </c:if>
 
-        <sql:query dataSource="jdbc/sarariman" var="entries">
-            SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name, tasks.project, tasks.billable
-            FROM hours
-            INNER JOIN tasks ON hours.task=tasks.id
-            WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
-            ORDER BY hours.date ASC, hours.task ASC
-            <sql:param value="${employee.number}"/>
-            <sql:param value="${thisWeekStart}"/>
-            <sql:param value="${thisWeekStart}"/>
-        </sql:query>
         <c:set var="totalRegular" value="0.0"/>
         <c:set var="totalHoursWorked" value="0.0"/>
         <c:set var="totalUnbillable" value="0.0"/>
