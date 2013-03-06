@@ -110,7 +110,7 @@ public class TimesheetEntryHandler extends HttpServlet {
         checkArgument(task.isActive());
         Date weekStart = DateUtils.weekStart(date);
         Week week = DateUtils.week(weekStart);
-        Timesheet timesheet = Timesheet.lookup(sarariman, employee.getNumber(), week);
+        TimesheetImpl timesheet = TimesheetImpl.lookup(sarariman, employee.getNumber(), week);
         checkArgument(!timesheet.isSubmitted());
     }
 
