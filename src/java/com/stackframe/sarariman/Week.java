@@ -113,12 +113,13 @@ public class Week implements Comparable<Week> {
 
         @Override
         public long distance(Week start, Week end) {
+            // FIXME: I'm not completely comforatble with this. Does it work with leap days between Saturdays? Need some unit tests.
             return Weeks.weeksBetween(new DateTime(start.getStart()), new DateTime(end.getStart())).getWeeks();
         }
 
         @Override
         public Week minValue() {
-            return new Week("2004-01-03"); // FIXME: Come up with non-arbitrary bound.
+            return new Week("1970-01-03"); // FIXME: Come up with non-arbitrary bound.
         }
 
         @Override
