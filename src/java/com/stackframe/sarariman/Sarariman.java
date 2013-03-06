@@ -262,9 +262,9 @@ public class Sarariman implements ServletContextListener {
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
-            timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory);
             projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory, this);
             tasks = new TasksImpl(getDataSource(), getMountPoint(), projects);
+            timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory, tasks);
             clients = new ClientsImpl(getDataSource());
             tickets = new TicketsImpl(getDataSource());
         } catch (NamingException ne) {

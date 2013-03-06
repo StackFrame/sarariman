@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +30,8 @@ public interface Timesheet {
 
     Map<Calendar, BigDecimal> getHoursByDay() throws SQLException;
 
+    List<TimesheetEntry> getEntries() throws SQLException;
+
     double getPTOHours() throws SQLException;
 
     double getRegularHours() throws SQLException;
@@ -44,5 +47,5 @@ public interface Timesheet {
     boolean reject();
 
     boolean submit();
-    
+
 }

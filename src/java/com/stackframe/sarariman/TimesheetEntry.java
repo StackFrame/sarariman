@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
  */
 public interface TimesheetEntry {
 
-    int getTask();
+    Task getTask();
 
     Employee getEmployee();
 

@@ -228,17 +228,6 @@
 
             <br/>
 
-            <sql:query dataSource="jdbc/sarariman" var="entries">
-                SELECT hours.task, hours.description, hours.date, hours.duration, tasks.name AS task_name, projects.name AS project_name, customers.name AS customer_name
-                FROM hours INNER JOIN tasks ON hours.task = tasks.id
-                LEFT JOIN projects ON projects.id = tasks.project
-                LEFT JOIN customers ON customers.id = projects.customer
-                WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)
-                ORDER BY hours.date DESC, hours.task ASC
-                <sql:param value="${employeeNumber}"/>
-                <sql:param value="${thisWeekStart}"/>
-                <sql:param value="${thisWeekStart}"/>
-            </sql:query>
             <c:set var="totalHours" value="0.0"/>
             <c:set var="totalRegular" value="0.0"/>
             <c:set var="totalPTO" value="0.0"/>
@@ -249,14 +238,14 @@
                     </c:if>
                 </tr>
                 <tr><th>Name</th><th>#</th></tr>
-                <c:forEach var="entry" items="${entries.rows}">
+                <c:forEach var="entry" items="${timesheet.entries}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                         <td class="date">${entryDate}</td>
-                        <td>${fn:escapeXml(entry.task_name)}</td>
-                        <td class="task">${entry.task}</td>
-                        <td>${fn:escapeXml(entry.project_name)}</td>
-                        <td>${fn:escapeXml(entry.customer_name)}</td>
+                        <td>${fn:escapeXml(entry.task.name)}</td>
+                        <td class="task">${entry.task.id}</td>
+                        <td>${fn:escapeXml(entry.task.project.name)}</td>
+                        <td>${fn:escapeXml(entry.task.project.client.name)}</td>
                         <td class="duration">${entry.duration}</td>
                         <c:set var="entryDescription" value="${entry.description}"/>
                         <c:if test="${sarariman:containsHTML(entryDescription)}">
@@ -267,8 +256,9 @@
                         <c:if test="${!timesheet.submitted}">
                             <td>
                                 <c:url var="editLink" value="editentry">
-                                    <c:param name="task" value="${entry.task}"/>
-                                    <c:param name="date" value="${entry.date}"/>
+                                    <c:param name="task" value="${entry.task.id}"/>
+                                    <fmt:formatDate var="dateString" value='${entry.date}' type='date' pattern='yyyy-MM-dd'/>
+                                    <c:param name="date" value="${dateString}"/>
                                     <c:param name="employee" value="${employeeNumber}"/>
                                 </c:url>
                                 <a href="${fn:escapeXml(editLink)}">Edit</a>
@@ -277,7 +267,7 @@
                         <c:set var="totalHours" value="${totalHours + entry.duration}"/>
                         <c:choose>
                             <%-- FIXME: This needs to look this up somewhere. --%>
-                            <c:when test="${entry.task == 5}">
+                            <c:when test="${entry.task.id == 5}">
                                 <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                             </c:when>
                             <c:otherwise>

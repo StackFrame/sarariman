@@ -11,8 +11,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,7 +109,7 @@ public class TimesheetImpl implements Timesheet {
             calendar.add(Calendar.DATE, i);
             map.put(calendar, new BigDecimal(0));
         }
-        
+
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT duration, date "
@@ -134,6 +136,39 @@ public class TimesheetImpl implements Timesheet {
             connection.close();
         }
         return map;
+    }
+
+    public List<TimesheetEntry> getEntries() throws SQLException {
+        Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
+        Connection connection = sarariman.openConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT task, date "
+                + "FROM hours "
+                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+        try {
+            ps.setInt(1, employeeNumber);
+            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+            ResultSet resultSet = ps.executeQuery();
+            try {
+                List<TimesheetEntry> list = new ArrayList<TimesheetEntry>();
+                while (resultSet.next()) {
+                    Date date = resultSet.getDate("date");
+                    int task = resultSet.getInt("task");
+                    Calendar calendar = (Calendar)week.getStart().clone();
+                    calendar.setTime(date);
+                    TimesheetEntry entry = new TimesheetEntryImpl(sarariman.getDataSource(), sarariman.getTasks().get(task), employee, date);
+                    list.add(entry);
+                }
+
+                return list;
+            } finally {
+                resultSet.close();
+            }
+        } finally {
+            ps.close();
+            connection.close();
+        }
     }
 
     private double getHours(int task) throws SQLException {

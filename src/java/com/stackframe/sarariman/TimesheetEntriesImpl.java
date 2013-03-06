@@ -7,7 +7,7 @@ package com.stackframe.sarariman;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
-import java.math.BigDecimal;
+import com.stackframe.sarariman.tasks.Tasks;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,10 +23,12 @@ class TimesheetEntriesImpl implements TimesheetEntries {
 
     private final DataSource dataSource;
     private final Directory directory;
+    private final Tasks tasks;
 
-    TimesheetEntriesImpl(DataSource dataSource, Directory directory) {
+    TimesheetEntriesImpl(DataSource dataSource, Directory directory, Tasks tasks) {
         this.dataSource = dataSource;
         this.directory = directory;
+        this.tasks = tasks;
     }
 
     public Iterable<TimesheetEntry> getEntries(Range<Date> dateRange) {
@@ -34,7 +36,7 @@ class TimesheetEntriesImpl implements TimesheetEntries {
             Connection connection = dataSource.getConnection();
             try {
                 String dateRangeExpression = RangeUtilities.toSQL("date", dateRange);
-                PreparedStatement s = connection.prepareStatement(String.format("SELECT * FROM hours WHERE %s ORDER BY DATE DESC", dateRangeExpression));
+                PreparedStatement s = connection.prepareStatement(String.format("SELECT task, employee, date FROM hours WHERE %s ORDER BY DATE DESC", dateRangeExpression));
                 try {
                     ResultSet r = s.executeQuery();
                     try {
@@ -44,10 +46,7 @@ class TimesheetEntriesImpl implements TimesheetEntries {
                             int employeeNumber = r.getInt("employee");
                             Employee employee = directory.getByNumber().get(employeeNumber);
                             Date date = r.getDate("date");
-                            BigDecimal duration = r.getBigDecimal("duration");
-                            int service_agreement = r.getInt("service_agreement");
-                            String description = r.getString("description");
-                            TimesheetEntry entry = new TimesheetEntryImpl(task, employee, date, duration, service_agreement, description);
+                            TimesheetEntry entry = new TimesheetEntryImpl(dataSource, tasks.get(task), employee, date);
                             builder.add(entry);
                         }
 
