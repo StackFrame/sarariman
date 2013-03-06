@@ -6,8 +6,10 @@ package com.stackframe.sarariman;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.projects.Project;
@@ -23,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Map;
 import java.util.SortedSet;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -390,6 +393,17 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     public URI getURI() {
         return URI.create(String.format("%semployee?id=%d", sarariman.getMountPoint(), number));
+    }
+
+    public Map<Week, Timesheet> getTimesheets() {
+        ContiguousSet<Week> allWeeks = ContiguousSet.create(Range.<Week>all(), Week.discreteDomain);
+        Function<Week, Timesheet> f = new Function<Week,Timesheet>(){
+
+            public Timesheet apply(Week f) {
+                return TimesheetImpl.lookup(sarariman, number, f);
+            }
+        };
+        return Maps.asMap(allWeeks, f);
     }
 
     @Override

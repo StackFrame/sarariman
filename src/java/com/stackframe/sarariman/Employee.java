@@ -9,6 +9,7 @@ import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.Map;
 import java.util.SortedSet;
 import javax.mail.internet.InternetAddress;
 import org.joda.time.LocalDate;
@@ -65,5 +66,7 @@ public interface Employee extends Linkable, Identifiable {
     BigDecimal getRecentEntryLatency();
 
     Iterable<Employee> getAdministrativeAssistants();
+
+    Map<Week, Timesheet> getTimesheets();
 
 }

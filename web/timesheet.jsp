@@ -115,26 +115,25 @@
         <c:set var="totalHoliday" value="0.0"/>
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
-            <c:forEach var="entry" items="${entries.rows}">
-                <c:set var="project" value="${sarariman.projects.map[entry.project]}"/>
+            <c:forEach var="entry" items="${employee.timesheets[week].entries}">
                 <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project)) || sarariman:contains(reports, employee.number)}">
                     <tr>
                         <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
                         <td class="date">${entryDate}</td>
-                        <c:set var="task" value="${sarariman.tasks.map[entry.task]}"/>
-                        <td><a href="${task.URL}">${fn:escapeXml(entry.name)}</a></td>
-                        <td class="task"><a href="${task.URL}">${entry.task}</a></td>
-                        <c:set var="customer" value="${project.client}"/>
+                        <c:set var="task" value="${entry.task}"/>
+                        <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
+                        <td class="task"><a href="${task.URL}">${task.id}</a></td>
+                        <c:set var="customer" value="${task.project.client}"/>
                         <c:url var="projectLink" value="project">
-                            <c:param name="id" value="${entry.project}"/>
+                            <c:param name="id" value="${task.project.id}"/>
                         </c:url>
                         <td>
-                            <c:if test="${!empty project}">
-                                <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(project.name)}</a>
+                            <c:if test="${!empty task.project}">
+                                <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(task.project.name)}</a>
                             </c:if>
                         </td>
                         <c:url var="customerLink" value="customer">
-                            <c:param name="id" value="${project.client.id}"/>
+                            <c:param name="id" value="${task.project.client.id}"/>
                         </c:url>
                         <td>
                             <c:if test="${!empty customer}">
@@ -144,15 +143,15 @@
 
                         <c:choose>
                             <%-- FIXME: This needs to look this up somewhere. --%>
-                            <c:when test="${entry.task == 5}">
+                            <c:when test="${entry.task.id == 5}">
                                 <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
                             </c:when>
-                            <c:when test="${entry.task == 4}">
+                            <c:when test="${entry.task.id == 4}">
                                 <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
                             </c:when>
                             <c:otherwise>
                                 <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
-                                <c:if test="${!entry.billable}">
+                                <c:if test="${!entry.task.billable}">
                                     <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
                                 </c:if>
                             </c:otherwise>

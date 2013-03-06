@@ -31,7 +31,7 @@ public class AccessControlUtilities {
      */
     public static boolean entryVisibleToUser(DataSource dataSource, TimesheetEntry entry, Employee user, OrganizationHierarchy organizationHierarchy, Tasks tasks) {
         try {
-            Task task = tasks.get(entry.getTask());
+            Task task = entry.getTask();
             Project project = task.getProject();
             if (project == null) {
                 return Sarariman.isBoss(organizationHierarchy, user);
