@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2103 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
 
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.Linkable;
 import java.net.InetAddress;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -15,7 +16,7 @@ import java.util.List;
  *
  * @author mcculley
  */
-public interface Ticket {
+public interface Ticket extends Linkable {
 
     Timestamp getCreated();
 

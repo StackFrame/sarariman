@@ -214,18 +214,6 @@ public class Sarariman implements ServletContextListener {
         return directorySynchronizer;
     }
 
-    public URL getTicketURL(int ticketID) {
-        try {
-            return new URL(getMountPoint() + "tickets/" + ticketID);
-        } catch (MalformedURLException mue) {
-            throw new AssertionError(mue);
-        }
-    }
-
-    public URL getTicketURL(Ticket ticket) {
-        return getTicketURL(ticket.getId());
-    }
-
     public TimesheetEntries getTimesheetEntries() {
         return timesheetEntries;
     }
@@ -266,7 +254,7 @@ public class Sarariman implements ServletContextListener {
             projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory, this);
             tasks = new TasksImpl(getDataSource(), getMountPoint(), projects);
             timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory, tasks);
-            tickets = new TicketsImpl(getDataSource());
+            tickets = new TicketsImpl(getDataSource(), mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.tickets;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -14,9 +13,11 @@ import java.util.Map;
  */
 public interface Tickets {
 
-    Collection<String> getStatusTypes() throws SQLException;
+    Ticket get(int id);
 
-    Collection<Ticket> getAll() throws SQLException;
+    Collection<String> getStatusTypes();
+
+    Collection<Ticket> getAll();
 
     Map<? extends Number, Ticket> getMap();
 

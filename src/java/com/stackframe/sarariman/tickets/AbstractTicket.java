@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.tickets;
 
+import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import java.sql.Connection;
@@ -24,7 +25,7 @@ import javax.naming.NamingException;
  *
  * @author mcculley
  */
-public abstract class AbstractTicket implements Ticket {
+public abstract class AbstractTicket extends AbstractLinkable implements Ticket {
 
     // FIXME: Eliminate this class. It was necessary when we had a bean implementation of Ticket.
 

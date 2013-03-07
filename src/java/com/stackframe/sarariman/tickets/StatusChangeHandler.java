@@ -24,12 +24,14 @@ import javax.sql.DataSource;
  */
 public class StatusChangeHandler extends HttpServlet {
 
+    private Sarariman sarariman;
     private DataSource dataSource;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        dataSource = ((Sarariman)getServletContext().getAttribute("sarariman")).getDataSource();
+        sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        dataSource = sarariman.getDataSource();
     }
 
     private void updateStatus(int ticket, String status, int employee) throws SQLException {
@@ -65,9 +67,8 @@ public class StatusChangeHandler extends HttpServlet {
         Employee employee = (Employee)request.getAttribute("user");
         try {
             updateStatus(ticket, status, employee.getNumber());
-            Ticket ticketBean = new TicketImpl(ticket, dataSource);
-            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-            URL ticketURL = sarariman.getTicketURL(ticketBean);
+            Ticket ticketBean = sarariman.getTickets().get(ticket);
+            URL ticketURL = ticketBean.getURL();
             String messageBody = String.format("%s changed the status of ticket %d to %s.\n\nGo to %s to view.", employee.getDisplayName(), ticket, status, ticketURL);
             String messageSubject = String.format("ticket %d: new status: %s", ticket, status);
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(ticketBean.getStakeholders()), null, messageSubject, messageBody);
@@ -75,8 +76,6 @@ public class StatusChangeHandler extends HttpServlet {
             // FIXME: If external_creator_email is set, send to it.
 
             response.sendRedirect(request.getHeader("Referer"));
-        } catch (NoSuchTicketException nste) {
-            throw new ServletException(nste);
         } catch (SQLException se) {
             throw new ServletException(se);
         }

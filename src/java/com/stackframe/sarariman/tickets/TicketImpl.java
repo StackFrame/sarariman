@@ -6,6 +6,7 @@ package com.stackframe.sarariman.tickets;
 
 import com.stackframe.sarariman.Employee;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,15 +28,17 @@ public class TicketImpl extends AbstractTicket {
     private final String creatorUserAgent;
     private final InetAddress creatorIP;
     private final DataSource dataSource;
+    private final String servletPath;
 
     @Override
     protected Connection openConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
-    public TicketImpl(int id, DataSource dataSource) throws SQLException, NoSuchTicketException {
+    TicketImpl(int id, DataSource dataSource, String servletPath) throws SQLException {
         this.id = id;
         this.dataSource = dataSource;
+        this.servletPath = servletPath;
         Connection connection = dataSource.getConnection();
         try {
             PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP FROM ticket WHERE id = ?");
@@ -76,7 +79,7 @@ public class TicketImpl extends AbstractTicket {
                             }
                         }
                     } else {
-                        throw new NoSuchTicketException(id);
+                        throw new RuntimeException("no such ticket");
                     }
                 } finally {
                     resultSet.close();
@@ -111,6 +114,10 @@ public class TicketImpl extends AbstractTicket {
 
     public InetAddress getCreatorIPAddress() {
         return creatorIP;
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%s/%d", servletPath, id));
     }
 
 }

@@ -25,12 +25,14 @@ import javax.sql.DataSource;
  */
 public class TextUpdateHandler extends HttpServlet {
 
+    private Sarariman sarariman;
     private DataSource dataSource;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        dataSource = ((Sarariman)getServletContext().getAttribute("sarariman")).getDataSource();
+        sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        dataSource = sarariman.getDataSource();
     }
 
     private void update(int ticket, String table, String text, int updater) throws SQLException {
@@ -86,9 +88,9 @@ public class TextUpdateHandler extends HttpServlet {
         try {
             // FIXME: Check table name before update to defend against SQL injection attack.
             update(ticket, table, text, updater.getNumber());
-            Ticket ticketBean = new TicketImpl(ticket, dataSource);
+            Ticket ticketBean = sarariman.getTickets().get(ticket);
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-            URL viewTicketURL = sarariman.getTicketURL(ticketBean);
+            URL viewTicketURL = ticketBean.getURL();
             if (table.equals("description")) {
                 sendDescriptionChangeEmail(ticket, sarariman, updater, text, viewTicketURL, EmailDispatcher.addresses(ticketBean.getStakeholders()));
             } else if (table.equals("name")) {
@@ -100,8 +102,6 @@ public class TextUpdateHandler extends HttpServlet {
             }
 
             response.sendRedirect(request.getHeader("Referer"));
-        } catch (NoSuchTicketException nste) {
-            throw new ServletException(nste);
         } catch (SQLException se) {
             throw new ServletException(se);
         }

@@ -132,8 +132,7 @@
                 <ol>
                     <c:forEach var="ticket" items="${sarariman.tickets.all}">
                         <c:if test="${sarariman:contains(ticket.assignees, user) and ticket.status ne 'closed'}">
-                            <c:url var="ticketViewURL" value="tickets/${ticket.id}"/>
-                            <li><a href="${ticketViewURL}">${fn:escapeXml(ticket.name)}</a></li>
+                            <li><a href="${ticket.URL}">${fn:escapeXml(ticket.name)}</a></li>
                         </c:if>
                     </c:forEach>
                 </ol>

@@ -83,16 +83,17 @@ public class AssignmentHandler extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int ticket = Integer.parseInt(request.getParameter("id"));
+        int ticketID = Integer.parseInt(request.getParameter("id"));
         int assigneeID = Integer.parseInt(request.getParameter("assignee"));
         int assignment = Integer.parseInt(request.getParameter("assignment"));
         Employee assignor = (Employee)request.getAttribute("user");
         try {
-            assign(ticket, assigneeID, assignor.getNumber(), assignment);
+            assign(ticketID, assigneeID, assignor.getNumber(), assignment);
             if (assigneeID != assignor.getNumber()) {
                 Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-                URL ticketURL = sarariman.getTicketURL(ticket);
-                sendEmail(assigneeID, assignor, ticket, ticketURL, assignment);
+                Ticket ticket = sarariman.getTickets().get(ticketID);
+                URL ticketURL = ticket.getURL();
+                sendEmail(assigneeID, assignor, ticketID, ticketURL, assignment);
             }
 
             response.sendRedirect(request.getHeader("Referer"));
