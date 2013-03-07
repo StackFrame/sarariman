@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2009-2012 StackFrame, LLC
+ * Copyright (C) 2009-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
-import java.sql.Date;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class MorningTask extends TimerTask {
                 continue;
             }
 
-            if (!employee.active(new Date(prevWeek.getStart().getTime().getTime()))) {
+            if (!employee.active(convert(prevWeek.getStart().getTime()))) {
                 continue;
             }
             

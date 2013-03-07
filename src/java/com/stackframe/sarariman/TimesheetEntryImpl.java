@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.stackframe.sarariman.tasks.Task;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,7 +52,7 @@ public class TimesheetEntryImpl implements TimesheetEntry {
                 try {
                     s.setInt(1, employee.getNumber());
                     s.setInt(2, task.getId());
-                    s.setDate(3, new java.sql.Date(date.getTime()));
+                    s.setDate(3, convert(date));
                     ResultSet r = s.executeQuery();
                     try {
                         boolean hasRow = r.first();
@@ -82,7 +83,7 @@ public class TimesheetEntryImpl implements TimesheetEntry {
                 try {
                     s.setInt(1, employee.getNumber());
                     s.setInt(2, task.getId());
-                    s.setDate(3, new java.sql.Date(date.getTime()));
+                    s.setDate(3, convert(date));
                     ResultSet r = s.executeQuery();
                     try {
                         boolean hasRow = r.first();
@@ -113,7 +114,7 @@ public class TimesheetEntryImpl implements TimesheetEntry {
                 try {
                     s.setInt(1, employee.getNumber());
                     s.setInt(2, task.getId());
-                    s.setDate(3, new java.sql.Date(date.getTime()));
+                    s.setDate(3, convert(date));
                     ResultSet r = s.executeQuery();
                     try {
                         boolean hasRow = r.first();

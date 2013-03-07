@@ -4,7 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import java.sql.Date;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Timer;
@@ -89,7 +89,7 @@ class CronJobs {
                 try {
                     Calendar today = Calendar.getInstance();
                     java.util.Date todayDate = today.getTime();
-                    PaidTimeOff.creditWeeklyPaidTimeOff(sarariman, new Date(DateUtils.weekStart(todayDate).getTime()));
+                    PaidTimeOff.creditWeeklyPaidTimeOff(sarariman, convert(DateUtils.weekStart(todayDate)));
                     PaidTimeOff.creditHolidayPTO(sarariman);
                 } catch (SQLException se) {
                     System.err.println("caught exception in PTO update:" + se);

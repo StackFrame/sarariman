@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import com.stackframe.sarariman.clients.ClientImpl;
 import com.stackframe.sarariman.projects.Project;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -63,8 +64,8 @@ public class ProjectController extends HttpServlet {
             java.sql.Date pop_end;
             switch (action) {
                 case create:
-                    pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
+                    pop_start = convert(dateFormat.parse(request.getParameter("pop_start")));
+                    pop_end = convert(dateFormat.parse(request.getParameter("pop_start")));
                     project = sarariman.getProjects().create(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
                             null, null, new BigDecimal(0), new BigDecimal(0), 0, new BigDecimal(0), true, null);
                     id = project.getId();
@@ -73,8 +74,8 @@ public class ProjectController extends HttpServlet {
                 case update:
                     id = Long.parseLong(request.getParameter("id"));
                     project = sarariman.getProjects().getMap().get(id);
-                    pop_start = new java.sql.Date(dateFormat.parse(request.getParameter("pop_start")).getTime());
-                    pop_end = new java.sql.Date(dateFormat.parse(request.getParameter("pop_end")).getTime());
+                    pop_start = convert(dateFormat.parse(request.getParameter("pop_start")));
+                    pop_end = convert(dateFormat.parse(request.getParameter("pop_end")));
                     project.setName(name);
                     project.setClient(new ClientImpl(Integer.parseInt(request.getParameter("customer")), sarariman.getDataSource()));
                     project.setPoP(new PeriodOfPerformance(pop_start, pop_end));

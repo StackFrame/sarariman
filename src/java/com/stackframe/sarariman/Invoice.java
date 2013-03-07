@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -61,11 +62,11 @@ public class Invoice {
             connection.setAutoCommit(false);
 
             PreparedStatement createInvoice = connection.prepareStatement("INSERT INTO invoice_info (sent, customer, project, pop_start, pop_end, description) VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            createInvoice.setDate(1, new Date(new java.util.Date().getTime()));
+            createInvoice.setDate(1, convert(new java.util.Date()));
             createInvoice.setLong(2, client.getId());
             createInvoice.setLong(3, project.getId());
-            createInvoice.setDate(4, new Date(dateFormat.parse(popStart).getTime()));
-            createInvoice.setDate(5, new Date(dateFormat.parse(popEnd).getTime()));
+            createInvoice.setDate(4, convert(dateFormat.parse(popStart)));
+            createInvoice.setDate(5, convert(dateFormat.parse(popEnd)));
             createInvoice.setString(6, "invoice for " + client.getName() + " - " + project.getName());
             int createdRowCount = createInvoice.executeUpdate();
             assert createdRowCount == 1;

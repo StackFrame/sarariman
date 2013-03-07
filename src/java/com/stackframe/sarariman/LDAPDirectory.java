@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,7 +59,7 @@ public class LDAPDirectory implements Directory {
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
                 LocalDate birthdate = new LocalDate(attributes.get("birthdate").getAll().next().toString());
                 LocalDate hiredate = new LocalDate(attributes.get("hiredate").getAll().next().toString());
-                Range<java.sql.Date> periodOfService = Range.atLeast(new java.sql.Date(hiredate.toDateMidnight().toDate().getTime()));
+                Range<java.sql.Date> periodOfService = Range.atLeast(convert(hiredate.toDateMidnight().toDate()));
                 tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName, periodOfService, this, sarariman.getDataSource(), sarariman));
             }
 

@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -262,7 +263,7 @@ public class OrganizationHierarchyImpl implements OrganizationHierarchy {
     }
 
     private static Date now() {
-        return new Date(new java.util.Date().getTime());
+        return convert(new java.util.Date());
     }
 
 }

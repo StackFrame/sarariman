@@ -20,6 +20,7 @@ import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.clients.ClientImpl;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.Tasks;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.sql.Connection;
@@ -525,8 +526,8 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             try {
                 PreparedStatement s = connection.prepareStatement("UPDATE projects SET pop_start = ?, pop_end = ? WHERE id = ?");
                 try {
-                    s.setDate(1, new Date(pop.getStart().getTime()));
-                    s.setDate(2, new Date(pop.getEnd().getTime()));
+                    s.setDate(1, convert(pop.getStart()));
+                    s.setDate(2, convert(pop.getEnd()));
                     s.setInt(3, id);
                     int numRows = s.executeUpdate();
                     assert numRows == 1;

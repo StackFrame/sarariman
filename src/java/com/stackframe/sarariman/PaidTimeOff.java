@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Collections2;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -108,7 +109,7 @@ public class PaidTimeOff {
 
     public static void creditHolidayPTO(Sarariman sarariman) throws SQLException {
         Calendar today = Calendar.getInstance();
-        Date todayDate = new Date(today.getTime().getTime());
+        Date todayDate = convert(today.getTime());
         StringBuilder holidayName = new StringBuilder();
         boolean todayIsHoliday = isHoliday(sarariman, todayDate, holidayName);
         if (todayIsHoliday) {

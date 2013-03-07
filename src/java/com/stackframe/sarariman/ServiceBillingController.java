@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2011 StackFrame, LLC
+ * Copyright (C) 2011-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -41,8 +41,8 @@ public class ServiceBillingController extends HttpServlet {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO billed_services (service_agreement, pop_start, pop_end) VALUES(?, ?, ?)");
             try {
                 ps.setInt(1, serviceAgreement);
-                ps.setDate(2, new Date(popStart.toDate().getTime()));
-                ps.setDate(3, new Date(popEnd.toDate().getTime()));
+                ps.setDate(2, convert(popStart.toDate()));
+                ps.setDate(3, convert(popEnd.toDate()));
                 ps.executeUpdate();
             } finally {
                 ps.close();

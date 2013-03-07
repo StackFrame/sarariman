@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -52,8 +53,8 @@ public class TimesheetImpl implements Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
-            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(2, convert(week.getStart().getTime()));
+            ps.setDate(3, convert(week.getStart().getTime()));
             ps.setInt(4, holidayTask);
             ps.setInt(5, PTOTask);
             ResultSet resultSet = ps.executeQuery();
@@ -82,8 +83,8 @@ public class TimesheetImpl implements Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
-            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(2, convert(week.getStart().getTime()));
+            ps.setDate(3, convert(week.getStart().getTime()));
             ResultSet resultSet = ps.executeQuery();
             try {
                 if (!resultSet.first()) {
@@ -117,8 +118,8 @@ public class TimesheetImpl implements Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
-            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(2, convert(week.getStart().getTime()));
+            ps.setDate(3, convert(week.getStart().getTime()));
             ResultSet resultSet = ps.executeQuery();
             try {
                 while (resultSet.next()) {
@@ -147,8 +148,8 @@ public class TimesheetImpl implements Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
-            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(2, convert(week.getStart().getTime()));
+            ps.setDate(3, convert(week.getStart().getTime()));
             ResultSet resultSet = ps.executeQuery();
             try {
                 List<TimesheetEntry> list = new ArrayList<TimesheetEntry>();
@@ -179,8 +180,8 @@ public class TimesheetImpl implements Timesheet {
                 + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
         try {
             ps.setInt(1, employeeNumber);
-            ps.setDate(2, new Date(week.getStart().getTime().getTime()));
-            ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(2, convert(week.getStart().getTime()));
+            ps.setDate(3, convert(week.getStart().getTime()));
             ps.setInt(4, task);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -238,7 +239,7 @@ public class TimesheetImpl implements Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -257,7 +258,7 @@ public class TimesheetImpl implements Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT approver FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -281,7 +282,7 @@ public class TimesheetImpl implements Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT approved_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -304,7 +305,7 @@ public class TimesheetImpl implements Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -327,7 +328,7 @@ public class TimesheetImpl implements Timesheet {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
         try {
-            ps.setDate(1, new Date(week.getStart().getTime().getTime()));
+            ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
             ResultSet resultSet = ps.executeQuery();
             try {
@@ -353,7 +354,7 @@ public class TimesheetImpl implements Timesheet {
             try {
                 ps.setInt(1, user.getNumber());
                 ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                ps.setDate(3, new Date(week.getStart().getTime().getTime()));
+                ps.setDate(3, convert(week.getStart().getTime()));
                 ps.setInt(4, employeeNumber);
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
@@ -385,7 +386,7 @@ public class TimesheetImpl implements Timesheet {
             Connection connection = sarariman.openConnection();
             PreparedStatement ps = connection.prepareStatement("DELETE FROM timecards WHERE date=? AND employee=?");
             try {
-                ps.setDate(1, new Date(week.getStart().getTime().getTime()));
+                ps.setDate(1, convert(week.getStart().getTime()));
                 ps.setInt(2, employeeNumber);
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
@@ -419,7 +420,7 @@ public class TimesheetImpl implements Timesheet {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
             try {
                 ps.setInt(1, employeeNumber);
-                ps.setDate(2, new Date(week.getStart().getTime().getTime()));
+                ps.setDate(2, convert(week.getStart().getTime()));
                 int rowCount = ps.executeUpdate();
                 if (rowCount != 1) {
                     logger.severe("submit for week=" + week + " and employee=" + employeeNumber + " did not modify a row");

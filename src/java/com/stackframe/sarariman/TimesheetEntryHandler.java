@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import static com.google.common.base.Preconditions.*;
 import com.stackframe.sarariman.tasks.Task;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -41,7 +42,7 @@ public class TimesheetEntryHandler extends HttpServlet {
         try {
             s.setInt(1, employee.getNumber());
             s.setInt(2, task.getId());
-            s.setDate(3, new java.sql.Date(date.getTime()));
+            s.setDate(3, convert(date));
             s.setString(4, description);
             s.setBigDecimal(5, duration);
             int numRows = s.executeUpdate();
@@ -58,7 +59,7 @@ public class TimesheetEntryHandler extends HttpServlet {
         try {
             s.setInt(1, employee.getNumber());
             s.setInt(2, task.getId());
-            s.setDate(3, new java.sql.Date(date.getTime()));
+            s.setDate(3, convert(date));
             s.setString(4, reason);
             s.setString(5, remoteAddress);
             s.setInt(6, remoteUser.getNumber());

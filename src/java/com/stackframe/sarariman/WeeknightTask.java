@@ -4,7 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import java.sql.Date;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -54,7 +54,7 @@ public class WeeknightTask extends TimerTask {
                         String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
                     } else if (!isHoliday) {
-                        double hoursRecorded = timesheet.getHours(new Date(todayDate.getTime()));
+                        double hoursRecorded = timesheet.getHours(convert(todayDate));
                         if (hoursRecorded == 0.0 && employee.isFulltime()) {
                             String message = "Please record your time if you worked today at " + sarariman.getMountPoint() + ".";
                             emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);

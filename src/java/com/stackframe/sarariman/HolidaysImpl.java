@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
+import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,7 +62,7 @@ class HolidaysImpl implements Holidays {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?");
             try {
-                statement.setDate(1, new java.sql.Date(date.getTime()));
+                statement.setDate(1, convert(date));
                 ResultSet rs = statement.executeQuery();
                 try {
                     return rs.first();
