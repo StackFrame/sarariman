@@ -72,26 +72,14 @@
             <c:forEach var="entry" items="${entries}">
                 <tr>
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
-                    <td>
-                        <c:url var="employeeURL" value="employee">
-                            <c:param name="id" value="${entry.employee.number}"/>
-                        </c:url>
-                        <a href="${employeeURL}">${entry.employee.displayName}</a>
-                    </td>
+                    <td><a href="${entry.employee.URL}">${entry.employee.displayName}</a></td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <c:set var="task" value="${sarariman.tasks.map[entry.task]}"/>
+                    <c:set var="task" value="${entry.task}"/>
                     <c:set var="project" value="${task.project}"/>
                     <c:choose>
                         <c:when test="${not empty project}">
-                            <td>
-                                <a href="${task.URL}">${fn:escapeXml(task.name)}</a>
-                            </td>
-                            <td>
-                                <c:url var="projectURL" value="project">
-                                    <c:param name="id" value="${project.id}"/>
-                                </c:url>
-                                <a href="${projectURL}">${fn:escapeXml(project.name)}</a>
-                            </td>
+                            <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
+                            <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
                             <td>
                                 <c:url var="clientURL" value="customer">
                                     <c:param name="id" value="${project.client.id}"/>
