@@ -3,15 +3,12 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page import="com.sun.imageio.plugins.common.I18N"%>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@page import="com.google.common.base.Predicate" %>
 <%@page import="com.google.common.collect.Iterables" %>
 <%@page import="com.google.common.collect.Lists"%>
 <%@page import="com.google.common.collect.Range" %>
-<%@page import="com.google.common.collect.Ranges"%>
 <%@page import="com.stackframe.sarariman.AccessControlUtilities" %>
-<%@page import="com.stackframe.sarariman.Directory" %>
 <%@page import="com.stackframe.sarariman.Employee" %>
 <%@page import="com.stackframe.sarariman.Sarariman" %>
 <%@page import="com.stackframe.sarariman.TimesheetEntry" %>
@@ -24,11 +21,10 @@
 <%
     final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     final Employee user = (Employee)request.getAttribute("user");
-    final Directory directory = (Directory)request.getAttribute("directory");
     Calendar beginning = Calendar.getInstance();
     int days = 7;
     beginning.add(Calendar.DAY_OF_MONTH, -days);
-    Range<Date> dateRange = Ranges.greaterThan(beginning.getTime());
+    Range<Date> dateRange = Range.greaterThan(beginning.getTime());
     Iterable<TimesheetEntry> entries = sarariman.getTimesheetEntries().getEntries(dateRange);
 
     Predicate<TimesheetEntry> visible = new Predicate<TimesheetEntry>() {
@@ -80,12 +76,7 @@
                         <c:when test="${not empty project}">
                             <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
                             <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
-                            <td>
-                                <c:url var="clientURL" value="customer">
-                                    <c:param name="id" value="${project.client.id}"/>
-                                </c:url>
-                                <a href="${clientURL}">${fn:escapeXml(project.client.name)}</a>
-                            </td>
+                            <td><a href="${project.client.URL}">${fn:escapeXml(project.client.name)}</a></td>
                         </c:when>
                         <c:otherwise>
                             <td colspan="3">

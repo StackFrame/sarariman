@@ -17,7 +17,7 @@ import com.stackframe.sarariman.ProjectLineItemAudit;
 import com.stackframe.sarariman.ProjectOrgChartAudit;
 import com.stackframe.sarariman.ProjectPeriodOfPerformanceAudit;
 import com.stackframe.sarariman.clients.Client;
-import com.stackframe.sarariman.clients.ClientImpl;
+import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.Tasks;
 import static com.stackframe.sql.SQLUtilities.convert;
@@ -46,8 +46,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final Tasks tasks;
     private final Projects projects;
     private final String servletPath;
+    private final Clients clients;
 
-    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath) {
+    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath, Clients clients) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -55,6 +56,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.tasks = tasks;
         this.projects = projects;
         this.servletPath = servletPath;
+        this.clients = clients;
     }
 
     public int getId() {
@@ -455,7 +457,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         if (client_id == 0) {
                             return null;
                         } else {
-                            return new ClientImpl(client_id, dataSource);
+                            return clients.get(client_id);
                         }
                     } finally {
                         r.close();

@@ -28,9 +28,15 @@ import javax.sql.DataSource;
 public class ClientsImpl implements Clients {
 
     private final DataSource dataSource;
+    private final String mountPoint;
 
-    public ClientsImpl(DataSource dataSource) {
+    public ClientsImpl(DataSource dataSource, String mountPoint) {
         this.dataSource = dataSource;
+        this.mountPoint = mountPoint;
+    }
+
+    public Client get(int id) {
+        return new ClientImpl(id, dataSource, mountPoint + "customers");
     }
 
     public Iterable<Client> getAll() {
@@ -43,7 +49,7 @@ public class ClientsImpl implements Clients {
                     try {
                         Collection<Client> c = new ArrayList<Client>();
                         while (r.next()) {
-                            c.add(new ClientImpl(r.getInt("id"), dataSource));
+                            c.add(get(r.getInt("id")));
                         }
 
                         return c;
@@ -67,7 +73,7 @@ public class ClientsImpl implements Clients {
         Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Client> f = new Function<Number, Client>() {
             public Client apply(Number n) {
-                return new ClientImpl(n.intValue(), dataSource);
+                return get(n.intValue());
             }
 
         };
@@ -85,7 +91,7 @@ public class ClientsImpl implements Clients {
                     ResultSet rs = ps.getGeneratedKeys();
                     try {
                         rs.next();
-                        return new ClientImpl(rs.getInt(1), dataSource);
+                        return get(rs.getInt(1));
                     } finally {
                         rs.close();
                     }

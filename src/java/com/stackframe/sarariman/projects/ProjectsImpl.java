@@ -45,7 +45,7 @@ public class ProjectsImpl implements Projects {
     }
 
     public Project get(int id) {
-        return new ProjectImpl(id, dataSource, organizationHierarchy, directory, sarariman.getTasks(), this, sarariman.getMountPoint() + "project");
+        return new ProjectImpl(id, dataSource, organizationHierarchy, directory, sarariman.getTasks(), this, sarariman.getMountPoint() + "project", sarariman.getClients());
     }
 
     public Map<? extends Number, Project> getMap() {

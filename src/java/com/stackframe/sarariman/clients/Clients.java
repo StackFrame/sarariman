@@ -12,6 +12,8 @@ import java.util.Map;
  */
 public interface Clients {
 
+    Client get(int id);
+
     Iterable<Client> getAll();
 
     Map<? extends Number, Client> getMap();

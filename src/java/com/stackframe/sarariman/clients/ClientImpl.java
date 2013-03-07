@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.clients;
 
+import com.stackframe.sarariman.AbstractLinkable;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,14 +16,16 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class ClientImpl implements Client {
+public class ClientImpl extends AbstractLinkable implements Client {
 
     private final int id;
     private final DataSource dataSource;
+    private final String servletPath;
 
-    public ClientImpl(int id, DataSource dataSource) {
+    ClientImpl(int id, DataSource dataSource, String servletPath) {
         this.id = id;
         this.dataSource = dataSource;
+        this.servletPath = servletPath;
     }
 
     public int getId() {
@@ -73,6 +77,10 @@ public class ClientImpl implements Client {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%s?id=%d", servletPath, id));
     }
 
     public void delete() {

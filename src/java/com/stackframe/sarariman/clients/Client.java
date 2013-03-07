@@ -4,11 +4,13 @@
  */
 package com.stackframe.sarariman.clients;
 
+import com.stackframe.sarariman.Linkable;
+
 /**
  *
  * @author mcculley
  */
-public interface Client {
+public interface Client extends Linkable {
 
     int getId();
 

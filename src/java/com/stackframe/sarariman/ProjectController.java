@@ -4,7 +4,6 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.clients.ClientImpl;
 import com.stackframe.sarariman.projects.Project;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.io.IOException;
@@ -77,7 +76,7 @@ public class ProjectController extends HttpServlet {
                     pop_start = convert(dateFormat.parse(request.getParameter("pop_start")));
                     pop_end = convert(dateFormat.parse(request.getParameter("pop_end")));
                     project.setName(name);
-                    project.setClient(new ClientImpl(Integer.parseInt(request.getParameter("customer")), sarariman.getDataSource()));
+                    project.setClient(sarariman.getClients().get(Integer.parseInt(request.getParameter("customer"))));
                     project.setPoP(new PeriodOfPerformance(pop_start, pop_end));
                     project.setContract(request.getParameter("contract"));
                     project.setSubcontract(request.getParameter("subcontract"));
