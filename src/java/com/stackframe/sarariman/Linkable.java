@@ -10,7 +10,7 @@ import java.net.URL;
  *
  * @author mcculley
  */
-public interface Linkable {
+public interface Linkable extends Identifiable {
 
     URL getURL();
 

@@ -91,10 +91,7 @@
                     <c:forEach var="project" items="${relatedProjects}">
                         <li>
                             <c:set var="customer" value="${project.client}"/>
-                            <c:url var="projectLink" value="project">
-                                <c:param name="id" value="${project.id}"/>
-                            </c:url>
-                            <a href="${projectLink}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                            <a href="${project.URL}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
                             <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
                             <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
                             <c:if test="${isProjectManager or isProjectCostManager}">

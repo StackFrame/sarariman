@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.projects;
 
 import com.google.common.collect.ImmutableList;
+import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
@@ -20,6 +21,7 @@ import com.stackframe.sarariman.clients.ClientImpl;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.Tasks;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -34,7 +36,7 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class ProjectImpl implements Project {
+public class ProjectImpl extends AbstractLinkable implements Project {
 
     private final int id;
     private final DataSource dataSource;
@@ -42,14 +44,16 @@ public class ProjectImpl implements Project {
     private final Directory directory;
     private final Tasks tasks;
     private final Projects projects;
+    private final String servletPath;
 
-    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects) {
+    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
         this.directory = directory;
         this.tasks = tasks;
         this.projects = projects;
+        this.servletPath = servletPath;
     }
 
     public int getId() {
@@ -777,6 +781,10 @@ public class ProjectImpl implements Project {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%s?id=%d", servletPath, id));
     }
 
     public void delete() {

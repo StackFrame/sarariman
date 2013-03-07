@@ -18,7 +18,7 @@ import org.joda.time.LocalDate;
  *
  * @author mcculley
  */
-public interface Employee extends Linkable, Identifiable {
+public interface Employee extends Linkable {
 
     String getUserName();
 

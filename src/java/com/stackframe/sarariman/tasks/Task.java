@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  * @author mcculley
  */
-public interface Task extends Linkable, Identifiable {
+public interface Task extends Linkable {
 
     int getId();
 
