@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 */
 
@@ -64,4 +64,10 @@ table.altrows td {
 
 .evenrow {
     background-color: #c3dde0;
+}
+
+img#photo
+{
+    float: right;
+    margin-right: 30px;
 }

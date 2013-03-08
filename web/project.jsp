@@ -135,7 +135,10 @@
                 <sql:param value="${project.id}"/>
             </sql:query>
             <c:forEach var="row" items="${result.rows}">
-                <li><a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a></li>
+                <li>
+                    <a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a>
+                    <a href="${directory.byNumber[row.employee].URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></a>
+                </li>
             </c:forEach>
         </ul>
 
@@ -148,7 +151,10 @@
                 <sql:param value="${project.id}"/>
             </sql:query>
             <c:forEach var="row" items="${result.rows}">
-                <li><a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a></li>
+                <li>
+                    <a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a>
+                    <a href="${directory.byNumber[row.employee].URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></a>
+                </li>
             </c:forEach>
         </ul>
 
@@ -157,7 +163,10 @@
             <h2>Administrative Assistants</h2>
             <ul>
                 <c:forEach var="assistant" items="${assistants}">
-                    <li><a href="${assistant.URL}">${assistant.displayName}</a></li>
+                    <li>
+                        <a href="${assistant.URL}">${assistant.displayName}</a>
+                        <a href="${assistant.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${assistant.photoURL}"/></a>
+                    </li>
                 </c:forEach>
             </ul>
         </c:if>

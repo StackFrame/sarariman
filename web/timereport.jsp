@@ -96,7 +96,7 @@
         <img style="float:right" src="${sarariman.logoURL}"/>
         <h1>Timesheet</h1>
         <p>
-            Employee: ${directory.byNumber[param.employee].fullName}<br/>
+            Employee: ${directory.byNumber[param.employee].fullName} <img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[param.employee].photoURL}"/><br/>
             Week: ${param.week}<br/>
             Project: ${fn:escapeXml(project.name)}<br/>
             Client: ${fn:escapeXml(customer.name)}

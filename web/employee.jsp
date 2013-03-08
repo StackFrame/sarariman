@@ -24,6 +24,7 @@
         <%@include file="header.jsp" %>
 
         <h1>${employee.fullName}</h1>
+        <img id="photo" width="100" height="100" onerror="this.style.display='none'" src="${employee.photoURL}"/>
 
         <%
             Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");

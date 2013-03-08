@@ -531,7 +531,10 @@
             <a href="activity">Recent timesheet activity for your reports</a>
             <ol>
                 <c:forEach var="report" items="${reports}">
-                    <li><a href="employee?id=${report.number}">${report.fullName}</a></li>
+                    <li>
+                        <a href="employee?id=${report.number}">${report.fullName}</a>
+                        <a href="employee?id=${report.number}"><img width="25" height="25" onerror="this.style.display='none'" src="${report.photoURL}"/></a>
+                    </li>
                 </c:forEach>
             </ol>
         </c:if>

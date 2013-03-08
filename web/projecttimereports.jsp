@@ -52,7 +52,7 @@
                              value="Timesheet ${directory.byNumber[row.employee].fullName} ${param.week}.pdf"/>
                 </c:url>
                 <li>
-                    <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a>
+                    <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a> <img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/>
                     <a href="${fn:escapeXml(pdf)}">[PDF]</a>
                     <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
                     <c:set var="week" value="${du:week(startDay)}"/>
@@ -86,7 +86,7 @@
                 <c:forEach var="row" items="${noHoursResult.rows}">
                     <c:set var="employee" value="${directory.byNumber[row.employee]}"/>
                     <c:if test="${employee.active}">
-                        <li>${employee.fullName}</li>
+                        <li>${employee.fullName} <img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></li>
                     </c:if>
                 </c:forEach>
             </ul>

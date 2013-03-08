@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -32,10 +32,8 @@
                 <c:set var="employee" value="${employeeEntry.value}"/>
                 <c:if test="${employee.active || param.showInactive}">
                     <li>
-                        <c:url var="link" value="employee">
-                            <c:param name="id" value="${employee.number}"/>
-                        </c:url>
-                        <a href="${fn:escapeXml(link)}">${employee.fullName}</a>
+                        <a href="${employee.URL}">${employee.fullName}</a>
+                        <a href="${employee.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
                     </li>
                 </c:if>
             </c:forEach>

@@ -69,7 +69,10 @@
             <c:forEach var="entry" items="${entries}">
                 <tr>
                     <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
-                    <td><a href="${entry.employee.URL}">${entry.employee.displayName}</a></td>
+                    <td>
+                        <a href="${entry.employee.URL}">${entry.employee.displayName}</a>
+                        <a href="${entry.employee.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${entry.employee.photoURL}"/></a>
+                    </td>
                     <td class="duration">${fn:escapeXml(entry.duration)}</td>
                     <c:set var="task" value="${entry.task}"/>
                     <c:set var="project" value="${task.project}"/>
