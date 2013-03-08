@@ -8,6 +8,7 @@ import com.google.common.collect.Range;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Date;
 import java.util.Map;
 import java.util.SortedSet;
@@ -68,5 +69,7 @@ public interface Employee extends Linkable {
     Iterable<Employee> getAdministrativeAssistants();
 
     Map<Week, Timesheet> getTimesheets();
+
+    URL getPhotoURL();
 
 }

@@ -15,7 +15,9 @@ import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -395,13 +397,21 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return URI.create(String.format("%semployee?id=%d", sarariman.getMountPoint(), number));
     }
 
+    public URL getPhotoURL() {
+        try {
+            return new URL(String.format("http://www.stackframe.com/directory/photo?uid=%s", userName));
+        } catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     public Map<Week, Timesheet> getTimesheets() {
         ContiguousSet<Week> allWeeks = ContiguousSet.create(Range.<Week>all(), Week.discreteDomain);
-        Function<Week, Timesheet> f = new Function<Week,Timesheet>(){
-
+        Function<Week, Timesheet> f = new Function<Week, Timesheet>() {
             public Timesheet apply(Week f) {
                 return TimesheetImpl.lookup(sarariman, number, f);
             }
+
         };
         return Maps.asMap(allWeeks, f);
     }
