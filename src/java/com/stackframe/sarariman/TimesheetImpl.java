@@ -145,7 +145,8 @@ public class TimesheetImpl implements Timesheet {
         PreparedStatement ps = connection.prepareStatement(
                 "SELECT task, date "
                 + "FROM hours "
-                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) "
+                + "ORDER BY date, task");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, convert(week.getStart().getTime()));
