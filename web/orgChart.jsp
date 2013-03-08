@@ -21,7 +21,9 @@
             String write(OrganizationHierarchy.Node node) {
                 StringBuilder buf = new StringBuilder();
                 Directory directory = (Directory)getServletContext().getAttribute("directory");
-                String name = directory.getByNumber().get(node.id()).getFullName();
+                Employee employee = directory.getByNumber().get(node.id());
+                String name = employee.getFullName();
+                buf.append(String.format("<img src=\"%s\" width=\"25\" height=\"25\" onerror=\"this.style.display='none'\"/>", employee.getPhotoURL()));
                 buf.append("<a href=\"employee?id=" + node.id() + "\">");
                 buf.append(name);
                 buf.append("</a>");
