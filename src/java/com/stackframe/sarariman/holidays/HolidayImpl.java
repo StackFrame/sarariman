@@ -15,7 +15,7 @@ public class HolidayImpl implements Holiday {
     private final LocalDate date;
     private final String description;
 
-    public HolidayImpl(LocalDate date, String description) {
+    HolidayImpl(LocalDate date, String description) {
         this.date = date;
         this.description = description;
     }

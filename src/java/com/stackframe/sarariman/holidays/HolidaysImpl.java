@@ -22,11 +22,11 @@ import org.joda.time.LocalDate;
  *
  * @author mcculley
  */
-class HolidaysImpl implements Holidays {
+public class HolidaysImpl implements Holidays {
 
     private final DataSource dataSource;
 
-    HolidaysImpl(DataSource dataSource) {
+    public HolidaysImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

@@ -4,8 +4,6 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.holidays.Holidays;
-import com.stackframe.sarariman.holidays.HolidaysImpl;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -14,6 +12,8 @@ import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.clients.ClientsImpl;
 import com.stackframe.sarariman.events.Events;
 import com.stackframe.sarariman.events.EventsImpl;
+import com.stackframe.sarariman.holidays.Holidays;
+import com.stackframe.sarariman.holidays.HolidaysImpl;
 import com.stackframe.sarariman.projects.Projects;
 import com.stackframe.sarariman.projects.ProjectsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
