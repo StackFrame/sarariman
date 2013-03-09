@@ -1,12 +1,11 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.holidays;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.SortedSet;
 
 /**
  *
@@ -14,12 +13,8 @@ import java.util.SortedSet;
  */
 public interface Holidays {
 
-    SortedSet<Holiday> getAll() throws SQLException;
-
     boolean isHoliday(Date date) throws SQLException;
 
-    SortedSet<Integer> getYears() throws SQLException;
-    
     Iterable<Holiday> getUpcoming();
     
     Holiday getNext();

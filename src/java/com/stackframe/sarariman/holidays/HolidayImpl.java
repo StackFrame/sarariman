@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 StackFrame, LLC
+ * Copyright (C) 2012-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.holidays;
@@ -21,6 +21,7 @@ public class HolidayImpl implements Holiday {
     }
 
     public Date getDate() {
+        // Return a defensive copy as Date is not immutable.
         return (Date)date.clone();
     }
 
