@@ -4,7 +4,7 @@
  */
 package com.stackframe.sarariman.holidays;
 
-import org.joda.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -12,16 +12,16 @@ import org.joda.time.LocalDate;
  */
 public class HolidayImpl implements Holiday {
 
-    private final LocalDate date;
+    private final Date date;
     private final String description;
 
-    HolidayImpl(LocalDate date, String description) {
+    HolidayImpl(Date date, String description) {
         this.date = date;
         this.description = description;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Date getDate() {
+        return (Date)date.clone();
     }
 
     public String getDescription() {

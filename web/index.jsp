@@ -420,24 +420,10 @@
             </ul>
         </p>
 
-        <jsp:useBean id="date" class="java.util.Date" />
-        <c:set var="year" value="${date.year + 1900}" />
-        <c:url var="holidaysURL" value="holidays.jsp">
-            <c:param name="year" value="${year}"/>
-        </c:url>
-        <h2><a href="${holidaysURL}">Upcoming Holidays</a></h2>
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT * FROM holidays WHERE date >= DATE(NOW()) AND date < DATE_ADD(NOW(), INTERVAL 4 MONTH) ORDER BY date
-        </sql:query>
-        <table>
-            <tr><th>Date</th><th>Holiday</th></tr>
-            <c:forEach var="row" items="${resultSet.rows}">
-                <tr>
-                    <td><fmt:formatDate value="${row.date}" type="date" pattern="MMM d" /></td>
-                    <td>${row.description}</td>
-                </tr>
-            </c:forEach>
-        </table>
+        <h2>Holidays</h2>
+        <p><a href="holidays/upcoming.jsp">Holiday Schedule</a><br/>
+            <c:set var="nextHoliday" value="${sarariman.holidays.next}"/>
+            Next holiday: <fmt:formatDate value="${nextHoliday.date}" type="date" pattern="MMM d" />, ${nextHoliday.description}</p>
 
         <h2 id="scheduledVacation">Scheduled Vacation</h2>
         <p>

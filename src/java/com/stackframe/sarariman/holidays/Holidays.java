@@ -19,5 +19,9 @@ public interface Holidays {
     boolean isHoliday(Date date) throws SQLException;
 
     SortedSet<Integer> getYears() throws SQLException;
+    
+    Iterable<Holiday> getUpcoming();
+    
+    Holiday getNext();
 
 }

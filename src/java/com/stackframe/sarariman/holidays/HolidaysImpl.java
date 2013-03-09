@@ -16,7 +16,6 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.SortedSet;
 import javax.sql.DataSource;
-import org.joda.time.LocalDate;
 
 /**
  *
@@ -41,7 +40,7 @@ public class HolidaysImpl implements Holidays {
                     while (rs.next()) {
                         Date date = rs.getDate("date");
                         String description = rs.getString("description");
-                        Holiday holiday = new HolidayImpl(new LocalDate(date), description);
+                        Holiday holiday = new HolidayImpl(date, description);
                         b.add(holiday);
                     }
 
@@ -54,6 +53,65 @@ public class HolidaysImpl implements Holidays {
             }
         } finally {
             connection.close();
+        }
+    }
+
+    public Iterable<Holiday> getUpcoming() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                Statement statement = connection.createStatement();
+                try {
+                    ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays WHERE date >= DATE(NOW()) ORDER BY date");
+                    try {
+                        ImmutableSortedSet.Builder<Holiday> b = ImmutableSortedSet.naturalOrder();
+                        while (rs.next()) {
+                            Date date = rs.getDate("date");
+                            String description = rs.getString("description");
+                            Holiday holiday = new HolidayImpl(date, description);
+                            b.add(holiday);
+                        }
+
+                        return b.build();
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    statement.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Holiday getNext() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                Statement statement = connection.createStatement();
+                try {
+                    ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays WHERE date >= DATE(NOW()) ORDER BY date LIMIT 1");
+                    try {
+                        boolean hasRow = rs.first();
+                        assert hasRow;
+                        Date date = rs.getDate("date");
+                        String description = rs.getString("description");
+                        Holiday holiday = new HolidayImpl(date, description);
+                        return holiday;
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    statement.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

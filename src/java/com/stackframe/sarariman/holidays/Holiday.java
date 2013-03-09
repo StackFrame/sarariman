@@ -4,7 +4,7 @@
  */
 package com.stackframe.sarariman.holidays;
 
-import org.joda.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -12,7 +12,7 @@ import org.joda.time.LocalDate;
  */
 public interface Holiday extends Comparable<Holiday> {
 
-    LocalDate getDate();
+    Date getDate();
 
     String getDescription();
 
