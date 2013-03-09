@@ -4,7 +4,6 @@
  */
 package com.stackframe.sarariman.tasks;
 
-import com.stackframe.sarariman.Identifiable;
 import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.projects.Project;
 import java.math.BigDecimal;
