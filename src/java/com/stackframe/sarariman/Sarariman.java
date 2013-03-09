@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.holidays.Holidays;
+import com.stackframe.sarariman.holidays.HolidaysImpl;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
