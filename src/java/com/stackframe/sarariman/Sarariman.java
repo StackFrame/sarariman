@@ -10,6 +10,8 @@ import com.google.common.collect.Collections2;
 import com.stackframe.reflect.ReflectionUtils;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.clients.ClientsImpl;
+import com.stackframe.sarariman.events.Events;
+import com.stackframe.sarariman.events.EventsImpl;
 import com.stackframe.sarariman.projects.Projects;
 import com.stackframe.sarariman.projects.ProjectsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
@@ -59,6 +61,7 @@ public class Sarariman implements ServletContextListener {
     private Tasks tasks;
     private Clients clients;
     private Tickets tickets;
+    private Events events;
 
     public String getVersion() {
         return Version.version;
@@ -227,6 +230,10 @@ public class Sarariman implements ServletContextListener {
         return tickets;
     }
 
+    public Events getEvents() {
+        return events;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -252,6 +259,7 @@ public class Sarariman implements ServletContextListener {
             tasks = new TasksImpl(getDataSource(), getMountPoint(), projects);
             timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory, tasks);
             tickets = new TicketsImpl(getDataSource(), mountPoint);
+            events = new EventsImpl(getDataSource(), mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

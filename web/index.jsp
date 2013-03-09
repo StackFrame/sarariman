@@ -399,33 +399,25 @@
         <h2 id="events">Events</h2>
         <p>
             <a href="events/create.jsp">Add an event</a>
-            <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                SELECT id, begin, end, name, description FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-            </sql:query>
-            <c:if test="${resultSet.rowCount != 0}">
-                <ul>
-                    <c:forEach var="row" items="${resultSet.rows}">
-                        <li>
-                            <c:url var="eventLink" value="events/view">
-                                <c:param name="id" value="${row.id}"/>
-                            </c:url>
-                            <a href="${eventLink}">
-                                <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                                <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
-                                <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
-                                <c:choose>
-                                    <c:when test="${beginDate eq endDate}">
-                                        <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
-                                    </c:when>
-                                    <c:otherwise>
-                                        <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
-                                    </c:otherwise>
-                                </c:choose>
-                                - ${fn:escapeXml(row.name)}</a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
+            <ul>
+                <c:forEach var="event" items="${sarariman.events.current}">
+                    <li>
+                        <a href="${event.URL}">
+                            <fmt:formatDate value="${event.begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                            <fmt:formatDate var="beginDate" pattern="yyyy-MM-dd" value="${event.begin}"/>
+                            <fmt:formatDate var="endDate" pattern="yyyy-MM-dd" value="${event.end}"/>
+                            <c:choose>
+                                <c:when test="${beginDate eq endDate}">
+                                    <fmt:formatDate value="${event.end}" type="time" timeStyle="short" />                                    
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatDate value="${event.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                </c:otherwise>
+                            </c:choose>
+                            - ${fn:escapeXml(event.name)}</a>
+                    </li>
+                </c:forEach>
+            </ul>
         </p>
 
         <jsp:useBean id="date" class="java.util.Date" />
