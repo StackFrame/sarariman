@@ -461,40 +461,34 @@
         <h2 id="outOfOffice">Scheduled Out of Office</h2>
         <p>
             <a href="outOfOffice/create.jsp">Add an entry</a>
-            <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                SELECT id, begin, end, comment FROM out_of_office WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-                <sql:param value="${employeeNumber}"/>
-            </sql:query>
-            <c:if test="${resultSet.rowCount != 0}">
-                <ul>
-                    <c:forEach var="row" items="${resultSet.rows}">
-                        <li>
-                            <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                            <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
-                            <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
-                            <c:choose>
-                                <c:when test="${beginDate eq endDate}">
-                                    <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
-                                </c:otherwise>
-                            </c:choose>
-                            <c:if test="${!empty row.comment}">
-                                - ${fn:escapeXml(row.comment)}
-                            </c:if>
-                            <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
-                                <input type="hidden" name="id" value="${row.id}"/>
-                                <input type="submit" name="Edit" value="edit"/>
-                            </form>
-                            <form style="display:inline" method="POST" action="outOfOffice/handleDelete.jsp">
-                                <input type="hidden" name="id" value="${row.id}"/>
-                                <input type="submit" name="Delete" value="delete"/>
-                            </form>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
+            <ul>
+                <c:forEach var="entry" items="${user.upcomingOutOfOffice}">
+                    <li>
+                        <fmt:formatDate value="${entry.begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${entry.begin}"/>
+                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${entry.end}"/>
+                        <c:choose>
+                            <c:when test="${beginDate eq endDate}">
+                                <fmt:formatDate value="${entry.end}" type="time" timeStyle="short" />                                    
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatDate value="${entry.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                            </c:otherwise>
+                        </c:choose>
+                        <c:if test="${!empty entry.comment}">
+                            - ${fn:escapeXml(entry.comment)}
+                        </c:if>
+                        <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
+                            <input type="hidden" name="id" value="${entry.id}"/>
+                            <input type="submit" name="Edit" value="edit"/>
+                        </form>
+                        <form style="display:inline" method="POST" action="outOfOffice/handleDelete.jsp">
+                            <input type="hidden" name="id" value="${entry.id}"/>
+                            <input type="submit" name="Delete" value="delete"/>
+                        </form>
+                    </li>
+                </c:forEach>
+            </ul>
         </p>
 
         <c:set var="reports" value="${user.reports}"/>

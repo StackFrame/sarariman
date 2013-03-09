@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
+import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.vacation.VacationEntry;
@@ -74,5 +75,7 @@ public interface Employee extends Linkable {
     URL getPhotoURL();
 
     Iterable<VacationEntry> getUpcomingVacation();
+
+    Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice();
 
 }

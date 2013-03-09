@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
+import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.vacation.VacationEntry;
@@ -431,6 +432,35 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                         while (r.next()) {
                             int entryID = r.getInt("id");
                             l.add(sarariman.getVacations().get(entryID));
+                        }
+                        return l;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice() {
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");
+                try {
+                    s.setInt(1, number);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        List<OutOfOfficeEntry> l = new ArrayList<OutOfOfficeEntry>();
+                        while (r.next()) {
+                            int entryID = r.getInt("id");
+                            l.add(sarariman.getOutOfOfficeEntries().get(entryID));
                         }
                         return l;
                     } finally {
