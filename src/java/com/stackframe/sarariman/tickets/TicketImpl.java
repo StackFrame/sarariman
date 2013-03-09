@@ -22,11 +22,6 @@ import javax.sql.DataSource;
 public class TicketImpl extends AbstractTicket {
 
     private final int id;
-    private final Timestamp created;
-    private final Employee employeeCreator;
-    private final Location creatorLocation;
-    private final String creatorUserAgent;
-    private final InetAddress creatorIP;
     private final DataSource dataSource;
     private final String servletPath;
 
@@ -39,57 +34,6 @@ public class TicketImpl extends AbstractTicket {
         this.id = id;
         this.dataSource = dataSource;
         this.servletPath = servletPath;
-        Connection connection = dataSource.getConnection();
-        try {
-            PreparedStatement query = connection.prepareStatement("SELECT created, employee_creator, has_creator_location, creator_latitude, creator_longitude, creator_user_agent, creator_IP FROM ticket WHERE id = ?");
-            try {
-                query.setInt(1, id);
-                ResultSet resultSet = query.executeQuery();
-                try {
-                    if (resultSet.first()) {
-                        created = resultSet.getTimestamp("created");
-
-                        int employeeCreatorID = resultSet.getInt("employee_creator");
-                        if (resultSet.wasNull()) {
-                            employeeCreator = null;
-                        } else {
-                            employeeCreator = getDirectory().getByNumber().get(employeeCreatorID);
-                        }
-
-                        boolean hasCreatorLocation = resultSet.getBoolean("has_creator_location");
-                        if (hasCreatorLocation) {
-                            double latitude = resultSet.getDouble("creator_latitude");
-                            double longitude = resultSet.getDouble("creator_longitude");
-                            creatorLocation = new Location(latitude, longitude);
-                        } else {
-                            creatorLocation = null;
-                        }
-
-                        creatorUserAgent = resultSet.getString("creator_user_agent");
-
-                        String creatorIPAddressString = resultSet.getString("creator_IP");
-                        if (creatorIPAddressString == null) {
-                            creatorIP = null;
-                        } else {
-                            try {
-                                creatorIP = InetAddress.getByName(creatorIPAddressString);
-                            } catch (UnknownHostException uhe) {
-                                // This shouldn't happen as the address should be in the form of a numerical IP address.
-                                throw new RuntimeException(uhe);
-                            }
-                        }
-                    } else {
-                        throw new RuntimeException("no such ticket");
-                    }
-                } finally {
-                    resultSet.close();
-                }
-            } finally {
-                query.close();
-            }
-        } finally {
-            connection.close();
-        }
     }
 
     public int getId() {
@@ -97,23 +41,155 @@ public class TicketImpl extends AbstractTicket {
     }
 
     public Timestamp getCreated() {
-        return created;
+        try {
+            Connection connection = openConnection();
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT created FROM ticket WHERE id = ?");
+                try {
+                    query.setInt(1, id);
+                    ResultSet resultSet = query.executeQuery();
+                    try {
+                        boolean hasRow = resultSet.first();
+                        assert hasRow;
+                        return resultSet.getTimestamp("created");
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    query.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Employee getEmployeeCreator() {
-        return employeeCreator;
+        try {
+            Connection connection = openConnection();
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT employee_creator FROM ticket WHERE id = ?");
+                try {
+                    query.setInt(1, id);
+                    ResultSet resultSet = query.executeQuery();
+                    try {
+                        boolean hasRow = resultSet.first();
+                        assert hasRow;
+                        int employeeCreatorID = resultSet.getInt("employee_creator");
+                        if (resultSet.wasNull()) {
+                            return null;
+                        } else {
+                            return getDirectory().getByNumber().get(employeeCreatorID);
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    query.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Location getCreatorLocation() {
-        return creatorLocation;
+        try {
+            Connection connection = openConnection();
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT has_creator_location, creator_latitude, creator_longitude FROM ticket WHERE id = ?");
+                try {
+                    query.setInt(1, id);
+                    ResultSet resultSet = query.executeQuery();
+                    try {
+                        boolean hasRow = resultSet.first();
+                        assert hasRow;
+                        boolean hasCreatorLocation = resultSet.getBoolean("has_creator_location");
+                        if (hasCreatorLocation) {
+                            double latitude = resultSet.getDouble("creator_latitude");
+                            double longitude = resultSet.getDouble("creator_longitude");
+                            return new Location(latitude, longitude);
+                        } else {
+                            return null;
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    query.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getCreatorUserAgent() {
-        return creatorUserAgent;
+        try {
+            Connection connection = openConnection();
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT creator_user_agent FROM ticket WHERE id = ?");
+                try {
+                    query.setInt(1, id);
+                    ResultSet resultSet = query.executeQuery();
+                    try {
+                        boolean hasRow = resultSet.first();
+                        assert hasRow;
+                        return resultSet.getString("creator_user_agent");
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    query.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public InetAddress getCreatorIPAddress() {
-        return creatorIP;
+        try {
+            Connection connection = openConnection();
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT creator_IP FROM ticket WHERE id = ?");
+                try {
+                    query.setInt(1, id);
+                    ResultSet resultSet = query.executeQuery();
+                    try {
+                        boolean hasRow = resultSet.first();
+                        assert hasRow;
+                        String creatorIPAddressString = resultSet.getString("creator_IP");
+                        if (creatorIPAddressString == null) {
+                            return null;
+                        } else {
+                            try {
+                                return InetAddress.getByName(creatorIPAddressString);
+                            } catch (UnknownHostException uhe) {
+                                // This shouldn't happen as the address should be in the form of a numerical IP address.
+                                throw new RuntimeException(uhe);
+                            }
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    query.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public URI getURI() {
