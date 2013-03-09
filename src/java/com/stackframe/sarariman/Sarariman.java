@@ -14,6 +14,8 @@ import com.stackframe.sarariman.events.Events;
 import com.stackframe.sarariman.events.EventsImpl;
 import com.stackframe.sarariman.holidays.Holidays;
 import com.stackframe.sarariman.holidays.HolidaysImpl;
+import com.stackframe.sarariman.outofoffice.OutOfOfficeEntries;
+import com.stackframe.sarariman.outofoffice.OutOfOfficeEntriesImpl;
 import com.stackframe.sarariman.projects.Projects;
 import com.stackframe.sarariman.projects.ProjectsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
@@ -67,6 +69,7 @@ public class Sarariman implements ServletContextListener {
     private Tickets tickets;
     private Events events;
     private Vacations vacations;
+    private OutOfOfficeEntries outOfOffice;
 
     public String getVersion() {
         return Version.version;
@@ -243,6 +246,10 @@ public class Sarariman implements ServletContextListener {
         return events;
     }
 
+    public OutOfOfficeEntries getOutOfOfficeEntries() {
+        return outOfOffice;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -270,6 +277,7 @@ public class Sarariman implements ServletContextListener {
             tickets = new TicketsImpl(getDataSource(), mountPoint);
             events = new EventsImpl(getDataSource(), mountPoint);
             vacations = new VacationsImpl(getDataSource(), directory);
+            outOfOffice = new OutOfOfficeEntriesImpl(getDataSource(), directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
