@@ -51,8 +51,10 @@ public class WeeknightTask extends TimerTask {
                     Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
                     Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
                     if (dayOfWeek == Calendar.FRIDAY) {
-                        String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
-                        emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
+                        if (employee.isFulltime() || timesheet.getTotalHours() > 0) {
+                            String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
+                            emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
+                        }
                     } else if (!isHoliday) {
                         double hoursRecorded = timesheet.getHours(convert(todayDate));
                         if (hoursRecorded == 0.0 && employee.isFulltime()) {
