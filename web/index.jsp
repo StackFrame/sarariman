@@ -428,40 +428,34 @@
         <h2 id="scheduledVacation">Scheduled Vacation</h2>
         <p>
             <a href="vacation/create.jsp">Add an entry</a>
-            <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                SELECT begin, end, comment FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-                <sql:param value="${employeeNumber}"/>
-            </sql:query>
-            <c:if test="${resultSet.rowCount != 0}">
-                <ul>
-                    <c:forEach var="row" items="${resultSet.rows}">
-                        <li>
-                            <c:choose>
-                                <c:when test="${row.begin eq row.end}">
-                                    <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" />
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatDate value="${row.begin}" type="date" dateStyle="long" /> -
-                                    <fmt:formatDate value="${row.end}" type="date" dateStyle="long" />
-                                </c:otherwise>
-                            </c:choose>
-                            <c:if test="${!empty row.comment}">
-                                - ${fn:escapeXml(row.comment)}
-                            </c:if>
-                            <form style="display:inline" method="GET" action="vacation/edit.jsp">
-                                <input type="hidden" name="begin" value="${row.begin}"/>
-                                <input type="hidden" name="end" value="${row.end}"/>
-                                <input type="submit" name="Edit" value="edit"/>
-                            </form>
-                            <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
-                                <input type="hidden" name="begin" value="${row.begin}"/>
-                                <input type="hidden" name="end" value="${row.end}"/>
-                                <input type="submit" name="Delete" value="delete"/>
-                            </form>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
+            <ul>
+                <c:forEach var="entry" items="${user.upcomingVacation}">
+                    <li>
+                        <c:choose>
+                            <c:when test="${entry.begin eq entry.end}">
+                                <fmt:formatDate value="${entry.begin}" type="date" dateStyle="long" />
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatDate value="${entry.begin}" type="date" dateStyle="long" /> -
+                                <fmt:formatDate value="${entry.end}" type="date" dateStyle="long" />
+                            </c:otherwise>
+                        </c:choose>
+                        <c:if test="${!empty entry.comment}">
+                            - ${fn:escapeXml(entry.comment)}
+                        </c:if>
+                        <form style="display:inline" method="GET" action="vacation/edit.jsp">
+                            <input type="hidden" name="begin" value="${entry.begin}"/>
+                            <input type="hidden" name="end" value="${entry.end}"/>
+                            <input type="submit" name="Edit" value="edit"/>
+                        </form>
+                        <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
+                            <input type="hidden" name="begin" value="${entry.begin}"/>
+                            <input type="hidden" name="end" value="${entry.end}"/>
+                            <input type="submit" name="Delete" value="delete"/>
+                        </form>
+                    </li>
+                </c:forEach>
+            </ul>
         </p>
 
         <h2 id="outOfOffice">Scheduled Out of Office</h2>

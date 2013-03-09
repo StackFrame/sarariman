@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import com.google.common.collect.Range;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.vacation.VacationEntry;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Date;
@@ -71,5 +72,7 @@ public interface Employee extends Linkable {
     Map<Week, Timesheet> getTimesheets();
 
     URL getPhotoURL();
+
+    Iterable<VacationEntry> getUpcomingVacation();
 
 }

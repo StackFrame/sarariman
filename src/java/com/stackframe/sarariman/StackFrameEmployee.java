@@ -14,6 +14,7 @@ import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.vacation.VacationEntry;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import javax.mail.internet.AddressException;
@@ -414,6 +416,35 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
         };
         return Maps.asMap(allWeeks, f);
+    }
+
+    public Iterable<VacationEntry> getUpcomingVacation() {
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement("SELECT id FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");
+                try {
+                    s.setInt(1, number);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        List<VacationEntry> l = new ArrayList<VacationEntry>();
+                        while (r.next()) {
+                            int entryID = r.getInt("id");
+                            l.add(sarariman.getVacations().get(entryID));
+                        }
+                        return l;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

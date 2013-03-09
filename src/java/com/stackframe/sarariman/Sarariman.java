@@ -20,6 +20,8 @@ import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.tickets.Tickets;
 import com.stackframe.sarariman.tickets.TicketsImpl;
+import com.stackframe.sarariman.vacation.Vacations;
+import com.stackframe.sarariman.vacation.VacationsImpl;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -64,6 +66,7 @@ public class Sarariman implements ServletContextListener {
     private Clients clients;
     private Tickets tickets;
     private Events events;
+    private Vacations vacations;
 
     public String getVersion() {
         return Version.version;
@@ -179,6 +182,10 @@ public class Sarariman implements ServletContextListener {
         return holidays;
     }
 
+    public Vacations getVacations() {
+        return vacations;
+    }
+
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
@@ -262,6 +269,7 @@ public class Sarariman implements ServletContextListener {
             timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory, tasks);
             tickets = new TicketsImpl(getDataSource(), mountPoint);
             events = new EventsImpl(getDataSource(), mountPoint);
+            vacations = new VacationsImpl(getDataSource(), directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
