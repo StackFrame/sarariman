@@ -238,7 +238,7 @@ public class TimesheetImpl implements Timesheet {
     @Override
     public boolean isSubmitted() throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
+        PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
@@ -327,7 +327,7 @@ public class TimesheetImpl implements Timesheet {
     @Override
     public boolean isApproved() throws SQLException {
         Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM timecards WHERE date = ? AND employee = ?");
+        PreparedStatement ps = connection.prepareStatement("SELECT approved FROM timecards WHERE date = ? AND employee = ?");
         try {
             ps.setDate(1, convert(week.getStart().getTime()));
             ps.setInt(2, employeeNumber);
