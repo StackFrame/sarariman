@@ -130,10 +130,8 @@
                 </c:url>
                 <a href="${fn:escapeXml(myTicketsURL)}">My Unclosed Tickets</a>
                 <ol>
-                    <c:forEach var="ticket" items="${sarariman.tickets.all}">
-                        <c:if test="${sarariman:contains(ticket.assignees, user) and ticket.status ne 'closed'}">
-                            <li><a href="${ticket.URL}">${fn:escapeXml(ticket.name)}</a></li>
-                        </c:if>
+                    <c:forEach var="ticket" items="${user.unclosedTickets}">
+                        <li><a href="${ticket.URL}">${fn:escapeXml(ticket.name)}</a></li>
                     </c:forEach>
                 </ol>
             </li>

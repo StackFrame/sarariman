@@ -15,6 +15,7 @@ import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tickets.Ticket;
 import com.stackframe.sarariman.vacation.VacationEntry;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -462,6 +463,80 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                             int entryID = r.getInt("id");
                             l.add(sarariman.getOutOfOfficeEntries().get(entryID));
                         }
+                        return l;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean assigned(Connection c, int assignee, int ticket) throws SQLException {
+        PreparedStatement s = c.prepareStatement("SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE assignee = ? AND ticket = ?");
+        try {
+            s.setInt(1, assignee);
+            s.setInt(2, ticket);
+            ResultSet r = s.executeQuery();
+            try {
+                boolean hasRow = r.first();
+                assert hasRow;
+                int sum = r.getInt("sum");
+                return sum > 0;
+            } finally {
+                r.close();
+            }
+        } finally {
+            s.close();
+        }
+    }
+
+    private static boolean unclosed(Connection c, int ticket) throws SQLException {
+        PreparedStatement s = c.prepareStatement("SELECT status FROM ticket_status WHERE ticket = ? ORDER BY updated DESC LIMIT 1");
+        try {
+            s.setInt(1, ticket);
+            ResultSet r = s.executeQuery();
+            try {
+                boolean hasRow = r.first();
+                assert hasRow;
+                String status = r.getString("status");
+                return !status.equals("closed");
+            } finally {
+                r.close();
+            }
+        } finally {
+            s.close();
+        }
+    }
+
+    public Iterable<Ticket> getUnclosedTickets() {
+        // FIXME: There's got to be a smarter way to do this query.
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement("SELECT DISTINCT(ticket) FROM ticket_assignment WHERE assignee = ?");
+                try {
+                    s.setInt(1, number);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        List<Ticket> l = new ArrayList<Ticket>();
+                        while (r.next()) {
+                            int ticketID = r.getInt("ticket");
+                            boolean assigned = assigned(c, number, ticketID);
+                            if (assigned) {
+                                boolean unclosed = unclosed(c, ticketID);
+                                if (unclosed) {
+                                    l.add(sarariman.getTickets().get(ticketID));
+                                }
+                            }
+                        }
+
                         return l;
                     } finally {
                         r.close();

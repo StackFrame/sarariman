@@ -8,6 +8,7 @@ import com.google.common.collect.Range;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tickets.Ticket;
 import com.stackframe.sarariman.vacation.VacationEntry;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -77,5 +78,7 @@ public interface Employee extends Linkable {
     Iterable<VacationEntry> getUpcomingVacation();
 
     Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice();
+
+    Iterable<Ticket> getUnclosedTickets();
 
 }
