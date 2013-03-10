@@ -170,8 +170,9 @@
                         <option selected="true"></option>
                         <c:forEach var="task" items="${user.tasks}">
                             <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
-                                <c:if test="${!empty task.project}">
-                                    - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(task.project.client.name)}
+                                <c:set var="project" value="${task.project}"/>
+                                <c:if test="${!empty project}">
+                                    - ${fn:escapeXml(project.name)}:${fn:escapeXml(project.client.name)}
                                 </c:if>
                             </option>
                         </c:forEach>
@@ -238,8 +239,9 @@
                         <td class="date">${entryDate}</td>
                         <td>${fn:escapeXml(entry.task.name)}</td>
                         <td class="task">${entry.task.id}</td>
-                        <td>${fn:escapeXml(entry.task.project.name)}</td>
-                        <td>${fn:escapeXml(entry.task.project.client.name)}</td>
+                        <c:set var="project" value="${entry.task.project}"/>
+                        <td>${fn:escapeXml(project.name)}</td>
+                        <td>${fn:escapeXml(project.client.name)}</td>
                         <td class="duration">${entry.duration}</td>
                         <c:set var="entryDescription" value="${entry.description}"/>
                         <c:if test="${sarariman:containsHTML(entryDescription)}">
@@ -401,15 +403,17 @@
                 <c:forEach var="event" items="${sarariman.events.current}">
                     <li>
                         <a href="${event.URL}">
-                            <fmt:formatDate value="${event.begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                            <fmt:formatDate var="beginDate" pattern="yyyy-MM-dd" value="${event.begin}"/>
-                            <fmt:formatDate var="endDate" pattern="yyyy-MM-dd" value="${event.end}"/>
+                            <c:set var="begin" value="${event.begin}"/>
+                            <c:set var="end" value="${event.end}"/>
+                            <fmt:formatDate value="${begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                            <fmt:formatDate var="beginDate" pattern="yyyy-MM-dd" value="${begin}"/>
+                            <fmt:formatDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
                             <c:choose>
                                 <c:when test="${beginDate eq endDate}">
-                                    <fmt:formatDate value="${event.end}" type="time" timeStyle="short" />                                    
+                                    <fmt:formatDate value="${end}" type="time" timeStyle="short" />                                    
                                 </c:when>
                                 <c:otherwise>
-                                    <fmt:formatDate value="${event.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                    <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />                                
                                 </c:otherwise>
                             </c:choose>
                             - ${fn:escapeXml(event.name)}</a>
@@ -429,26 +433,28 @@
             <ul>
                 <c:forEach var="entry" items="${user.upcomingVacation}">
                     <li>
+                        <c:set var="begin" value="${entry.begin}"/>
+                        <c:set var="end" value="${entry.end}"/>
                         <c:choose>
-                            <c:when test="${entry.begin eq entry.end}">
-                                <fmt:formatDate value="${entry.begin}" type="date" dateStyle="long" />
+                            <c:when test="${begin eq end}">
+                                <fmt:formatDate value="${begin}" type="date" dateStyle="long" />
                             </c:when>
                             <c:otherwise>
-                                <fmt:formatDate value="${entry.begin}" type="date" dateStyle="long" /> -
-                                <fmt:formatDate value="${entry.end}" type="date" dateStyle="long" />
+                                <fmt:formatDate value="${begin}" type="date" dateStyle="long" /> -
+                                <fmt:formatDate value="${end}" type="date" dateStyle="long" />
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${!empty entry.comment}">
                             - ${fn:escapeXml(entry.comment)}
                         </c:if>
                         <form style="display:inline" method="GET" action="vacation/edit.jsp">
-                            <input type="hidden" name="begin" value="${entry.begin}"/>
-                            <input type="hidden" name="end" value="${entry.end}"/>
+                            <input type="hidden" name="begin" value="${begin}"/>
+                            <input type="hidden" name="end" value="${end}"/>
                             <input type="submit" name="Edit" value="edit"/>
                         </form>
                         <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
-                            <input type="hidden" name="begin" value="${entry.begin}"/>
-                            <input type="hidden" name="end" value="${entry.end}"/>
+                            <input type="hidden" name="begin" value="${begin}"/>
+                            <input type="hidden" name="end" value="${end}"/>
                             <input type="submit" name="Delete" value="delete"/>
                         </form>
                     </li>
@@ -462,15 +468,17 @@
             <ul>
                 <c:forEach var="entry" items="${user.upcomingOutOfOffice}">
                     <li>
-                        <fmt:formatDate value="${entry.begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${entry.begin}"/>
-                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${entry.end}"/>
+                        <c:set var="begin" value="${entry.begin}"/>
+                        <c:set var="end" value="${entry.end}"/>
+                        <fmt:formatDate value="${begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${begin}"/>
+                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
                         <c:choose>
                             <c:when test="${beginDate eq endDate}">
-                                <fmt:formatDate value="${entry.end}" type="time" timeStyle="short" />                                    
+                                <fmt:formatDate value="${end}" type="time" timeStyle="short" />                                    
                             </c:when>
                             <c:otherwise>
-                                <fmt:formatDate value="${entry.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />                                
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${!empty entry.comment}">
