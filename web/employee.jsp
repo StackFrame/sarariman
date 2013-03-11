@@ -81,10 +81,31 @@
                    <c:if test="${not user.administrator}">disabled="true"</c:if>
                    onchange="this.form.submit();"/>
         </form>
+        <form action="employeeController" method="POST">
+            <input type="hidden" name="employee" value="${employee.number}"/>
+            <input type="hidden" name="action" value="setBenefitsAdministrator"/>
+            <label for="administrator">Benefits Administrator:</label>
+            <input type="checkbox" id="administrator" name="administrator"
+                   <c:if test="${employee.benefitsAdministrator}">checked="checked"</c:if>
+                   <c:if test="${not user.administrator}">disabled="true"</c:if>
+                   onchange="this.form.submit();"/>
+        </form>
+        <form action="employeeController" method="POST">
+            <input type="hidden" name="employee" value="${employee.number}"/>
+            <input type="hidden" name="action" value="setPayrollAdministrator"/>
+            <label for="administrator">Payroll Administrator:</label>
+            <input type="checkbox" id="administrator" name="administrator"
+                   <c:if test="${employee.payrollAdministrator}">checked="checked"</c:if>
+                   <c:if test="${not user.administrator}">disabled="true"</c:if>
+                   onchange="this.form.submit();"/>
+        </form>
+        <br/>
 
         <c:if test="${user == employee or user.administrator}">
             Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
             Age: ${employee.age}<br/>
+        </c:if>
+        <c:if test="${user == employee or user.payrollAdministrator}">
             Hourly pay rate: <fmt:formatNumber type="currency" value="${employee.directRate}"/><br/>
             <c:if test="${employee.fulltime}">
                 Salary: <fmt:formatNumber type="currency" value="${employee.directRate * 2080}"/><br/>
@@ -95,13 +116,6 @@
             </c:if>
             <ul>
                 <li>
-                    <c:url var="myTicketsURL" value="tickets/">
-                        <c:param name="assignee" value="${param.id}"/>
-                        <c:param name="notStatus" value="closed"/>
-                    </c:url>
-                    <a href="${fn:escapeXml(myTicketsURL)}">Unclosed Tickets</a>
-                </li>
-                <li>
                     <c:url var="PTOLink" value="PTODetails">
                         <c:param name="employee" value="${param.id}"/>
                     </c:url>
@@ -109,6 +123,16 @@
                 </li>
             </ul>
         </c:if>
+
+        <ul>
+            <li>
+                <c:url var="myTicketsURL" value="tickets/">
+                    <c:param name="assignee" value="${param.id}"/>
+                    <c:param name="notStatus" value="closed"/>
+                </c:url>
+                <a href="${fn:escapeXml(myTicketsURL)}">Unclosed Tickets</a>
+            </li>
+        </ul>
 
         <c:if test="${user.administrator}">
             <h2>Direct Rate</h2>
