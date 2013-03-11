@@ -46,6 +46,7 @@ public class EmployeeController extends HttpServlet {
                 String administrator = request.getParameter("administrator");
                 employee.setAdministrator("on".equals(administrator));
             }
+            // FIXME: Add support for benefitsAdministrator and payrollAdministrator
         } else {
             throw new AssertionError(String.format("unexpected action '%s'", action));
         }

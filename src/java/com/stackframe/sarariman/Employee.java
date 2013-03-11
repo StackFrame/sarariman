@@ -83,6 +83,14 @@ public interface Employee extends Linkable {
 
     BigDecimal getMonthlyHealthInsurancePremium();
 
+    boolean isPayrollAdministrator();
+
+    void setPayrollAdministrator(boolean payrollAdministrator);
+
+    boolean isBenefitsAdministrator();
+
+    void setBenefitsAdministrator(boolean benefitsAdministrator);
+
     // FIXME: Add gender
     // FIXME: Add race
     // FIXME: Add periods of employment

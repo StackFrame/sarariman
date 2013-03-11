@@ -581,6 +581,96 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    public boolean isPayrollAdministrator() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT payroll_administrator FROM employee WHERE id = ?");
+                try {
+                    s.setInt(1, number);
+                    ResultSet rs = s.executeQuery();
+                    try {
+                        return rs.first() && rs.getBoolean("payroll_administrator");
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public void setPayrollAdministrator(boolean payrollAdministrator) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("UPDATE employee SET payroll_administrator = ? WHERE id = ?");
+                try {
+                    s.setBoolean(1, payrollAdministrator);
+                    s.setInt(2, number);
+                    int rowCount = s.executeUpdate();
+                    assert rowCount == 1;
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public boolean isBenefitsAdministrator() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT benefits_administrator FROM employee WHERE id = ?");
+                try {
+                    s.setInt(1, number);
+                    ResultSet rs = s.executeQuery();
+                    try {
+                        return rs.first() && rs.getBoolean("benefits_administrator");
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public void setBenefitsAdministrator(boolean benefitsAdministrator) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("UPDATE employee SET benefits_administrator = ? WHERE id = ?");
+                try {
+                    s.setBoolean(1, benefitsAdministrator);
+                    s.setInt(2, number);
+                    int rowCount = s.executeUpdate();
+                    assert rowCount == 1;
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
