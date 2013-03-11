@@ -562,8 +562,11 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                     ResultSet r = s.executeQuery();
                     try {
                         boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBigDecimal("premium");
+                        if (!hasRow) {
+                            return BigDecimal.ZERO;
+                        } else {
+                            return r.getBigDecimal("premium");
+                        }
                     } finally {
                         r.close();
                     }
