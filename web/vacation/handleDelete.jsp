@@ -1,16 +1,16 @@
 <%--
-  Copyright (C) 2012 StackFrame, LLC
+  Copyright (C) 2012-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!-- FIXME: Authorize. -->
+
 <sql:update dataSource="jdbc/sarariman">
     DELETE FROM vacation
-    WHERE employee = ? AND begin = ? AND end = ?
-    <sql:param value="${user.number}"/>
-    <sql:param value="${param.begin}"/>
-    <sql:param value="${param.end}"/>
+    WHERE id = ?
+    <sql:param value="${param.id}"/>
 </sql:update>
 <c:redirect url="../#scheduledVacation"/>

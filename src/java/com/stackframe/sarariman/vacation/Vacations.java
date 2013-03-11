@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.vacation;
 
+import java.util.Map;
+
 /**
  *
  * @author mcculley
@@ -11,5 +13,7 @@ package com.stackframe.sarariman.vacation;
 public interface Vacations {
 
     VacationEntry get(int id);
+
+    Map<? extends Number, VacationEntry> getMap();
 
 }

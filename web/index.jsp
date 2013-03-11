@@ -449,13 +449,11 @@
                             - ${fn:escapeXml(comment)}
                         </c:if>
                         <form style="display:inline" method="GET" action="vacation/edit.jsp">
-                            <input type="hidden" name="begin" value="${begin}"/>
-                            <input type="hidden" name="end" value="${end}"/>
+                            <input type="hidden" name="id" value="${entry.id}"/>
                             <input type="submit" name="Edit" value="edit"/>
                         </form>
                         <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
-                            <input type="hidden" name="begin" value="${begin}"/>
-                            <input type="hidden" name="end" value="${end}"/>
+                            <input type="hidden" name="id" value="${entry.id}"/>
                             <input type="submit" name="Delete" value="delete"/>
                         </form>
                     </li>
