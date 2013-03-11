@@ -88,6 +88,10 @@
             Hourly pay rate: <fmt:formatNumber type="currency" value="${employee.directRate}"/><br/>
             <c:if test="${employee.fulltime}">
                 Salary: <fmt:formatNumber type="currency" value="${employee.directRate * 2080}"/><br/>
+                Vacation: <fmt:formatNumber type="currency" value="${employee.directRate * 10 * 8}"/><br/>
+                Sick: <fmt:formatNumber type="currency" value="${employee.directRate * 12 * 8}"/><br/>
+                Holiday: <fmt:formatNumber type="currency" value="${employee.directRate * 9 * 8}"/><br/>
+                Health Insurance: <fmt:formatNumber type="currency" value="${employee.monthlyHealthInsurancePremium * 12}"/><br/>
             </c:if>
             <ul>
                 <li>

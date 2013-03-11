@@ -552,6 +552,32 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    public BigDecimal getMonthlyHealthInsurancePremium() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT p.premium AS premium FROM insurance_membership AS m JOIN insurance_premium AS p ON m.plan = p.plan AND m.coverage = p.coverage AND m.begin <= DATE(NOW()) and (m.end IS NULL OR m.end >= DATE(NOW())) AND employee=?");
+                try {
+                    s.setInt(1, number);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        return r.getBigDecimal("premium");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

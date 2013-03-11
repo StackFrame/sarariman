@@ -81,4 +81,6 @@ public interface Employee extends Linkable {
 
     Iterable<Ticket> getUnclosedTickets();
 
+    BigDecimal getMonthlyHealthInsurancePremium();
+
 }
