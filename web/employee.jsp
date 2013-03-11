@@ -84,7 +84,11 @@
 
         <c:if test="${user == employee or user.administrator}">
             Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
-            Age: ${employee.age} <br/>
+            Age: ${employee.age}<br/>
+            Hourly pay rate: <fmt:formatNumber type="currency" value="${employee.directRate}"/><br/>
+            <c:if test="${employee.fulltime}">
+                Salary: <fmt:formatNumber type="currency" value="${employee.directRate * 2080}"/><br/>
+            </c:if>
             <ul>
                 <li>
                     <c:url var="myTicketsURL" value="tickets/">
