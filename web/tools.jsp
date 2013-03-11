@@ -56,6 +56,9 @@
                 <li><a href="unbilledservices">Unbilled Services</a></li>
                 <li><a href="expenses">Expenses</a></li>
             </c:if>
+            <c:if test="${user.benefitsAdministrator}">
+                <li><a href="healthInsuranceSummary.jsp">Current Health Insurance Summary</a></li>                
+            </c:if>
         </ul>
 
         <%@include file="footer.jsp" %>
