@@ -138,7 +138,7 @@ public class Sarariman implements ServletContextListener {
         return clients;
     }
 
-    public Collection<Employee> getAdministrators() {
+    private Collection<Employee> getAdministrators() {
         Predicate<Employee> isAdministrator = ReflectionUtils.predicateForProperty(Employee.class, "administrator");
         return Collections2.filter(directory.getByUserName().values(), isAdministrator);
     }
