@@ -82,7 +82,9 @@
                    onchange="this.form.submit();"/>
         </form>
 
-        <c:if test="${user.administrator}">
+        <c:if test="${user == employee or user.administrator}">
+            Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
+            Age: ${employee.age} <br/>
             <ul>
                 <li>
                     <c:url var="myTicketsURL" value="tickets/">
@@ -98,10 +100,9 @@
                     <a href="${PTOLink}">Paid Time Off</a>
                 </li>
             </ul>
+        </c:if>
 
-            Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
-            Age: ${employee.age} <br/>
-
+        <c:if test="${user.administrator}">
             <h2>Direct Rate</h2>
             <sql:query dataSource="jdbc/sarariman" var="resultSet">
                 SELECT rate, effective
