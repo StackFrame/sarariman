@@ -83,4 +83,6 @@ public interface Employee extends Linkable {
 
     BigDecimal getMonthlyHealthInsurancePremium();
 
+    // FIXME: Add gender
+    // FIXME: Add race
 }
