@@ -389,7 +389,12 @@ public class TaskImpl extends AbstractLinkable implements Task {
                     try {
                         boolean hasRow = r.first();
                         assert hasRow;
-                        return r.getBigDecimal("costTotal");
+                        BigDecimal costTotal = r.getBigDecimal("costTotal");
+                        if (costTotal == null) {
+                            return BigDecimal.ZERO;
+                        } else {
+                            return costTotal;
+                        }
                     } finally {
                         r.close();
                     }
