@@ -51,7 +51,10 @@
     <body onload="altRows()">
         <a href="tools">Tools</a>
 
-        <span style="float: right"><a href="${user.URL}">${user.userName}<img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a></span>
+        <span style="float: right">
+            <a href="${user.URL}">${user.userName}</a>
+            <a href="${user.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a>
+        </span>
         
         <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
 
