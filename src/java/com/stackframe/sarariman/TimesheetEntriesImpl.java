@@ -35,7 +35,7 @@ class TimesheetEntriesImpl implements TimesheetEntries {
     }
 
     public TimesheetEntry get(Task task, Employee employee, Date date) {
-        return new TimesheetEntryImpl(task, employee, date, dataSource, mountPoint + "editentry.jsp");
+        return new TimesheetEntryImpl(task, employee, date, dataSource, mountPoint + "editentry");
     }
 
     public Iterable<TimesheetEntry> getEntries(Range<Date> dateRange) {
