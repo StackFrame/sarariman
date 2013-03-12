@@ -32,16 +32,18 @@ public class TimesheetImpl implements Timesheet {
     private final Sarariman sarariman;
     private final int employeeNumber;
     private final Week week;
+    private final TimesheetEntries entries;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public TimesheetImpl(Sarariman sarariman, int employeeNumber, Week week) {
+    public TimesheetImpl(Sarariman sarariman, int employeeNumber, Week week, TimesheetEntries entries) {
         this.sarariman = sarariman;
         this.employeeNumber = employeeNumber;
         this.week = week;
+        this.entries = entries;
     }
 
     public static TimesheetImpl lookup(Sarariman sarariman, int employeeNumber, Week week) {
-        return new TimesheetImpl(sarariman, employeeNumber, week);
+        return new TimesheetImpl(sarariman, employeeNumber, week, sarariman.getTimesheetEntries());
     }
 
     @Override
@@ -159,7 +161,7 @@ public class TimesheetImpl implements Timesheet {
                     int task = resultSet.getInt("task");
                     Calendar calendar = (Calendar)week.getStart().clone();
                     calendar.setTime(date);
-                    TimesheetEntry entry = new TimesheetEntryImpl(sarariman.getDataSource(), sarariman.getTasks().get(task), employee, date);
+                    TimesheetEntry entry = entries.get(sarariman.getTasks().get(task), employee, date);
                     list.add(entry);
                 }
 

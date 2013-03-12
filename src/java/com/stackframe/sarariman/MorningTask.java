@@ -42,8 +42,8 @@ public class MorningTask extends TimerTask {
             if (!employee.active(convert(prevWeek.getStart().getTime()))) {
                 continue;
             }
-            
-            TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), prevWeek);
+
+            TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), prevWeek, sarariman.getTimesheetEntries());
             try {
                 if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
                     Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());

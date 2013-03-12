@@ -273,7 +273,7 @@ public class Sarariman implements ServletContextListener {
             clients = new ClientsImpl(getDataSource(), mountPoint);
             projects = new ProjectsImpl(getDataSource(), organizationHierarchy, directory, this);
             tasks = new TasksImpl(getDataSource(), getMountPoint(), projects);
-            timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory, tasks);
+            timesheetEntries = new TimesheetEntriesImpl(getDataSource(), directory, tasks, mountPoint);
             tickets = new TicketsImpl(getDataSource(), mountPoint);
             events = new EventsImpl(getDataSource(), mountPoint);
             vacations = new VacationsImpl(getDataSource(), directory);

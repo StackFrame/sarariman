@@ -7,10 +7,13 @@ package com.stackframe.sarariman;
 import com.stackframe.sarariman.tasks.Task;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.sql.DataSource;
 
@@ -18,18 +21,20 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class TimesheetEntryImpl implements TimesheetEntry {
+public class TimesheetEntryImpl extends AbstractLinkable implements TimesheetEntry {
 
     private final Task task;
     private final Employee employee;
     private final Date date;
     private final DataSource dataSource;
+    private final String servletPath;
 
-    public TimesheetEntryImpl(DataSource dataSource, Task task, Employee employee, Date date) {
-        this.dataSource = dataSource;
+    public TimesheetEntryImpl(Task task, Employee employee, Date date, DataSource dataSource, String servletPath) {
         this.task = task;
         this.employee = employee;
         this.date = date;
+        this.dataSource = dataSource;
+        this.servletPath = servletPath;
     }
 
     public Date getDate() {
@@ -135,6 +140,12 @@ public class TimesheetEntryImpl implements TimesheetEntry {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public URI getURI() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(date);
+        return URI.create(String.format("%s?task=%d&date=%s&employee=%d", servletPath, task.getId(), formattedDate, employee.getNumber()));
     }
 
     @Override

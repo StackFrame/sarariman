@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author mcculley
  */
-public interface TimesheetEntry {
+public interface TimesheetEntry extends Linkable {
 
     Task getTask();
 

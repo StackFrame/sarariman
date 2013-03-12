@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
+import com.stackframe.sarariman.tasks.Task;
 import java.util.Date;
 
 /**
@@ -12,6 +13,8 @@ import java.util.Date;
  * @author mcculley
  */
 public interface TimesheetEntries {
+
+    TimesheetEntry get(Task task, Employee employee, Date date);
 
     Iterable<TimesheetEntry> getEntries(Range<Date> dateRange);
 

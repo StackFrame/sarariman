@@ -255,15 +255,7 @@
                         </c:if>
                         <td>${entryDescription}</td>
                         <c:if test="${!timesheet.submitted}">
-                            <td>
-                                <c:url var="editLink" value="editentry">
-                                    <c:param name="task" value="${entry.task.id}"/>
-                                    <fmt:formatDate var="dateString" value='${entry.date}' type='date' pattern='yyyy-MM-dd'/>
-                                    <c:param name="date" value="${dateString}"/>
-                                    <c:param name="employee" value="${employeeNumber}"/>
-                                </c:url>
-                                <a href="${fn:escapeXml(editLink)}">Edit</a>
-                            </td>
+                            <td><a href="${fn:escapeXml(entry.URL)}">Edit</a></td>
                         </c:if>
                         <c:set var="totalHours" value="${totalHours + entry.duration}"/>
                         <c:choose>
