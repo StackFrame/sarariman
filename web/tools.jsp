@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2012 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -16,6 +16,7 @@
     </head>
 
     <body>
+        <span style="float: right"><a href="${user.URL}">${user.userName}<img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a></span>
         <ul>
             <li><a href="./">Home</a></li>
             <li><a href="help.xhtml">Help</a></li>
