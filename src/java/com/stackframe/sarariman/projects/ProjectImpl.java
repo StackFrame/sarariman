@@ -858,4 +858,26 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + this.id;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProjectImpl other = (ProjectImpl)obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+
 }
