@@ -92,51 +92,55 @@
         <table class="altrows" id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${employee.timesheets[week].entries}">
-                <c:if test="${user.administrator || user.invoiceManager || (!empty project && sarariman:isManager(user, project)) || sarariman:contains(user.reports, employee)}">
-                    <tr>
-                        <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
-                        <td class="date">${entryDate}</td>
-                        <c:set var="task" value="${entry.task}"/>
-                        <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
-                        <td class="task"><a href="${task.URL}">${task.id}</a></td>
-                        <c:set var="customer" value="${task.project.client}"/>
-                        <c:url var="projectLink" value="project">
-                            <c:param name="id" value="${task.project.id}"/>
-                        </c:url>
-                        <td>
-                            <c:if test="${!empty task.project}">
-                                <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(task.project.name)}</a>
-                            </c:if>
-                        </td>
-                        <c:url var="customerLink" value="customer">
-                            <c:param name="id" value="${task.project.client.id}"/>
-                        </c:url>
-                        <td>
-                            <c:if test="${!empty customer}">
-                                <a href="${fn:escapeXml(customerLink)}">${fn:escapeXml(customer.name)}</a>
-                            </c:if>
-                        </td>
+                <c:if test="${user.administrator ||
+                              user.invoiceManager ||
+                              (!empty entry.task.project && (sarariman:isManager(user, entry.task.project) ||
+                              sarariman:contains(user.projectsAdministrativelyAssisting, entry.task.project))) ||
+                              sarariman:contains(user.reports, employee)}">
+                      <tr>
+                          <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
+                          <td class="date">${entryDate}</td>
+                          <c:set var="task" value="${entry.task}"/>
+                          <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
+                          <td class="task"><a href="${task.URL}">${task.id}</a></td>
+                          <c:set var="customer" value="${task.project.client}"/>
+                          <c:url var="projectLink" value="project">
+                              <c:param name="id" value="${task.project.id}"/>
+                          </c:url>
+                          <td>
+                              <c:if test="${!empty task.project}">
+                                  <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(task.project.name)}</a>
+                              </c:if>
+                          </td>
+                          <c:url var="customerLink" value="customer">
+                              <c:param name="id" value="${task.project.client.id}"/>
+                          </c:url>
+                          <td>
+                              <c:if test="${!empty customer}">
+                                  <a href="${fn:escapeXml(customerLink)}">${fn:escapeXml(customer.name)}</a>
+                              </c:if>
+                          </td>
 
-                        <c:choose>
-                            <%-- FIXME: This needs to look this up somewhere. --%>
-                            <c:when test="${entry.task.id == 5}">
-                                <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
-                            </c:when>
-                            <c:when test="${entry.task.id == 4}">
-                                <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
-                                <c:if test="${!entry.task.billable}">
-                                    <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
-                                </c:if>
-                            </c:otherwise>
-                        </c:choose>
+                          <c:choose>
+                              <%-- FIXME: This needs to look this up somewhere. --%>
+                              <c:when test="${entry.task.id == 5}">
+                                  <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
+                              </c:when>
+                              <c:when test="${entry.task.id == 4}">
+                                  <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
+                              </c:when>
+                              <c:otherwise>
+                                  <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
+                                  <c:if test="${!entry.task.billable}">
+                                      <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
+                                  </c:if>
+                              </c:otherwise>
+                          </c:choose>
 
-                        <td class="duration">${entry.duration}</td>
-                        <td>${entry.description}</td>
-                        <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
-                    </tr>
+                          <td class="duration">${entry.duration}</td>
+                          <td>${entry.description}</td>
+                          <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
+                      </tr>
                 </c:if>
             </c:forEach>
             <tr>
@@ -187,6 +191,7 @@
                 <tr><th>Client</th><th>Project</th><th>Hours</th></tr>
                 <c:forEach var="entry" items="${customerEntries.rows}">
                     <c:set var="customer" value="${sarariman.clients.map[entry.id]}"/>
+                    <!-- FIXME: Ditch SQL and do proper access checking using administrative assistant code. -->
                     <c:if test="${user.administrator || user.invoiceManager || sarariman:contains(user.reports, employee)}">
                         <sql:query dataSource="jdbc/sarariman" var="projectEntries">
                             SELECT DISTINCT(projects.id)
