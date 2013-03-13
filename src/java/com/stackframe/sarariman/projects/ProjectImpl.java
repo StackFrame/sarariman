@@ -880,4 +880,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return Integer.toString(id);
+    }
+
 }
