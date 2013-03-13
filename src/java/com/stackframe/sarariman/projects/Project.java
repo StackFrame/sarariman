@@ -9,6 +9,7 @@ import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.LineItem;
 import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.PeriodOfPerformance;
+import com.stackframe.sarariman.Week;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
@@ -82,6 +83,8 @@ public interface Project extends Linkable {
     Collection<Task> getTasks();
 
     Iterable<Employee> getAdministrativeAssistants();
+
+    Iterable<Week> getWorkedWeeks();
 
     void delete();
 

@@ -86,6 +86,28 @@ public class Week implements Comparable<Week> {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + (this.start != null ? this.start.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Week other = (Week)obj;
+        if (this.start != other.start && (this.start == null || !this.start.equals(other.start))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         return getName();
     }

@@ -7,6 +7,7 @@ package com.stackframe.sarariman.projects;
 import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Audit;
+import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.LineItem;
@@ -16,6 +17,7 @@ import com.stackframe.sarariman.ProjectFundingAudit;
 import com.stackframe.sarariman.ProjectLineItemAudit;
 import com.stackframe.sarariman.ProjectOrgChartAudit;
 import com.stackframe.sarariman.ProjectPeriodOfPerformanceAudit;
+import com.stackframe.sarariman.Week;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.tasks.Task;
@@ -30,6 +32,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 import javax.sql.DataSource;
 
@@ -651,13 +655,13 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal "
-                        + "FROM hours AS h "
-                        + "JOIN tasks AS t on h.task = t.id "
-                        + "JOIN projects AS p on p.id = t.project "
-                        + "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) "
-                        + "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)"
-                        + "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0");
+                PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                        "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)" +
+                        "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0");
                 try {
                     s.setInt(1, id);
                     ResultSet r = s.executeQuery();
@@ -683,13 +687,13 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date "
-                        + "FROM hours AS h "
-                        + "JOIN tasks AS t on h.task = t.id "
-                        + "JOIN projects AS p on p.id = t.project "
-                        + "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) "
-                        + "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) "
-                        + "WHERE p.id = ? AND t.billable = TRUE;");
+                PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                        "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) " +
+                        "WHERE p.id = ? AND t.billable = TRUE;");
                 try {
                     ps.setLong(1, id);
                     ResultSet rs = ps.executeQuery();
@@ -726,9 +730,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id "
-                        + "FROM tasks AS t "
-                        + "WHERE t.project = ?");
+                PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id " +
+                        "FROM tasks AS t " +
+                        "WHERE t.project = ?");
                 ps.setInt(1, id);
                 try {
                     ResultSet resultSet = ps.executeQuery();
@@ -758,9 +762,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement ps = connection.prepareStatement("SELECT assistant "
-                        + "FROM project_administrative_assistants "
-                        + "WHERE project = ?");
+                PreparedStatement ps = connection.prepareStatement("SELECT assistant " +
+                        "FROM project_administrative_assistants " +
+                        "WHERE project = ?");
                 ps.setInt(1, id);
                 try {
                     ResultSet resultSet = ps.executeQuery();
@@ -788,6 +792,52 @@ public class ProjectImpl extends AbstractLinkable implements Project {
 
     public URI getURI() {
         return URI.create(String.format("%s?id=%d", servletPath, id));
+    }
+
+    private Collection<Date> getWorkedDates() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT DISTINCT(h.date) " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t ON h.task = t.id " +
+                        "JOIN projects AS p ON p.id = t.project " +
+                        "WHERE project = ?");
+                ps.setInt(1, id);
+                try {
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
+                        while (resultSet.next()) {
+                            Date date = resultSet.getDate("date");
+                            listBuilder.add(date);
+                        }
+
+                        return listBuilder.build();
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Iterable<Week> getWorkedWeeks() {
+        Set<Week> weeks = new TreeSet<Week>();
+        Collection<Date> dates = getWorkedDates();
+        for (Date date : dates) {
+            Week week = DateUtils.week(date);
+            weeks.add(week);
+        }
+
+        return weeks;
     }
 
     public void delete() {
