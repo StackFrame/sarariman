@@ -161,28 +161,25 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                         "SELECT pm.project "
                         + "FROM project_managers AS pm "
                         + "JOIN projects AS p ON pm.project = p.id "
-                        + "WHERE pm.employee = ? AND "
+                        + "WHERE pm.employee = @employee AND "
                         + "p.active = TRUE "
                         + "UNION "
                         + "SELECT pm.project "
                         + "FROM project_cost_managers AS pm "
                         + "JOIN projects AS p ON pm.project = p.id "
-                        + "WHERE pm.employee = ? AND "
+                        + "WHERE pm.employee = @employee AND "
                         + "p.active = TRUE "
                         + "UNION "
                         + "SELECT DISTINCT(p.id) AS project "
                         + "FROM projects AS p "
                         + "JOIN tasks AS t ON t.project = p.id "
                         + "JOIN task_assignments AS ta ON ta.task=t.id "
-                        + "WHERE ta.employee = ? AND "
+                        + "WHERE ta.employee = @employee AND "
                         + "p.active = TRUE "
                         + "UNION "
-                        + "SELECT project FROM project_administrative_assistants WHERE assistant = ?");
+                        + "SELECT project FROM project_administrative_assistants WHERE assistant = @employee");
                 try {
-                    s.setInt(1, number);
-                    s.setInt(2, number);
-                    s.setInt(3, number);
-                    s.setInt(4, number);
+                    s.execute(String.format("SET @employee = %d", number));
                     ResultSet rs = s.executeQuery();
                     try {
                         Collection<Project> c = new ArrayList<Project>();
