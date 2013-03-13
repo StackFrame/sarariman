@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import javax.mail.internet.InternetAddress;
 import org.joda.time.LocalDate;
@@ -55,6 +56,10 @@ public interface Employee extends Linkable {
     String getDisplayName();
 
     SortedSet<Employee> getReports();
+
+    Set<Project> getProjectsAdministrativelyAssisting();
+
+    Set<Project> getCurrentlyAssignedProjects();
 
     Iterable<Project> getRelatedProjects();
 

@@ -30,8 +30,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -142,6 +144,73 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                     s.setInt(2, number);
                     int rowCount = s.executeUpdate();
                     assert rowCount == 1;
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Set<Project> getCurrentlyAssignedProjects() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT DISTINCT(p.id) AS project " +
+                        "FROM projects AS p " +
+                        "JOIN tasks AS t ON t.project = p.id " +
+                        "JOIN task_assignments AS ta ON ta.task = t.id " +
+                        "WHERE ta.employee = ? AND " +
+                        "p.active = TRUE ");
+                try {
+                    s.setInt(1, number);
+                    ResultSet rs = s.executeQuery();
+                    try {
+                        Set<Project> c = new HashSet<Project>();
+                        while (rs.next()) {
+                            int project_id = rs.getInt("project");
+                            c.add(sarariman.getProjects().get(project_id));
+                        }
+                        return c;
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Set<Project> getProjectsAdministrativelyAssisting() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT project " +
+                        "FROM project_administrative_assistants " +
+                        "WHERE assistant = ?");
+                try {
+                    s.setInt(1, number);
+                    ResultSet rs = s.executeQuery();
+                    try {
+                        Set<Project> c = new HashSet<Project>();
+                        while (rs.next()) {
+                            int project_id = rs.getInt("project");
+                            c.add(sarariman.getProjects().get(project_id));
+                        }
+                        return c;
+                    } finally {
+                        rs.close();
+                    }
                 } finally {
                     s.close();
                 }

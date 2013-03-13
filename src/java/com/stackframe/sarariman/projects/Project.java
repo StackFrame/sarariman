@@ -15,6 +15,7 @@ import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  *
@@ -83,6 +84,8 @@ public interface Project extends Linkable {
     Collection<Task> getTasks();
 
     Iterable<Employee> getAdministrativeAssistants();
+
+    Set<Employee> getCurrentlyAssigned();
 
     Iterable<Week> getWorkedWeeks();
 

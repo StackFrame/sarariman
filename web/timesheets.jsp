@@ -3,7 +3,13 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page import="java.util.Collection,com.stackframe.sarariman.Sarariman,com.stackframe.sarariman.Employee"%>
+<%@page import="java.util.Collection"%>
+<%@page import="java.util.HashSet"%>
+<%@page import="java.util.Set"%>
+<%@page import="com.stackframe.sarariman.Directory"%>
+<%@page import="com.stackframe.sarariman.Employee"%>
+<%@page import="com.stackframe.sarariman.projects.Project"%>
+<%@page import="com.stackframe.sarariman.Sarariman"%>
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -68,13 +74,20 @@
             boolean showInactive = showInactiveParam != null && showInactiveParam.equals("on");
             Collection<Integer> reports = sarariman.getOrganizationHierarchy().getReports(user.getNumber(), showInactive);
             pageContext.setAttribute("reports", reports);
+
+            Set<Project> projectsAssisting = user.getProjectsAdministrativelyAssisting();
+            Set<Employee> administrativelyAssisting = new HashSet<Employee>();
+            pageContext.setAttribute("administrativelyAssisting", administrativelyAssisting);
+            for (Project project : projectsAssisting) {
+                administrativelyAssisting.addAll(project.getCurrentlyAssigned());
+            }
         %>
 
         <table class="altrows" id="timesheets">
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>On Time</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>
-                <c:if test="${(employee.active || param.showInactive == 'on') && sarariman:contains(reports, employee.number)}">
+                <c:if test="${(employee.active || param.showInactive == 'on') && (sarariman:contains(reports, employee.number) or sarariman:contains(administrativelyAssisting, employee))}">
                     <tr>
                         <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
                         <c:set var="PTO" value="${timesheet.PTOHours}"/>
