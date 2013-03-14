@@ -68,7 +68,7 @@
             </tr>
             <c:forEach var="entry" items="${entries}">
                 <tr>
-                    <td class="date"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></td>
+                    <td class="date"><a href="${fn:escapeXml(entry.URL)}"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></a></td>
                     <td>
                         <a href="${entry.employee.URL}">${entry.employee.displayName}</a>
                         <a href="${entry.employee.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${entry.employee.photoURL}"/></a>
@@ -88,7 +88,7 @@
                             </td>
                         </c:otherwise>
                     </c:choose>
-                    <td>${entry.description}</td>
+                    <td><a href="${fn:escapeXml(entry.URL)}">${entry.description}</a></td>
                 </tr>
             </c:forEach>
         </table>
