@@ -35,7 +35,7 @@ public class OrgChartGlobalAudit implements Audit {
         return c;
     }
 
-    private Collection<AuditResult> checkGlobal() {
+    public Collection<AuditResult> getResults() {
         ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
         Collection<Employee> activeFulltimeEmployees = Collections2.filter(sarariman.getDirectory().getByUserName().values(), Utilities.activeFulltime);
         OrganizationHierarchy organizationHierarchy = sarariman.getOrganizationHierarchy();
@@ -47,10 +47,6 @@ public class OrgChartGlobalAudit implements Audit {
         }
 
         return listBuilder.build();
-    }
-
-    public Collection<AuditResult> getResults() {
-        return ImmutableList.copyOf(checkGlobal());
     }
 
 }
