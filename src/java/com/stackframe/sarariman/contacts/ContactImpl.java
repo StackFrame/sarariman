@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.contacts;
 
+import com.stackframe.sarariman.AbstractLinkable;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,14 +16,16 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-class ContactImpl implements Contact {
+class ContactImpl extends AbstractLinkable implements Contact {
 
     private final int id;
     private final DataSource dataSource;
+    private final String servletPath;
 
-    public ContactImpl(int id, DataSource dataSource) {
+    public ContactImpl(int id, DataSource dataSource, String servletPath) {
         this.id = id;
         this.dataSource = dataSource;
+        this.servletPath = servletPath;
     }
 
     public int getId() {
@@ -50,6 +54,10 @@ class ContactImpl implements Contact {
         } finally {
             connection.close();
         }
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%s?id=%d", servletPath, id));
     }
 
 }

@@ -42,7 +42,7 @@ public class OrgChartGlobalAudit implements Audit {
         Collection<Integer> employeesInOrgChart = employeesInOrgChart(organizationHierarchy.getOrgChart());
         for (Employee employee : activeFulltimeEmployees) {
             if (!employeesInOrgChart.contains(employee.getNumber())) {
-                listBuilder.add(new AuditResult(AuditResultType.error, String.format("%s is not in org chart", employee.getDisplayName())));
+                listBuilder.add(new AuditResult(AuditResultType.error, String.format("%s is not in org chart", employee.getDisplayName()), employee.getURL()));
             }
         }
 

@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.projects.Projects;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,12 +62,13 @@ public class ProjectLineItemAudit implements Audit {
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         try {
-            Collection<LineItem> lineItems = projects.get(project).getLineItems();
+            Project p = projects.get(project);
+            Collection<LineItem> lineItems = p.getLineItems();
             boolean hasLineItems = !lineItems.isEmpty();
             if (hasLineItems) {
                 Collection<Integer> tasksWithNoLineItem = tasksWithNoLineItem();
                 for (int task : tasksWithNoLineItem) {
-                    c.add(new AuditResult(AuditResultType.error, String.format("task %d has no line item", task)));
+                    c.add(new AuditResult(AuditResultType.error, String.format("task %d has no line item", task), p.getURL()));
                 }
             }
         } catch (SQLException e) {

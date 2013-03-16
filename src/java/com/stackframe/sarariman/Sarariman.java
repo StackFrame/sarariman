@@ -10,6 +10,8 @@ import com.google.common.collect.Collections2;
 import com.stackframe.reflect.ReflectionUtils;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.clients.ClientsImpl;
+import com.stackframe.sarariman.contacts.Contacts;
+import com.stackframe.sarariman.contacts.ContactsImpl;
 import com.stackframe.sarariman.events.Events;
 import com.stackframe.sarariman.events.EventsImpl;
 import com.stackframe.sarariman.holidays.Holidays;
@@ -70,6 +72,7 @@ public class Sarariman implements ServletContextListener {
     private Events events;
     private Vacations vacations;
     private OutOfOfficeEntries outOfOffice;
+    private Contacts contacts;
 
     public String getVersion() {
         return Version.version;
@@ -192,7 +195,7 @@ public class Sarariman implements ServletContextListener {
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
-        c.add(new ContactsGlobalAudit(this));
+        c.add(new ContactsGlobalAudit(getDataSource(), contacts));
         c.add(new ProjectAdministrativeAssistantGlobalAudit(this));
         c.add(new DirectRateAudit(directory));
         return c;
@@ -251,6 +254,10 @@ public class Sarariman implements ServletContextListener {
         return outOfOffice;
     }
 
+    public Contacts getContacts() {
+        return contacts;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -279,6 +286,7 @@ public class Sarariman implements ServletContextListener {
             events = new EventsImpl(getDataSource(), mountPoint);
             vacations = new VacationsImpl(getDataSource(), directory);
             outOfOffice = new OutOfOfficeEntriesImpl(getDataSource(), directory);
+            contacts = new ContactsImpl(getDataSource(), mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

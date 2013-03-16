@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
+import com.stackframe.sarariman.projects.Project;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,7 +46,8 @@ public class ProjectAdministrativeAssistantGlobalAudit implements Audit {
                         ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
                         while (r.next()) {
                             int project = r.getInt("project");
-                            AuditResult auditResult = new AuditResult(AuditResultType.error, String.format("project %d has no administrative assistants", project));
+                            Project p = sarariman.getProjects().get(project);
+                            AuditResult auditResult = new AuditResult(AuditResultType.error, String.format("project %d has no administrative assistants", project), p.getURL());
                             listBuilder.add(auditResult);
                         }
 

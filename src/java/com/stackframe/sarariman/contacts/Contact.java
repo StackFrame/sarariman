@@ -4,13 +4,14 @@
  */
 package com.stackframe.sarariman.contacts;
 
+import com.stackframe.sarariman.Linkable;
 import java.sql.SQLException;
 
 /**
  *
  * @author mcculley
  */
-public interface Contact {
+public interface Contact extends Linkable {
 
     int getId();
 

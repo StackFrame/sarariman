@@ -100,7 +100,7 @@
                         ${audit.displayName}
                         <ol>
                             <c:forEach var="auditResult" items="${auditResults}">
-                                <li class="error">${auditResult.message}</li>
+                                <li class="error"><a href="${auditResult.URL}">${auditResult.message}</a></li>
                             </c:forEach>
                         </ol>
                     </li>

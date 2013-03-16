@@ -55,7 +55,7 @@
             <a href="${user.URL}">${user.userName}</a>
             <a href="${user.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a>
         </span>
-        
+
         <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
 
         <p>
@@ -80,7 +80,7 @@
                                     ${audit.displayName}
                                     <ol>
                                         <c:forEach var="result" items="${auditResults}">
-                                            <li class="error">${result.type}: ${result.message}</li>
+                                            <li class="error"><a href="${result.URL}">${result.type}: ${result.message}</a></li>
                                         </c:forEach>
                                     </ol>
                                 </li>
@@ -107,13 +107,13 @@
                                             <li>
                                                 <c:choose>
                                                     <c:when test="${fn:length(auditResults) == 1}">
-                                                        <span class="error">${auditResults[0].message}</span>
+                                                        <span class="error"><a href="${auditResults[0].URL}">${auditResults[0].message}</a></span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         ${audit.displayName}
                                                         <ol>
                                                             <c:forEach var="result" items="${auditResults}">
-                                                                <li class="error">${result.message}</li>
+                                                                <li class="error"><a href="${result.URL}">${result.message}</a></li>
                                                             </c:forEach>
                                                         </ol>
                                                     </c:otherwise>

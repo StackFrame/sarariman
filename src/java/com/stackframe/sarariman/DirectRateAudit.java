@@ -31,7 +31,7 @@ public class DirectRateAudit implements Audit {
         for (Employee e : activeEmployees) {
             BigDecimal directRate = e.getDirectRate();
             if (directRate == null) {
-                c.add(new AuditResult(AuditResultType.error, String.format("%s (%d) has no current direct rate", e.getDisplayName(), e.getNumber())));
+                c.add(new AuditResult(AuditResultType.error, String.format("%s (%d) has no current direct rate", e.getDisplayName(), e.getNumber()), e.getURL()));
             }
         }
 

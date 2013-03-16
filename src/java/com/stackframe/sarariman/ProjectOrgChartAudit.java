@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.projects.Project;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -21,12 +22,12 @@ import javax.sql.DataSource;
  */
 public class ProjectOrgChartAudit implements Audit {
 
-    private final int project;
+    private final Project project;
     private final DataSource dataSource;
     private final OrganizationHierarchy organizationHierarchy;
     private final Directory directory;
 
-    public ProjectOrgChartAudit(int project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
+    public ProjectOrgChartAudit(Project project, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory) {
         this.project = project;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -42,16 +43,16 @@ public class ProjectOrgChartAudit implements Audit {
             Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement p = connection.prepareStatement(
-                        "SELECT project_managers.employee AS manager, hours.employee, hours.date "
-                        + "FROM hours "
-                        + "JOIN tasks ON hours.task = tasks.id "
-                        + "JOIN project_managers ON project_managers.project = tasks.project "
-                        + "WHERE hours.date >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND tasks.project = ? "
-                        + "AND project_managers.employee != hours.employee "
-                        + "AND hours.employee NOT IN (SELECT employee FROM project_managers WHERE project = ?)");
+                        "SELECT project_managers.employee AS manager, hours.employee, hours.date " +
+                        "FROM hours " +
+                        "JOIN tasks ON hours.task = tasks.id " +
+                        "JOIN project_managers ON project_managers.project = tasks.project " +
+                        "WHERE hours.date >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND tasks.project = ? " +
+                        "AND project_managers.employee != hours.employee " +
+                        "AND hours.employee NOT IN (SELECT employee FROM project_managers WHERE project = ?)");
                 try {
-                    p.setInt(1, project);
-                    p.setInt(2, project);
+                    p.setInt(1, project.getId());
+                    p.setInt(2, project.getId());
                     ResultSet rs = p.executeQuery();
                     try {
                         Set<Integer> missing = new HashSet<Integer>();
@@ -70,7 +71,7 @@ public class ProjectOrgChartAudit implements Audit {
                         Collection<AuditResult> results = new ArrayList<AuditResult>();
                         for (Integer employee : missing) {
                             String name = directory.getByNumber().get(employee).getDisplayName();
-                            AuditResult result = new AuditResult(AuditResultType.error, String.format("%s is not in org chart under a manager of this project", name));
+                            AuditResult result = new AuditResult(AuditResultType.error, String.format("%s is not in org chart under a manager of this project", name), project.getURL());
                             results.add(result);
                         }
 

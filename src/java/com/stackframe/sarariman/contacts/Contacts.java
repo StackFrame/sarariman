@@ -13,6 +13,8 @@ import java.util.Collection;
  */
 public interface Contacts {
 
-    Collection<Contact> getAll() throws SQLException;
+    Contact get(int id);
+
+    Collection<Contact> getAll();
 
 }

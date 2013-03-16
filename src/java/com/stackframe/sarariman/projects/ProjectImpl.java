@@ -644,7 +644,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     
     public Collection<Audit> getAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
-        c.add(new ProjectOrgChartAudit(id, dataSource, organizationHierarchy, directory));
+        c.add(new ProjectOrgChartAudit(this, dataSource, organizationHierarchy, directory));
         c.add(new ProjectPeriodOfPerformanceAudit(id, projects));
         c.add(new ProjectFundingAudit(id, projects));
         c.add(new ProjectLineItemAudit(id, dataSource, projects));

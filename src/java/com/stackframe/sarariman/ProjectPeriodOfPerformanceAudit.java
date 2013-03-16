@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.projects.Projects;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +31,10 @@ public class ProjectPeriodOfPerformanceAudit implements Audit {
     public Collection<AuditResult> getResults() {
         Collection<AuditResult> c = new ArrayList<AuditResult>();
         Date now = new Date();
-        Date PoPEnd = projects.get(project).getPoP().getEnd();
+        Project p = projects.get(project);
+        Date PoPEnd = p.getPoP().getEnd();
         if (now.compareTo(PoPEnd) > 0) {
-            c.add(new AuditResult(AuditResultType.error, "beyond period of performance"));
+            c.add(new AuditResult(AuditResultType.error, "beyond period of performance", p.getURL()));
         }
 
         return c;

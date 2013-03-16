@@ -19,32 +19,42 @@ import javax.sql.DataSource;
 public class ContactsImpl implements Contacts {
 
     private final DataSource dataSource;
+    private final String mountPoint;
 
-    public ContactsImpl(DataSource dataSource) {
+    public ContactsImpl(DataSource dataSource, String mountPoint) {
         this.dataSource = dataSource;
+        this.mountPoint = mountPoint;
     }
 
-    public Collection<Contact> getAll() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        try {
-            PreparedStatement query = connection.prepareStatement("SELECT id FROM contacts");
-            try {
-                ResultSet resultSet = query.executeQuery();
-                try {
-                    Collection<Contact> result = new ArrayList<Contact>();
-                    while (resultSet.next()) {
-                        result.add(new ContactImpl(resultSet.getInt("id"), dataSource));
-                    }
+    public Contact get(int id) {
+        return new ContactImpl(id, dataSource, mountPoint + "contact");
+    }
 
-                    return result;
+    public Collection<Contact> getAll() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT id FROM contacts");
+                try {
+                    ResultSet resultSet = query.executeQuery();
+                    try {
+                        Collection<Contact> result = new ArrayList<Contact>();
+                        while (resultSet.next()) {
+                            result.add(get(resultSet.getInt("id")));
+                        }
+
+                        return result;
+                    } finally {
+                        resultSet.close();
+                    }
                 } finally {
-                    resultSet.close();
+                    query.close();
                 }
             } finally {
-                query.close();
+                connection.close();
             }
-        } finally {
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

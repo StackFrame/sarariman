@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.stackframe.sarariman.contacts.Contact;
 import com.stackframe.sarariman.contacts.Contacts;
-import com.stackframe.sarariman.contacts.ContactsImpl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.sql.DataSource;
 
 /**
  *
@@ -24,10 +24,12 @@ import java.util.Set;
  */
 public class ContactsGlobalAudit implements Audit {
 
-    private final Sarariman sarariman;
+    private final DataSource dataSource;
+    private final Contacts contacts;
 
-    public ContactsGlobalAudit(Sarariman sarariman) {
-        this.sarariman = sarariman;
+    public ContactsGlobalAudit(DataSource dataSource, Contacts contacts) {
+        this.dataSource = dataSource;
+        this.contacts = contacts;
     }
 
     public String getDisplayName() {
@@ -35,7 +37,7 @@ public class ContactsGlobalAudit implements Audit {
     }
 
     private Set<Integer> projectTimesheetContacts() throws SQLException {
-        Connection connection = sarariman.getDataSource().getConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_timesheet_contacts");
             try {
@@ -55,7 +57,7 @@ public class ContactsGlobalAudit implements Audit {
     }
 
     private Set<Integer> projectInvoiceContacts() throws SQLException {
-        Connection connection = sarariman.getDataSource().getConnection();
+        Connection connection = dataSource.getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_invoice_contacts");
             try {
@@ -75,12 +77,11 @@ public class ContactsGlobalAudit implements Audit {
     }
 
     private Collection<Contact> orphanedContacts() throws SQLException {
-        Contacts contacts = new ContactsImpl(sarariman.getDataSource());
         Map<Integer, Contact> map = new HashMap<Integer, Contact>();
         for (Contact contact : contacts.getAll()) {
             map.put(contact.getId(), contact);
         }
-        
+
         Set<Integer> keys = map.keySet();
         keys.removeAll(projectTimesheetContacts());
         keys.removeAll(projectInvoiceContacts());
@@ -92,7 +93,7 @@ public class ContactsGlobalAudit implements Audit {
             Collection<Contact> orphanedContacts = orphanedContacts();
             ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
             for (Contact contact : orphanedContacts) {
-                listBuilder.add(new AuditResult(AuditResultType.warning, String.format("%s is an orphaned contact", contact.getName())));
+                listBuilder.add(new AuditResult(AuditResultType.warning, String.format("%s is an orphaned contact", contact.getName()), contact.getURL()));
             }
 
             return listBuilder.build();
