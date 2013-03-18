@@ -64,7 +64,7 @@ public class ProjectController extends HttpServlet {
             switch (action) {
                 case create:
                     pop_start = convert(dateFormat.parse(request.getParameter("pop_start")));
-                    pop_end = convert(dateFormat.parse(request.getParameter("pop_start")));
+                    pop_end = convert(dateFormat.parse(request.getParameter("pop_end")));
                     project = sarariman.getProjects().create(name, Long.parseLong(request.getParameter("customer")), pop_start, pop_end,
                             null, null, new BigDecimal(0), new BigDecimal(0), 0, new BigDecimal(0), true, null);
                     id = project.getId();
