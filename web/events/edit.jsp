@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2012 StackFrame, LLC
+  Copyright (C) 2012-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -11,6 +11,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <link href="../style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
         <title>Edit Event</title>
 

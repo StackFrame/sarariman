@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2012 StackFrame, LLC
+  Copyright (C) 2012-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -13,6 +13,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>PTO Balance</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>

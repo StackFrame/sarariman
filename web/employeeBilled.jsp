@@ -23,6 +23,7 @@
     <c:set var="employee" value="${directory.byNumber[param.employee]}"/>
 
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Billing Report for ${employee.fullName} for the week of ${param.week}</title>
     </head>
