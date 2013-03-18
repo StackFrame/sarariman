@@ -36,15 +36,15 @@
             <tr><th>ID</th><th>Name</th>
                 <c:if test="${user.administrator}"><th>Action</th></c:if>
             </tr>
-            <c:forEach var="entry" items="${sarariman.customers}">
+            <c:forEach var="client" items="${sarariman.clients.all}">
                 <tr>
-                    <td><a href="customer?id=${entry.key}">${entry.key}</a></td>
-                    <td><a href="customer?id=${entry.key}">${fn:escapeXml(entry.value.name)}</a></td>
+                    <td><a href="customer?id=${client.id}">${client.id}</a></td>
+                    <td><a href="customer?id=${client.id}">${fn:escapeXml(client.name)}</a></td>
                     <c:if test="${user.administrator}">
                         <td>
                             <form method="POST" action="customerController">
                                 <input type="hidden" name="action" value="delete"/>
-                                <input type="hidden" name="id" value="${entry.key}"/>
+                                <input type="hidden" name="id" value="${client.id}"/>
                                 <input type="submit" name="delete" value="Delete"/>
                             </form>
                         </td>
