@@ -21,6 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced time for ${fn:escapeXml(project.client.name)} - ${fn:escapeXml(project.name)}</title>
         <script type="text/javascript" src="utilities.js"/>
