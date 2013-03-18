@@ -14,9 +14,8 @@
     <head>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
         <title>SAIC Tasks</title>
-        <script type="text/javascript" src="../utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="../header.jsp" %>
 
         <!-- FIXME: Get customer id out of config or look it up or something. -->
@@ -46,7 +45,7 @@
         </form>
 
         <h2>Tasks</h2>
-        <table class="altrows" id="tasks">
+        <table id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Charge Number</th><th>Line Item</th></tr>
             <c:forEach var="task" items="${tasks.rows}">
                 <c:if test="${task.task != null}">

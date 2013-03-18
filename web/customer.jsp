@@ -18,9 +18,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Customer ${customer.id}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Customer ${customer.id}</h1>
@@ -33,7 +32,7 @@
         </form>
 
         <h2>Projects</h2>
-        <table class="altrows" id="projects">
+        <table id="projects">
             <tr><th>ID</th><th>Name</th></tr>
             <c:forEach var="entry" items="${sarariman.projects}">
                 <c:if test="${entry.value.customer == customer.id}">

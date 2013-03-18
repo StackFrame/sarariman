@@ -21,9 +21,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Changelog</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:set var="start" value="${param.start}"/>
@@ -58,7 +57,7 @@
             <sql:param value="${end}"/>
             <sql:param value="${maxRows}"/>
         </sql:query>
-        <table class="altrows" id="entries">
+        <table id="entries">
             <tr><th>Timestamp</th><th>Date</th><th>Task #</th><th>Duration</th><th>Employee</th><th>Remote Address</th><th>Remote User</th><th>Reason</th><th></th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>

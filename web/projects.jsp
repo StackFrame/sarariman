@@ -17,9 +17,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Projects</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Projects</h1>
@@ -47,7 +46,7 @@
         </form>
         <br/>
 
-        <table class="altrows" id="projects">
+        <table id="projects">
             <tr><th>ID</th><th>Name</th><th>Customer</th>
                 <c:if test="${user.administrator}"><th>Action</th></c:if>
             </tr>

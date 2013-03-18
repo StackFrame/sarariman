@@ -32,10 +32,9 @@
             }
         </style>
         <title>${employee.fullName}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:choose>
@@ -90,7 +89,7 @@
         <c:set var="totalUnbillable" value="0.0"/>
         <c:set var="totalPTO" value="0.0"/>
         <c:set var="totalHoliday" value="0.0"/>
-        <table class="altrows" id="timesheet">
+        <table id="timesheet">
             <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
             <c:forEach var="entry" items="${employee.timesheets[week].entries}">
                 <c:if test="${user.administrator ||
@@ -187,7 +186,7 @@
             <!-- FIXME: Add totals by task. -->
             <!-- FIXME: Add totals by line item. -->
 
-            <table class="altrows" id="summary">
+            <table id="summary">
                 <caption>Summary</caption>
                 <tr><th>Client</th><th>Project</th><th>Hours</th></tr>
                 <c:forEach var="entry" items="${customerEntries.rows}">
@@ -295,7 +294,7 @@
                     </sql:query>
                     <c:set var="grouping" value="${groupResult.rows[0]}"/>
 
-                    <table class="altrows">
+                    <table>
                         <caption>${fn:escapeXml(grouping.name)}</caption>
                         <tr><th>Task</th><th>Name</th><th>Target</th><th>Actual</th></tr>
 

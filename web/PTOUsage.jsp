@@ -14,20 +14,19 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>PTO Usage</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
 
     <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
 
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
 
         <h1>PTO usage for the week of ${thisWeekStart}</h1>
 
-        <table class="altrows" id="timesheets">
+        <table id="timesheets">
             <tr><th>Employee</th><th>Used</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>

@@ -14,9 +14,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Invoice Managers</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Invoice Managers</h1>
@@ -43,7 +42,7 @@
         </form>
         <br/>
 
-        <table class="altrows" id="invoicemanagers">
+        <table id="invoicemanagers">
             <tr>
                 <th>Employee</th>
                 <c:if test="${isAdministrator}"><th>Action</th></c:if>

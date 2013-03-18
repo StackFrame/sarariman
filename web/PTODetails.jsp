@@ -35,9 +35,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>PTO Details</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>PTO Details for ${directory.byNumber[param.employee].fullName}</h1>
@@ -55,7 +54,7 @@
             <sql:param value="${param.employee}"></sql:param>
         </sql:query>
 
-        <table id="pto" class="altrows">
+        <table id="pto">
             <tr><th>Amount</th><th>Comment</th><th>Date</th><th>Added</th></tr>
             <c:forEach var="row" items="${resultSet.rows}">
                 <tr>

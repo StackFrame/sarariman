@@ -51,13 +51,12 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Timesheet Activity</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Timesheet Activity</h1>
-        <table id="activity" class="altrows">
+        <table id="activity">
             <tr>
                 <th>Date</th>
                 <th>Employee</th>

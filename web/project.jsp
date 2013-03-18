@@ -21,10 +21,9 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
-        <script type="text/javascript" src="utilities.js"/>
         <title>${fn:escapeXml(project.name)} (project ${project.id})</title>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
@@ -297,7 +296,7 @@
         <c:set var="lineItems" value="${project.lineItems}"/>
         <c:if test="${isCostManager}">
             <c:if test="${!empty lineItems}">
-                <table class="altrows" id="line_items">
+                <table id="line_items">
                     <caption>Line Items</caption>
                     <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="4">Expended</th><th rowspan="2"></th></tr>
                     <tr><th>Start</th><th>End</th><th>Hours</th><th>Dollars</th><th>%</th><th>Remaining</th></tr>
@@ -373,7 +372,7 @@
         </c:if>
 
         <c:if test="${isManager || isCostManager}">
-            <table class="altrows" id="tasks">
+            <table id="tasks">
                 <caption>Tasks</caption>
                 <tr>
                     <th>ID</th>
@@ -409,7 +408,7 @@
                 WHERE p.id = ?
                 <sql:param value="${project.id}"/>
             </sql:query>
-            <table class="altrows" id="task_assignments">
+            <table id="task_assignments">
                 <caption>Task Assignments</caption>
                 <tr><th>Employee</th><th colspan="2">Task</th></tr>
                 <c:forEach var="row" items="${resultSet.rows}">
@@ -435,7 +434,7 @@
             <c:set var="invoicedODCFeeTotal" value="0"/>
 
             <c:if test="${isCostManager}">
-                <table class="altrows" id="categories">
+                <table id="categories">
                     <caption>Labor Categories</caption>
                     <!-- FIXME: Sort by date and then rate. Check out project 49 for example where this is needed. -->
                     <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th colspan="2">Expended</th><th colspan="2">Invoiced</th></tr>
@@ -492,7 +491,7 @@
                 </table>
             </c:if>
 
-            <table class="altrows" id="rates">
+            <table id="rates">
                 <caption>Labor Category Assignments</caption>
                 <tr><th>Employee</th><th>Labor Category</th><th>Start</th><th>End</th><th>Rate</th></tr>
                 <c:forEach var="entry" items="${sarariman.projectBillRates}">
@@ -524,7 +523,7 @@
                     <sql:param value="${project.id}"/>
                 </sql:query>
                 <h2>Invoices</h2>
-                <table class="altrows" id="invoices_new">
+                <table id="invoices_new">
                     <tr><th>ID</th></tr>
                     <c:forEach var="invoice" items="${invoiceInfoResultSet.rows}">
                         <tr>
@@ -581,7 +580,7 @@
 
             <c:if test="${isCostManager}">
                 <h2>Cumulative</h2>
-                <table class="altrows">
+                <table>
                     <c:choose>
                         <c:when test="${empty project.funded or project.funded lt 0.1}"> <!-- FIXME: This should check for a funding limit. -->
                             <tr>

@@ -21,7 +21,6 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Edit Entry</title>
-        <script type="text/javascript" src="utilities.js"/>
 
         <!-- TinyMCE -->
         <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
@@ -34,7 +33,7 @@
         <!-- /TinyMCE -->
 
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:set var="canModify" value="${user.administrator || user.number == param.employee}"/>
@@ -138,7 +137,7 @@
             <sql:param value="${param.employee}"/>
             <sql:param value="${param.date}"/>
         </sql:query>
-        <table class="altrows" id="entries">
+        <table id="entries">
             <tr><th>Timestamp</th><th>Date</th><th>Task #</th><th>Duration</th><th>Employee</th><th>Remote Address</th><th>Remote User</th><th>Reason</th></tr>
             <c:forEach var="entry" items="${entries.rows}">
                 <tr>

@@ -71,7 +71,7 @@
     <p>Total this invoice: <fmt:formatNumber type="currency" value="${invoiceTotal}"/></p>
 
     <div>
-        <table class="altrows" id="entries">
+        <table id="entries">
             <caption>Timesheet Entries</caption>
             <thead>
                 <tr>
@@ -163,7 +163,7 @@
         <sql:param value="${param.invoice}"/>
     </sql:query>
     <div>
-        <table class="altrows">
+        <table>
             <caption>Totals by Line Item and Employee</caption>
             <thead>
                 <tr>
@@ -202,7 +202,7 @@
 
     <c:if test="${expenseResultSet.rowCount > 0}">
         <div>
-            <table class="altrows">
+            <table>
                 <caption>Expenses</caption>
                 <thead>
                     <tr>

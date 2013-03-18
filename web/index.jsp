@@ -16,7 +16,6 @@
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Sarariman</title>
-        <script type="text/javascript" src="utilities.js"/>
 
         <!-- jQuery -->
         <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
@@ -48,7 +47,7 @@
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
-    <body onload="altRows()">
+    <body>
         <a href="tools">Tools</a>
 
         <span style="float: right">
@@ -211,7 +210,7 @@
 
             <h2>Timesheet for the week of ${thisWeekStart}</h2>
 
-            <table class="altrows" id="days">
+            <table id="days">
                 <c:set var="dayTotals" value="${timesheet.hoursByDay}"/>
                 <tr>
                     <c:forEach items="${dayTotals}" var="entry">
@@ -231,7 +230,7 @@
             <c:set var="totalHours" value="0.0"/>
             <c:set var="totalRegular" value="0.0"/>
             <c:set var="totalPTO" value="0.0"/>
-            <table class="altrows" id="hours">
+            <table id="hours">
                 <tr><th rowspan="2">Date</th><th colspan="2">Task</th><th rowspan="2">Project</th><th rowspan="2">Customer</th><th rowspan="2">Duration</th><th rowspan="2">Description</th>
                     <c:if test="${!timesheet.submitted}">
                         <th rowspan="2"></th>
@@ -337,7 +336,7 @@
                 </sql:query>
                 <c:set var="grouping" value="${groupResult.rows[0]}"/>
 
-                <table class="altrows">
+                <table>
                     <caption>${fn:escapeXml(grouping.name)}</caption>
                     <tr><th>Task</th><th>Name</th><th>Target</th><th>Actual</th></tr>
 

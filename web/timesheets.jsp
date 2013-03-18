@@ -24,11 +24,10 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Timesheets</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <!-- FIXME: Need to make PTO stand out for easier payroll processing. -->
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:choose>
@@ -84,7 +83,7 @@
             }
         %>
 
-        <table class="altrows" id="timesheets">
+        <table id="timesheets">
             <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>On Time</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>

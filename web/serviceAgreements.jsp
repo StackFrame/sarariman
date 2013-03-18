@@ -20,9 +20,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Service Agreement Management</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Service Agreement Management</h1>
@@ -58,7 +57,7 @@
         <br/>
 
         <h2>Service Agreements</h2>
-        <table class="altrows" id="tasks">
+        <table id="tasks">
             <tr>
                 <th>Project</th>
                 <th>Description</th>

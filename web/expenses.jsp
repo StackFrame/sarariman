@@ -20,9 +20,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Expense Management</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Expense Management</h1>
@@ -48,7 +47,7 @@
         <br/>
 
         <h2>Expenses</h2>
-        <table class="altrows" id="tasks">
+        <table id="tasks">
             <tr>
                 <th>Task</th>
                 <th>Employee</th>

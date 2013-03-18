@@ -345,7 +345,7 @@
 
             <c:if test="${result.rowCount > 0}">
                 <div>
-                    <table class="altrows" id="hours">
+                    <table id="hours">
                         <caption>Timesheet Entries</caption>
                         <thead>
                             <tr>
@@ -424,7 +424,7 @@
 
                 <div id="totals">
                     <div id="task">
-                        <table class="altrows">
+                        <table>
                             <caption>Total by Employee and Task</caption>
                             <thead>
                                 <tr><th>Employee</th><th>Task</th><th>Hours</th></tr>
@@ -464,7 +464,7 @@
                     </div>
 
                     <div id="employees">
-                        <table class="altrows">
+                        <table>
                             <caption>Total by Employee</caption>
                             <thead>
                                 <tr><th>Employee</th><th>Hours</th></tr>
@@ -493,7 +493,7 @@
 
             <c:if test="${expenseResultSet.rowCount > 0}">
                 <div>
-                    <table class="altrows">
+                    <table>
                         <caption>Expenses (ODC)</caption>
                         <thead>
                             <tr>
@@ -536,7 +536,7 @@
 
             <c:if test="${servicesResultSet.rowCount > 0}">
                 <div>
-                    <table class="altrows">
+                    <table>
                         <caption>Services</caption>
                         <thead>
                             <tr>

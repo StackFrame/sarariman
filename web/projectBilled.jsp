@@ -25,7 +25,6 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Weekly Billing Report for ${fn:escapeXml(project.name)}</title>
-        <script type="text/javascript" src="utilities.js"></script>
         <script src="MochiKit/MochiKit.js" type="text/javascript"></script>
         <script src="PlotKit/excanvas.js" type="text/javascript"></script>
         <script src="PlotKit/Base.js" type="text/javascript"></script>
@@ -33,7 +32,7 @@
         <script src="PlotKit/Canvas.js" type="text/javascript"></script>
         <script src="PlotKit/SweetCanvas.js" type="text/javascript"></script>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:url var="projectLink" value="project"><c:param name="id" value="${param.project}"/></c:url>
@@ -50,7 +49,7 @@
             // FIXME: Need a way to compute yTicks using max value.
         </script>
 
-        <table class="altrows" id="billing">
+        <table id="billing">
             <thead>
                 <tr><th>Week</th><th>Hours</th><th>Billed</th></tr>
             </thead>

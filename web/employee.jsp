@@ -144,7 +144,7 @@
                 ORDER BY effective DESC
                 <sql:param value="${param.id}"/>
             </sql:query>
-            <table class="altrows">
+            <table>
                 <tr><th>Rate</th><th>Effective Date</th><th>Duration</th></tr>
                 <c:set var="endDate" value="${du:now()}"/>
                 <c:forEach var="rate_row" items="${resultSet.rows}" varStatus="varStatus">

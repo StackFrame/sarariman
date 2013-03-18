@@ -19,9 +19,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Invoices</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Invoices</h1>
@@ -32,7 +31,7 @@
             SELECT DISTINCT(id) FROM invoice_info ORDER BY id DESC
         </sql:query>
 
-        <table id="invoices" class="altrows">
+        <table id="invoices">
             <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
             <c:forEach var="invoice" items="${invoices.rows}">
                 <tr>

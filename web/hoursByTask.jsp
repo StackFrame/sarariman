@@ -15,9 +15,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Hours for task ${task}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload ="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Hours for task ${task}</h1>
@@ -26,7 +25,7 @@
             <sql:param value="${task}"/>
         </sql:query>
 
-        <table class="altrows" id="hours">
+        <table id="hours">
             <tr><th>Date</th><th>Employee</th><th>Duration</th><th>Description</th></tr>
             <c:set var="total" value="0.0"/>
             <c:forEach var="row" items="${result.rows}">

@@ -17,14 +17,13 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Labor Category Assignments</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Labor Category Assignments</h1>
 
-        <table class="altrows" id="rates">
+        <table id="rates">
             <tr><th>Employee</th><th>Labor Category</th><th>Project</th><th>Customer</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.projectBillRates}">
                 <tr>

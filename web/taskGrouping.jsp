@@ -24,9 +24,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>${fn:escapeXml(grouping.name)}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>${fn:escapeXml(grouping.name)}</h1>
@@ -46,7 +45,7 @@
             </c:forEach>
         </ul>
 
-        <table class="altrows" id="taskGroupingElements">
+        <table id="taskGroupingElements">
             <tr><th>Task</th><th>Name</th><th>Fraction</th></tr>
 
             <sql:query dataSource="jdbc/sarariman" var="elementsResult">

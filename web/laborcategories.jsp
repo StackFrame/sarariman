@@ -20,9 +20,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Labor Categories</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Labor Categories</h1>
@@ -52,7 +51,7 @@
             </form>
         </div>
 
-        <table class="altrows" id="categories">
+        <table id="categories">
             <tr><th>Project</th><th>Client</th><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th></tr>
             <c:forEach var="entry" items="${sarariman.laborCategories}">
                 <tr>

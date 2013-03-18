@@ -17,16 +17,15 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Health Insurance Summary</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Health Insurance Summary</h1>
         <h2>Current Rates and Participation</h2>
         <!-- FIXME: Add coverage type? -->
 
-        <table class="altrows">
+        <table>
             <tr>
                 <th>Employee</th>
                 <th>Premium</th>

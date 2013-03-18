@@ -18,14 +18,13 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Task Groupings</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Task Groupings</h1>
 
-        <table class="altrows" id="taskGroupings">
+        <table id="taskGroupings">
             <tr><th>ID</th><th>Name</th></tr>
             <sql:query dataSource="jdbc/sarariman" var="result">
                 SELECT * FROM task_grouping

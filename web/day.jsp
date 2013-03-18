@@ -21,9 +21,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>View Day</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:choose>
@@ -42,7 +41,7 @@
             <input type="submit" value="View"/>
         </form>
 
-        <table class="altrows" id="days">
+        <table id="days">
             <tr><th>Employee</th><th>Hours</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <sql:query dataSource="jdbc/sarariman" var="data">

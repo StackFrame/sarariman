@@ -17,9 +17,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Contacts</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Contacts</h1>
@@ -33,7 +32,7 @@
             SELECT * from contacts
         </sql:query>
 
-        <table id="contacts" class="altrows">
+        <table id="contacts">
             <tr><th>Name</th><th>Title</th><th>Phone</th><th>Email</th></tr>
             <c:forEach var="contact" items="${contacts.rows}">
                 <tr>

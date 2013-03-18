@@ -15,7 +15,6 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Deduct PTO</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
 
     <c:choose>
@@ -27,12 +26,12 @@
             <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
             <c:set var="week" value="${du:week(parsedWeek)}"/>
 
-            <body onload="altRows()">
+            <body>
                 <%@include file="header.jsp" %>
 
                 <h1>Deduct PTO for the week of ${week.name}</h1>
 
-                <table class="altrows" id="timesheets">
+                <table id="timesheets">
                     <tr><th>Employee</th><th>PTO</th></tr>
                     <c:forEach var="employeeEntry" items="${directory.byUserName}">
                         <c:set var="employee" value="${employeeEntry.value}"/>

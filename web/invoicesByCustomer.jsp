@@ -22,9 +22,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Invoices for ${fn:escapeXml(customer.name)}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:url var="customerLink" value="customer">
@@ -37,7 +36,7 @@
             <sql:param value="${customer_id}"/>
         </sql:query>
 
-        <table id="invoices" class="altrows">
+        <table id="invoices">
             <tr><th>Invoice</th><th>Sent</th><th>Project</th></tr>
             <c:forEach var="invoice" items="${invoices.rows}">
                 <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">

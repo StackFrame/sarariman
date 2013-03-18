@@ -35,7 +35,7 @@ th {
     white-space: nowrap;
 }
 
-table.altrows {
+table {
     font-family: verdana,arial,sans-serif;
     font-size:11px;
     color:#333333;
@@ -44,19 +44,22 @@ table.altrows {
     border-collapse: collapse;
 }
 
-table.altrows th {
+table th {
     border-width: 1px;
     padding: 8px;
     border-style: solid;
     border-color: #a9c6c9;
 }
 
-table.altrows td {
+table td {
     border-width: 1px;
     padding: 8px;
     border-style: solid;
     border-color: #a9c6c9;
 }
+
+tr:nth-child(odd) {background: #c3dde0;}
+tr:nth-child(even) {background: #d4e3e5;}
 
 .oddrow {
     background-color: #d4e3e5;

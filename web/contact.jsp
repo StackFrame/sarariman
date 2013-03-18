@@ -17,7 +17,6 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Contact</title>
-        <script type="text/javascript" src="utilities.js"/>
         <style type="text/css">
             label {
                 float: left;
@@ -60,7 +59,7 @@
             }
         </style>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <c:if test="${param.action != 'create'}">

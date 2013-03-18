@@ -20,9 +20,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Task Management</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Task Management</h1>
@@ -54,7 +53,7 @@
         <br/>
 
         <h2>Tasks</h2>
-        <table class="altrows" id="tasks">
+        <table id="tasks">
             <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
             <c:forEach var="task" items="${sarariman.tasks.all}">
                 <tr>

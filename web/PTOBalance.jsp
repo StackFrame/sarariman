@@ -15,14 +15,13 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>PTO Balance</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>PTO Balance</h1>
 
-        <table class="altrows" id="timesheets">
+        <table id="timesheets">
             <tr><th>Employee</th><th>Balance</th></tr>
             <c:forEach var="employeeEntry" items="${directory.byUserName}">
                 <c:set var="employee" value="${employeeEntry.value}"/>

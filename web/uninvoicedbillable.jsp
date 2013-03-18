@@ -13,9 +13,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced Billable</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <h1>Uninvoiced Billable</h1>
@@ -28,7 +27,7 @@
             WHERE t.billable = 1 AND i.id IS NULL AND h.duration > 0
             ORDER BY h.date ASC
         </sql:query>
-        <table class="altrows">
+        <table>
             <tr><th>Employee</th><th>Date</th><th>Task</th></tr>
             <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                 <tr>

@@ -16,9 +16,8 @@
         <link href="../style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
         <title>Tickets</title>
-        <script type="text/javascript" src="../utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="../header.jsp" %>
         <h1>Tickets</h1>
 
@@ -58,7 +57,7 @@
             <input type="submit" value="Search"/>
         </form>
 
-        <table class="altrows">
+        <table>
             <tr>
                 <th>#</th>
                 <th>Name</th>

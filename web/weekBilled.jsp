@@ -24,9 +24,8 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Billing Report for the week of ${param.week}</title>
-        <script type="text/javascript" src="utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <fmt:parseDate var="weekParam" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
@@ -86,7 +85,7 @@
             <sql:param value="${param.week}"/>
         </sql:query>
 
-        <table class="altrows">
+        <table>
             <tr><th>Project</th></tr>
             <c:forEach var="row" items="${result.rows}">
                 <tr>

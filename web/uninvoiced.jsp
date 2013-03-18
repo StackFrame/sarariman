@@ -24,7 +24,6 @@
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Uninvoiced time for ${fn:escapeXml(project.client.name)} - ${fn:escapeXml(project.name)}</title>
-        <script type="text/javascript" src="utilities.js"/>
 
         <!-- jQuery -->
         <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
@@ -41,7 +40,7 @@
             });
         </script>
     </head>
-    <body  onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
 
         <!-- FIXME: Add customer and project hyperlinks. -->
@@ -119,7 +118,7 @@
 
             <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-            <table class="altrows">
+            <table>
                 <caption>Services</caption>
                 <thead>
                     <tr>
@@ -151,7 +150,7 @@
 
             <jsp:useBean id="taskTotals" class="java.util.HashMap" scope="page"/>
 
-            <table class="altrows">
+            <table>
                 <caption>Labor</caption>
                 <thead>
                     <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Date</th><th rowspan="2">Duration</th><th rowspan="2">Cost</th><th rowspan="2">Invoice</th></tr>
@@ -211,7 +210,7 @@
                 </tbody>
             </table>
 
-            <table class="altrows">
+            <table>
                 <caption>Total by Task</caption>
                 <thead>
                     <tr>

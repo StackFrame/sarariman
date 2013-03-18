@@ -13,14 +13,13 @@
         <link href="../style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="../style.css" rel="stylesheet" type="text/css"/>
         <title>Upcoming Holidays</title>
-        <script type="text/javascript" src="../utilities.js"/>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="../header.jsp" %>
 
         <h1>Upcoming Holidays</h1>
 
-        <table class="altrows" id="holidays">
+        <table id="holidays">
             <tr><th>Date</th><th>Holiday</th></tr>
             <c:forEach var="holiday" items="${sarariman.holidays.upcoming}">
                 <tr>

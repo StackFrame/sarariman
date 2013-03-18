@@ -16,7 +16,7 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Scheduled Vacation</title>
     </head>
-    <body onload="altRows()">
+    <body>
         <%@include file="header.jsp" %>
         <h1>Scheduled Vacation</h1>
 
