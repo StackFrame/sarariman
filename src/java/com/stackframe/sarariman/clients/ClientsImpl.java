@@ -84,7 +84,7 @@ public class ClientsImpl implements Clients {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO customers (name) VALUES(?)", Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO customers (name, active, official) VALUES(?, TRUE, TRUE)", Statement.RETURN_GENERATED_KEYS);
                 try {
                     ps.setString(1, name);
                     ps.executeUpdate();
