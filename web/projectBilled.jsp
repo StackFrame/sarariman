@@ -12,7 +12,7 @@
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
 <fmt:parseNumber var="project_id" value="${param.project}"/>
-<c:set var="project" value="${sarariman.projects[project_id]}"/>
+<c:set var="project" value="${sarariman.projects.map[project_id]}"/>
 
 <c:if test="${!(sarariman:isCostManager(user, project) || user.administrator)}">
     <jsp:forward page="unauthorized"/>
