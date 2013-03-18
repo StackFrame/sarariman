@@ -22,6 +22,7 @@
     </c:choose>
 
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <style type="text/css">
             @media print{

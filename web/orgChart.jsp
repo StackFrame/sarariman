@@ -10,6 +10,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Org Chart</title>
     </head>
     <body>

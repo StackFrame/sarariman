@@ -12,6 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Tools</title>
     </head>
 
@@ -22,7 +23,7 @@
         </span>
 
         <ul>
-            <li><a href="./">Home</a></li>
+            <li><a class="icon-home" href="./"></a></li>
             <li><a href="help.xhtml">Help</a></li>
             <li><a href="tickets/">Tickets</a></li>
             <li><a href="orgChart">Org Chart</a></li>

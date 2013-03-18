@@ -18,6 +18,7 @@
     <c:set var="employee" value="${directory.byNumber[param.id]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>${employee.fullName}</title>
     </head>
     <body>

@@ -3,7 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8" import="com.stackframe.sarariman.Employee"%>
+<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -20,6 +20,7 @@
 
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <script type="text/javascript" src="utilities.js"/>
         <title>${fn:escapeXml(project.name)} (project ${project.id})</title>
     </head>

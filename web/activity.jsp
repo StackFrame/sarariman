@@ -49,6 +49,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Timesheet Activity</title>
         <script type="text/javascript" src="utilities.js"/>
     </head>
@@ -88,7 +89,7 @@
                             </td>
                         </c:otherwise>
                     </c:choose>
-                    <td><a href="${fn:escapeXml(entry.URL)}">${entry.description}</a></td>
+                    <td>${entry.description}<a class="icon-link" title="go to this entry" href="${fn:escapeXml(entry.URL)}"></a></td>
                 </tr>
             </c:forEach>
         </table>
