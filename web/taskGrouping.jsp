@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -21,6 +21,7 @@
     </sql:query>
     <c:set var="grouping" value="${result.rows[0]}"/>
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>${fn:escapeXml(grouping.name)}</title>
         <script type="text/javascript" src="utilities.js"/>

@@ -21,6 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Billing Report for the week of ${param.week}</title>
         <script type="text/javascript" src="utilities.js"/>

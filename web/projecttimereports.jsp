@@ -17,6 +17,7 @@
     <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
     <c:set var="customer" value="${project.client}"/>
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>${fn:escapeXml(customer.name)} - ${fn:escapeXml(project.name)} - ${param.week}</title>
     </head>

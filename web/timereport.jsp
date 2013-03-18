@@ -17,6 +17,7 @@
     <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
     <c:set var="customer" value="${project.client}"/>
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <style type="text/css">
             @media screen, print {
                 body {

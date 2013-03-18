@@ -18,6 +18,7 @@
     <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
 
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Time Reports for Project ${project_id} ('${fn:escapeXml(project.name)}')</title>
     </head>

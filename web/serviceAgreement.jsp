@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2011 StackFrame, LLC
+  Copyright (C) 2011-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -50,6 +50,7 @@
     </c:if>
 
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Agreement ${agreement_id}</title>
     </head>

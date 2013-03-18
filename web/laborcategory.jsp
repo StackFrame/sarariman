@@ -50,6 +50,7 @@
     </c:if>
 
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Labor Category ${id}</title>
 

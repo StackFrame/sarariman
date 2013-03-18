@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2009-2010 StackFrame, LLC
+  Copyright (C) 2009-2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -12,6 +12,7 @@
 <fmt:parseNumber var="task" value="${param.task}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Hours for task ${task}</title>
         <script type="text/javascript" src="utilities.js"/>
