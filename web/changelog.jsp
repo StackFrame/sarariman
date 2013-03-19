@@ -32,8 +32,8 @@
         </c:if>
         <c:set var="end" value="${param.end}"/>
         <c:if test="${empty end}">
-            <c:set var="end" value="${du:nextWeek(du:now())}"/>
-            <fmt:formatDate var="end" value="${end}" type="date" pattern="yyyy-MM-dd"/>
+            <c:set var="end" value="${du:week(du:now())}"/>
+            <c:set var="end" value="${end.next.name}"/>
         </c:if>
         <c:set var="maxRows" value="${param.maxRows}"/>
         <c:if test="${empty maxRows}">
