@@ -196,7 +196,7 @@ public class Sarariman implements ServletContextListener {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
         c.add(new ContactsGlobalAudit(getDataSource(), contacts));
-        c.add(new ProjectAdministrativeAssistantGlobalAudit(this));
+        c.add(new ProjectAdministrativeAssistantGlobalAudit(getDataSource(), projects));
         c.add(new DirectRateAudit(directory));
         return c;
     }

@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.projects.Projects;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,10 +21,12 @@ import javax.sql.DataSource;
  */
 public class ProjectAdministrativeAssistantGlobalAudit implements Audit {
 
-    private final Sarariman sarariman;
+    private final DataSource dataSource;
+    private final Projects projects;
 
-    public ProjectAdministrativeAssistantGlobalAudit(Sarariman sarariman) {
-        this.sarariman = sarariman;
+    public ProjectAdministrativeAssistantGlobalAudit(DataSource dataSource, Projects projects) {
+        this.dataSource = dataSource;
+        this.projects = projects;
     }
 
     public String getDisplayName() {
@@ -31,7 +34,6 @@ public class ProjectAdministrativeAssistantGlobalAudit implements Audit {
     }
 
     public Collection<AuditResult> getResults() {
-        DataSource dataSource = sarariman.getDataSource();
         try {
             Connection c = dataSource.getConnection();
             try {
@@ -39,16 +41,18 @@ public class ProjectAdministrativeAssistantGlobalAudit implements Audit {
                         "SELECT p.id AS project " +
                         "FROM projects AS p " +
                         "LEFT OUTER JOIN project_administrative_assistants AS a ON a.project = p.id " +
-                        "WHERE p.active = TRUE AND a.assistant IS NULL;");
+                        "WHERE p.active = TRUE AND a.assistant IS NULL");
                 try {
                     ResultSet r = s.executeQuery();
                     try {
                         ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
                         while (r.next()) {
                             int project = r.getInt("project");
-                            Project p = sarariman.getProjects().get(project);
-                            AuditResult auditResult = new AuditResult(AuditResultType.error, String.format("project %d has no administrative assistants", project), p.getURL());
-                            listBuilder.add(auditResult);
+                            Project p = projects.get(project);
+                            AuditResult result = new AuditResult(AuditResultType.error,
+                                                                 String.format("project %d (%s) has no administrative assistants",
+                                                                               project, p.getName()), p.getURL());
+                            listBuilder.add(result);
                         }
 
                         return listBuilder.build();
