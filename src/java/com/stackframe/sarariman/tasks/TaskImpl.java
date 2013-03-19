@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.tasks;
 
+import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.projects.Projects;
@@ -13,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import javax.sql.DataSource;
 
 /**
@@ -25,12 +27,14 @@ public class TaskImpl extends AbstractLinkable implements Task {
     private final DataSource dataSource;
     private final String servletPath;
     private final Projects projects;
+    private final Tasks tasks;
 
-    TaskImpl(int id, DataSource dataSource, String servletPath, Projects projects) {
+    TaskImpl(int id, DataSource dataSource, String servletPath, Projects projects, Tasks tasks) {
         this.id = id;
         this.dataSource = dataSource;
         this.servletPath = servletPath;
         this.projects = projects;
+        this.tasks = tasks;
     }
 
     public int getId() {
@@ -376,13 +380,13 @@ public class TaskImpl extends AbstractLinkable implements Task {
             Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement s = connection.prepareStatement(
-                        "SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal "
-                        + "FROM hours AS h "
-                        + "JOIN tasks AS t on h.task = t.id "
-                        + "JOIN projects AS p on p.id = t.project "
-                        + "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) "
-                        + "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) "
-                        + "WHERE t.id=? AND t.billable=TRUE and h.duration > 0");
+                        "SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                        "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) " +
+                        "WHERE t.id=? AND t.billable=TRUE and h.duration > 0");
                 try {
                     s.setInt(1, id);
                     ResultSet r = s.executeQuery();
@@ -446,6 +450,67 @@ public class TaskImpl extends AbstractLinkable implements Task {
 
     public URI getURI() {
         return URI.create(String.format("%s?task_id=%d", servletPath, id));
+    }
+
+    public Collection<Task> getChildren() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT child FROM task_hierarchy WHERE parent = ?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        ImmutableList.Builder<Task> b = ImmutableList.<Task>builder();
+                        while (r.next()) {
+                            int task = r.getInt("child");
+                            b.add(tasks.get(task));
+                        }
+
+                        return b.build();
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Task getParent() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT parent FROM task_hierarchy WHERE child = ?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        if (hasRow) {
+                            int task = r.getInt("parent");
+                            assert !r.next();
+                            return tasks.get(task);
+                        } else {
+                            return null;
+                        }
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
     }
 
     @Override

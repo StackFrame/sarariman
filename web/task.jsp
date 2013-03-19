@@ -74,16 +74,31 @@
             <label for="billable">Billable: </label>
             <input type="checkbox" name="billable" id="billable" <c:if test="${task.billable}">checked="true"</c:if>
                    <c:if test="${!user.administrator}">disabled="true"</c:if>/>
-                   <label for="active">Active: </label>
-                   <input type="checkbox" name="active" id="active" <c:if test="${task.active}">checked="true"</c:if>
+            <label for="active">Active: </label>
+            <input type="checkbox" name="active" id="active" <c:if test="${task.active}">checked="true"</c:if>
                    <c:if test="${!user.administrator}">disabled="true"</c:if>/>
-                   <br/>
-                   <label for="task_description">Description: </label>
-                   <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
+            <br/>
+            <label for="task_description">Description: </label>
+            <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
             <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-            </form>
+        </form>
 
-            <p>
+        <c:set var="parent" value="${task.parent}"/>
+        <c:if test="${not empty parent}">
+            <p>Parent: <a href="${parent.URL}">${parent.id}: ${fn:escapeXml(parent.name)}</a></p>
+        </c:if>
+
+        <c:set var="children" value="${task.children}"/>
+        <c:if test="${not empty children}">
+            <h2>Child Tasks</h2>
+            <ol>
+                <c:forEach var="child" items="${children}">
+                    <li><a href="${child.URL}">${child.id}: ${fn:escapeXml(child.name)}</a></li>
+                </c:forEach>
+            </ol>
+        </c:if>
+
+        <p>
             <c:url var="hoursByTask" value="hoursByTask">
                 <c:param name="task" value="${param.task_id}"/>
             </c:url>

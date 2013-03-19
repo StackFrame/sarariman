@@ -7,6 +7,7 @@ package com.stackframe.sarariman.tasks;
 import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.projects.Project;
 import java.math.BigDecimal;
+import java.util.Collection;
 
 /**
  *
@@ -49,5 +50,9 @@ public interface Task extends Linkable {
     BigDecimal getExpendedLabor();
 
     BigDecimal getExpendedOtherDirectCosts();
+
+    Collection<Task> getChildren();
+
+    Task getParent();
 
 }

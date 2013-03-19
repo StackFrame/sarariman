@@ -38,7 +38,7 @@ public class TasksImpl implements Tasks {
     }
 
     public Task get(int id) {
-        return new TaskImpl(id, dataSource, mountPoint + "task", projects);
+        return new TaskImpl(id, dataSource, mountPoint + "task", projects, this);
     }
 
     public Map<? extends Number, Task> getMap() {
