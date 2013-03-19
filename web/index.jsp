@@ -14,6 +14,7 @@
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Sarariman</title>
 
@@ -394,7 +395,7 @@
 
         <h2 id="events">Events</h2>
         <p>
-            <a href="events/create.jsp">Add an event</a>
+            <a href="events/create.jsp" title="Add an event"><i class="icon-plus"></i></a>
             <ul>
                 <c:forEach var="event" items="${sarariman.events.current}">
                     <li>
@@ -425,7 +426,7 @@
 
         <h2 id="scheduledVacation">Scheduled Vacation</h2>
         <p>
-            <a href="vacation/create.jsp">Add an entry</a>
+            <a href="vacation/create.jsp" title="Add an entry"><i class="icon-plus"></i></a>
             <ul>
                 <c:forEach var="entry" items="${user.upcomingVacation}">
                     <li>
@@ -459,7 +460,7 @@
 
         <h2 id="outOfOffice">Scheduled Out of Office</h2>
         <p>
-            <a href="outOfOffice/create.jsp">Add an entry</a>
+            <a href="outOfOffice/create.jsp" title="Add an entry"><i class="icon-plus"></i></a>
             <ul>
                 <c:forEach var="entry" items="${user.upcomingOutOfOffice}">
                     <li>
