@@ -395,10 +395,14 @@ public class TaskImpl extends AbstractLinkable implements Task {
                         assert hasRow;
                         BigDecimal costTotal = r.getBigDecimal("costTotal");
                         if (costTotal == null) {
-                            return BigDecimal.ZERO;
-                        } else {
-                            return costTotal;
+                            costTotal = BigDecimal.ZERO;
                         }
+
+                        for (Task child : getChildren()) {
+                            costTotal = costTotal.add(child.getExpendedLabor());
+                        }
+
+                        return costTotal;
                     } finally {
                         r.close();
                     }
@@ -426,10 +430,14 @@ public class TaskImpl extends AbstractLinkable implements Task {
                         assert hasRow;
                         BigDecimal total = r.getBigDecimal("total");
                         if (total == null) {
-                            return BigDecimal.ZERO;
-                        } else {
-                            return total;
+                            total = BigDecimal.ZERO;
                         }
+
+                        for (Task child : getChildren()) {
+                            total = total.add(child.getExpendedOtherDirectCosts());
+                        }
+
+                        return total;
                     } finally {
                         r.close();
                     }
