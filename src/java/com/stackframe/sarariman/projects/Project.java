@@ -51,6 +51,10 @@ public interface Project extends Linkable {
 
     void setSubcontract(String subcontract);
 
+    String getPurchaseOrder();
+
+    void setPurchaseOrder(String purchaseOrder);
+
     String getInvoiceText();
 
     void setInvoiceText(String text);

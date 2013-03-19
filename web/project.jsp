@@ -49,6 +49,9 @@
                 <label for="subcontract">Subcontract: </label>
                 <input type="text" size="40" id="subcontract" name="subcontract" value="${fn:escapeXml(project.subcontract)}"/><br/>
 
+                <label for="purchaseOrder">Purchase Order: </label>
+                <input type="text" size="40" id="purchaseOrder" name="subcontract" value="${fn:escapeXml(project.purchaseOrder)}"/><br/>
+
                 <c:if test="${isCostManager}">
                     <label for="funded">Funded: </label>
                     <input type="text" size="13" id="funded" name="funded" value="${fn:escapeXml(project.funded)}"/><br/>

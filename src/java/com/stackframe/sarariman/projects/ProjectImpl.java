@@ -208,6 +208,53 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
     
+    public String getPurchaseOrder() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT purchase_order FROM projects WHERE id = ?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        return r.getString("purchase_order");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+    
+    public void setPurchaseOrder(String purchaseOrder) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("UPDATE projects SET purchase_order = ? WHERE id = ?");
+                try {
+                    s.setString(1, purchaseOrder);
+                    s.setInt(2, id);
+                    int numRows = s.executeUpdate();
+                    assert numRows == 1;
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+    
     public String getInvoiceText() {
         try {
             Connection connection = dataSource.getConnection();
