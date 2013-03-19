@@ -20,14 +20,17 @@
         <h1>Global Audits</h1>
         <ol>
             <c:forEach var="audit" items="${sarariman.globalAudits}">
-                <li>
-                    ${audit.displayName}
-                    <ol>
-                        <c:forEach var="result" items="${audit.results}">
-                            <li class="error">${result.type}: ${result.message}</li>
-                        </c:forEach>
-                    </ol>
-                </li>
+                <c:set var="results" value="${audit.results}"/>
+                <c:if test="${not empty results}">
+                    <li>
+                        ${audit.displayName}
+                        <ol>
+                            <c:forEach var="result" items="${results}">
+                                <li class="error"><a href="${result.URL}">${result.type}: ${result.message}</a></li>
+                            </c:forEach>
+                        </ol>
+                    </li>
+                </c:if>
             </c:forEach>
         </ol>
 
