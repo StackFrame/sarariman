@@ -447,11 +447,11 @@
                         </c:if>
                         <form style="display:inline" method="GET" action="vacation/edit.jsp">
                             <input type="hidden" name="id" value="${entry.id}"/>
-                            <input type="submit" name="Edit" value="edit"/>
+                            <button type="submit" name="Edit" value="edit" title="edit this entry"><i class="icon-edit"></i></button>
                         </form>
                         <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
                             <input type="hidden" name="id" value="${entry.id}"/>
-                            <input type="submit" name="Delete" value="delete"/>
+                            <button type="submit" name="Delete" value="delete" title="delete this entry"><i class="icon-trash"></i></button>
                         </form>
                     </li>
                 </c:forEach>
@@ -483,11 +483,11 @@
                         </c:if>
                         <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
                             <input type="hidden" name="id" value="${entry.id}"/>
-                            <input type="submit" name="Edit" value="edit"/>
+                            <button type="submit" name="Edit" value="edit" title="edit this entry"><i class="icon-edit"></i></button>
                         </form>
                         <form style="display:inline" method="POST" action="outOfOffice/handleDelete.jsp">
                             <input type="hidden" name="id" value="${entry.id}"/>
-                            <input type="submit" name="Delete" value="delete"/>
+                            <button type="submit" name="Delete" value="delete" title="delete this entry"><i class="icon-trash"></i></button>
                         </form>
                     </li>
                 </c:forEach>
