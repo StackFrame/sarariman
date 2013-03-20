@@ -8,6 +8,7 @@ import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.LineItem;
 import com.stackframe.sarariman.Linkable;
+import com.stackframe.sarariman.NamedResource;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.Week;
 import com.stackframe.sarariman.clients.Client;
@@ -92,6 +93,8 @@ public interface Project extends Linkable {
     Set<Employee> getCurrentlyAssigned();
 
     Iterable<Week> getWorkedWeeks();
+
+    Collection<NamedResource> getResources();
 
     void delete();
 

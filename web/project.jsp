@@ -79,17 +79,12 @@
                 </form>
         </c:if>
 
-        <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT URL, description
-            FROM project_links
-            WHERE project = ?
-            <sql:param value="${project.id}"/>
-        </sql:query>
-        <c:if test="${!empty result.rows}">
+        <c:set var="resources" value="${project.resources}"/>
+        <c:if test="${!empty resources}">
             <h2>Links</h2>
             <ul>
-                <c:forEach var="row" items="${result.rows}">
-                    <li><a href="${fn:escapeXml(row.URL)}">${fn:escapeXml(row.description)}</a></li>
+                <c:forEach var="resource" items="${resources}">
+                    <li><a href="${fn:escapeXml(resource.URL)}">${fn:escapeXml(resource.name)}</a></li>
                 </c:forEach>
             </ul>
         </c:if>

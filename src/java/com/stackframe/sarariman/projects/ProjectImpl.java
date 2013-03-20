@@ -11,6 +11,8 @@ import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.LineItem;
+import com.stackframe.sarariman.NamedResource;
+import com.stackframe.sarariman.NamedResourceImpl;
 import com.stackframe.sarariman.OrganizationHierarchy;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.ProjectFundingAudit;
@@ -25,6 +27,8 @@ import com.stackframe.sarariman.tasks.Tasks;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -42,7 +46,7 @@ import javax.sql.DataSource;
  * @author mcculley
  */
 public class ProjectImpl extends AbstractLinkable implements Project {
-    
+
     private final int id;
     private final DataSource dataSource;
     private final OrganizationHierarchy organizationHierarchy;
@@ -51,7 +55,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final Projects projects;
     private final String servletPath;
     private final Clients clients;
-    
+
     ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath, Clients clients) {
         this.id = id;
         this.dataSource = dataSource;
@@ -62,11 +66,11 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.servletPath = servletPath;
         this.clients = clients;
     }
-    
+
     public int getId() {
         return id;
     }
-    
+
     public String getName() {
         try {
             Connection connection = dataSource.getConnection();
@@ -92,7 +96,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setName(String name) {
         try {
             Connection connection = dataSource.getConnection();
@@ -113,7 +117,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public String getContract() {
         try {
             Connection connection = dataSource.getConnection();
@@ -139,7 +143,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setContract(String contract) {
         try {
             Connection connection = dataSource.getConnection();
@@ -160,7 +164,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public String getSubcontract() {
         try {
             Connection connection = dataSource.getConnection();
@@ -186,7 +190,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setSubcontract(String subcontract) {
         try {
             Connection connection = dataSource.getConnection();
@@ -207,7 +211,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public String getPurchaseOrder() {
         try {
             Connection connection = dataSource.getConnection();
@@ -233,7 +237,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setPurchaseOrder(String purchaseOrder) {
         try {
             Connection connection = dataSource.getConnection();
@@ -254,7 +258,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public String getInvoiceText() {
         try {
             Connection connection = dataSource.getConnection();
@@ -280,7 +284,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setInvoiceText(String text) {
         try {
             Connection connection = dataSource.getConnection();
@@ -301,7 +305,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public BigDecimal getFunded() {
         try {
             Connection connection = dataSource.getConnection();
@@ -327,7 +331,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setFunded(BigDecimal funded) {
         try {
             Connection connection = dataSource.getConnection();
@@ -348,7 +352,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public BigDecimal getPreviouslyBilled() {
         try {
             Connection connection = dataSource.getConnection();
@@ -374,7 +378,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setPreviouslyBilled(BigDecimal previouslyBilled) {
         try {
             Connection connection = dataSource.getConnection();
@@ -395,7 +399,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public BigDecimal getODCFee() {
         try {
             Connection connection = dataSource.getConnection();
@@ -421,7 +425,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setODCFee(BigDecimal fee) {
         try {
             Connection connection = dataSource.getConnection();
@@ -442,7 +446,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public boolean isManager(Employee employee) {
         try {
             Connection connection = dataSource.getConnection();
@@ -467,7 +471,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public boolean isCostManager(Employee employee) {
         try {
             Connection connection = dataSource.getConnection();
@@ -492,7 +496,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Client getClient() {
         try {
             Connection connection = dataSource.getConnection();
@@ -523,7 +527,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setClient(Client client) {
         try {
             Connection connection = dataSource.getConnection();
@@ -544,7 +548,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public PeriodOfPerformance getPoP() {
         try {
             Connection connection = dataSource.getConnection();
@@ -572,7 +576,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setPoP(PeriodOfPerformance pop) {
         try {
             Connection connection = dataSource.getConnection();
@@ -594,7 +598,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public int getTerms() {
         try {
             Connection connection = dataSource.getConnection();
@@ -620,7 +624,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setTerms(int terms) {
         try {
             Connection connection = dataSource.getConnection();
@@ -641,7 +645,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public boolean isActive() {
         try {
             Connection connection = dataSource.getConnection();
@@ -667,7 +671,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public void setActive(boolean active) {
         try {
             Connection connection = dataSource.getConnection();
@@ -688,7 +692,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Collection<Audit> getAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new ProjectOrgChartAudit(this, dataSource, organizationHierarchy, directory));
@@ -697,7 +701,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         c.add(new ProjectLineItemAudit(id, dataSource, projects));
         return c;
     }
-    
+
     public BigDecimal getExpended() {
         try {
             Connection connection = dataSource.getConnection();
@@ -729,7 +733,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Iterable<Date> getDaysBilled() {
         try {
             Connection connection = dataSource.getConnection();
@@ -749,7 +753,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         while (rs.next()) {
                             days.add(rs.getDate("date"));
                         }
-                        
+
                         return days;
                     } finally {
                         rs.close();
@@ -764,7 +768,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Collection<LineItem> getLineItems() {
         try {
             return LineItem.getLineItems(dataSource, id);
@@ -772,7 +776,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Collection<Task> getTasks() {
         try {
             Connection connection = dataSource.getConnection();
@@ -789,7 +793,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                             int task_id = resultSet.getInt("task_id");
                             list.add(tasks.get(task_id));
                         }
-                        
+
                         return list;
                     } finally {
                         resultSet.close();
@@ -804,7 +808,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Iterable<Employee> getAdministrativeAssistants() {
         try {
             Connection connection = dataSource.getConnection();
@@ -821,7 +825,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                             int task_id = resultSet.getInt("assistant");
                             listBuilder.add(directory.getByNumber().get(task_id));
                         }
-                        
+
                         return listBuilder.build();
                     } finally {
                         resultSet.close();
@@ -836,11 +840,11 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public URI getURI() {
         return URI.create(String.format("%s?id=%d", servletPath, id));
     }
-    
+
     private Collection<Date> getWorkedDates() {
         try {
             Connection connection = dataSource.getConnection();
@@ -860,7 +864,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                             Date date = resultSet.getDate("date");
                             listBuilder.add(date);
                         }
-                        
+
                         return listBuilder.build();
                     } finally {
                         resultSet.close();
@@ -875,7 +879,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
     public Iterable<Week> getWorkedWeeks() {
         Set<Week> weeks = new TreeSet<Week>();
         Collection<Date> dates = getWorkedDates();
@@ -883,10 +887,10 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             Week week = DateUtils.week(date);
             weeks.add(week);
         }
-        
+
         return weeks;
     }
-    
+
     public void delete() {
         try {
             Connection connection = dataSource.getConnection();
@@ -905,7 +909,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(e);
         }
     }
-    
+
     public Set<Employee> getCurrentlyAssigned() {
         try {
             Connection connection = dataSource.getConnection();
@@ -940,14 +944,52 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             throw new RuntimeException(se);
         }
     }
-    
+
+    public Collection<NamedResource> getResources() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT URL, description " +
+                        "FROM project_links " +
+                        "WHERE project = ?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet rs = s.executeQuery();
+                    try {
+                        ImmutableList.Builder<NamedResource> b = ImmutableList.<NamedResource>builder();
+                        while (rs.next()) {
+                            URL url = rs.getURL("URL");
+                            String description = rs.getString("description");
+                            try {
+                                b.add(new NamedResourceImpl(url.toURI(), description));
+                            } catch (URISyntaxException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+                        return b.build();
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 23 * hash + this.id;
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -962,10 +1004,10 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return Integer.toString(id);
     }
-    
+
 }
