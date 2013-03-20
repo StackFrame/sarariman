@@ -131,32 +131,20 @@
 
         <h2>Managers</h2>
         <ul>
-            <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT employee
-                FROM project_managers
-                WHERE project=?
-                <sql:param value="${project.id}"/>
-            </sql:query>
-            <c:forEach var="row" items="${result.rows}">
+            <c:forEach var="manager" items="${project.managers}">
                 <li>
-                    <a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a>
-                    <a href="${directory.byNumber[row.employee].URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></a>
+                    <a href="${manager.URL}">${manager.fullName}</a>
+                    <a href="${manager.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${manager.photoURL}"/></a>
                 </li>
             </c:forEach>
         </ul>
 
         <h2>Cost Managers</h2>
         <ul>
-            <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT employee
-                FROM project_cost_managers
-                WHERE project=?
-                <sql:param value="${project.id}"/>
-            </sql:query>
-            <c:forEach var="row" items="${result.rows}">
+            <c:forEach var="manager" items="${project.costManagers}">
                 <li>
-                    <a href="${directory.byNumber[row.employee].URL}">${directory.byNumber[row.employee].fullName}</a>
-                    <a href="${directory.byNumber[row.employee].URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></a>
+                    <a href="${manager.URL}">${manager.fullName}</a>
+                    <a href="${manager.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${manager.photoURL}"/></a>
                 </li>
             </c:forEach>
         </ul>

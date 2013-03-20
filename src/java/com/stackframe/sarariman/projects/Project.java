@@ -88,6 +88,10 @@ public interface Project extends Linkable {
 
     Collection<Task> getTasks();
 
+    Iterable<Employee> getManagers();
+
+    Iterable<Employee> getCostManagers();
+
     Iterable<Employee> getAdministrativeAssistants();
 
     Set<Employee> getCurrentlyAssigned();
