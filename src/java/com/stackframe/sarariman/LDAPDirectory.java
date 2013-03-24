@@ -4,12 +4,12 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.naming.NamingEnumeration;
@@ -27,8 +27,8 @@ public class LDAPDirectory implements Directory {
 
     private final Sarariman sarariman;
     private final DirContext context;
-    private final Map<Object, Employee> byNumber = new LinkedHashMap<Object, Employee>();
-    private final Map<String, Employee> byUserName = new LinkedHashMap<String, Employee>();
+    private Map<Object, Employee> byNumber;
+    private Map<String, Employee> byUserName;
 
     public LDAPDirectory(DirContext context, Sarariman sarariman) {
         this.context = context;
@@ -47,7 +47,7 @@ public class LDAPDirectory implements Directory {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
-                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName", "hiredate"});
+                                                                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName", "hiredate"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -70,32 +70,31 @@ public class LDAPDirectory implements Directory {
 
             });
 
+            ImmutableMap.Builder<String, Employee> byUserNameBuilder = new ImmutableMap.Builder<String, Employee>();
+            ImmutableMap.Builder<Object, Employee> byNumberBuilder = new ImmutableMap.Builder<Object, Employee>();
             for (Employee employee : tmp) {
-                byNumber.put(employee.getNumber(), employee);
-                byNumber.put(new Long(employee.getNumber()), employee);
-                byNumber.put(Integer.toString(employee.getNumber()), employee);
-                byUserName.put(employee.getUserName(), employee);
+                byNumberBuilder.put(employee.getNumber(), employee);
+                byNumberBuilder.put(new Long(employee.getNumber()), employee);
+                byNumberBuilder.put(Integer.toString(employee.getNumber()), employee);
+                byUserNameBuilder.put(employee.getUserName(), employee);
             }
+
+            byUserName = byUserNameBuilder.build();
+            byNumber = byNumberBuilder.build();
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
         }
     }
 
-    private static <K, V> Map<K, V> copy(Map<K, V> map) {
-        return Collections.unmodifiableMap(new LinkedHashMap<K, V>(map));
-    }
-
     public synchronized Map<String, Employee> getByUserName() {
-        return copy(byUserName);
+        return byUserName;
     }
 
     public synchronized Map<Object, Employee> getByNumber() {
-        return copy(byNumber);
+        return byNumber;
     }
 
     public synchronized void reload() {
-        byNumber.clear();
-        byUserName.clear();
         load();
     }
 
