@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Map;
+import javax.sql.DataSource;
 
 /**
  *
@@ -118,7 +119,7 @@ public class Invoice {
             connection.setAutoCommit(true);
 // FIXME: Add hyperlink to invoice.
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice created",
-                    "Invoice " + id + " was created.");
+                                                "Invoice " + id + " was created.");
             return new Invoice(id, sarariman);
         } finally {
             connection.close();
@@ -163,7 +164,7 @@ public class Invoice {
             connection.setAutoCommit(true);
 
             sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getInvoiceManagers()), null, "invoice deleted",
-                    "Invoice " + id + " was deleted.");
+                                                "Invoice " + id + " was deleted.");
         } finally {
             connection.close();
         }
@@ -176,33 +177,50 @@ public class Invoice {
     }
 
     public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, int task_id, Date date, double duration) throws SQLException {
-        // FIXME: Need to look at date ranges of both the category and the assignment.
-        Task task = sarariman.getTasks().get(task_id);
-        for (LaborCategoryAssignment projectBillRate : projectBillRates) {
-            LaborCategory category = categoriesById.get(projectBillRate.getLaborCategory());
-            Employee billRateEmployee = projectBillRate.getEmployee();
-            long categoryProject = category.getProject();
-            int billRateEmployeeNumber = billRateEmployee.getNumber();
-            if (billRateEmployeeNumber == employee && categoryProject == project) {
-                java.util.Date start = projectBillRate.getPeriodOfPerformanceStart();
-                java.util.Date end = projectBillRate.getPeriodOfPerformanceEnd();
-                if (start.compareTo(date) <= 0 && end.compareTo(date) >= 0) {
+        DataSource dataSource = sarariman.getDataSource();
+        Connection c = dataSource.getConnection();
+        try {
+            PreparedStatement s = c.prepareStatement(
+                    "SELECT labor_categories.rate, labor_categories.id " +
+                    "FROM labor_categories " +
+                    "JOIN labor_category_assignments ON labor_categories.id = labor_category_assignments.labor_category " +
+                    "WHERE labor_categories.project = ? AND " +
+                    "labor_category_assignments.employee = ? AND " +
+                    "labor_categories.pop_start <= ? AND " +
+                    "labor_categories.pop_end >= ? AND " +
+                    "labor_category_assignments.pop_start <= ? AND " +
+                    "labor_category_assignments.pop_end >= ?");
+            try {
+                s.setInt(1, project);
+                s.setInt(2, employee);
+                s.setDate(3, date);
+                s.setDate(4, date);
+                s.setDate(5, date);
+                s.setDate(6, date);
+                ResultSet r = s.executeQuery();
+                if (r.first()) {
                     BigDecimal rate;
                     BigDecimal cost;
+                    Task task = sarariman.getTasks().get(task_id);
+                    Long categoryId = r.getLong("id");
                     if (task.isBillable()) {
-                        rate = category.getRate().setScale(2);
+                        rate = r.getBigDecimal("rate").setScale(2);
                         cost = rate.multiply(new BigDecimal(duration));
                         cost = cost.setScale(2, RoundingMode.UP);
                     } else {
                         rate = cost = BigDecimal.ZERO;
                     }
 
-                    return new CostData(cost, category, rate);
+                    return new CostData(cost, categoriesById.get(categoryId), rate);
+                } else {
+                    return new CostData(new BigDecimal(0), null, new BigDecimal(0));
                 }
+            } finally {
+                s.close();
             }
+        } finally {
+            c.close();
         }
-
-        return new CostData(new BigDecimal(0), null, new BigDecimal(0));
     }
 
     public String getId() {
