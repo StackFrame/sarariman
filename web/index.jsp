@@ -45,6 +45,15 @@
                 $( "#date" ).datepicker({dateFormat: 'yy-mm-dd'});
             });
         </script>
+        <script>
+            function gotCurrentPosition(position) {
+                $("input[name='geolocation']").val(position.coords.latitude + "," + position.coords.longitude);
+            }
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(gotCurrentPosition);
+            } 
+        </script>
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
@@ -191,6 +200,7 @@
                     <textarea cols="80" rows="10" name="description" id="description"></textarea>
                     <fmt:formatDate var="weekString" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
                     <input type="hidden" name="week" value="${weekString}"/><br/>
+                    <input type="hidden" id="geolocation" name="geolocation" value=""/>
                     <input type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
                 </form>
             </div>

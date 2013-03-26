@@ -26,25 +26,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author mcculley
  */
 public class TimesheetEntryHandler extends HttpServlet {
-
+    
     private Sarariman sarariman;
-
+    
     @Override
     public void init() throws ServletException {
         super.init();
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     }
-
-    private void recordEntry(Connection connection, Employee employee, Task task, Date date, String description, BigDecimal duration) throws SQLException {
+    
+    private void recordEntry(Connection connection, Employee employee, Task task, Date date, String description,
+                             BigDecimal duration, String location) throws SQLException {
         // FIXME: Check that the entry does not already exist.
         // FIXME: Check that the task is assigned to the employee.
-        PreparedStatement s = connection.prepareStatement("INSERT INTO hours (employee, task, date, description, duration) VALUES(?, ?, ?, ?, ?)");
+        PreparedStatement s = connection.prepareStatement("INSERT INTO hours (employee, task, date, description, duration, location) VALUES(?, ?, ?, ?, ?, ?)");
         try {
             s.setInt(1, employee.getNumber());
             s.setInt(2, task.getId());
             s.setDate(3, convert(date));
             s.setString(4, description);
             s.setBigDecimal(5, duration);
+            s.setString(6, location);
             int numRows = s.executeUpdate();
             if (numRows != 1) {
                 throw new IllegalStateException("error inserting entry");
@@ -53,9 +55,9 @@ public class TimesheetEntryHandler extends HttpServlet {
             s.close();
         }
     }
-
-    private void logEntry(Connection connection, Employee employee, Task task, Date date, String reason, String remoteAddress, Employee remoteUser, BigDecimal duration) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration) values(?, ?, ?, ?, ?, ?, ?)");
+    
+    private void logEntry(Connection connection, Employee employee, Task task, Date date, String reason, String remoteAddress, Employee remoteUser, BigDecimal duration, String location) throws SQLException {
+        PreparedStatement s = connection.prepareStatement("INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration, location) values(?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             s.setInt(1, employee.getNumber());
             s.setInt(2, task.getId());
@@ -64,6 +66,7 @@ public class TimesheetEntryHandler extends HttpServlet {
             s.setString(5, remoteAddress);
             s.setInt(6, remoteUser.getNumber());
             s.setBigDecimal(7, duration);
+            s.setString(8, location);
             int numRows = s.executeUpdate();
             if (numRows != 1) {
                 throw new IllegalStateException("error logging entry");
@@ -72,36 +75,36 @@ public class TimesheetEntryHandler extends HttpServlet {
             s.close();
         }
     }
-
+    
     private void recordAndLogEntry(Employee employee, Task task, Date date, String reason, String remoteHost, Employee user,
-            BigDecimal duration, String description) throws SQLException {
+                                   BigDecimal duration, String description, String location) throws SQLException {
         if (employee.getNumber() != user.getNumber()) {
             // FIXME: Add support for administrators to modify entries on behalf of users.
             throw new IllegalArgumentException("submitter must be user");
         }
-
+        
         Connection connection = sarariman.getDataSource().getConnection();
         try {
             connection.setAutoCommit(false);
-            recordEntry(connection, employee, task, date, description, duration);
-            logEntry(connection, employee, task, date, reason, remoteHost, user, duration);
+            recordEntry(connection, employee, task, date, description, duration, location);
+            logEntry(connection, employee, task, date, reason, remoteHost, user, duration, location);
             connection.commit();
             connection.setAutoCommit(true);
         } finally {
             connection.close();
         }
     }
-
+    
     private void validate(BigDecimal duration, Date date, Task task, Employee employee) throws SQLException {
         // FIXME: Check that the duration has acceptable fractional part.
         if (duration.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
-
+        
         if (duration.compareTo(BigDecimal.valueOf(24)) > 0) {
             throw new IllegalArgumentException("duration must be less than one day");
         }
-
+        
         Date now = new Date();
         final int PTOtask = 5;
         if (date.after(now) && task.getId() != PTOtask) {
@@ -138,17 +141,18 @@ public class TimesheetEntryHandler extends HttpServlet {
         Employee user = (Employee)checkNotNull(request.getAttribute("user"));
         BigDecimal duration = new BigDecimal(durationParam); // FIXME: Check for valid fraction.
         Task task = sarariman.getTasks().getMap().get(Integer.parseInt(taskParam)); // FIXME: Check that task is valid.
+        String geolocation = request.getParameter("geolocation");
         try {
             Date date = dateFormat.parse(dateParam);
             validate(duration, date, task, user);
             recordAndLogEntry(user, task, date, "Entry created.", request.getRemoteHost().toString(), user, duration,
-                    descriptionParam);
+                              descriptionParam, geolocation);
         } catch (ParseException pe) {
             throw new ServletException(pe);
         } catch (SQLException se) {
             throw new ServletException(se);
         }
-
+        
         response.sendRedirect(request.getHeader("Referer"));
     }
 
@@ -161,5 +165,5 @@ public class TimesheetEntryHandler extends HttpServlet {
     public String getServletInfo() {
         return "handler for timesheet entries";
     }
-
+    
 }
