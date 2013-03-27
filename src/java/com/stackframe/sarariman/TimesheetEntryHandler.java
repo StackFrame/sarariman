@@ -142,6 +142,10 @@ public class TimesheetEntryHandler extends HttpServlet {
         BigDecimal duration = new BigDecimal(durationParam); // FIXME: Check for valid fraction.
         Task task = sarariman.getTasks().getMap().get(Integer.parseInt(taskParam)); // FIXME: Check that task is valid.
         String geolocation = request.getParameter("geolocation");
+        if (geolocation.isEmpty()) {
+            geolocation = null;
+        }
+
         try {
             Date date = dateFormat.parse(dateParam);
             validate(duration, date, task, user);
