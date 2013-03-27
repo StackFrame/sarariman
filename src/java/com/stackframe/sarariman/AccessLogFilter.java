@@ -32,12 +32,12 @@ public class AccessLogFilter implements Filter {
     }
     
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        StatusExposingServletResponse sesr = new StatusExposingServletResponse((HttpServletResponse)response);
         long start = System.currentTimeMillis();
-        chain.doFilter(request, response);
+        chain.doFilter(request, sesr);
         long stop = System.currentTimeMillis();
         long took = stop - start;
         HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse)response;
         Employee employee = (Employee)request.getAttribute("user");
         try {
             Connection c = dataSource.getConnection();
@@ -50,7 +50,7 @@ public class AccessLogFilter implements Filter {
                     s.setString(2, httpServletRequest.getQueryString());
                     s.setString(3, httpServletRequest.getMethod());
                     s.setInt(4, employee.getNumber());
-                    s.setInt(5, httpServletResponse.getStatus());
+                    s.setInt(5, sesr.getStatus());
                     s.setLong(6, took);
                     s.setString(7, httpServletRequest.getHeader("User-Agent"));
                     s.setString(8, httpServletRequest.getRemoteAddr());
