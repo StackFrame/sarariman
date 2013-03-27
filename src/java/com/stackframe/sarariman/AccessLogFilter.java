@@ -32,7 +32,9 @@ public class AccessLogFilter implements Filter {
     }
     
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // FIXME: This is a hack because the deployed version of Tomcat doesn't support getStatus(). Ditch it when we upgrade.
         StatusExposingServletResponse sesr = new StatusExposingServletResponse((HttpServletResponse)response);
+        
         long start = System.currentTimeMillis();
         chain.doFilter(request, sesr);
         long stop = System.currentTimeMillis();
