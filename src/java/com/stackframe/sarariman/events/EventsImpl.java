@@ -36,7 +36,7 @@ public class EventsImpl implements Events {
             try {
                 Statement s = connection.createStatement();
                 try {
-                    ResultSet r = s.executeQuery("SELECT id FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW()))");
+                    ResultSet r = s.executeQuery("SELECT id FROM company_events WHERE (begin >= DATE(NOW()) OR end >= DATE(NOW())) ORDER BY begin");
                     try {
                         Collection<Event> c = new ArrayList<Event>();
                         while (r.next()) {
