@@ -35,8 +35,8 @@
             <c:set var="missingBillings" value="${sarariman:missingBillings(sarariman, service_agreement.id)}"/>
             <c:if test="${!empty missingBillings}">
                 <h2>
-                    <c:set var="project" value="${sarariman.projects[service_agreement.project]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <c:set var="project" value="${sarariman.projects.map[service_agreement.project]}"/>
+                    <c:set var="customer" value="${project.client}"/>
                     ${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}
                 </h2>
                 <c:forEach var="missingBilling" items="${missingBillings}">
