@@ -74,8 +74,8 @@
                     SELECT * FROM projects
                 </sql:query>
                 <c:forEach var="row" items="${projectResultSet.rows}">
-                    <c:set var="project" value="${sarariman.projects[row.id]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <c:set var="project" value="${sarariman.projects.map[row.id]}"/>
+                    <c:set var="customer" value="${project.client}"/>
                     <option value="${row.id}" <c:if test="${agreement.project == row.id}">selected="selected"</c:if>>${fn:escapeXml(row.name)} - ${fn:escapeXml(customer.name)}</option>
                 </c:forEach>
             </select><br/>
