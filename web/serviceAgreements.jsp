@@ -35,8 +35,8 @@
                     SELECT * FROM projects
                 </sql:query>
                 <c:forEach var="row" items="${projectResultSet.rows}">
-                    <c:set var="project" value="${sarariman.projects[row.id]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <c:set var="project" value="${sarariman.projects.map[row.id]}"/>
+                    <c:set var="customer" value="${project.client}"/>
                     <option value="${row.id}">${fn:escapeXml(row.name)} - ${fn:escapeXml(customer.name)}</option>
                 </c:forEach>
             </select><br/>
@@ -72,8 +72,8 @@
             </sql:query>
             <c:forEach var="service_agreement" items="${resultSet.rows}">
                 <tr>
-                    <c:set var="project" value="${sarariman.projects[service_agreement.project]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
+                    <c:set var="project" value="${sarariman.projects.map[service_agreement.project]}"/>
+                    <c:set var="customer" value="${project.client}"/>
                     <td>${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</td>
                     <td>${fn:escapeXml(service_agreement.description)}</td>
                     <td>${service_agreement.billing_period}</td>
