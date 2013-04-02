@@ -330,7 +330,18 @@
                         <sql:param value="${project.id}"/>
                         <sql:param value="${invoice_info.pop_start}"/>
                     </sql:query>
-                    <c:set var="previouslyBilled" value="${previouslyBilledResult.rows[0].costTotal + project.previouslyBilled}"/>
+
+                    <sql:query dataSource="jdbc/sarariman" var="previouslyInvoicedExpenseResult">
+                        SELECT SUM(e.cost) AS costTotal
+                        FROM expenses AS e
+                        JOIN tasks AS t on t.id = e.task
+                        JOIN projects AS p ON t.project = p.id
+                        WHERE p.id = ? AND e.invoice IS NOT NULL AND e.invoice != ?
+                        <sql:param value="${project.id}"/>
+                        <sql:param value="${param.invoice}"/>
+                    </sql:query>
+
+                    <c:set var="previouslyBilled" value="${previouslyBilledResult.rows[0].costTotal + previouslyInvoicedExpenseResult.rows[0].costTotal + project.previouslyBilled}"/>
                     <c:if test="${empty previouslyBilled}">
                         <c:set var="previouslyBilled" value="0"/>
                     </c:if>
