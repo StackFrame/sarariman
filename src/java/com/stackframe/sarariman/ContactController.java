@@ -94,7 +94,6 @@ public class ContactController extends HttpServlet {
                         response.sendRedirect(String.format("contact?id=%d", id));
                     } finally {
                         ps.close();
-                        connection.close();
                     }
                 } finally {
                     connection.close();
