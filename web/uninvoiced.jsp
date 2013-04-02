@@ -118,19 +118,19 @@
 
             <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-            <table>
-                <caption>Services</caption>
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Cost</th>
-                        <th>Invoice</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="row" items="${servicesResultSet.rows}" varStatus="varStatus">
+                <table>
+                    <caption>Services</caption>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Cost</th>
+                            <th>Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="row" items="${servicesResultSet.rows}">
                         <tr>
                             <td>${fn:escapeXml(row.description)}</td>
                             <td>${row.pop_start}</td>
@@ -139,9 +139,9 @@
                             <td>
                                 <input type="checkbox" name="addToInvoiceService" value="${row.id}" checked="true"
                                        <c:if test="${!user.administrator}">disabled="true"</c:if>
-                                       />
-                            </td>
-                        </tr>
+                                           />
+                                </td>
+                            </tr>
                     </c:forEach>
                 </tbody>
             </table>
@@ -163,7 +163,8 @@
                     <c:set var="laborCategories" value="${sarariman.laborCategories}"/>
                     <c:set var="totalApproved" value="0.0"/>
                     <c:set var="totalRecorded" value="0.0"/>
-                    <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
+                    <c:set var="elementIndex" value="0"/>
+                    <c:forEach var="row" items="${result.rows}">
                         <fmt:parseDate var="date" value="${row.date}" pattern="yyyy-MM-dd"/>
                         <c:if test="${(empty filter_pop_start || date ge filter_pop_start) && (empty filter_pop_end || date le filter_pop_end) && (empty param.filter_task || param.filter_task == row.task)}">
                             <tr>
@@ -183,12 +184,12 @@
                                 <c:set var="totalRecorded" value="${totalRecorded + costData.cost}"/> 
                                 <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                                 <td>
-                                    <input type="checkbox" name="addToInvoice${varStatus.index}" value="true"
+                                    <input type="checkbox" name="addToInvoice${elementIndex}" value="true"
                                            <c:if test="${date >= pop_start && date <= pop_end}">checked="true" <c:set var="totalApproved" value="${totalApproved + costData.cost}"/></c:if>
                                            <c:if test="${!user.administrator}">disabled="true"</c:if>
-                                           />
-                                </td>
-                                <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
+                                               />
+                                    </td>
+                                    <input type="hidden" name="addToInvoiceEmployee" value="${row.employee}"/>
                                 <input type="hidden" name="addToInvoiceTask" value="${row.task}"/>
                                 <input type="hidden" name="addToInvoiceDate" value="${row.date}"/>
                                 <%
@@ -196,12 +197,13 @@
                                     java.math.BigDecimal cost = (java.math.BigDecimal)pageContext.getAttribute("cost");
                                     java.math.BigDecimal old = (java.math.BigDecimal)taskTotals.get(task);
                                     if (old == null) {
-                                        taskTotals.put(task,  cost);
+                                        taskTotals.put(task, cost);
                                     } else {
-                                        taskTotals.put(task,  old.add(cost));
+                                        taskTotals.put(task, old.add(cost));
                                     }
                                 %>
                             </tr>
+                            <c:set var="elementIndex" value="${elementIndex + 1}"/>
                         </c:if>
                     </c:forEach>
                     <!-- FIXME: Add total duration. -->
