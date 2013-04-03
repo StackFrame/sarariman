@@ -254,7 +254,7 @@
 
         <c:if test="${!entriesTableEmitted}">
             <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT i.employee, i.task, i.date, h.duration, t.project, t.line_item
+                SELECT i.employee, i.task, i.date, h.duration, t.project, t.line_item, t.name
                 FROM invoices AS i
                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
                 JOIN tasks AS t on i.task = t.id
@@ -360,14 +360,18 @@
                         <caption>Timesheet Entries</caption>
                         <thead>
                             <tr>
-                                <th>Employee</th>
-                                <th>Task</th>
-                                <th>Line Item</th>
-                                <th>Labor Category</th>
-                                <th>Date</th>
-                                <th>Rate</th>
-                                <th>Duration</th>
-                                <th>Cost</th>
+                                <th rowspan="2">Employee</th>
+                                <th colspan="2">Task</th>
+                                <th rowspan="2">Line Item</th>
+                                <th rowspan="2">Labor Category</th>
+                                <th rowspan="2">Date</th>
+                                <th rowspan="2">Rate</th>
+                                <th rowspan="2">Duration</th>
+                                <th rowspan="2">Cost</th>
+                            </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -376,6 +380,7 @@
                                 <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
                                     <td>${directory.byNumber[row.employee].fullName}</td>
                                     <td><a href="task?task_id=${row.task}">${row.task}</a></td>
+                                    <td>${fn:escapeXml(row.name)}</td>
                                     <td class="line_item">${row.line_item}</td>
                                     <c:choose>
                                         <c:when test="${empty costData.laborCategory}">
