@@ -285,7 +285,7 @@
                 <table id="line_items">
                     <caption>Line Items</caption>
                     <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="4">Expended</th><th rowspan="2"></th></tr>
-                    <tr><th>Start</th><th>End</th><th>Hours</th><th>Dollars</th><th>%</th><th>Remaining</th></tr>
+                    <tr><th>Start</th><th>End</th><th>Hours</th><th>$</th><th>%</th><th>Remaining</th></tr>
                     <c:set var="fundedTotal" value="0.0"/>
                     <c:set var="expendedHoursTotal" value="0.0"/>
                     <c:set var="expendedDollarsTotal" value="0.0"/>
@@ -426,7 +426,7 @@
                     <caption>Labor Categories</caption>
                     <!-- FIXME: Sort by date and then rate. Check out project 49 for example where this is needed. -->
                     <tr><th>Labor Category</th><th>Rate</th><th>Start</th><th>End</th><th colspan="2">Expended</th><th colspan="2">Invoiced</th></tr>
-                    <tr><th colspan="4"></th><th>Hours</th><th>Dollars</th><th>Hours</th><th>Dollars</th></tr>
+                    <tr><th colspan="4"></th><th>Hours</th><th>$</th><th>Hours</th><th>$</th></tr>
                     <c:forEach var="entry" items="${sarariman.laborCategories}">
                         <c:if test="${entry.value.project == project.id}">
                             <c:set var="category" value="${entry.value}"/>
