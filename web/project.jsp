@@ -367,6 +367,7 @@
                         <th>Line Item</th>
                     </c:if>
                     <th>Active</th>
+                    <th>Hours</th>
                     <th>Expended</th>
                 </tr>
                 <c:forEach var="task" items="${project.tasks}">
@@ -381,6 +382,7 @@
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
                                 </form>
                             </td>
+                            <td class="duration"><fmt:formatNumber value="${task.expendedHours}" minFractionDigits="2"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${task.expended}"/></td>
                     </tr>
                 </c:forEach>

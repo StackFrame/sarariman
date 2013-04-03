@@ -47,6 +47,8 @@ public interface Task extends Linkable {
 
     BigDecimal getExpended();
 
+    BigDecimal getExpendedHours();
+
     BigDecimal getExpendedLabor();
 
     BigDecimal getExpendedOtherDirectCosts();

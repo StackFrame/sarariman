@@ -375,6 +375,45 @@ public class TaskImpl extends AbstractLinkable implements Task {
         }
     }
 
+    public BigDecimal getExpendedHours() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT SUM(h.duration) AS totalHours " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "WHERE t.id=? AND t.billable=TRUE and h.duration > 0");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        BigDecimal costTotal = r.getBigDecimal("totalHours");
+                        if (costTotal == null) {
+                            costTotal = BigDecimal.ZERO;
+                        }
+
+                        for (Task child : getChildren()) {
+                            costTotal = costTotal.add(child.getExpendedHours());
+                        }
+
+                        return costTotal;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     public BigDecimal getExpendedLabor() {
         try {
             Connection connection = dataSource.getConnection();
