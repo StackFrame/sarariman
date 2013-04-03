@@ -51,6 +51,10 @@
                     color: red;
                 }
 
+                .date {
+                    white-space: nowrap;
+                }
+
                 .duration, .task, .currency, .line_item {
                     text-align: right;
                     font-family: monospace;
@@ -81,10 +85,6 @@
                     font-weight: bold;
                 }
 
-                .oddrow {
-                    background-color: #d4e3e5;
-                }
-
                 #footer {
                     text-align: center;
                 }
@@ -93,6 +93,9 @@
                     float: right;
                     text-align: center;
                 }
+
+                tr:nth-child(odd) {background: #c3dde0;}
+                tr:nth-child(even) {background: #d4e3e5;}
             }
 
             @media print {
@@ -375,9 +378,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
+                            <c:forEach var="row" items="${result.rows}">
                                 <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
-                                <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                                <tr>
                                     <td>${directory.byNumber[row.employee].fullName}</td>
                                     <td><a href="task?task_id=${row.task}">${row.task}</a></td>
                                     <td>${fn:escapeXml(row.name)}</td>
@@ -390,7 +393,7 @@
                                             <td>${costData.laborCategory.name}</td>
                                         </c:otherwise>
                                     </c:choose>
-                                    <td>${row.date}</td>
+                                    <td class="date">${row.date}</td>
                                     <c:choose>
                                         <c:when test="${empty costData.laborCategory}">
                                             <td class="error">no rate</td>
@@ -421,7 +424,7 @@
                                 <sql:param value="${param.invoice}"/>
                             </sql:query>
                             <tr>
-                                <td colspan="6"><strong>Total</strong></td>
+                                <td colspan="7"><strong>Total</strong></td>
                                 <td class="duration"><strong><fmt:formatNumber value="${sum.rows[0].total}" minFractionDigits="2"/></strong></td>
                                 <td class="currency"><strong><fmt:formatNumber type="currency" value="${laborTotal}"/></strong></td>
                             </tr>
@@ -441,13 +444,52 @@
                 <div id="totals">
                     <div id="task">
                         <table>
+                            <caption>Total by Task</caption>
+                            <thead>
+                                <tr><th colspan="2">Task</th><th rowspan="2">Cost</th></tr>
+                                <tr><th>#</th><th>Name</th></tr>
+                            </thead>
+                            <tbody>
+                                <sql:query dataSource="jdbc/sarariman" var="tasks">
+                                    SELECT DISTINCT h.task
+                                    FROM invoices AS i
+                                    JOIN tasks AS t ON i.task = t.id
+                                    JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                                    WHERE i.id = ?
+                                    <sql:param value="${param.invoice}"/>
+                                </sql:query>
+                                <c:forEach var="taskRows" items="${tasks.rows}">
+                                    <tr>
+                                        <td>${taskRows.task}</td>
+                                        <sql:query dataSource="jdbc/sarariman" var="totals">
+                                            SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal, t.name
+                                            FROM invoices AS i
+                                            JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                                            JOIN tasks AS t ON h.task = t.id
+                                            JOIN projects AS p on p.id = t.project
+                                            JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                                            JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                                            WHERE i.id = ? AND h.task = ?
+                                            GROUP BY t.name
+                                            <sql:param value="${param.invoice}"/>
+                                            <sql:param value="${taskRows.task}"/>
+                                        </sql:query>
+                                        <td>${fn:escapeXml(totals.rows[0].name)}</td>
+                                        <td class="currency"><fmt:formatNumber type="currency" value="${totals.rows[0].costTotal}"/></td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="employeeTask">
+                        <table>
                             <caption>Total by Employee and Task</caption>
                             <thead>
                                 <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Hours</th></tr>
                                 <tr><th>#</th><th>Name</th></tr>
                             </thead>
                             <tbody>
-                                <c:set var="index" value="0"/>
                                 <c:forEach var="employeeRows" items="${employees.rows}">
                                     <sql:query dataSource="jdbc/sarariman" var="tasks">
                                         SELECT DISTINCT h.task
@@ -459,7 +501,7 @@
                                         <sql:param value="${employeeRows.employee}"/>
                                     </sql:query>
                                     <c:forEach var="taskRows" items="${tasks.rows}">
-                                        <tr class="${index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                                        <tr>
                                             <td>${directory.byNumber[employeeRows.employee].fullName}</td>
                                             <td>${taskRows.task}</td>
                                             <sql:query dataSource="jdbc/sarariman" var="totals">
@@ -474,9 +516,8 @@
                                                 <sql:param value="${taskRows.task}"/>
                                             </sql:query>
                                             <td>${fn:escapeXml(totals.rows[0].name)}</td>
-                                            <td class="duration">${totals.rows[0].total}</td>
+                                            <td class="duration"><fmt:formatNumber value="${totals.rows[0].total}" minFractionDigits="2"/></td>
                                         </tr>
-                                        <c:set var="index" value="${index + 1}"/>
                                     </c:forEach>
                                 </c:forEach>
                             </tbody>
@@ -490,8 +531,8 @@
                                 <tr><th>Employee</th><th>Hours</th></tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="employeeRows" items="${employees.rows}" varStatus="varStatus">
-                                    <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                                <c:forEach var="employeeRows" items="${employees.rows}">
+                                    <tr>
                                         <td>${directory.byNumber[employeeRows.employee].fullName}</td>
                                         <sql:query dataSource="jdbc/sarariman" var="totals">
                                             SELECT SUM(h.duration) AS total
@@ -502,7 +543,7 @@
                                             <sql:param value="${param.invoice}"/>
                                             <sql:param value="${employeeRows.employee}"/>
                                         </sql:query>
-                                        <td class="duration">${totals.rows[0].total}</td>
+                                        <td class="duration"><fmt:formatNumber value="${totals.rows[0].total}" minFractionDigits="2"/></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -529,8 +570,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="row" items="${expenseResultSet.rows}" varStatus="varStatus">
-                                <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                            <c:forEach var="row" items="${expenseResultSet.rows}">
+                                <tr>
                                     <td>${row.date}</td>
                                     <td>${directory.byNumber[row.employee].fullName}</td>
                                     <td>${row.task}</td>
@@ -567,7 +608,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="row" items="${servicesResultSet.rows}" varStatus="varStatus">
+                            <c:forEach var="row" items="${servicesResultSet.rows}">
                                 <tr>
                                     <td>${fn:escapeXml(row.description)}</td>
                                     <td>${row.pop_start}</td>
