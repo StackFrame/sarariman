@@ -361,14 +361,17 @@
             <table id="tasks">
                 <caption>Tasks</caption>
                 <tr>
-                    <th>ID</th>
-                    <th>Task</th>
+                    <th rowspan="2">ID</th>
+                    <th rowspan="2">Task</th>
                     <c:if test="${!empty lineItems}">
-                        <th>Line Item</th>
+                        <th rowspan="2">Line Item</th>
                     </c:if>
-                    <th>Active</th>
+                    <th rowspan="2">Active</th>
+                    <th colspan="2">Expended</th>
+                </tr>
+                <tr>
                     <th>Hours</th>
-                    <th>Expended</th>
+                    <th>$</th>
                 </tr>
                 <c:forEach var="task" items="${project.tasks}">
                     <tr>
