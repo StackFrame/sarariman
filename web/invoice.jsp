@@ -443,7 +443,8 @@
                         <table>
                             <caption>Total by Employee and Task</caption>
                             <thead>
-                                <tr><th>Employee</th><th>Task</th><th>Hours</th></tr>
+                                <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Hours</th></tr>
+                                <tr><th>#</th><th>Name</th></tr>
                             </thead>
                             <tbody>
                                 <c:set var="index" value="0"/>
@@ -462,14 +463,17 @@
                                             <td>${directory.byNumber[employeeRows.employee].fullName}</td>
                                             <td>${taskRows.task}</td>
                                             <sql:query dataSource="jdbc/sarariman" var="totals">
-                                                SELECT SUM(h.duration) AS total
+                                                SELECT SUM(h.duration) AS total, t.name
                                                 FROM invoices AS i
                                                 JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                                                JOIN tasks AS t ON h.task = t.id
                                                 WHERE i.id = ? AND h.employee = ? AND h.task = ?
+                                                GROUP BY t.name
                                                 <sql:param value="${param.invoice}"/>
                                                 <sql:param value="${employeeRows.employee}"/>
                                                 <sql:param value="${taskRows.task}"/>
                                             </sql:query>
+                                            <td>${fn:escapeXml(totals.rows[0].name)}</td>
                                             <td class="duration">${totals.rows[0].total}</td>
                                         </tr>
                                         <c:set var="index" value="${index + 1}"/>
@@ -591,9 +595,9 @@
                 </sql:query>
                 <ul>
                     <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
-                    </ul>
+                </ul>
 
-                    <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
+                <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
                     <c:forEach var="documentName" items="${documentNames}">
                         <input type="hidden" name="documentName" value="${documentName}"/>
                     </c:forEach>
@@ -630,7 +634,7 @@
 
                     <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
                     <input type="submit" value="Send" <c:if test="${errorsOccurred || empty emailResult.rows}">disabled="true"</c:if> />
-                    </form>
+                </form>
             </c:if>
 
             <p>
