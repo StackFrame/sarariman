@@ -367,9 +367,12 @@
                         <th rowspan="2">Line Item</th>
                     </c:if>
                     <th rowspan="2">Active</th>
+                    <th colspan="2">Invoiced</th>
                     <th colspan="2">Expended</th>
                 </tr>
                 <tr>
+                    <th>Hours</th>
+                    <th>$</th>
                     <th>Hours</th>
                     <th>$</th>
                 </tr>
@@ -385,6 +388,8 @@
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
                                 </form>
                             </td>
+                            <td class="duration"><fmt:formatNumber value="${task.invoicedHours}" minFractionDigits="2"/></td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${task.invoicedLabor}"/></td> <!-- FIXME: account for ODC -->
                             <td class="duration"><fmt:formatNumber value="${task.expendedHours}" minFractionDigits="2"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${task.expended}"/></td>
                     </tr>

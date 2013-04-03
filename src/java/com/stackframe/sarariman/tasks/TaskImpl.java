@@ -414,6 +414,46 @@ public class TaskImpl extends AbstractLinkable implements Task {
         }
     }
 
+    public BigDecimal getInvoicedHours() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT SUM(h.duration) AS totalHours " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN invoices AS i ON i.date = h.date AND i.employee = h.employee AND i.task = h.task " +
+                        "WHERE t.id=? AND t.billable=TRUE and h.duration > 0");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        BigDecimal costTotal = r.getBigDecimal("totalHours");
+                        if (costTotal == null) {
+                            costTotal = BigDecimal.ZERO;
+                        }
+
+                        for (Task child : getChildren()) {
+                            costTotal = costTotal.add(child.getInvoicedHours());
+                        }
+
+                        return costTotal;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     public BigDecimal getExpendedLabor() {
         try {
             Connection connection = dataSource.getConnection();
@@ -439,6 +479,49 @@ public class TaskImpl extends AbstractLinkable implements Task {
 
                         for (Task child : getChildren()) {
                             costTotal = costTotal.add(child.getExpendedLabor());
+                        }
+
+                        return costTotal;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public BigDecimal getInvoicedLabor() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                        "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) " +
+                        "JOIN invoices AS i ON i.date = h.date AND i.employee = h.employee AND i.task = h.task " +
+                        "WHERE t.id=? AND t.billable=TRUE and h.duration > 0");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        BigDecimal costTotal = r.getBigDecimal("costTotal");
+                        if (costTotal == null) {
+                            costTotal = BigDecimal.ZERO;
+                        }
+
+                        for (Task child : getChildren()) {
+                            costTotal = costTotal.add(child.getInvoicedLabor());
                         }
 
                         return costTotal;

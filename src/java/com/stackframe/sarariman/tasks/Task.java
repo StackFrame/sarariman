@@ -53,6 +53,10 @@ public interface Task extends Linkable {
 
     BigDecimal getExpendedOtherDirectCosts();
 
+    BigDecimal getInvoicedHours();
+
+    BigDecimal getInvoicedLabor();
+
     Collection<Task> getChildren();
 
     Task getParent();
