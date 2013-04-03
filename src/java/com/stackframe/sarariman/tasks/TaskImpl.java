@@ -574,8 +574,50 @@ public class TaskImpl extends AbstractLinkable implements Task {
         }
     }
 
+    public BigDecimal getInvoicedOtherDirectCosts() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT SUM(cost) AS total " +
+                        "FROM expenses " +
+                        "WHERE task = ? and invoice IS NOT NULL");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.first();
+                        assert hasRow;
+                        BigDecimal total = r.getBigDecimal("total");
+                        if (total == null) {
+                            total = BigDecimal.ZERO;
+                        }
+
+                        for (Task child : getChildren()) {
+                            total = total.add(child.getInvoicedOtherDirectCosts());
+                        }
+
+                        return total;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     public BigDecimal getExpended() {
         return getExpendedLabor().add(getExpendedOtherDirectCosts());
+    }
+
+    public BigDecimal getInvoiced() {
+        return getInvoicedLabor().add(getInvoicedOtherDirectCosts());
     }
 
     public URI getURI() {

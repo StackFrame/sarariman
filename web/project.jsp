@@ -389,7 +389,7 @@
                                 </form>
                             </td>
                             <td class="duration"><fmt:formatNumber value="${task.invoicedHours}" minFractionDigits="2"/></td>
-                            <td class="currency"><fmt:formatNumber type="currency" value="${task.invoicedLabor}"/></td> <!-- FIXME: account for ODC -->
+                            <td class="currency"><fmt:formatNumber type="currency" value="${task.invoiced}"/></td>
                             <td class="duration"><fmt:formatNumber value="${task.expendedHours}" minFractionDigits="2"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${task.expended}"/></td>
                     </tr>
