@@ -402,16 +402,16 @@
                         </tr>
                     </c:forEach>
                     <tr>
-                        <td colspan="4">Total</td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal}"/></td>
-                        <td class="duration"><fmt:formatNumber value="${invoicedHoursTotal}" minFractionDigits="2"/></td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${invoicedDollarsTotal}"/></td>
-                        <td class="percentage"><fmt:formatNumber value="${invoicedDollarsTotal / fundedTotal}" type="percent"/></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
-                        <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - invoicedDollarsTotal}"/></td>
-                        <td class="duration"><fmt:formatNumber value="${expendedHoursTotal}" minFractionDigits="2"/></td>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
-                        <td class="percentage"><fmt:formatNumber value="${expendedDollarsTotal / fundedTotal}" type="percent"/></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
-                        <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - expendedDollarsTotal}"/></td>
+                        <td colspan="4"><strong>Total</strong></td>
+                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${fundedTotal}"/></strong></td>
+                        <td class="duration"><strong><fmt:formatNumber value="${invoicedHoursTotal}" minFractionDigits="2"/></strong></td>
+                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${invoicedDollarsTotal}"/></strong></td>
+                        <td class="percentage"><strong><fmt:formatNumber value="${invoicedDollarsTotal / fundedTotal}" type="percent"/></strong></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
+                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${fundedTotal - invoicedDollarsTotal}"/></strong></td>
+                        <td class="duration"><strong><fmt:formatNumber value="${expendedHoursTotal}" minFractionDigits="2"/></strong></td>
+                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></strong></td>
+                        <td class="percentage"><strong><fmt:formatNumber value="${expendedDollarsTotal / fundedTotal}" type="percent"/></strong></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
+                        <td class="currency"><strong><fmt:formatNumber type="currency" value="${fundedTotal - expendedDollarsTotal}"/></strong></td>
                         <td></td>
                     </tr>
                 </table>
