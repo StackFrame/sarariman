@@ -75,8 +75,8 @@
                 <label for="active">Active: </label>
                 <input type="checkbox" name="active" id="active" <c:if test="${project.active}">checked="true"</c:if> <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                        <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                </form>
+                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
         </c:if>
 
         <c:set var="resources" value="${project.resources}"/>
@@ -284,9 +284,30 @@
             <c:if test="${!empty lineItems}">
                 <table id="line_items">
                     <caption>Line Items</caption>
-                    <tr><th rowspan="2">Line Item</th><th rowspan="2">Description</th><th colspan="2">Period of Performance</th><th rowspan="2">Funded</th><th colspan="4">Expended</th><th rowspan="2"></th></tr>
-                    <tr><th>Start</th><th>End</th><th>Hours</th><th>$</th><th>%</th><th>Remaining</th></tr>
+                    <tr>
+                        <th rowspan="2">Line Item</th>
+                        <th rowspan="2">Description</th>
+                        <th colspan="2">Period of Performance</th>
+                        <th rowspan="2">Funded</th>
+                        <th colspan="4">Invoiced</th>
+                        <th colspan="4">Expended</th>
+                        <th rowspan="2"></th>
+                    </tr>
+                    <tr>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Hours</th>
+                        <th>$</th>
+                        <th>%</th>
+                        <th>Remaining</th>
+                        <th>Hours</th>
+                        <th>$</th>
+                        <th>%</th>
+                        <th>Remaining</th>
+                    </tr>
                     <c:set var="fundedTotal" value="0.0"/>
+                    <c:set var="invoicedHoursTotal" value="0.0"/>
+                    <c:set var="invoicedDollarsTotal" value="0.0"/>
                     <c:set var="expendedHoursTotal" value="0.0"/>
                     <c:set var="expendedDollarsTotal" value="0.0"/>
                     <c:forEach var="lineItem" items="${lineItems}">
@@ -297,6 +318,43 @@
                             <td class="date"><fmt:formatDate value="${lineItem.pop.end}" pattern="yyyy-MM-dd"/></td>
                             <td class="currency"><fmt:formatNumber type="currency" value="${lineItem.funded}"/></td>
                             <c:set var="fundedTotal" value="${fundedTotal + lineItem.funded}"/>
+
+                            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                                SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
+                                FROM hours AS h
+                                JOIN tasks AS t on h.task = t.id
+                                JOIN projects AS p on p.id = t.project
+                                JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                                JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
+                                JOIN invoices AS i ON i.task = h.task AND i.employee = h.employee AND i.date = h.date
+                                WHERE t.line_item=? AND t.project=? AND t.billable=TRUE and h.duration > 0;
+                                <sql:param value="${lineItem.id}"/>
+                                <sql:param value="${project.id}"/>
+                            </sql:query>
+
+                            <c:set var="invoicedDuration" value="${resultSet.rows[0].durationTotal}"/>
+                            <c:set var="invoicedCost" value="${resultSet.rows[0].costTotal}"/>
+                            <td class="duration"><fmt:formatNumber value="${invoicedDuration}" minFractionDigits="2"/></td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${invoicedCost}"/></td>
+                            <c:choose>
+                                <c:when test="${lineItem.funded lt 0.1}">
+                                    <td>NaN</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="percentage"><fmt:formatNumber value="${invoicedCost / lineItem.funded}" type="percent"/></td>                                    
+                                </c:otherwise>
+                            </c:choose>
+                            <c:set var="invoicedDollarsTotal" value="${invoicedDollarsTotal + invoicedCost}"/>
+                            <c:set var="invoicedHoursTotal" value="${invoicedHoursTotal + invoicedDuration}"/>
+
+                            <c:set var="remaining" value="${lineItem.funded - invoicedCost}"/>
+                            <c:choose>
+                                <c:when test="${remaining < 0}"><c:set var="error" value="error"/></c:when>
+                                <c:otherwise><c:set var="error" value=""/></c:otherwise>
+                            </c:choose>
+                            <td class="currency ${error}">
+                                <fmt:formatNumber type="currency" value="${remaining}"/>                                       
+                            </td>
 
                             <sql:query dataSource="jdbc/sarariman" var="resultSet">
                                 SELECT SUM(h.duration) AS durationTotal, SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal
@@ -333,18 +391,23 @@
                             <td class="currency ${error}">
                                 <fmt:formatNumber type="currency" value="${remaining}"/>                                       
                             </td>
+
                             <td>   
                                 <form style="display:inline" method="GET" action="lineItems/edit.jsp">
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
                                     <input type="hidden" name="project" value="${lineItem.project}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-                                    </form>
-                                </td>
-                            </tr>
+                                </form>
+                            </td>
+                        </tr>
                     </c:forEach>
                     <tr>
                         <td colspan="4">Total</td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal}"/></td>
+                        <td class="duration"><fmt:formatNumber value="${invoicedHoursTotal}" minFractionDigits="2"/></td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${invoicedDollarsTotal}"/></td>
+                        <td class="percentage"><fmt:formatNumber value="${invoicedDollarsTotal / fundedTotal}" type="percent"/></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
+                        <td class="currency"><fmt:formatNumber type="currency" value="${fundedTotal - invoicedDollarsTotal}"/></td>
                         <td class="duration"><fmt:formatNumber value="${expendedHoursTotal}" minFractionDigits="2"/></td>
                         <td class="currency"><fmt:formatNumber type="currency" value="${expendedDollarsTotal}"/></td>
                         <td class="percentage"><fmt:formatNumber value="${expendedDollarsTotal / fundedTotal}" type="percent"/></td> <!-- FIXME: Need to use expended_warning_threshold to flag error. --> <!-- FIXME: Add to audit list. -->
@@ -386,12 +449,12 @@
                         <td>
                             <form>
                                 <input type="checkbox" name="active" disabled="true" <c:if test="${task.active}">checked="checked"</c:if>/>
-                                </form>
-                            </td>
-                            <td class="duration"><fmt:formatNumber value="${task.invoicedHours}" minFractionDigits="2"/></td>
-                            <td class="currency"><fmt:formatNumber type="currency" value="${task.invoiced}"/></td>
-                            <td class="duration"><fmt:formatNumber value="${task.expendedHours}" minFractionDigits="2"/></td>
-                            <td class="currency"><fmt:formatNumber type="currency" value="${task.expended}"/></td>
+                            </form>
+                        </td>
+                        <td class="duration"><fmt:formatNumber value="${task.invoicedHours}" minFractionDigits="2"/></td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${task.invoiced}"/></td>
+                        <td class="duration"><fmt:formatNumber value="${task.expendedHours}" minFractionDigits="2"/></td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${task.expended}"/></td>
                     </tr>
                 </c:forEach>
             </table>
