@@ -6,12 +6,12 @@ package com.stackframe.sarariman.projects;
 
 import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.Employee;
-import com.stackframe.sarariman.lineitems.LineItem;
 import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.NamedResource;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.Week;
 import com.stackframe.sarariman.clients.Client;
+import com.stackframe.sarariman.lineitems.LineItem;
 import com.stackframe.sarariman.tasks.Task;
 import java.math.BigDecimal;
 import java.sql.Date;
