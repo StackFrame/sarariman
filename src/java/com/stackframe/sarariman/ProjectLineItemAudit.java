@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.lineitems.LineItem;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.projects.Projects;
 import java.sql.Connection;

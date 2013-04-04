@@ -10,7 +10,7 @@ import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
-import com.stackframe.sarariman.LineItem;
+import com.stackframe.sarariman.lineitems.LineItem;
 import com.stackframe.sarariman.NamedResource;
 import com.stackframe.sarariman.NamedResourceImpl;
 import com.stackframe.sarariman.OrganizationHierarchy;
