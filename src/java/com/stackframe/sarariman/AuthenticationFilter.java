@@ -66,6 +66,7 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
+        // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use the session?
         request.setAttribute("user", user);
         chain.doFilter(request, response);
     }
