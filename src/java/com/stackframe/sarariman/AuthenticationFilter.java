@@ -43,7 +43,6 @@ public class AuthenticationFilter implements Filter {
                 String encodedBytes = split[1];
                 byte[] decodedBytes = decoder.decodeBuffer(encodedBytes);
                 String decodedString = new String(decodedBytes);
-                String[] credentials = decodedString.split(":");
                 int firstColon = decodedString.indexOf(':');
                 String username = decodedString.substring(0, firstColon);
                 String password = decodedString.substring(firstColon + 1);
