@@ -10,12 +10,15 @@ import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 import org.joda.time.LocalDate;
 
@@ -96,6 +99,20 @@ public class LDAPDirectory implements Directory {
 
     public synchronized void reload() {
         load();
+    }
+
+    public boolean checkCredentials(String username, String password) {
+        String DN = String.format("uid=%s,ou=People,dc=stackframe,dc=com", username);
+        try {
+            Hashtable environment = (Hashtable)context.getEnvironment().clone();
+            environment.put(Context.SECURITY_PRINCIPAL, DN);
+            environment.put(Context.SECURITY_CREDENTIALS, password);
+            DirContext dirContext = new InitialDirContext(environment);
+            dirContext.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }
