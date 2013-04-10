@@ -23,18 +23,18 @@ import javax.sql.DataSource;
  * @author mcculley
  */
 public class AccessLogFilter implements Filter {
-    
+
     private DataSource dataSource;
-    
+
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         dataSource = sarariman.getDataSource();
     }
-    
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // FIXME: This is a hack because the deployed version of Tomcat doesn't support getStatus(). Ditch it when we upgrade.
         StatusExposingServletResponse sesr = new StatusExposingServletResponse((HttpServletResponse)response);
-        
+
         long start = System.currentTimeMillis();
         chain.doFilter(request, sesr);
         long stop = System.currentTimeMillis();
@@ -51,7 +51,12 @@ public class AccessLogFilter implements Filter {
                     s.setString(1, httpServletRequest.getServletPath());
                     s.setString(2, httpServletRequest.getQueryString());
                     s.setString(3, httpServletRequest.getMethod());
-                    s.setInt(4, employee.getNumber());
+                    if (employee == null) {
+                        s.setObject(4, null);
+                    } else {
+                        s.setInt(4, employee.getNumber());
+                    }
+                    
                     s.setInt(5, sesr.getStatus());
                     s.setLong(6, took);
                     s.setString(7, httpServletRequest.getHeader("User-Agent"));
@@ -68,8 +73,8 @@ public class AccessLogFilter implements Filter {
             throw new ServletException(e);
         }
     }
-    
+
     public void destroy() {
     }
-    
+
 }
