@@ -22,7 +22,11 @@ import sun.misc.BASE64Decoder;
  */
 public class AuthenticationFilter implements Filter {
 
+    private Directory directory;
+
     public void init(FilterConfig filterConfig) throws ServletException {
+        Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
+        directory = sarariman.getDirectory();
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -53,8 +57,6 @@ public class AuthenticationFilter implements Filter {
                 }
 
                 username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
-                Sarariman sarariman = (Sarariman)request.getServletContext().getAttribute("sarariman");
-                Directory directory = sarariman.getDirectory();
                 boolean valid = directory.checkCredentials(username, password);
                 if (valid) {
                     user = directory.getByUserName().get(username);
