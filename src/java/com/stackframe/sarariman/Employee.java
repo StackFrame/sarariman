@@ -13,6 +13,7 @@ import com.stackframe.sarariman.vacation.VacationEntry;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Date;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -84,7 +85,7 @@ public interface Employee extends Linkable {
 
     Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice();
 
-    Iterable<Ticket> getUnclosedTickets();
+    Collection<Ticket> getUnclosedTickets();
 
     BigDecimal getMonthlyHealthInsurancePremium();
 

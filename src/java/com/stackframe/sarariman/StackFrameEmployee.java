@@ -602,7 +602,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
-    public Iterable<Ticket> getUnclosedTickets() {
+    public Collection<Ticket> getUnclosedTickets() {
         // FIXME: There's got to be a smarter way to do this query.
         try {
             Connection c = dataSource.getConnection();
