@@ -51,12 +51,10 @@ public class AuthenticationFilter implements Filter {
                 String username = decodedString.substring(0, firstColon);
                 String password = decodedString.substring(firstColon + 1);
                 int domainIndex = username.indexOf('@');
-                if (domainIndex == -1) {
-                    httpResponse.sendError(401, "username must be in the form of an email address (user@example.com)");
-                    return;
+                if (domainIndex != -1) {
+                    username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
                 }
 
-                username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
                 boolean valid = directory.checkCredentials(username, password);
                 if (valid) {
                     user = directory.getByUserName().get(username);
