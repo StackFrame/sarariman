@@ -165,6 +165,10 @@
         <servlet-name>DeductPTOHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.DeductPTOHandler</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserStatus</servlet-name>
+        <servlet-class>com.stackframe.sarariman.statusboard.UserStatus</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DeductPTOHandler</servlet-name>
         <url-pattern>/DeductPTOHandler</url-pattern>
@@ -636,6 +640,10 @@
     <servlet-mapping>
         <servlet-name>createServiceBilling</servlet-name>
         <url-pattern>/createservicebilling</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserStatus</servlet-name>
+        <url-pattern>/statusboard/mine</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
