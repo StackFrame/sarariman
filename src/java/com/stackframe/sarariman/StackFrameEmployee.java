@@ -565,49 +565,19 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
-    private static boolean assigned(Connection c, int assignee, int ticket) throws SQLException {
-        PreparedStatement s = c.prepareStatement("SELECT SUM(assignment) AS sum FROM ticket_assignment WHERE assignee = ? AND ticket = ?");
-        try {
-            s.setInt(1, assignee);
-            s.setInt(2, ticket);
-            ResultSet r = s.executeQuery();
-            try {
-                boolean hasRow = r.first();
-                assert hasRow;
-                int sum = r.getInt("sum");
-                return sum > 0;
-            } finally {
-                r.close();
-            }
-        } finally {
-            s.close();
-        }
-    }
-
-    private static boolean unclosed(Connection c, int ticket) throws SQLException {
-        PreparedStatement s = c.prepareStatement("SELECT status FROM ticket_status WHERE ticket = ? ORDER BY updated DESC LIMIT 1");
-        try {
-            s.setInt(1, ticket);
-            ResultSet r = s.executeQuery();
-            try {
-                boolean hasRow = r.first();
-                assert hasRow;
-                String status = r.getString("status");
-                return !status.equals("closed");
-            } finally {
-                r.close();
-            }
-        } finally {
-            s.close();
-        }
-    }
-
     public Collection<Ticket> getUnclosedTickets() {
-        // FIXME: There's got to be a smarter way to do this query.
         try {
             Connection c = dataSource.getConnection();
             try {
-                PreparedStatement s = c.prepareStatement("SELECT DISTINCT(ticket) FROM ticket_assignment WHERE assignee = ?");
+                PreparedStatement s = c.prepareStatement(
+                        "SELECT updated.ticket, updated.latest, ticket_status.status " +
+                        "FROM (SELECT assigned.ticket, MAX(ticket_status.updated) AS latest " +
+                        "FROM (SELECT ticket, SUM(assignment) AS sum " +
+                        "FROM ticket_assignment WHERE assignee = ? GROUP BY ticket) AS assigned " +
+                        "JOIN ticket_status ON ticket_status.ticket = assigned.ticket " +
+                        "WHERE assigned.sum > 0 GROUP BY ticket) AS updated " +
+                        "JOIN ticket_status ON updated.ticket = ticket_status.ticket AND updated.latest = ticket_status.updated " +
+                        "WHERE ticket_status.status != 'closed'");
                 try {
                     s.setInt(1, number);
                     ResultSet r = s.executeQuery();
@@ -615,13 +585,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                         List<Ticket> l = new ArrayList<Ticket>();
                         while (r.next()) {
                             int ticketID = r.getInt("ticket");
-                            boolean assigned = assigned(c, number, ticketID);
-                            if (assigned) {
-                                boolean unclosed = unclosed(c, ticketID);
-                                if (unclosed) {
-                                    l.add(sarariman.getTickets().get(ticketID));
-                                }
-                            }
+                            l.add(sarariman.getTickets().get(ticketID));
                         }
 
                         return l;
