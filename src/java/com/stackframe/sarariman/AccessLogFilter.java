@@ -90,6 +90,7 @@ public class AccessLogFilter implements Filter {
                         c.close();
                     }
                 } catch (SQLException e) {
+                    // FIXME: Should we log this exception? Does it kill the Executor?
                     throw new RuntimeException(e);
                 }
             }
