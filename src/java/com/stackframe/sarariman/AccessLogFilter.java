@@ -57,6 +57,7 @@ public class AccessLogFilter implements Filter {
                         s.setInt(4, employee.getNumber());
                     }
 
+                    // We will always get 0 if no error is set, because of the aforementioned Tomcat/Servlet spec. issue.
                     int status = sesr.getStatus();
                     if (status == 0) {
                         status = 200;
