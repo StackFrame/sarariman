@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
@@ -50,7 +51,7 @@ public class LDAPDirectory implements Directory {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
-                                                                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName", "hiredate"});
+                                                                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -63,7 +64,9 @@ public class LDAPDirectory implements Directory {
                 LocalDate birthdate = new LocalDate(attributes.get("birthdate").getAll().next().toString());
                 LocalDate hiredate = new LocalDate(attributes.get("hiredate").getAll().next().toString());
                 Range<java.sql.Date> periodOfService = Range.atLeast(convert(hiredate.toDateMidnight().toDate()));
-                tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName, periodOfService, this, sarariman.getDataSource(), sarariman));
+                Attribute jpegPhotoAttribute = attributes.get("jpegPhoto");
+                byte[] photo = jpegPhotoAttribute == null ? null : (byte[])jpegPhotoAttribute.getAll().next();
+                tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName, periodOfService, photo, this, sarariman.getDataSource(), sarariman));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {

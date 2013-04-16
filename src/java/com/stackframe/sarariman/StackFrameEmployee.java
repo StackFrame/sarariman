@@ -55,11 +55,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     private final LocalDate birthdate;
     private final String displayName;
     private final Range<java.sql.Date> periodOfService;
+    private final byte[] photo;
     private final LDAPDirectory directory;
     private final DataSource dataSource;
     private final Sarariman sarariman;
 
-    StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, LDAPDirectory directory, DataSource dataSource, Sarariman sarariman) {
+    StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo, LDAPDirectory directory, DataSource dataSource, Sarariman sarariman) {
         this.directory = directory;
         this.fullName = fullName;
         this.userName = userName;
@@ -70,6 +71,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         this.birthdate = birthdate;
         this.displayName = displayName;
         this.periodOfService = periodOfService;
+        this.photo = photo;
         this.dataSource = dataSource;
         this.sarariman = sarariman;
     }
@@ -490,7 +492,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     public URL getPhotoURL() {
         try {
-            return new URL(String.format("http://www.stackframe.com/directory/photo?uid=%s", userName));
+            return new URL(String.format("%sphoto?uid=%s", sarariman.getMountPoint(), userName));
         } catch (MalformedURLException e) {
             throw new AssertionError(e);
         }
@@ -720,6 +722,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public byte[] getPhoto() {
+        return photo;
     }
 
     @Override

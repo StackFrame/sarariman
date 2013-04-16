@@ -96,6 +96,8 @@ public interface Employee extends Linkable {
     boolean isBenefitsAdministrator();
 
     void setBenefitsAdministrator(boolean benefitsAdministrator);
+    
+    byte[] getPhoto();
 
     // FIXME: Add gender
     // FIXME: Add race
