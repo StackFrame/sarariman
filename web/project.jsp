@@ -395,7 +395,7 @@
                             <td>   
                                 <form style="display:inline" method="GET" action="lineItems/edit.jsp">
                                     <input type="hidden" name="id" value="${lineItem.id}"/>
-                                    <input type="hidden" name="project" value="${lineItem.project}"/>
+                                    <input type="hidden" name="project" value="${project.id}"/>
                                     <input type="submit" name="Edit" value="edit" <c:if test="${!user.administrator}">disabled="true"</c:if> />
                                 </form>
                             </td>
