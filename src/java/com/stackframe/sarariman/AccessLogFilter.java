@@ -57,7 +57,12 @@ public class AccessLogFilter implements Filter {
                         s.setInt(4, employee.getNumber());
                     }
 
-                    s.setInt(5, sesr.getStatus());
+                    int status = sesr.getStatus();
+                    if (status == 0) {
+                        status = 200;
+                    }
+
+                    s.setInt(5, status);
                     s.setLong(6, took);
                     s.setString(7, httpServletRequest.getHeader("User-Agent"));
                     s.setString(8, httpServletRequest.getRemoteAddr());
