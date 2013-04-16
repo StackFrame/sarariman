@@ -169,6 +169,10 @@
         <servlet-name>UserStatus</servlet-name>
         <servlet-class>com.stackframe.sarariman.statusboard.UserStatus</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PhotoFetcher</servlet-name>
+        <servlet-class>com.stackframe.sarariman.PhotoFetcher</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DeductPTOHandler</servlet-name>
         <url-pattern>/DeductPTOHandler</url-pattern>
@@ -644,6 +648,10 @@
     <servlet-mapping>
         <servlet-name>UserStatus</servlet-name>
         <url-pattern>/statusboard/mine</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PhotoFetcher</servlet-name>
+        <url-pattern>/photo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
