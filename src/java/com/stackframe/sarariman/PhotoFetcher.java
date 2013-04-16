@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.ServletException;
@@ -16,6 +18,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author mcculley
  */
 public class PhotoFetcher extends HttpServlet {
+
+    private static String entityTag(byte[] b) {
+        HashFunction hashFunction = Hashing.md5();
+        String hash = hashFunction.hashBytes(b).toString();
+        return String.format("\"%s\"", hash);
+    }
 
     /**
      * Handles the HTTP
@@ -32,11 +40,18 @@ public class PhotoFetcher extends HttpServlet {
         Directory directory = (Directory)getServletContext().getAttribute("directory");
         String uid = request.getParameter("uid");
         Employee employee = directory.getByUserName().get(uid);
-        OutputStream out = response.getOutputStream();
-        try {
-            out.write(employee.getPhoto());
-        } finally {
-            out.close();
+        byte[] photo = employee.getPhoto();
+        String ETag = entityTag(photo);
+        if (ETag.equals(request.getHeader("If-None-Match"))) {
+            response.sendError(304);
+        } else {
+            response.addHeader("ETag", ETag);
+            OutputStream out = response.getOutputStream();
+            try {
+                out.write(photo);
+            } finally {
+                out.close();
+            }
         }
     }
 
