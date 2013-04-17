@@ -6,7 +6,6 @@ package com.stackframe.sarariman;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
@@ -20,29 +19,29 @@ public interface Timesheet extends Linkable {
 
     boolean approve(Employee user);
 
-    Timestamp getApprovedTimestamp() throws SQLException;
+    Timestamp getApprovedTimestamp();
 
-    Employee getApprover() throws SQLException;
+    Employee getApprover();
 
-    double getHolidayHours() throws SQLException;
+    double getHolidayHours();
 
-    double getHours(Date day) throws SQLException;
+    double getHours(Date day);
 
-    Map<Calendar, BigDecimal> getHoursByDay() throws SQLException;
+    Map<Calendar, BigDecimal> getHoursByDay();
 
-    List<TimesheetEntry> getEntries() throws SQLException;
+    List<TimesheetEntry> getEntries();
 
-    double getPTOHours() throws SQLException;
+    double getPTOHours();
 
-    double getRegularHours() throws SQLException;
+    double getRegularHours();
 
-    Timestamp getSubmittedTimestamp() throws SQLException;
+    Timestamp getSubmittedTimestamp();
 
-    double getTotalHours() throws SQLException;
+    double getTotalHours();
 
-    boolean isApproved() throws SQLException;
+    boolean isApproved();
 
-    boolean isSubmitted() throws SQLException;
+    boolean isSubmitted();
 
     Employee getEmployee();
 

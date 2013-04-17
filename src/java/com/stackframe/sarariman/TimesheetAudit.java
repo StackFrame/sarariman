@@ -44,18 +44,13 @@ public class TimesheetAudit implements Audit {
         ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
         Week lastWeek = DateUtils.week(DateUtils.now()).getPrevious();
         List<Timesheet> timesheets = timesheets(lastWeek);
-        // FIXME: Take throws SQLException out out timesheet.isSubmitted and isApproved
-        try {
-            for (Timesheet timesheet : timesheets) {
-                if (timesheet.isSubmitted() && !timesheet.isApproved()) {
-                    listBuilder.add(new AuditResult(AuditResultType.todo,
-                                                    String.format("timesheet for %s needs review",
-                                                                  timesheet.getEmployee().getDisplayName()),
-                                                    timesheet.getURL()));
-                }
+        for (Timesheet timesheet : timesheets) {
+            if (timesheet.isSubmitted() && !timesheet.isApproved()) {
+                listBuilder.add(new AuditResult(AuditResultType.todo,
+                                                String.format("timesheet for %s needs review",
+                                                              timesheet.getEmployee().getDisplayName()),
+                                                timesheet.getURL()));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
 
         return listBuilder.build();

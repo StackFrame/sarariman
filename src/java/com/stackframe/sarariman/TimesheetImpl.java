@@ -48,65 +48,85 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     }
 
     @Override
-    public double getRegularHours() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total " +
-                 "FROM hours " +
-                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
+    public double getRegularHours() {
         try {
-            ps.setInt(1, employeeNumber);
-            ps.setDate(2, convert(week.getStart().getTime()));
-            ps.setDate(3, convert(week.getStart().getTime()));
-            ps.setInt(4, holidayTask);
-            ps.setInt(5, PTOTask);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return 0;
-                } else {
-                    String total = resultSet.getString("total");
-                    return total == null ? 0 : Double.parseDouble(total);
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT SUM(hours.duration) AS total " +
+                        "FROM hours " +
+                        "WHERE employee=? AND " +
+                        "hours.date >= ? AND " +
+                        "hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND " +
+                        "hours.task != ? AND " +
+                        "hours.task != ?");
+                try {
+                    ps.setInt(1, employeeNumber);
+                    ps.setDate(2, convert(week.getStart().getTime()));
+                    ps.setDate(3, convert(week.getStart().getTime()));
+                    ps.setInt(4, holidayTask);
+                    ps.setInt(5, PTOTask);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return 0;
+                        } else {
+                            String total = resultSet.getString("total");
+                            return total == null ? 0 : Double.parseDouble(total);
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public double getTotalHours() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total " +
-                 "FROM hours " +
-                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+    public double getTotalHours() {
         try {
-            ps.setInt(1, employeeNumber);
-            ps.setDate(2, convert(week.getStart().getTime()));
-            ps.setDate(3, convert(week.getStart().getTime()));
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return 0;
-                } else {
-                    String total = resultSet.getString("total");
-                    return total == null ? 0 : Double.parseDouble(total);
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT SUM(hours.duration) AS total " +
+                        "FROM hours " +
+                        "WHERE employee=? AND " +
+                        "hours.date >= ? AND " +
+                        "hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                try {
+                    ps.setInt(1, employeeNumber);
+                    ps.setDate(2, convert(week.getStart().getTime()));
+                    ps.setDate(3, convert(week.getStart().getTime()));
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return 0;
+                        } else {
+                            String total = resultSet.getString("total");
+                            return total == null ? 0 : Double.parseDouble(total);
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Map<Calendar, BigDecimal> getHoursByDay() throws SQLException {
+    public Map<Calendar, BigDecimal> getHoursByDay() {
         Map<Calendar, BigDecimal> map = new LinkedHashMap<Calendar, BigDecimal>();
         for (int i = 0; i < 7; i++) {
             Calendar calendar = week.getStart();
@@ -114,239 +134,331 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
             map.put(calendar, new BigDecimal(0));
         }
 
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT duration, date " +
-                 "FROM hours " +
-                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
-            ps.setInt(1, employeeNumber);
-            ps.setDate(2, convert(week.getStart().getTime()));
-            ps.setDate(3, convert(week.getStart().getTime()));
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                while (resultSet.next()) {
-                    Date date = resultSet.getDate("date");
-                    Calendar calendar = (Calendar)week.getStart().clone();
-                    calendar.setTime(date);
-                    BigDecimal duration = resultSet.getBigDecimal("duration");
-                    map.put(calendar, map.get(calendar).add(duration));
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT duration, date " +
+                        "FROM hours " +
+                        "WHERE employee=? AND " +
+                        "hours.date >= ? AND " +
+                        "hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                try {
+                    ps.setInt(1, employeeNumber);
+                    ps.setDate(2, convert(week.getStart().getTime()));
+                    ps.setDate(3, convert(week.getStart().getTime()));
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        while (resultSet.next()) {
+                            Date date = resultSet.getDate("date");
+                            Calendar calendar = (Calendar)week.getStart().clone();
+                            calendar.setTime(date);
+                            BigDecimal duration = resultSet.getBigDecimal("duration");
+                            map.put(calendar, map.get(calendar).add(duration));
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return map;
     }
 
-    public List<TimesheetEntry> getEntries() throws SQLException {
+    public List<TimesheetEntry> getEntries() {
         Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT task, date " +
-                 "FROM hours " +
-                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) " +
-                 "ORDER BY date, task");
         try {
-            ps.setInt(1, employeeNumber);
-            ps.setDate(2, convert(week.getStart().getTime()));
-            ps.setDate(3, convert(week.getStart().getTime()));
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                List<TimesheetEntry> list = new ArrayList<TimesheetEntry>();
-                while (resultSet.next()) {
-                    Date date = resultSet.getDate("date");
-                    int task = resultSet.getInt("task");
-                    Calendar calendar = (Calendar)week.getStart().clone();
-                    calendar.setTime(date);
-                    TimesheetEntry entry = entries.get(sarariman.getTasks().get(task), employee, date);
-                    list.add(entry);
-                }
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT task, date " +
+                        "FROM hours " +
+                        "WHERE employee=? AND " +
+                        "hours.date >= ? AND " +
+                        "hours.date < DATE_ADD(?, INTERVAL 7 DAY) " +
+                        "ORDER BY date, task");
+                try {
+                    ps.setInt(1, employeeNumber);
+                    ps.setDate(2, convert(week.getStart().getTime()));
+                    ps.setDate(3, convert(week.getStart().getTime()));
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        List<TimesheetEntry> list = new ArrayList<TimesheetEntry>();
+                        while (resultSet.next()) {
+                            Date date = resultSet.getDate("date");
+                            int task = resultSet.getInt("task");
+                            Calendar calendar = (Calendar)week.getStart().clone();
+                            calendar.setTime(date);
+                            TimesheetEntry entry = entries.get(sarariman.getTasks().get(task), employee, date);
+                            list.add(entry);
+                        }
 
-                return list;
+                        return list;
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private double getHours(int task) throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total " +
-                 "FROM hours " +
-                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
+    private double getHours(int task) {
         try {
-            ps.setInt(1, employeeNumber);
-            ps.setDate(2, convert(week.getStart().getTime()));
-            ps.setDate(3, convert(week.getStart().getTime()));
-            ps.setInt(4, task);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return 0;
-                } else {
-                    String total = resultSet.getString("total");
-                    return total == null ? 0 : Double.parseDouble(total);
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT SUM(hours.duration) AS total " +
+                        "FROM hours " +
+                        "WHERE employee=? AND " +
+                        "hours.date >= ? AND " +
+                        "hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND " +
+                        "hours.task = ?");
+                try {
+                    ps.setInt(1, employeeNumber);
+                    ps.setDate(2, convert(week.getStart().getTime()));
+                    ps.setDate(3, convert(week.getStart().getTime()));
+                    ps.setInt(4, task);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return 0;
+                        } else {
+                            String total = resultSet.getString("total");
+                            return total == null ? 0 : Double.parseDouble(total);
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
-        }
-    }
-
-    @Override
-    public double getHours(Date day) throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT SUM(duration) AS total FROM hours WHERE employee=? AND date=?");
-        try {
-            ps.setInt(1, employeeNumber);
-            ps.setDate(2, day);
-            ResultSet resultSet = ps.executeQuery();
-            try {
-                if (!resultSet.first()) {
-                    return 0;
-                } else {
-                    String total = resultSet.getString("total");
-                    return total == null ? 0 : Double.parseDouble(total);
-                }
-            } finally {
-                resultSet.close();
-            }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public double getPTOHours() throws SQLException {
+    public double getHours(Date day) {
+        try {
+            Connection connection = sarariman.openConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT SUM(duration) AS total " +
+                        "FROM hours WHERE employee=? " +
+                        "AND date=?");
+                try {
+                    ps.setInt(1, employeeNumber);
+                    ps.setDate(2, day);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return 0;
+                        } else {
+                            String total = resultSet.getString("total");
+                            return total == null ? 0 : Double.parseDouble(total);
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public double getPTOHours() {
         return getHours(PTOTask);
     }
 
     @Override
-    public double getHolidayHours() throws SQLException {
+    public double getHolidayHours() {
         return getHours(holidayTask);
     }
 
     @Override
-    public boolean isSubmitted() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
+    public boolean isSubmitted() {
         try {
-            ps.setDate(1, convert(week.getStart().getTime()));
-            ps.setInt(2, employeeNumber);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                return resultSet.first();
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT submitted_timestamp " +
+                        "FROM timecards " +
+                        "WHERE date = ? AND " +
+                        "employee = ?");
+                try {
+                    ps.setDate(1, convert(week.getStart().getTime()));
+                    ps.setInt(2, employeeNumber);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        return resultSet.first();
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Employee getApprover() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT approver FROM timecards WHERE date = ? AND employee = ?");
+    public Employee getApprover() {
         try {
-            ps.setDate(1, convert(week.getStart().getTime()));
-            ps.setInt(2, employeeNumber);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return null;
-                } else {
-                    int employee = resultSet.getInt("approver");
-                    return sarariman.getDirectory().getByNumber().get(employee);
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT approver FROM timecards " +
+                        "WHERE date = ? AND " +
+                        "employee = ?");
+                try {
+                    ps.setDate(1, convert(week.getStart().getTime()));
+                    ps.setInt(2, employeeNumber);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return null;
+                        } else {
+                            int employee = resultSet.getInt("approver");
+                            return sarariman.getDirectory().getByNumber().get(employee);
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Timestamp getApprovedTimestamp() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT approved_timestamp FROM timecards WHERE date = ? AND employee = ?");
+    public Timestamp getApprovedTimestamp() {
         try {
-            ps.setDate(1, convert(week.getStart().getTime()));
-            ps.setInt(2, employeeNumber);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return null;
-                } else {
-                    return resultSet.getTimestamp("approved_timestamp");
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT approved_timestamp " +
+                        "FROM timecards " +
+                        "WHERE date = ? AND " +
+                        "employee = ?");
+                try {
+                    ps.setDate(1, convert(week.getStart().getTime()));
+                    ps.setInt(2, employeeNumber);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return null;
+                        } else {
+                            return resultSet.getTimestamp("approved_timestamp");
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Timestamp getSubmittedTimestamp() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT submitted_timestamp FROM timecards WHERE date = ? AND employee = ?");
+    public Timestamp getSubmittedTimestamp() {
         try {
-            ps.setDate(1, convert(week.getStart().getTime()));
-            ps.setInt(2, employeeNumber);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return null;
-                } else {
-                    return resultSet.getTimestamp("submitted_timestamp");
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT submitted_timestamp " +
+                        "FROM timecards " +
+                        "WHERE date = ? AND " +
+                        "employee = ?");
+                try {
+                    ps.setDate(1, convert(week.getStart().getTime()));
+                    ps.setInt(2, employeeNumber);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return null;
+                        } else {
+                            return resultSet.getTimestamp("submitted_timestamp");
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean isApproved() throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT approved FROM timecards WHERE date = ? AND employee = ?");
+    public boolean isApproved() {
         try {
-            ps.setDate(1, convert(week.getStart().getTime()));
-            ps.setInt(2, employeeNumber);
-            ResultSet resultSet = ps.executeQuery();
+            Connection connection = sarariman.openConnection();
             try {
-                if (!resultSet.first()) {
-                    return false;
-                } else {
-                    return resultSet.getBoolean("approved");
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT approved " +
+                        "FROM timecards " +
+                        "WHERE date = ? AND " +
+                        "employee = ?");
+                try {
+                    ps.setDate(1, convert(week.getStart().getTime()));
+                    ps.setInt(2, employeeNumber);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        if (!resultSet.first()) {
+                            return false;
+                        } else {
+                            return resultSet.getBoolean("approved");
+                        }
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
                 }
             } finally {
-                resultSet.close();
+                connection.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
