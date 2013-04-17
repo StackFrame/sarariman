@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author mcculley
  */
-public class TimesheetImpl implements Timesheet {
+public class TimesheetImpl extends AbstractLinkable implements Timesheet {
 
     // FIXME: These hard coded task numbers should come from a config file.
     private static final int holidayTask = 4;
@@ -50,9 +51,9 @@ public class TimesheetImpl implements Timesheet {
     public double getRegularHours() throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total "
-                + "FROM hours "
-                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
+                "SELECT SUM(hours.duration) AS total " +
+                 "FROM hours " +
+                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task != ? AND hours.task != ?");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, convert(week.getStart().getTime()));
@@ -80,9 +81,9 @@ public class TimesheetImpl implements Timesheet {
     public double getTotalHours() throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total "
-                + "FROM hours "
-                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                "SELECT SUM(hours.duration) AS total " +
+                 "FROM hours " +
+                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, convert(week.getStart().getTime()));
@@ -115,9 +116,9 @@ public class TimesheetImpl implements Timesheet {
 
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT duration, date "
-                + "FROM hours "
-                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
+                "SELECT duration, date " +
+                 "FROM hours " +
+                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY)");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, convert(week.getStart().getTime()));
@@ -145,10 +146,10 @@ public class TimesheetImpl implements Timesheet {
         Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT task, date "
-                + "FROM hours "
-                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) "
-                + "ORDER BY date, task");
+                "SELECT task, date " +
+                 "FROM hours " +
+                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) " +
+                 "ORDER BY date, task");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, convert(week.getStart().getTime()));
@@ -178,9 +179,9 @@ public class TimesheetImpl implements Timesheet {
     private double getHours(int task) throws SQLException {
         Connection connection = sarariman.openConnection();
         PreparedStatement ps = connection.prepareStatement(
-                "SELECT SUM(hours.duration) AS total "
-                + "FROM hours "
-                + "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
+                "SELECT SUM(hours.duration) AS total " +
+                 "FROM hours " +
+                 "WHERE employee=? AND hours.date >= ? AND hours.date < DATE_ADD(?, INTERVAL 7 DAY) AND hours.task = ?");
         try {
             ps.setInt(1, employeeNumber);
             ps.setDate(2, convert(week.getStart().getTime()));
@@ -366,7 +367,7 @@ public class TimesheetImpl implements Timesheet {
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(employee.getEmail(), null, "timesheet approved",
-                            "Timesheet approved for " + employee.getFullName() + " for week of " + week + ".");
+                                                        "Timesheet approved for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
             } finally {
@@ -398,7 +399,7 @@ public class TimesheetImpl implements Timesheet {
                 } else {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(employee.getEmail(), null, "timesheet rejected",
-                            "Timesheet rejected for " + employee.getFullName() + " for week of " + week + ".");
+                                                        "Timesheet rejected for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
             } finally {
@@ -432,8 +433,8 @@ public class TimesheetImpl implements Timesheet {
                     Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
                     // FIXME: Add URL to timesheet.
                     sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getApprovers()), null,
-                            "timesheet submitted",
-                            "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
+                                                        "timesheet submitted",
+                                                        "Timesheet submitted for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
                 }
             } finally {
@@ -448,6 +449,18 @@ public class TimesheetImpl implements Timesheet {
 
     public static boolean submit(TimesheetImpl timesheet) {
         return timesheet.submit();
+    }
+
+    public URI getURI() {
+        return URI.create(String.format("%stimesheet?week=%s&employee=%d", sarariman.getMountPoint(), week.getName(), employeeNumber));
+    }
+
+    public Employee getEmployee() {
+        return sarariman.getDirectory().getByNumber().get(employeeNumber);
+    }
+
+    public Week getWeek() {
+        return week;
     }
 
     @Override

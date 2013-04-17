@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author mcculley
  */
-public interface Timesheet {
+public interface Timesheet extends Linkable {
 
     boolean approve(Employee user);
 
@@ -43,6 +43,10 @@ public interface Timesheet {
     boolean isApproved() throws SQLException;
 
     boolean isSubmitted() throws SQLException;
+
+    Employee getEmployee();
+
+    Week getWeek();
 
     boolean reject();
 
