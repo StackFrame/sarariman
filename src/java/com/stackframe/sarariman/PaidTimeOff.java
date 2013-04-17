@@ -13,17 +13,45 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
+import javax.sql.DataSource;
 
 /**
  *
  * @author mcculley
  */
 public class PaidTimeOff {
-
+    
     private static Collection<Employee> employeesToCredit(Sarariman sarariman) {
         return Collections2.filter(sarariman.getDirectory().getByUserName().values(), Utilities.activeFulltime);
     }
-
+    
+    public static double getPaidTimeOff(DataSource dataSource, Employee employee, Week effective, String source) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement checkQuery = connection.prepareStatement("SELECT SUM(amount) AS sum FROM paid_time_off WHERE employee=? AND effective=? AND source=?");
+                try {
+                    checkQuery.setInt(1, employee.getNumber());
+                    checkQuery.setString(2, effective.getName());
+                    checkQuery.setString(3, source);
+                    ResultSet result = checkQuery.executeQuery();
+                    try {
+                        result.first();
+                        return result.getDouble("sum");
+                    } finally {
+                        result.close();
+                    }
+                } finally {
+                    checkQuery.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private static void creditPaidTimeOff(Sarariman sarariman, Connection connection, double amount, Employee employee, Date effective, String source, String comment) throws SQLException {
         PreparedStatement checkQuery = connection.prepareStatement("SELECT * FROM paid_time_off WHERE employee=? AND effective=? AND source=?");
         try {
@@ -45,7 +73,7 @@ public class PaidTimeOff {
                         if (rowCount != 1) {
                             throw new AssertionError("Expected there to be 1 row");
                         }
-
+                        
                         sarariman.getEmailDispatcher().send(employee.getEmail(), null, "PTO updated", "Paid time off was updated: " + comment);
                     } finally {
                         addPTO.close();
@@ -58,7 +86,7 @@ public class PaidTimeOff {
             checkQuery.close();
         }
     }
-
+    
     public static void creditWeeklyPaidTimeOff(Sarariman sarariman, Date weekStart) throws SQLException {
         Collection<Employee> employeesToCredit = employeesToCredit(sarariman);
         double perWeek = 3.39;
@@ -69,14 +97,14 @@ public class PaidTimeOff {
             for (Employee employee : employeesToCredit) {
                 creditPaidTimeOff(sarariman, connection, perWeek, employee, weekStart, source, "credit for week of " + weekStart);
             }
-
+            
             connection.commit();
             connection.setAutoCommit(true);
         } finally {
             connection.close();
         }
     }
-
+    
     public static boolean isHoliday(Sarariman sarariman, Date date, StringBuilder holidayName) throws SQLException {
         Connection connection = sarariman.openConnection();
         try {
@@ -93,7 +121,7 @@ public class PaidTimeOff {
                         if (holidayName != null) {
                             holidayName.append(description);
                         }
-
+                        
                         return true;
                     }
                 } finally {
@@ -106,7 +134,7 @@ public class PaidTimeOff {
             connection.close();
         }
     }
-
+    
     public static void creditHolidayPTO(Sarariman sarariman) throws SQLException {
         Calendar today = Calendar.getInstance();
         Date todayDate = convert(today.getTime());
@@ -116,7 +144,7 @@ public class PaidTimeOff {
             creditHolidayPTO(sarariman, todayDate, holidayName);
         }
     }
-
+    
     public static void creditHolidayPTO(Sarariman sarariman, Date day, CharSequence holidayName) throws SQLException {
         Collection<Employee> employeesToCredit = employeesToCredit(sarariman);
         String source = "holidayPTOCredit";
@@ -126,12 +154,12 @@ public class PaidTimeOff {
             for (Employee employee : employeesToCredit) {
                 creditPaidTimeOff(sarariman, connection, 8.00, employee, day, source, "credit for holiday: " + holidayName);
             }
-
+            
             connection.commit();
             connection.setAutoCommit(true);
         } finally {
             connection.close();
         }
     }
-
+    
 }

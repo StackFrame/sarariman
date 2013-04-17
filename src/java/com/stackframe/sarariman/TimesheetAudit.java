@@ -5,9 +5,6 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,11 +42,25 @@ public class TimesheetAudit implements Audit {
         Week lastWeek = DateUtils.week(DateUtils.now()).getPrevious();
         List<Timesheet> timesheets = timesheets(lastWeek);
         for (Timesheet timesheet : timesheets) {
-            if (timesheet.isSubmitted() && !timesheet.isApproved()) {
-                listBuilder.add(new AuditResult(AuditResultType.todo,
-                                                String.format("timesheet for %s needs review",
-                                                              timesheet.getEmployee().getDisplayName()),
-                                                timesheet.getURL()));
+            if (timesheet.isSubmitted()) {
+                Employee employee = timesheet.getEmployee();
+                if (timesheet.isApproved()) {
+                    double recorded = timesheet.getPTOHours();
+                    if (recorded > 0) {
+                        double deducted = PaidTimeOff.getPaidTimeOff(sarariman.getDataSource(), employee, lastWeek,
+                                                                     "weeklyPTODeduction");
+                        if (recorded != -deducted) {
+                            listBuilder.add(new AuditResult(AuditResultType.todo,
+                                                            String.format("PTO needs to be deducted for %s for week of %s",
+                                                                          employee.getDisplayName(), lastWeek.getName()),
+                                                            timesheet.getURL()));
+                        }
+                    }
+                } else {
+                    listBuilder.add(new AuditResult(AuditResultType.todo,
+                                                    String.format("timesheet for %s needs review", employee.getDisplayName()),
+                                                    timesheet.getURL()));
+                }
             }
         }
 
