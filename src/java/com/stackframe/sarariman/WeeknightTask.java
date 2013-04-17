@@ -47,7 +47,7 @@ public class WeeknightTask extends TimerTask {
                     continue;
                 }
 
-                TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), week, sarariman.getTimesheetEntries());
+                TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), week, sarariman.getTimesheetEntries(), sarariman.getTasks(), sarariman.getDataSource(), sarariman.getDirectory());
                 if (!timesheet.isSubmitted()) {
                     Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
                     Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));

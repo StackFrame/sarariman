@@ -42,7 +42,7 @@ public class MorningTask extends TimerTask {
                 continue;
             }
 
-            TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), prevWeek, sarariman.getTimesheetEntries());
+            TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), prevWeek, sarariman.getTimesheetEntries(), sarariman.getTasks(), sarariman.getDataSource(), sarariman.getDirectory());
             if (!timesheet.isSubmitted() && (employee.isFulltime() || timesheet.getRegularHours() > 0)) {
                 Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
                 Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));

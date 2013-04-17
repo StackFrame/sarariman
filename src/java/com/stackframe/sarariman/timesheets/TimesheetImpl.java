@@ -5,12 +5,14 @@
 package com.stackframe.sarariman.timesheets;
 
 import com.stackframe.sarariman.AbstractLinkable;
+import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.EmailDispatcher;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Sarariman;
 import com.stackframe.sarariman.TimesheetEntries;
 import com.stackframe.sarariman.TimesheetEntry;
 import com.stackframe.sarariman.Week;
+import com.stackframe.sarariman.tasks.Tasks;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
@@ -37,27 +40,38 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     // FIXME: These hard coded task numbers should come from a config file.
     private static final int holidayTask = 4;
     private static final int PTOTask = 5;
-    private final Sarariman sarariman;
     private final int employeeNumber;
     private final Week week;
     private final TimesheetEntries entries;
+    private final Tasks tasks;
+    private final DataSource dataSource;
+    private final Directory directory;
+    private final Sarariman sarariman;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public TimesheetImpl(Sarariman sarariman, int employeeNumber, Week week, TimesheetEntries entries) {
+    public TimesheetImpl(Sarariman sarariman, int employeeNumber, Week week, TimesheetEntries entries, Tasks tasks, DataSource dataSource, Directory directory) {
         this.sarariman = sarariman;
         this.employeeNumber = employeeNumber;
         this.week = week;
         this.entries = entries;
+        this.tasks = tasks;
+        this.dataSource = dataSource;
+        this.directory = directory;
+
+    }
+
+    public static TimesheetImpl lookup(Sarariman sarariman, int employeeNumber, Week week, Tasks tasks, DataSource dataSource, Directory directory) {
+        return new TimesheetImpl(sarariman, employeeNumber, week, sarariman.getTimesheetEntries(), tasks, dataSource, directory);
     }
 
     public static TimesheetImpl lookup(Sarariman sarariman, int employeeNumber, Week week) {
-        return new TimesheetImpl(sarariman, employeeNumber, week, sarariman.getTimesheetEntries());
+        return lookup(sarariman, employeeNumber, week, sarariman.getTasks(), sarariman.getDataSource(), sarariman.getDirectory());
     }
 
     @Override
     public double getRegularHours() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT SUM(hours.duration) AS total " +
@@ -98,7 +112,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public double getTotalHours() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT SUM(hours.duration) AS total " +
@@ -142,7 +156,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
         }
 
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT duration, date " +
@@ -181,7 +195,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     public List<TimesheetEntry> getEntries() {
         Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT task, date " +
@@ -202,7 +216,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
                             int task = resultSet.getInt("task");
                             Calendar calendar = (Calendar)week.getStart().clone();
                             calendar.setTime(date);
-                            TimesheetEntry entry = entries.get(sarariman.getTasks().get(task), employee, date);
+                            TimesheetEntry entry = entries.get(tasks.get(task), employee, date);
                             list.add(entry);
                         }
 
@@ -223,7 +237,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
 
     private double getHours(int task) {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT SUM(hours.duration) AS total " +
@@ -262,7 +276,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public double getHours(Date day) {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT SUM(duration) AS total " +
@@ -306,7 +320,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public boolean isSubmitted() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT submitted_timestamp " +
@@ -336,7 +350,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public Employee getApprover() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT approver FROM timecards " +
@@ -351,7 +365,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
                             return null;
                         } else {
                             int employee = resultSet.getInt("approver");
-                            return sarariman.getDirectory().getByNumber().get(employee);
+                            return directory.getByNumber().get(employee);
                         }
                     } finally {
                         resultSet.close();
@@ -370,7 +384,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public Timestamp getApprovedTimestamp() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT approved_timestamp " +
@@ -404,7 +418,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public Timestamp getSubmittedTimestamp() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT submitted_timestamp " +
@@ -438,7 +452,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public boolean isApproved() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement ps = connection.prepareStatement(
                         "SELECT approved " +
@@ -472,7 +486,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public boolean approve(Employee user) {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement("UPDATE timecards SET approved=true, approver=?, approved_timestamp=? WHERE date=? AND employee=?");
             try {
                 ps.setInt(1, user.getNumber());
@@ -484,7 +498,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
                     logger.severe("update for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
+                    Employee employee = directory.getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(employee.getEmail(), null, "timesheet approved",
                                                         "Timesheet approved for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
@@ -506,7 +520,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public boolean reject() {
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement("DELETE FROM timecards WHERE date=? AND employee=?");
             try {
                 ps.setDate(1, convert(week.getStart().getTime()));
@@ -516,7 +530,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
                     logger.severe("reject for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
+                    Employee employee = directory.getByNumber().get(employeeNumber);
                     sarariman.getEmailDispatcher().send(employee.getEmail(), null, "timesheet rejected",
                                                         "Timesheet rejected for " + employee.getFullName() + " for week of " + week + ".");
                     return true;
@@ -539,7 +553,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     public boolean submit() {
         // FIXME: Check that no day has more than 24 hours.
         try {
-            Connection connection = sarariman.openConnection();
+            Connection connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement("INSERT INTO timecards (employee, date, approved) values(?, ?, false)");
             try {
                 ps.setInt(1, employeeNumber);
@@ -549,7 +563,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
                     logger.severe("submit for week=" + week + " and employee=" + employeeNumber + " did not modify a row");
                     return false;
                 } else {
-                    Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
+                    Employee employee = directory.getByNumber().get(employeeNumber);
                     // FIXME: Add URL to timesheet.
                     sarariman.getEmailDispatcher().send(EmailDispatcher.addresses(sarariman.getApprovers()), null,
                                                         "timesheet submitted",
@@ -575,7 +589,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     }
 
     public Employee getEmployee() {
-        return sarariman.getDirectory().getByNumber().get(employeeNumber);
+        return directory.getByNumber().get(employeeNumber);
     }
 
     public Week getWeek() {
