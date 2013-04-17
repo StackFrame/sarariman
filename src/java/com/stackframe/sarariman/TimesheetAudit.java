@@ -53,7 +53,7 @@ public class TimesheetAudit implements Audit {
                             listBuilder.add(new AuditResult(AuditResultType.todo,
                                                             String.format("PTO needs to be deducted for %s for week of %s",
                                                                           employee.getDisplayName(), lastWeek.getName()),
-                                                            timesheet.getURL()));
+                                                            sarariman.getTimesheets().getURL()));
                         }
                     }
                 } else {

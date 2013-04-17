@@ -24,6 +24,8 @@ import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.tickets.Tickets;
 import com.stackframe.sarariman.tickets.TicketsImpl;
+import com.stackframe.sarariman.timesheets.Timesheets;
+import com.stackframe.sarariman.timesheets.TimesheetsImpl;
 import com.stackframe.sarariman.vacation.Vacations;
 import com.stackframe.sarariman.vacation.VacationsImpl;
 import java.net.InetAddress;
@@ -73,6 +75,7 @@ public class Sarariman implements ServletContextListener {
     private Vacations vacations;
     private OutOfOfficeEntries outOfOffice;
     private Contacts contacts;
+    private Timesheets timesheets;
 
     public String getVersion() {
         return Version.version;
@@ -135,6 +138,10 @@ public class Sarariman implements ServletContextListener {
 
     public Collection<Employee> getTimesheetManagers() {
         return timesheetManagers;
+    }
+
+    public Timesheets getTimesheets() {
+        return timesheets;
     }
 
     public Clients getClients() {
@@ -290,6 +297,7 @@ public class Sarariman implements ServletContextListener {
             vacations = new VacationsImpl(getDataSource(), directory);
             outOfOffice = new OutOfOfficeEntriesImpl(getDataSource(), directory);
             contacts = new ContactsImpl(getDataSource(), mountPoint);
+            timesheets = new TimesheetsImpl(mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
