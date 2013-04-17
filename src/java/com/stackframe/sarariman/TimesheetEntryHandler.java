@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import static com.google.common.base.Preconditions.*;
 import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.io.IOException;
 import java.math.BigDecimal;

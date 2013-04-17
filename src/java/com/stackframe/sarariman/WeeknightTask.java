@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.SQLException;
 import java.util.Calendar;

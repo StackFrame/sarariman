@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.MessageFormat;

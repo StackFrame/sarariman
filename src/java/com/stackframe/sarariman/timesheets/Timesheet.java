@@ -2,8 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.stackframe.sarariman;
+package com.stackframe.sarariman.timesheets;
 
+import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.Linkable;
+import com.stackframe.sarariman.TimesheetEntry;
+import com.stackframe.sarariman.Week;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
