@@ -89,7 +89,7 @@
                                     ${audit.displayName}
                                     <ol>
                                         <c:forEach var="result" items="${auditResults}">
-                                            <li class="error"><a href="${result.URL}">${result.type}: ${fn:escapeXml(result.message)}</a></li>
+                                            <li class="error"><a href="${fn:escapeXml(result.URL)}">${result.type}: ${fn:escapeXml(result.message)}</a></li>
                                         </c:forEach>
                                     </ol>
                                 </li>
