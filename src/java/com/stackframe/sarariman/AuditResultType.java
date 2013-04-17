@@ -10,5 +10,5 @@ package com.stackframe.sarariman;
  */
 public enum AuditResultType {
 
-    error, warning
+    error, warning, todo
 }
