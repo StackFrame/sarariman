@@ -11,22 +11,22 @@
   <function>
     <name>timesheet</name>
     <function-class>com.stackframe.sarariman.timesheets.TimesheetImpl</function-class>
-    <function-signature>com.stackframe.sarariman.Timesheet lookup(com.stackframe.sarariman.Sarariman, int, com.stackframe.sarariman.Week)</function-signature>
+    <function-signature>com.stackframe.sarariman.timesheets.Timesheet lookup(com.stackframe.sarariman.Sarariman, int, com.stackframe.sarariman.Week)</function-signature>
   </function>
   <function>
     <name>approveTimesheet</name>
     <function-class>com.stackframe.sarariman.timesheets.TimesheetImpl</function-class>
-    <function-signature>boolean approve(com.stackframe.sarariman.Timesheet, com.stackframe.sarariman.Employee)</function-signature>
+    <function-signature>boolean approve(com.stackframe.sarariman.timesheets.Timesheet, com.stackframe.sarariman.Employee)</function-signature>
   </function>
   <function>
     <name>rejectTimesheet</name>
     <function-class>com.stackframe.sarariman.timesheets.TimesheetImpl</function-class>
-    <function-signature>boolean reject(com.stackframe.sarariman.TimesheetImpl)</function-signature>
+    <function-signature>boolean reject(com.stackframe.sarariman.timesheets.TimesheetImpl)</function-signature>
   </function>
   <function>
     <name>submitTimesheet</name>
     <function-class>com.stackframe.sarariman.timesheets.TimesheetImpl</function-class>
-    <function-signature>boolean submit(com.stackframe.sarariman.TimesheetImpl)</function-signature>
+    <function-signature>boolean submit(com.stackframe.sarariman.timesheets.TimesheetImpl)</function-signature>
   </function>
   <function>
     <name>createInvoice</name>
