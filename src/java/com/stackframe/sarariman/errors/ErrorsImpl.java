@@ -45,7 +45,7 @@ public class ErrorsImpl implements Errors {
             try {
                 Statement s = connection.createStatement();
                 try {
-                    ResultSet r = s.executeQuery("SELECT id FROM error_log");
+                    ResultSet r = s.executeQuery("SELECT id FROM error_log ORDER BY timestamp DESC");
                     try {
                         Collection<Error> c = new ArrayList<Error>();
                         while (r.next()) {
