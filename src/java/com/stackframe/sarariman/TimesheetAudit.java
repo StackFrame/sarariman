@@ -6,7 +6,6 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.timesheets.Timesheet;
-import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,8 +31,7 @@ public class TimesheetAudit implements Audit {
     private List<Timesheet> timesheets(Week week) {
         List<Timesheet> list = new ArrayList<Timesheet>();
         for (Employee employee : directory.getByUserName().values()) {
-            Timesheet t = TimesheetImpl.lookup(sarariman, employee.getNumber(), week);
-            list.add(t);
+            list.add(sarariman.getTimesheets().get(employee, week));
         }
 
         return list;

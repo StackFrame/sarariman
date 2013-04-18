@@ -504,7 +504,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         ContiguousSet<Week> allWeeks = ContiguousSet.create(Range.<Week>all(), Week.discreteDomain);
         Function<Week, Timesheet> f = new Function<Week, Timesheet>() {
             public Timesheet apply(Week f) {
-                return TimesheetImpl.lookup(sarariman, number, f);
+                return sarariman.getTimesheets().get(StackFrameEmployee.this, f);
             }
 
         };

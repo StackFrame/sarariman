@@ -6,7 +6,7 @@ package com.stackframe.sarariman;
 
 import static com.google.common.base.Preconditions.*;
 import com.stackframe.sarariman.tasks.Task;
-import com.stackframe.sarariman.timesheets.TimesheetImpl;
+import com.stackframe.sarariman.timesheets.Timesheet;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -115,7 +115,7 @@ public class TimesheetEntryHandler extends HttpServlet {
         checkArgument(task.isActive());
         Date weekStart = DateUtils.weekStart(date);
         Week week = DateUtils.week(weekStart);
-        TimesheetImpl timesheet = TimesheetImpl.lookup(sarariman, employee.getNumber(), week);
+        Timesheet timesheet = sarariman.getTimesheets().get(employee, week);
         checkArgument(!timesheet.isSubmitted());
     }
 

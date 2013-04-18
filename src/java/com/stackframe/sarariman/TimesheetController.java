@@ -4,7 +4,7 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.timesheets.TimesheetImpl;
+import com.stackframe.sarariman.timesheets.Timesheet;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -51,12 +51,13 @@ public class TimesheetController extends HttpServlet {
         }
 
         int employeeNumber = Integer.parseInt(request.getParameter("employee"));
+        Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date date = dateFormat.parse(request.getParameter("week"));
             Action action = Action.valueOf(request.getParameter("action"));
             Week week = DateUtils.week(date);
-            TimesheetImpl timesheet = TimesheetImpl.lookup(sarariman, employeeNumber, week);
+            Timesheet timesheet = sarariman.getTimesheets().get(employee, week);
             switch (action) {
                 case Approve:
                     timesheet.approve(user);
