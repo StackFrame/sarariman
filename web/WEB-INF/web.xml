@@ -13,6 +13,10 @@
         <filter-class>com.stackframe.sarariman.AuthenticationFilter</filter-class>
     </filter>
     <filter>
+        <filter-name>ErrorFilter</filter-name>
+        <filter-class>com.stackframe.sarariman.ErrorFilter</filter-class>
+    </filter>
+    <filter>
         <filter-name>PDFRenderer</filter-name>
         <filter-class>com.stackframe.sarariman.PDFRendererFilter</filter-class>
     </filter>
@@ -37,6 +41,11 @@
         <url-pattern>/invoice</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ErrorFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
     <listener>
         <listener-class>com.stackframe.sarariman.Sarariman</listener-class>
