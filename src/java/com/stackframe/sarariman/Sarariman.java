@@ -297,7 +297,7 @@ public class Sarariman implements ServletContextListener {
             vacations = new VacationsImpl(getDataSource(), directory);
             outOfOffice = new OutOfOfficeEntriesImpl(getDataSource(), directory);
             contacts = new ContactsImpl(getDataSource(), mountPoint);
-            timesheets = new TimesheetsImpl(mountPoint);
+            timesheets = new TimesheetsImpl(this, mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
