@@ -10,6 +10,14 @@ package com.stackframe.sarariman.accesslog;
  */
 public interface AccessLog {
 
+    int getHitCount();
+
+    double getAverageTime();
+
+    Iterable<String> getUserAgents();
+
     Iterable<AccessLogEntry> getLatest();
+
+    Iterable<AccessLogEntry> getLongest();
 
 }
