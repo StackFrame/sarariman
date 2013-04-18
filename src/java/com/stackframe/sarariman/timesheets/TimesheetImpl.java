@@ -60,10 +60,6 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
 
     }
 
-    public static TimesheetImpl lookup(Sarariman sarariman, int employeeNumber, Week week, Tasks tasks, DataSource dataSource, Directory directory) {
-        return new TimesheetImpl(sarariman, employeeNumber, week, sarariman.getTimesheetEntries(), tasks, dataSource, directory);
-    }
-
     @Override
     public double getRegularHours() {
         try {
