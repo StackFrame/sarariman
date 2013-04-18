@@ -4,6 +4,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,6 +19,13 @@
         <p>Yikes! There was an error.</p>
 
         <p>The error has been logged and whoever is responsible will be found and flogged.</p>
+
+        <c:if test="${not empty stacktrace}">
+            <p>There was an exception:</p>
+            <pre>
+${stacktrace}
+            </pre>
+        </c:if>
 
         <%@include file="footer.jsp" %>
     </body>
