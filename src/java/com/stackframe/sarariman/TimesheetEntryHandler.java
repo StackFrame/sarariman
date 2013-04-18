@@ -27,15 +27,15 @@ import javax.servlet.http.HttpServletResponse;
  * @author mcculley
  */
 public class TimesheetEntryHandler extends HttpServlet {
-    
+
     private Sarariman sarariman;
-    
+
     @Override
     public void init() throws ServletException {
         super.init();
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     }
-    
+
     private void recordEntry(Connection connection, Employee employee, Task task, Date date, String description,
                              BigDecimal duration, String location) throws SQLException {
         // FIXME: Check that the entry does not already exist.
@@ -56,7 +56,7 @@ public class TimesheetEntryHandler extends HttpServlet {
             s.close();
         }
     }
-    
+
     private void logEntry(Connection connection, Employee employee, Task task, Date date, String reason, String remoteAddress, Employee remoteUser, BigDecimal duration, String location) throws SQLException {
         PreparedStatement s = connection.prepareStatement("INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration, location) values(?, ?, ?, ?, ?, ?, ?, ?)");
         try {
@@ -76,14 +76,14 @@ public class TimesheetEntryHandler extends HttpServlet {
             s.close();
         }
     }
-    
+
     private void recordAndLogEntry(Employee employee, Task task, Date date, String reason, String remoteHost, Employee user,
                                    BigDecimal duration, String description, String location) throws SQLException {
         if (employee.getNumber() != user.getNumber()) {
             // FIXME: Add support for administrators to modify entries on behalf of users.
             throw new IllegalArgumentException("submitter must be user");
         }
-        
+
         Connection connection = sarariman.getDataSource().getConnection();
         try {
             connection.setAutoCommit(false);
@@ -95,28 +95,28 @@ public class TimesheetEntryHandler extends HttpServlet {
             connection.close();
         }
     }
-    
+
     private void validate(BigDecimal duration, Date date, Task task, Employee employee) throws SQLException {
         // FIXME: Check that the duration has acceptable fractional part.
         if (duration.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
-        
+
         if (duration.compareTo(BigDecimal.valueOf(24)) > 0) {
             throw new IllegalArgumentException("duration must be less than one day");
         }
-        
+
         Date now = new Date();
         final int PTOtask = 5;
         if (date.after(now) && task.getId() != PTOtask) {
             throw new IllegalArgumentException("Cannot record non-PTO time in the future.");
         }
-        
-        checkArgument(task.isActive());
+
+        checkArgument(task.isActive(), "task must be active");
         Date weekStart = DateUtils.weekStart(date);
         Week week = DateUtils.week(weekStart);
         Timesheet timesheet = sarariman.getTimesheets().get(employee, week);
-        checkArgument(!timesheet.isSubmitted());
+        checkArgument(!timesheet.isSubmitted(), "timesheet must not already be submitted");
     }
 
     /**
@@ -131,15 +131,15 @@ public class TimesheetEntryHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String dateParam = request.getParameter("date");
-        checkArgument(checkNotNull(dateParam).length() > 0);
+        checkArgument(checkNotNull(dateParam).length() > 0, "must have a date");
         String durationParam = request.getParameter("duration");
-        checkArgument(checkNotNull(durationParam).length() > 0);
+        checkArgument(checkNotNull(durationParam).length() > 0, "duration must be positive");
         String taskParam = request.getParameter("task");
-        checkArgument(checkNotNull(taskParam).length() > 0);
+        checkArgument(checkNotNull(taskParam).length() > 0, "must have a task");
         String descriptionParam = request.getParameter("description");
-        checkArgument(checkNotNull(descriptionParam).length() > 0);
+        checkArgument(checkNotNull(descriptionParam).length() > 0, "must have a description");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Employee user = (Employee)checkNotNull(request.getAttribute("user"));
+        Employee user = (Employee)checkNotNull(request.getAttribute("user"), "must have a user");
         BigDecimal duration = new BigDecimal(durationParam); // FIXME: Check for valid fraction.
         Task task = sarariman.getTasks().getMap().get(Integer.parseInt(taskParam)); // FIXME: Check that task is valid.
         String geolocation = request.getParameter("geolocation");
@@ -157,7 +157,7 @@ public class TimesheetEntryHandler extends HttpServlet {
         } catch (SQLException se) {
             throw new ServletException(se);
         }
-        
+
         response.sendRedirect(request.getHeader("Referer"));
     }
 
@@ -170,5 +170,5 @@ public class TimesheetEntryHandler extends HttpServlet {
     public String getServletInfo() {
         return "handler for timesheet entries";
     }
-    
+
 }
