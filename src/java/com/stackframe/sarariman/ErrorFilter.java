@@ -41,7 +41,7 @@ public class ErrorFilter implements Filter {
         } catch (final Exception e) {
             final String stackTrace = Throwables.getStackTraceAsString(e);
             request.setAttribute("stacktrace", stackTrace);
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
 
             // One would think that the httpServletRequest could just be marked final and used in the Runnable, but it gets reused after
             // this call.
