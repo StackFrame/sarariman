@@ -20,6 +20,18 @@
         <h1>Access Log</h1>
         <h2>Activity for the last 24 hours</h2>
 
+        <p>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT COUNT(timestamp) AS hits FROM access_log WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) AND remote_address NOT LIKE '0:0:0:0:0:0:0:1%0'
+            </sql:query>
+            Hits: ${resultSet.rows[0].hits}<br/>
+
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT AVG(time) AS average FROM access_log WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) AND remote_address NOT LIKE '0:0:0:0:0:0:0:1%0'
+            </sql:query>
+            Average time: ${resultSet.rows[0].average}
+        </p>
+
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
             SELECT * FROM access_log WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) AND remote_address NOT LIKE '0:0:0:0:0:0:0:1%0' ORDER BY time DESC, timestamp DESC LIMIT 5
         </sql:query>
