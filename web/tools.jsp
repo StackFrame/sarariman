@@ -65,6 +65,7 @@
             <c:if test="${user.benefitsAdministrator}">
                 <li><a href="healthInsuranceSummary.jsp">Current Health Insurance Summary</a></li>                
             </c:if>
+            <li><a href="accessLog.jsp">Access Log</a></li>
         </ul>
 
         <%@include file="footer.jsp" %>
