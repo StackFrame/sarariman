@@ -33,7 +33,7 @@
         </p>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT * FROM access_log WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) AND remote_address NOT LIKE '0:0:0:0:0:0:0:1%0' ORDER BY time DESC, timestamp DESC LIMIT 5
+            SELECT * FROM access_log WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) AND remote_address NOT LIKE '0:0:0:0:0:0:0:1%0' GROUP BY path ORDER BY time DESC, timestamp DESC LIMIT 5
         </sql:query>
         <table id="worstPerforming">
             <caption>Worst Performing Pages</caption>
