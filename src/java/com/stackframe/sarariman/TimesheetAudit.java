@@ -6,6 +6,8 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.timesheets.Timesheet;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,10 +52,17 @@ public class TimesheetAudit implements Audit {
                         double deducted = PaidTimeOff.getPaidTimeOff(sarariman.getDataSource(), employee, lastWeek,
                                                                      "weeklyPTODeduction");
                         if (recorded != -deducted) {
+                            URL timesheetsURL = sarariman.getTimesheets().getURL();
+                            try {
+                                timesheetsURL = new URL(timesheetsURL.toString() + "?week=" + lastWeek.getName());
+                            } catch (MalformedURLException mue) {
+                                throw new AssertionError(mue);
+                            }
+
                             listBuilder.add(new AuditResult(AuditResultType.todo,
                                                             String.format("PTO needs to be deducted for %s for week of %s",
                                                                           employee.getDisplayName(), lastWeek.getName()),
-                                                            sarariman.getTimesheets().getURL()));
+                                                            timesheetsURL));
                         }
                     }
                 } else {
