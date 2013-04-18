@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -26,6 +27,13 @@ public interface Directory {
      * @return a Map of Employees with the username as the key
      */
     Map<String, Employee> getByUserName();
+
+    /**
+     * Retrieves a Set of all Employees.
+     *
+     * @return a Set of all Employees
+     */
+    Set<Employee> getEmployees();
 
     /**
      * Synchronize this directory against the backing store.

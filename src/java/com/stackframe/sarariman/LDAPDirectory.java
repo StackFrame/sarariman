@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -33,6 +35,7 @@ public class LDAPDirectory implements Directory {
     private final DirContext context;
     private Map<Object, Employee> byNumber;
     private Map<String, Employee> byUserName;
+    private Set<Employee> employees;
 
     public LDAPDirectory(DirContext context, Sarariman sarariman) {
         this.context = context;
@@ -78,15 +81,18 @@ public class LDAPDirectory implements Directory {
 
             ImmutableMap.Builder<String, Employee> byUserNameBuilder = new ImmutableMap.Builder<String, Employee>();
             ImmutableMap.Builder<Object, Employee> byNumberBuilder = new ImmutableMap.Builder<Object, Employee>();
+            ImmutableSet.Builder<Employee> employeeBuilder = new ImmutableSet.Builder<Employee>();
             for (Employee employee : tmp) {
                 byNumberBuilder.put(employee.getNumber(), employee);
                 byNumberBuilder.put(new Long(employee.getNumber()), employee);
                 byNumberBuilder.put(Integer.toString(employee.getNumber()), employee);
                 byUserNameBuilder.put(employee.getUserName(), employee);
+                employeeBuilder.add(employee);
             }
 
             byUserName = byUserNameBuilder.build();
             byNumber = byNumberBuilder.build();
+            employees = employeeBuilder.build();
         } catch (NamingException ne) {
             throw new RuntimeException(ne);
         }
@@ -98,6 +104,10 @@ public class LDAPDirectory implements Directory {
 
     public synchronized Map<Object, Employee> getByNumber() {
         return byNumber;
+    }
+
+    public synchronized Set<Employee> getEmployees() {
+        return employees;
     }
 
     public synchronized void reload() {

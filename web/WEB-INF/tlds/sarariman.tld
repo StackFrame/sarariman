@@ -9,11 +9,6 @@
     <function-signature>boolean containsHTML(java.lang.String)</function-signature>
   </function>
   <function>
-    <name>timesheet</name>
-    <function-class>com.stackframe.sarariman.timesheets.TimesheetImpl</function-class>
-    <function-signature>com.stackframe.sarariman.timesheets.Timesheet lookup(com.stackframe.sarariman.Sarariman, int, com.stackframe.sarariman.Week)</function-signature>
-  </function>
-  <function>
     <name>approveTimesheet</name>
     <function-class>com.stackframe.sarariman.timesheets.TimesheetImpl</function-class>
     <function-signature>boolean approve(com.stackframe.sarariman.timesheets.Timesheet, com.stackframe.sarariman.Employee)</function-signature>

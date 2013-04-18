@@ -9,7 +9,6 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
-<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <sql:setDataSource var="db" dataSource="jdbc/sarariman"/>
@@ -57,7 +56,7 @@
                     <a href="${fn:escapeXml(pdf)}">[PDF]</a>
                     <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
                     <c:set var="week" value="${du:week(startDay)}"/>
-                    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, row.employee, week)}"/>
+                    <c:set var="timesheet" value="${sarariman.timesheets.map[directory.byNumber[row.employee]][week]}"/>
                     <c:if test="${!timesheet.approved}">
                         <span class="error">This timesheet is not yet approved.</span>
                     </c:if>

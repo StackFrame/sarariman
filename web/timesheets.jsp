@@ -89,7 +89,7 @@
                 <c:set var="employee" value="${employeeEntry.value}"/>
                 <c:if test="${(employee.active || param.showInactive == 'on') && (sarariman:contains(reports, employee.number) or sarariman:contains(administrativelyAssisting, employee))}">
                     <tr>
-                        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
+                        <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
                         <c:set var="PTO" value="${timesheet.PTOHours}"/>
                         <c:set var="holiday" value="${timesheet.holidayHours}"/>
                         <c:set var="hours" value="${timesheet.totalHours}"/>

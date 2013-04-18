@@ -105,7 +105,7 @@
 
         <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
         <c:set var="week" value="${du:week(startDay)}"/>
-        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, param.employee, week)}"/>
+        <c:set var="timesheet" value="${sarariman.timesheets.map[directory.byNumber[param.employee]][week]}"/>
         <c:if test="${!timesheet.approved}">
             <p class="error">This timesheet is not yet approved.</p>
         </c:if>

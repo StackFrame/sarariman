@@ -63,7 +63,7 @@
             <input type="submit" value="Retrieve"/>
         </form>
 
-        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employee.number, week)}"/>
+        <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
         <c:if test="${user.administrator}">
             <form method="post" action="timesheetController">
                 <input type="hidden" value="${week.name}" name="week"/>
