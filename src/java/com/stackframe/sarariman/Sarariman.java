@@ -8,6 +8,8 @@ import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.stackframe.reflect.ReflectionUtils;
+import com.stackframe.sarariman.accesslog.AccessLog;
+import com.stackframe.sarariman.accesslog.AccessLogImpl;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.clients.ClientsImpl;
 import com.stackframe.sarariman.contacts.Contacts;
@@ -79,6 +81,7 @@ public class Sarariman implements ServletContextListener {
     private Contacts contacts;
     private Timesheets timesheets;
     private Errors errors;
+    private AccessLog accessLog;
 
     public String getVersion() {
         return Version.version;
@@ -179,6 +182,10 @@ public class Sarariman implements ServletContextListener {
 
     public Collection<Extension> getExtensions() {
         return extensions;
+    }
+
+    public AccessLog getAccessLog() {
+        return accessLog;
     }
 
     public OrganizationHierarchy getOrganizationHierarchy() {
@@ -306,6 +313,7 @@ public class Sarariman implements ServletContextListener {
             contacts = new ContactsImpl(getDataSource(), mountPoint);
             timesheets = new TimesheetsImpl(this, mountPoint);
             errors = new ErrorsImpl(getDataSource(), mountPoint);
+            accessLog = new AccessLogImpl(getDataSource(), directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

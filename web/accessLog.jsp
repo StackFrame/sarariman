@@ -81,9 +81,6 @@
             </c:forEach>
         </ul>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT * FROM access_log WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) ORDER BY timestamp DESC
-        </sql:query>
         <table id="dayEntries">
             <caption>All Entries</caption>
             <tr>
@@ -97,25 +94,21 @@
                 <th>Time</th>
                 <th>User Agent</th>
             </tr>
-            <c:forEach var="row" items="${resultSet.rows}">
+            <c:forEach var="entry" items="${sarariman.accessLog.latest}">
                 <tr>
-                    <td>${row.timestamp}</td>
-                    <td>${row.remote_address}</td>
-                    <td>
-                        <c:if test="${!empty row.employee}">
-                            ${directory.byNumber[row.employee].userName}
-                        </c:if>
-                    </td>
-                    <td>${row.status}</td>
-                    <c:set var="target" value="${row.path}"/>
-                    <c:if test="${not empty row.query}">
-                        <c:set var="target" value="${target}?${row.query}"/>
+                    <td>${entry.timestamp}</td>
+                    <td>${entry.remoteAddress}</td>
+                    <td>${entry.employee.userName}</td>
+                    <td>${entry.status}</td>
+                    <c:set var="target" value="${entry.path}"/>
+                    <c:if test="${not empty entry.query}">
+                        <c:set var="target" value="${target}?${entry.query}"/>
                     </c:if>
-                    <td><a href="${target}">${row.path}</a></td>
-                    <td><a href="${target}">${row.query}</a></td>
-                    <td>${row.method}</td>
-                    <td>${row.time}</td>
-                    <td>${row.user_agent}</td>
+                    <td><a href="${target}">${entry.path}</a></td>
+                    <td><a href="${target}">${entry.query}</a></td>
+                    <td>${entry.method}</td>
+                    <td>${entry.time}</td>
+                    <td>${entry.userAgent}</td>
                 </tr>
             </c:forEach>
         </table>
