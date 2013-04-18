@@ -1,10 +1,11 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 StackFrame, LLC
+ * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.statusboard;
 
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -16,7 +17,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class UserStatus extends HttpServlet {
+public class SystemStatus extends HttpServlet {
+
+    private Sarariman sarariman;
+
+    public void init() throws ServletException {
+        super.init();
+        sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+    }
 
     /**
      * Handles the HTTP
@@ -29,12 +37,11 @@ public class UserStatus extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Employee user = (Employee)request.getAttribute("user");
         response.setContentType("text/csv;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            out.println(String.format("Unclosed Tickets,%d", user.getUnclosedTickets().size()));
-            out.println(String.format("Paid Time Off,%s", user.getPaidTimeOff()));
+            out.println(String.format("Hits,%d", sarariman.getAccessLog().getHitCount()));
+            out.println(String.format("Average Time,%d", (int)sarariman.getAccessLog().getAverageTime()));
         } finally {
             out.close();
         }
