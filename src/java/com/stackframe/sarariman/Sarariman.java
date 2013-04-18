@@ -12,6 +12,8 @@ import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.clients.ClientsImpl;
 import com.stackframe.sarariman.contacts.Contacts;
 import com.stackframe.sarariman.contacts.ContactsImpl;
+import com.stackframe.sarariman.errors.Errors;
+import com.stackframe.sarariman.errors.ErrorsImpl;
 import com.stackframe.sarariman.events.Events;
 import com.stackframe.sarariman.events.EventsImpl;
 import com.stackframe.sarariman.holidays.Holidays;
@@ -76,6 +78,7 @@ public class Sarariman implements ServletContextListener {
     private OutOfOfficeEntries outOfOffice;
     private Contacts contacts;
     private Timesheets timesheets;
+    private Errors errors;
 
     public String getVersion() {
         return Version.version;
@@ -260,6 +263,10 @@ public class Sarariman implements ServletContextListener {
         return events;
     }
 
+    public Errors getErrors() {
+        return errors;
+    }
+
     public OutOfOfficeEntries getOutOfOfficeEntries() {
         return outOfOffice;
     }
@@ -298,6 +305,7 @@ public class Sarariman implements ServletContextListener {
             outOfOffice = new OutOfOfficeEntriesImpl(getDataSource(), directory);
             contacts = new ContactsImpl(getDataSource(), mountPoint);
             timesheets = new TimesheetsImpl(this, mountPoint);
+            errors = new ErrorsImpl(getDataSource(), mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
