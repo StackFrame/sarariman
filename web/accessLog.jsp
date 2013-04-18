@@ -58,8 +58,12 @@
                         </c:if>
                     </td>
                     <td>${row.status}</td>
-                    <td>${row.path}</td>
-                    <td>${row.query}</td>
+                    <c:set var="target" value="${row.path}"/>
+                    <c:if test="${not empty row.query}">
+                        <c:set var="target" value="${target}?${row.query}"/>
+                    </c:if>
+                    <td><a href="${target}">${row.path}</a></td>
+                    <td><a href="${target}">${row.query}</a></td>
                     <td>${row.method}</td>
                     <td>${row.time}</td>
                     <td>${row.user_agent}</td>
@@ -103,8 +107,12 @@
                         </c:if>
                     </td>
                     <td>${row.status}</td>
-                    <td>${row.path}</td>
-                    <td>${row.query}</td>
+                    <c:set var="target" value="${row.path}"/>
+                    <c:if test="${not empty row.query}">
+                        <c:set var="target" value="${target}?${row.query}"/>
+                    </c:if>
+                    <td><a href="${target}">${row.path}</a></td>
+                    <td><a href="${target}">${row.query}</a></td>
                     <td>${row.method}</td>
                     <td>${row.time}</td>
                     <td>${row.user_agent}</td>
