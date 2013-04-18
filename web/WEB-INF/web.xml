@@ -179,6 +179,10 @@
         <servlet-class>com.stackframe.sarariman.statusboard.UserStatus</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>SystemStatus</servlet-name>
+        <servlet-class>com.stackframe.sarariman.statusboard.SystemStatus</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>PhotoFetcher</servlet-name>
         <servlet-class>com.stackframe.sarariman.PhotoFetcher</servlet-class>
     </servlet>
@@ -657,6 +661,10 @@
     <servlet-mapping>
         <servlet-name>UserStatus</servlet-name>
         <url-pattern>/statusboard/mine</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SystemStatus</servlet-name>
+        <url-pattern>/statusboard/system</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PhotoFetcher</servlet-name>
