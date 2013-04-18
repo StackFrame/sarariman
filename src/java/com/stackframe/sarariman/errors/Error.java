@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.errors;
 
 import com.stackframe.sarariman.Linkable;
+import java.sql.Timestamp;
 
 /**
  *
@@ -15,5 +16,7 @@ public interface Error extends Linkable {
     int getId();
 
     String getStackTrace();
+
+    Timestamp getTimestamp();
 
 }

@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import javax.sql.DataSource;
 
 /**
@@ -42,6 +43,31 @@ public class ErrorImpl extends AbstractLinkable implements Error {
                     try {
                         r.first();
                         return r.getString("exception");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Timestamp getTimestamp() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT timestamp FROM error_log WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        r.first();
+                        return r.getTimestamp("timestamp");
                     } finally {
                         r.close();
                     }

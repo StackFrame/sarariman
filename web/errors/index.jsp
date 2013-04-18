@@ -19,10 +19,12 @@
         <table>            
             <caption>Errors</caption>
             <tr>
+                <th>Time</th>
                 <th>ID</th>
             </tr>
             <c:forEach var="error" items="${sarariman.errors.all}">
                 <tr>
+                    <td><a href="${error.URL}">${error.timestamp}</a></td>
                     <td><a href="${error.URL}">${error.id}</a></td>
                 </tr>
             </c:forEach>

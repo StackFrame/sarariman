@@ -23,6 +23,11 @@
         <fmt:parseNumber var="errorNumber" value="${param.id}"/>
         <c:set var="error" value="${sarariman.errors.map[errorNumber]}"/>
 
+        <p>
+        ID: ${error.id}<br/>
+        Timestamp: ${error.timestamp}
+        </p>
+        
         <pre>
 ${error.stackTrace}
         </pre>
