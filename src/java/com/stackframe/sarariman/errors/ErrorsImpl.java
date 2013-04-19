@@ -10,7 +10,6 @@ import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
-import com.stackframe.sarariman.tasks.Task;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +38,7 @@ public class ErrorsImpl implements Errors {
         return new ErrorImpl(id, dataSource, mountPoint);
     }
 
-    public Iterable<Error> getAll() {
+    public Collection<Error> getAll() {
         try {
             Connection connection = dataSource.getConnection();
             try {

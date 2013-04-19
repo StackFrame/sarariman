@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.errors;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -14,7 +15,7 @@ public interface Errors {
 
     Error get(int id);
 
-    Iterable<Error> getAll();
+    Collection<Error> getAll();
 
     Map<? extends Number, Error> getMap();
 
