@@ -7,6 +7,7 @@ package com.stackframe.sarariman.errors;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.stackframe.base.Numbers;
+import com.stackframe.sarariman.Directory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,14 +25,16 @@ public class ErrorsImpl implements Errors {
 
     private final DataSource dataSource;
     private final String mountPoint;
+    private final Directory directory;
 
-    public ErrorsImpl(DataSource dataSource, String mountPoint) {
+    public ErrorsImpl(DataSource dataSource, String mountPoint, Directory directory) {
         this.dataSource = dataSource;
         this.mountPoint = mountPoint;
+        this.directory = directory;
     }
 
     public Error get(int id) {
-        return new ErrorImpl(id, dataSource, mountPoint);
+        return new ErrorImpl(id, dataSource, mountPoint, directory);
     }
 
     public Collection<Error> getAll() {

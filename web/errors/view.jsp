@@ -25,7 +25,8 @@
 
         <p>
         ID: ${error.id}<br/>
-        Timestamp: ${error.timestamp}
+        Timestamp: ${error.timestamp}<br/>
+        Employee: ${error.employee.userName}
         </p>
         
         <pre>

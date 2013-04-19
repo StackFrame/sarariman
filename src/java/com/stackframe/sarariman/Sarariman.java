@@ -312,7 +312,7 @@ public class Sarariman implements ServletContextListener {
             outOfOffice = new OutOfOfficeEntriesImpl(getDataSource(), directory);
             contacts = new ContactsImpl(getDataSource(), mountPoint);
             timesheets = new TimesheetsImpl(this, mountPoint);
-            errors = new ErrorsImpl(getDataSource(), mountPoint);
+            errors = new ErrorsImpl(getDataSource(), mountPoint, directory);
             accessLog = new AccessLogImpl(getDataSource(), directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
