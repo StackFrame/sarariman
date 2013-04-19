@@ -19,7 +19,17 @@ public interface Error extends Linkable {
     String getStackTrace();
 
     Timestamp getTimestamp();
-    
+
     Employee getEmployee();
+
+    String getRemoteAddress();
+
+    String getPath();
+
+    String getQuery();
+
+    String getMethod();
+
+    String getUserAgent();
 
 }

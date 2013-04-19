@@ -117,6 +117,131 @@ public class ErrorImpl extends AbstractLinkable implements Error {
         }
     }
 
+    public String getRemoteAddress() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT remote_address FROM error_log WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        r.first();
+                        return r.getString("remote_address");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getPath() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT path FROM error_log WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        r.first();
+                        return r.getString("path");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getQuery() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT query FROM error_log WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        r.first();
+                        return r.getString("query");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getMethod() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT method FROM error_log WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        r.first();
+                        return r.getString("method");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getUserAgent() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT user_agent FROM error_log WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        r.first();
+                        return r.getString("user_agent");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public URI getURI() {
         return URI.create(String.format("%serrors/view.jsp?id=%d", mountPoint, id));
     }

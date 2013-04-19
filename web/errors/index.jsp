@@ -22,12 +22,22 @@
                 <th>Time</th>
                 <th>ID</th>
                 <th>Employee</th>
+                <th>Remote Address</th>
+                <th>Path</th>
+                <th>Query</th>
+                <th>Method</th>
+                <th>User Agent</th>
             </tr>
             <c:forEach var="error" items="${sarariman.errors.all}">
                 <tr>
                     <td><a href="${error.URL}">${error.timestamp}</a></td>
                     <td><a href="${error.URL}">${error.id}</a></td>
                     <td><a href="${error.URL}">${error.employee.userName}</a></td>
+                    <td><a href="${error.URL}">${error.remoteAddress}</a></td>
+                    <td><a href="${error.URL}">${error.path}</a></td>
+                    <td><a href="${error.URL}">${error.query}</a></td>
+                    <td><a href="${error.URL}">${error.method}</a></td>
+                    <td><a href="${error.URL}">${error.userAgent}</a></td>
                 </tr>
             </c:forEach>
         </table>

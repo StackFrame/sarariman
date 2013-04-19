@@ -26,7 +26,12 @@
         <p>
         ID: ${error.id}<br/>
         Timestamp: ${error.timestamp}<br/>
-        Employee: ${error.employee.userName}
+        Employee: ${error.employee.userName}<br/>
+        Remote Address: ${error.remoteAddress}<br/>
+        Path: ${error.path}<br/>
+        Query: ${error.query}<br/>
+        Method: ${error.method}<br/>
+        User Agent: ${error.userAgent}
         </p>
         
         <pre>
