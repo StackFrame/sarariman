@@ -5,11 +5,8 @@
 package com.stackframe.sarariman.tasks;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
+import com.stackframe.base.Numbers;
 import com.stackframe.sarariman.projects.Projects;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,7 +15,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -42,16 +38,13 @@ public class TasksImpl implements Tasks {
     }
 
     public Map<? extends Number, Task> getMap() {
-        Set<? extends Number> longKeys = ContiguousSet.create(Range.greaterThan(0L), DiscreteDomain.longs());
-        Set<? extends Number> intKeys = ContiguousSet.create(Range.greaterThan(0), DiscreteDomain.integers());
-        Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Task> f = new Function<Number, Task>() {
             public Task apply(Number f) {
                 return get(f.intValue());
             }
 
         };
-        return Maps.asMap(keys, f);
+        return Maps.asMap(Numbers.positiveIntegers, f);
     }
 
     public Iterable<Task> getAll() {

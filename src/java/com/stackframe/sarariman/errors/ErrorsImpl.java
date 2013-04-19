@@ -5,11 +5,8 @@
 package com.stackframe.sarariman.errors;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
+import com.stackframe.base.Numbers;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +14,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -67,16 +63,13 @@ public class ErrorsImpl implements Errors {
     }
 
     public Map<? extends Number, Error> getMap() {
-        Set<? extends Number> longKeys = ContiguousSet.create(Range.greaterThan(0L), DiscreteDomain.longs());
-        Set<? extends Number> intKeys = ContiguousSet.create(Range.greaterThan(0), DiscreteDomain.integers());
-        Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Error> f = new Function<Number, Error>() {
             public Error apply(Number f) {
                 return get(f.intValue());
             }
 
         };
-        return Maps.asMap(keys, f);
+        return Maps.asMap(Numbers.positiveIntegers, f);
     }
 
 }

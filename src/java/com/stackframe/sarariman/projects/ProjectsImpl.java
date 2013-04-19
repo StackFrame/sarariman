@@ -5,11 +5,8 @@
 package com.stackframe.sarariman.projects;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
+import com.stackframe.base.Numbers;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.OrganizationHierarchy;
 import com.stackframe.sarariman.Sarariman;
@@ -23,7 +20,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -49,16 +45,13 @@ public class ProjectsImpl implements Projects {
     }
 
     public Map<? extends Number, Project> getMap() {
-        Set<? extends Number> longKeys = ContiguousSet.create(Range.greaterThan(0L), DiscreteDomain.longs());
-        Set<? extends Number> intKeys = ContiguousSet.create(Range.greaterThan(0), DiscreteDomain.integers());
-        Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Project> f = new Function<Number, Project>() {
             public Project apply(Number n) {
                 return get(n.intValue());
             }
 
         };
-        return Maps.asMap(keys, f);
+        return Maps.asMap(Numbers.positiveIntegers, f);
     }
 
     public Iterable<Project> getAll() {

@@ -5,11 +5,8 @@
 package com.stackframe.sarariman.clients;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
+import com.stackframe.base.Numbers;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +15,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -68,16 +64,13 @@ public class ClientsImpl implements Clients {
     }
 
     public Map<? extends Number, Client> getMap() {
-        Set<? extends Number> longKeys = ContiguousSet.create(Range.greaterThan(0L), DiscreteDomain.longs());
-        Set<? extends Number> intKeys = ContiguousSet.create(Range.greaterThan(0), DiscreteDomain.integers());
-        Set<? extends Number> keys = Sets.union(longKeys, intKeys);
         Function<Number, Client> f = new Function<Number, Client>() {
             public Client apply(Number n) {
                 return get(n.intValue());
             }
 
         };
-        return Maps.asMap(keys, f);
+        return Maps.asMap(Numbers.positiveIntegers, f);
     }
 
     public Client create(String name) {
