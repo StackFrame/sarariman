@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.accesslog;
 
+import com.stackframe.sarariman.Employee;
 import java.sql.Timestamp;
 
 /**
@@ -13,5 +14,21 @@ import java.sql.Timestamp;
 public interface AccessLogEntry {
 
     Timestamp getTimestamp();
+
+    String getRemoteAddress();
+
+    Employee getEmployee();
+
+    int getStatus();
+
+    String getPath();
+
+    String getQuery();
+
+    String getMethod();
+
+    int getTime();
+
+    String getUserAgent();
 
 }
