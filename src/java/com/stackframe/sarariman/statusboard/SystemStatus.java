@@ -42,6 +42,7 @@ public class SystemStatus extends HttpServlet {
         try {
             out.println(String.format("Hits,%d", sarariman.getAccessLog().getHitCount()));
             out.println(String.format("Average Time,%d", (int)sarariman.getAccessLog().getAverageTime()));
+            out.println(String.format("Errors,%d", sarariman.getErrors().getAll().size()));
         } finally {
             out.close();
         }
