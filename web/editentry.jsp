@@ -113,6 +113,18 @@
         </sql:query>
         <c:if test="${entries.rowCount != 1}">Did not get the expected row.  rowCount=${rowCount}</c:if>
         <c:set var="entry" value="${entries.rows[0]}"/>
+
+        <c:if test="${not empty attemptedOverwrite}">
+            <div class="error">
+                <p>You attempted to replace an entry for this task with a duration of ${attemptedDuration} and a description of:</p>
+                ${attemptedDescription}
+                <p>Instead, edit the entry below to take this new data into account.</p>
+                <c:set var="attemptedOverwrite" value="" scope="session"/>
+                <c:set var="attemptedDuration" value="" scope="session"/>
+                <c:set var="attemptedDescription" value="" scope="session"/>
+            </div>
+        </c:if>
+
         Employee: ${directory.byNumber[param.employee].fullName}<br/>
         Date: ${entry.date}<br/>
         Task: ${fn:escapeXml(entry.name)} (${entry.task})<br/>
