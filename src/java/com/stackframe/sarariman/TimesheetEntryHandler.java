@@ -151,7 +151,6 @@ public class TimesheetEntryHandler extends HttpServlet {
             Date date = dateFormat.parse(dateParam);
             TimesheetEntry entry = sarariman.getTimesheetEntries().get(task, user, date);
             if (entry != null) {
-                System.err.println("Yow! We already have an entry for that date.");
                 request.getSession().setAttribute("attemptedOverwrite", true);
                 request.getSession().setAttribute("attemptedDuration", durationParam);
                 request.getSession().setAttribute("attemptedDescription", descriptionParam);
