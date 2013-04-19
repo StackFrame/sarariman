@@ -4,7 +4,6 @@
  */
 package com.stackframe.sarariman.statusboard;
 
-import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +20,7 @@ public class SystemStatus extends HttpServlet {
 
     private Sarariman sarariman;
 
+    @Override
     public void init() throws ServletException {
         super.init();
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
@@ -43,6 +43,7 @@ public class SystemStatus extends HttpServlet {
             out.println(String.format("Hits,%d", sarariman.getAccessLog().getHitCount()));
             out.println(String.format("Average Time,%d", (int)sarariman.getAccessLog().getAverageTime()));
             out.println(String.format("Errors,%d", sarariman.getErrors().getAll().size()));
+            out.println(String.format("Active Users,%d", sarariman.getAccessLog().getActiveUserCount()));
         } finally {
             out.close();
         }

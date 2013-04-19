@@ -14,6 +14,8 @@ public interface AccessLog {
 
     double getAverageTime();
 
+    int getActiveUserCount();
+
     Iterable<String> getUserAgents();
 
     Iterable<AccessLogEntry> getLatest();
