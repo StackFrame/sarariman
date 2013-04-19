@@ -142,6 +142,32 @@ public class TimesheetEntryImpl extends AbstractLinkable implements TimesheetEnt
         }
     }
 
+    public boolean exists() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT * FROM hours WHERE employee=? AND task=? AND date=?");
+                try {
+                    s.setInt(1, employee.getNumber());
+                    s.setInt(2, task.getId());
+                    s.setDate(3, convert(date));
+                    ResultSet r = s.executeQuery();
+                    try {
+                        return r.first();
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public URI getURI() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(date);

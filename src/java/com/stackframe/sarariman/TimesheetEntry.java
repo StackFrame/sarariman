@@ -26,4 +26,6 @@ public interface TimesheetEntry extends Linkable {
 
     int getServiceAgreement();
 
+    boolean exists();
+
 }
