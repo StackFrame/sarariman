@@ -691,17 +691,22 @@
                 <c:url var="hoursByProject" value="hoursByProject">
                     <c:param name="project" value="${param.id}"/>
                 </c:url>
-                <a href="${hoursByProject}">Hours billed to this project</a>.
+                <a href="${hoursByProject}">Hours billed to this project</a>
             </p>
         </c:if>
 
         <c:if test="${isCostManager}">
-            <c:url var="projectBilled" value="projectBilled">
-                <c:param name="project" value="${param.id}"/>
-            </c:url>
-            <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a>
-
             <p>
+                <c:url var="projection" value="projection.jsp">
+                    <c:param name="project" value="${param.id}"/>
+                </c:url>
+                <a href="${fn:escapeXml(projection)}">Projection</a><br/>
+
+                <c:url var="projectBilled" value="projectBilled">
+                    <c:param name="project" value="${param.id}"/>
+                </c:url>
+                <a href="${fn:escapeXml(projectBilled)}">Weekly Billing Report</a><br/>
+
                 <a href="uninvoiced?project=${project_id}">Uninvoiced hours and services</a>
             </p>
         </c:if>

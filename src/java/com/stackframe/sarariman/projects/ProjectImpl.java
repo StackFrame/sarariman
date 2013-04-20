@@ -7,6 +7,7 @@ package com.stackframe.sarariman.projects;
 import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Audit;
+import com.stackframe.sarariman.CostData;
 import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
@@ -19,6 +20,7 @@ import com.stackframe.sarariman.ProjectLineItemAudit;
 import com.stackframe.sarariman.ProjectOrgChartAudit;
 import com.stackframe.sarariman.ProjectPeriodOfPerformanceAudit;
 import com.stackframe.sarariman.Week;
+import com.stackframe.sarariman.Workdays;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.lineitems.LineItem;
@@ -55,8 +57,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final Projects projects;
     private final String servletPath;
     private final Clients clients;
+    private final Workdays workdays;
 
-    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath, Clients clients) {
+    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath, Clients clients, Workdays workdays) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -65,6 +68,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.projects = projects;
         this.servletPath = servletPath;
         this.clients = clients;
+        this.workdays = workdays;
     }
 
     public int getId() {
@@ -1048,6 +1052,52 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public Collection<LaborProjection> getLaborProjections() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT labor_projection.id FROM labor_projection " +
+                        "JOIN tasks ON labor_projection.task = tasks.id " +
+                        "WHERE tasks.project = ?");
+                ps.setInt(1, id);
+                try {
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        Collection<LaborProjection> list = new ArrayList<LaborProjection>();
+                        while (resultSet.next()) {
+                            int laborProjectionId = resultSet.getInt("labor_projection.id");
+                            list.add(new LaborProjectionImpl(laborProjectionId, dataSource, directory, tasks));
+                        }
+
+                        return list;
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Collection<ProjectedExpense> getProjectedExpenses(PeriodOfPerformance pop) {
+        Collection<ProjectedExpense> result = new ArrayList<ProjectedExpense>();
+        Collection<LaborProjection> laborProjections = getLaborProjections();
+        for (LaborProjection projection : laborProjections) {
+            PeriodOfPerformance intersection = projection.getPeriodOfPerformance().intersection(pop);
+            CostData costData = null;
+            ProjectedExpense projectedExpense = new ProjectedExpenseImpl(projection.getEmployee(), intersection, projection.getTask(), costData, workdays);
+            result.add(projectedExpense);
+        }
+
+        return result;
     }
 
     @Override

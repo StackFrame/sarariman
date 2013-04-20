@@ -41,7 +41,8 @@ public class ProjectsImpl implements Projects {
     }
 
     public Project get(int id) {
-        return new ProjectImpl(id, dataSource, organizationHierarchy, directory, sarariman.getTasks(), this, sarariman.getMountPoint() + "project", sarariman.getClients());
+        return new ProjectImpl(id, dataSource, organizationHierarchy, directory, sarariman.getTasks(), this,
+                               sarariman.getMountPoint() + "project", sarariman.getClients(), sarariman.getWorkdays());
     }
 
     public Map<? extends Number, Project> getMap() {
@@ -83,8 +84,8 @@ public class ProjectsImpl implements Projects {
     }
 
     public Project create(String name, Long customer, Date pop_start, Date pop_end, String contract,
-            String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active,
-            String invoiceText) {
+                          String subcontract, BigDecimal funded, BigDecimal previouslyBilled, long terms, BigDecimal odc_fee, boolean active,
+                          String invoiceText) {
         try {
             Connection connection = dataSource.getConnection();
             try {

@@ -100,6 +100,10 @@ public interface Project extends Linkable {
 
     Collection<NamedResource> getResources();
 
+    Collection<LaborProjection> getLaborProjections();
+
+    Collection<ProjectedExpense> getProjectedExpenses(PeriodOfPerformance pop);
+
     void delete();
 
 }
