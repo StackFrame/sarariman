@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tasks.Tasks;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -177,7 +178,14 @@ public class Invoice {
     }
 
     public static CostData cost(Sarariman sarariman, Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, int task_id, Date date, double duration) throws SQLException {
-        DataSource dataSource = sarariman.getDataSource();
+        return cost(categoriesById, projectBillRates, project, employee, task_id, date, duration, sarariman.getTasks(), sarariman.getDataSource());
+    }
+
+    public static CostData cost(Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, int task_id, Date date, double duration, Tasks tasks, DataSource dataSource) throws SQLException {
+        return cost(categoriesById, projectBillRates, project, employee, tasks.get(task_id), date, duration, dataSource);
+    }
+
+    public static CostData cost(Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, Task task, Date date, double duration, DataSource dataSource) throws SQLException {
         Connection c = dataSource.getConnection();
         try {
             PreparedStatement s = c.prepareStatement(
@@ -201,7 +209,6 @@ public class Invoice {
                 if (r.first()) {
                     BigDecimal rate;
                     BigDecimal cost;
-                    Task task = sarariman.getTasks().get(task_id);
                     Long categoryId = r.getLong("id");
                     if (task.isBillable()) {
                         rate = r.getBigDecimal("rate").setScale(2);

@@ -4,10 +4,10 @@
  */
 package com.stackframe.sarariman.projects;
 
-import com.stackframe.sarariman.CostData;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.tasks.Task;
+import java.math.BigDecimal;
 
 /**
  *
@@ -21,7 +21,7 @@ public interface ProjectedExpense {
 
     Task getTask();
 
-    CostData getCost();
+    BigDecimal getCost();
 
     int getHours();
 

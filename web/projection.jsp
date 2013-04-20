@@ -136,16 +136,24 @@
                 <th>Start</th>
                 <th>End</th>
                 <th>Hours</th>
+                <th>Cost</th>
             </tr>
+            <c:set var="totalCost" value="0"/>
             <c:forEach var="e" items="${projectedExpenses}">
                 <tr>
                     <td><a href="${e.employee.URL}">${e.employee.fullName}</a></td>
                     <td><a href="${e.task.URL}">${e.task.id}</a></td>
                     <td><fmt:formatDate value="${e.periodOfPerformance.start}" type="date" pattern="yyyy-MM-dd" /></td>
                     <td><fmt:formatDate value="${e.periodOfPerformance.end}" type="date" pattern="yyyy-MM-dd" /></td>
-                    <td>${e.hours}</td>
+                    <td class="duration">${e.hours}</td>
+                    <td class="currency"><fmt:formatNumber type="currency" value="${e.cost}"/></td>
+                    <c:set var="totalCost" value="${totalCost+e.cost}"/>
                 </tr>
             </c:forEach>
+            <tr>
+                <td colspan="5">Total</td>
+                <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td>
+            </tr>
         </table>
 
         <%@include file="footer.jsp" %>

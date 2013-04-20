@@ -7,10 +7,11 @@ package com.stackframe.sarariman.projects;
 import com.google.common.collect.ImmutableList;
 import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Audit;
-import com.stackframe.sarariman.CostData;
 import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.LaborCategory;
+import com.stackframe.sarariman.LaborCategoryAssignment;
 import com.stackframe.sarariman.NamedResource;
 import com.stackframe.sarariman.NamedResourceImpl;
 import com.stackframe.sarariman.OrganizationHierarchy;
@@ -39,6 +40,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.sql.DataSource;
@@ -58,8 +60,12 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final String servletPath;
     private final Clients clients;
     private final Workdays workdays;
+    private final Map<Long, LaborCategory> categoriesById;
+    private final Collection<LaborCategoryAssignment> projectBillRates;
 
-    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks, Projects projects, String servletPath, Clients clients, Workdays workdays) {
+    ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks,
+                Projects projects, String servletPath, Clients clients, Workdays workdays,
+                Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -69,6 +75,8 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.servletPath = servletPath;
         this.clients = clients;
         this.workdays = workdays;
+        this.categoriesById = categoriesById;
+        this.projectBillRates = projectBillRates;
     }
 
     public int getId() {
@@ -1092,8 +1100,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         Collection<LaborProjection> laborProjections = getLaborProjections();
         for (LaborProjection projection : laborProjections) {
             PeriodOfPerformance intersection = projection.getPeriodOfPerformance().intersection(pop);
-            CostData costData = null;
-            ProjectedExpense projectedExpense = new ProjectedExpenseImpl(projection.getEmployee(), intersection, projection.getTask(), costData, workdays);
+            ProjectedExpense projectedExpense = new ProjectedExpenseImpl(projection.getEmployee(), intersection,
+                                                                         projection.getTask(), workdays, categoriesById,
+                                                                         projectBillRates, dataSource);
             result.add(projectedExpense);
         }
 
