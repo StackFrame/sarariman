@@ -1101,8 +1101,8 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         for (LaborProjection projection : laborProjections) {
             PeriodOfPerformance intersection = projection.getPeriodOfPerformance().intersection(pop);
             ProjectedExpense projectedExpense = new ProjectedExpenseImpl(projection.getEmployee(), intersection,
-                                                                         projection.getTask(), workdays, categoriesById,
-                                                                         projectBillRates, dataSource);
+                                                                         projection.getTask(), projection.getUtilization(),
+                                                                         workdays, categoriesById, projectBillRates, dataSource);
             result.add(projectedExpense);
         }
 
