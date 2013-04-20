@@ -82,6 +82,7 @@ public class Sarariman implements ServletContextListener {
     private Timesheets timesheets;
     private Errors errors;
     private AccessLog accessLog;
+    private Workdays workdays;
 
     public String getVersion() {
         return Version.version;
@@ -282,6 +283,10 @@ public class Sarariman implements ServletContextListener {
         return contacts;
     }
 
+    public Workdays getWorkdays() {
+        return workdays;
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -314,6 +319,7 @@ public class Sarariman implements ServletContextListener {
             timesheets = new TimesheetsImpl(this, mountPoint);
             errors = new ErrorsImpl(getDataSource(), mountPoint, directory);
             accessLog = new AccessLogImpl(getDataSource(), directory);
+            workdays = new WorkdaysImpl(holidays);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
