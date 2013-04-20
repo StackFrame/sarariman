@@ -39,9 +39,7 @@ public class PeriodOfPerformance {
     }
     
     public PeriodOfPerformance intersection(PeriodOfPerformance pop) {
-        Date newStart = start.after(pop.start) ? start : pop.start;
-        Date newEnd = end.before(pop.end) ? end : pop.end;
-        return new PeriodOfPerformance(newStart, newEnd);
+        return new PeriodOfPerformance(asRange().intersection(pop.asRange()));
     }
     
     @Override
