@@ -31,7 +31,6 @@ public class WorkdaysImpl implements Workdays {
         Calendar calendar = new GregorianCalendar();
         calendar.clear();
         calendar.set(Calendar.YEAR, pop.getStart().getYear() + 1900);
-        System.err.println("calendar=" + calendar.getTime());
         calendar.set(Calendar.MONTH, pop.getStart().getMonth());
         calendar.set(Calendar.DATE, pop.getStart().getDate());
         while (!calendar.getTime().after(pop.getEnd())) {
