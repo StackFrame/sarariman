@@ -185,7 +185,9 @@ public class Invoice {
         return cost(categoriesById, projectBillRates, project, employee, tasks.get(task_id), date, duration, dataSource);
     }
 
-    public static CostData cost(Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, int project, int employee, Task task, Date date, double duration, DataSource dataSource) throws SQLException {
+    public static CostData cost(Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates,
+                                int project, int employee, Task task, Date date, double duration, DataSource dataSource)
+            throws SQLException {
         Connection c = dataSource.getConnection();
         try {
             PreparedStatement s = c.prepareStatement(
