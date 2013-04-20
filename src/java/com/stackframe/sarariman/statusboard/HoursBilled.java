@@ -56,6 +56,7 @@ public class HoursBilled extends HttpServlet {
                 try {
                     ResultSet r = s.executeQuery();
                     try {
+                        out.println("Date,Hours");
                         while (r.next()) {
                             String date = r.getString("date");
                             String total = r.getString("total");
