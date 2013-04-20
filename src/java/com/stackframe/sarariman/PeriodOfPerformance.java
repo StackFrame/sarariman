@@ -12,35 +12,41 @@ import java.util.Date;
  * @author mcculley
  */
 public class PeriodOfPerformance {
-
+    
     private final Date start;
     private final Date end;
-
+    
     public PeriodOfPerformance(Date start, Date end) {
         this.start = start;
         this.end = end;
     }
-
+    
     public PeriodOfPerformance(Range<Date> range) {
         this.start = range.lowerEndpoint();
         this.end = range.upperEndpoint();
     }
-
+    
     public Date getEnd() {
         return end;
     }
-
+    
     public Date getStart() {
         return start;
     }
-
+    
     public Range<Date> asRange() {
         return Range.closed(start, end);
     }
-
+    
+    public PeriodOfPerformance intersection(PeriodOfPerformance pop) {
+        Date newStart = start.after(pop.start) ? start : pop.start;
+        Date newEnd = end.before(pop.end) ? end : pop.end;
+        return new PeriodOfPerformance(newStart, newEnd);
+    }
+    
     @Override
     public String toString() {
         return "{start=" + start + ", end=" + end + "}";
     }
-
+    
 }
