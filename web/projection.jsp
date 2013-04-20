@@ -151,8 +151,8 @@
                 </tr>
             </c:forEach>
             <tr>
-                <td colspan="5">Total</td>
-                <td class="currency"><fmt:formatNumber type="currency" value="${totalCost}"/></td>
+                <td colspan="5"><b>Total</b></td>
+                <td class="currency"><b><fmt:formatNumber type="currency" value="${totalCost}"/></b></td>
             </tr>
         </table>
 
