@@ -4,7 +4,6 @@
  */
 package com.stackframe.sarariman.holidays;
 
-import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 public interface Holidays {
 
-    boolean isHoliday(Date date) throws SQLException;
+    boolean isHoliday(Date date);
 
     Iterable<Holiday> getUpcoming();
     

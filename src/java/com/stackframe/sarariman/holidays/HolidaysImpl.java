@@ -85,23 +85,27 @@ public class HolidaysImpl implements Holidays {
         }
     }
 
-    public boolean isHoliday(Date date) throws SQLException {
-        Connection connection = dataSource.getConnection();
+    public boolean isHoliday(Date date) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?");
+            Connection connection = dataSource.getConnection();
             try {
-                statement.setDate(1, convert(date));
-                ResultSet rs = statement.executeQuery();
+                PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?");
                 try {
-                    return rs.first();
+                    statement.setDate(1, convert(date));
+                    ResultSet rs = statement.executeQuery();
+                    try {
+                        return rs.first();
+                    } finally {
+                        rs.close();
+                    }
                 } finally {
-                    rs.close();
+                    statement.close();
                 }
             } finally {
-                statement.close();
+                connection.close();
             }
-        } finally {
-            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
