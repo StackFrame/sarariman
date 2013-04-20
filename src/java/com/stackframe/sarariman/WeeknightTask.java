@@ -39,34 +39,30 @@ public class WeeknightTask extends TimerTask {
         }
 
         java.util.Date todayDate = today.getTime();
-        try {
-            boolean isHoliday = sarariman.getHolidays().isHoliday(todayDate);
-            Week week = DateUtils.week(DateUtils.weekStart(todayDate));
-            for (Employee employee : directory.getByUserName().values()) {
-                if (!employee.isActive()) {
-                    continue;
-                }
+        boolean isHoliday = sarariman.getHolidays().isHoliday(todayDate);
+        Week week = DateUtils.week(DateUtils.weekStart(todayDate));
+        for (Employee employee : directory.getByUserName().values()) {
+            if (!employee.isActive()) {
+                continue;
+            }
 
-                TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), week, sarariman.getTimesheetEntries(), sarariman.getTasks(), sarariman.getDataSource(), sarariman.getDirectory());
-                if (!timesheet.isSubmitted()) {
-                    Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
-                    Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
-                    if (dayOfWeek == Calendar.FRIDAY) {
-                        if (employee.isFulltime() || timesheet.getTotalHours() > 0) {
-                            String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
-                            emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
-                        }
-                    } else if (!isHoliday) {
-                        double hoursRecorded = timesheet.getHours(convert(todayDate));
-                        if (hoursRecorded == 0.0 && employee.isFulltime()) {
-                            String message = "Please record your time if you worked today at " + sarariman.getMountPoint() + ".";
-                            emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
-                        }
+            TimesheetImpl timesheet = new TimesheetImpl(sarariman, employee.getNumber(), week, sarariman.getTimesheetEntries(), sarariman.getTasks(), sarariman.getDataSource(), sarariman.getDirectory());
+            if (!timesheet.isSubmitted()) {
+                Collection<Integer> chainOfCommand = sarariman.getOrganizationHierarchy().getChainsOfCommand(employee.getNumber());
+                Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
+                if (dayOfWeek == Calendar.FRIDAY) {
+                    if (employee.isFulltime() || timesheet.getTotalHours() > 0) {
+                        String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
+                        emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
+                    }
+                } else if (!isHoliday) {
+                    double hoursRecorded = timesheet.getHours(convert(todayDate));
+                    if (hoursRecorded == 0.0 && employee.isFulltime()) {
+                        String message = "Please record your time if you worked today at " + sarariman.getMountPoint() + ".";
+                        emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
                     }
                 }
             }
-        } catch (SQLException se) {
-            logger.log(Level.SEVERE, "Had SQL trouble.", se);
         }
     }
 
