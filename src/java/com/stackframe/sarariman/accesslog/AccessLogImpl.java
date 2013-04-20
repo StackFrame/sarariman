@@ -207,7 +207,6 @@ public class AccessLogImpl implements AccessLog {
                             "SELECT * " +
                             "FROM access_log " +
                             "WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY) AND remote_address NOT LIKE '0:0:0:0:0:0:0:1%0' " +
-                            "GROUP BY path " +
                             "ORDER BY time DESC, timestamp DESC " +
                             "LIMIT 5");
                     try {
