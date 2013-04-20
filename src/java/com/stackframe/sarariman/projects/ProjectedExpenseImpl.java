@@ -35,7 +35,8 @@ public class ProjectedExpenseImpl implements ProjectedExpense {
     private final DataSource dataSource;
 
     public ProjectedExpenseImpl(Employee employee, PeriodOfPerformance pop, Task task, Workdays workdays,
-                                Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates, DataSource dataSource) {
+                                Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates,
+                                DataSource dataSource) {
         this.employee = employee;
         this.pop = pop;
         this.task = task;
@@ -62,7 +63,13 @@ public class ProjectedExpenseImpl implements ProjectedExpense {
         BigDecimal total = BigDecimal.ZERO;
         for (Date date : dates) {
             try {
-                CostData cost = Invoice.cost(categoriesById, projectBillRates, task.getProject().getId(), employee.getNumber(), task, SQLUtilities.convert(date), 8, dataSource);
+                CostData cost = Invoice.cost(categoriesById, projectBillRates, task.getProject().getId(), employee.getNumber(),
+                                             task, SQLUtilities.convert(date), 8, dataSource);
+                // If we are missing any cost data, abort and return 0 to flag it.
+                if (cost.getLaborCategory() == null) {
+                    return BigDecimal.ZERO;
+                }
+
                 total = total.add(cost.getCost());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
