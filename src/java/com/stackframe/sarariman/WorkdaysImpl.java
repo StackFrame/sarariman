@@ -8,7 +8,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.stackframe.sarariman.holidays.Holidays;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -24,22 +23,6 @@ public class WorkdaysImpl implements Workdays {
 
     public WorkdaysImpl(Holidays holidays) {
         this.holidays = holidays;
-    }
-
-    private static Collection<Date> getDays(PeriodOfPerformance pop) {
-        Collection<Date> result = new ArrayList<Date>();
-        Calendar calendar = new GregorianCalendar();
-        calendar.clear();
-        calendar.set(Calendar.YEAR, pop.getStart().getYear() + 1900);
-        calendar.set(Calendar.MONTH, pop.getStart().getMonth());
-        calendar.set(Calendar.DATE, pop.getStart().getDate());
-        while (!calendar.getTime().after(pop.getEnd())) {
-            Date date = new Date(calendar.get(Calendar.YEAR) - 1900, calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
-            result.add(date);
-            calendar.add(Calendar.DATE, 1);
-        }
-
-        return result;
     }
 
     private static final Predicate<Date> isWeekDay = new Predicate<Date>() {
@@ -60,7 +43,7 @@ public class WorkdaysImpl implements Workdays {
 
     public Collection<Date> getWorkdays(PeriodOfPerformance pop) {
         // FIXME: This could be faster if we pull holidays and remove them instead of the other way around.
-        return Collections2.filter(Collections2.filter(getDays(pop), isWeekDay), Predicates.not(isHoliday));
+        return Collections2.filter(Collections2.filter(pop.getDays(), isWeekDay), Predicates.not(isHoliday));
     }
 
 }
