@@ -163,7 +163,7 @@ public class HoursBilled extends HttpServlet {
                     out.println(String.format("%s,%s,%s,%s", date, b, o, p));
                 }
 
-                out.println("Colors,green,red,yellow");
+                out.println("Colors,Green,Red,Yellow");
             } finally {
                 connection.close();
             }
