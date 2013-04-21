@@ -672,7 +672,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HoursBilled</servlet-name>
-        <url-pattern>/statusboard/hoursbilled</url-pattern>
+        <url-pattern>/statusboard/hours</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PhotoFetcher</servlet-name>
