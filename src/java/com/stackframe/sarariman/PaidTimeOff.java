@@ -117,7 +117,7 @@ public class PaidTimeOff {
         }
     }
 
-    public static boolean isHoliday(Sarariman sarariman, Date date, StringBuilder holidayName) throws SQLException {
+    private static boolean isHoliday(Sarariman sarariman, Date date, StringBuilder holidayName) throws SQLException {
         Connection connection = sarariman.openConnection();
         try {
             PreparedStatement checkQuery = connection.prepareStatement("SELECT description FROM holidays WHERE date=?");
@@ -157,7 +157,7 @@ public class PaidTimeOff {
         }
     }
 
-    public static void creditHolidayPTO(Sarariman sarariman, Date day, CharSequence holidayName) throws SQLException {
+    private static void creditHolidayPTO(Sarariman sarariman, Date day, CharSequence holidayName) throws SQLException {
         Collection<Employee> employeesToCredit = employeesToCredit(sarariman);
         String source = "holidayPTOCredit";
         Connection connection = sarariman.openConnection();
