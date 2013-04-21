@@ -44,8 +44,8 @@ public class TimesheetAudit implements Audit {
         Week lastWeek = DateUtils.week(DateUtils.now()).getPrevious();
         List<Timesheet> timesheets = timesheets(lastWeek);
         for (Timesheet timesheet : timesheets) {
+            Employee employee = timesheet.getEmployee();
             if (timesheet.isSubmitted()) {
-                Employee employee = timesheet.getEmployee();
                 if (timesheet.isApproved()) {
                     double recorded = timesheet.getPTOHours();
                     if (recorded > 0) {
@@ -68,6 +68,12 @@ public class TimesheetAudit implements Audit {
                 } else {
                     listBuilder.add(new AuditResult(AuditResultType.todo,
                                                     String.format("timesheet for %s needs review", employee.getDisplayName()),
+                                                    timesheet.getURL()));
+                }
+            } else {
+                if (employee.isActive()) {
+                    listBuilder.add(new AuditResult(AuditResultType.warning, String.format("timesheet for %s needs to be submitted",
+                                                                                           employee.getDisplayName()),
                                                     timesheet.getURL()));
                 }
             }
