@@ -230,6 +230,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         try {
             Connection connection = dataSource.getConnection();
             try {
+                // FIXME: This triggers the slow query log on MySQL for no good reason that I can figure out.
                 PreparedStatement s = connection.prepareStatement(
                         "SELECT pm.project " +
                         "FROM project_managers AS pm " +
