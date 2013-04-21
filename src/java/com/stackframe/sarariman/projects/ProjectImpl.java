@@ -23,6 +23,8 @@ import com.stackframe.sarariman.Workdays;
 import com.stackframe.sarariman.clients.Client;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.lineitems.LineItem;
+import com.stackframe.sarariman.outofoffice.OutOfOfficeEntries;
+import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.Tasks;
 import static com.stackframe.sql.SQLUtilities.convert;
@@ -38,6 +40,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.sql.DataSource;
@@ -57,9 +60,10 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final String servletPath;
     private final Clients clients;
     private final Workdays workdays;
+    private final OutOfOfficeEntries oofEntries;
 
     ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks,
-                Projects projects, String servletPath, Clients clients, Workdays workdays) {
+                Projects projects, String servletPath, Clients clients, Workdays workdays, OutOfOfficeEntries oofEntries) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -69,6 +73,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.servletPath = servletPath;
         this.clients = clients;
         this.workdays = workdays;
+        this.oofEntries = oofEntries;
     }
 
     public int getId() {
@@ -1143,6 +1148,44 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         }
 
                         return result;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice() {
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement(
+                        "SELECT oof.id " +
+                        "FROM out_of_office AS oof " +
+                        "JOIN task_assignments AS ta ON ta.employee = oof.employee " +
+                        "JOIN tasks AS t on t.id = ta.task " +
+                        "JOIN projects AS p ON p.id = t.project " +
+                        "WHERE p.id = ? AND oof.end >= DATE(NOW()) " +
+                        "GROUP BY oof.employee, oof.begin, oof.end, oof.comment " +
+                        "ORDER BY oof.begin");
+                try {
+                    s.setInt(1, id);
+                    ResultSet r = s.executeQuery();
+                    try {
+                        List<OutOfOfficeEntry> l = new ArrayList<OutOfOfficeEntry>();
+                        while (r.next()) {
+                            int entryID = r.getInt("id");
+                            l.add(oofEntries.get(entryID));
+                        }
+
+                        return l;
                     } finally {
                         r.close();
                     }

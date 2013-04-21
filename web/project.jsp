@@ -243,36 +243,26 @@
             </ul>
         </c:if>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT oof.employee, oof.begin, oof.end, oof.comment
-            FROM out_of_office AS oof
-            JOIN task_assignments AS ta ON ta.employee = v.employee
-            JOIN tasks AS t on t.id = ta.task
-            JOIN projects AS p ON p.id = t.project
-            WHERE p.id = ? AND oof.end >= DATE(NOW()
-            GROUP BY oof.employee, oof.begin, oof.end, oof.comment
-            ORDER BY oof.begin
-            <sql:param value="${param.id}"/>
-        </sql:query>
-        <c:if test="${resultSet.rowCount != 0}">
+        <c:set var="oof" value="${project.upcomingOutOfOffice}"/>
+        <c:if test="${not empty oof}">
             <h2>Scheduled Out of Office</h2>
             <ul>
-                <c:forEach var="row" items="${resultSet.rows}">
+                <c:forEach var="entry" items="${oof}">
                     <li>
-                        ${directory.byNumber[row.employee].fullName}:
-                        <fmt:formatDate value="${row.begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${row.begin}"/>
-                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${row.end}"/>
+                        ${entry.employee.displayName}:
+                        <fmt:formatDate value="${entry.begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                        <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${entry.begin}"/>
+                        <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${entry.end}"/>
                         <c:choose>
                             <c:when test="${beginDate eq endDate}">
-                                <fmt:formatDate value="${row.end}" type="time" timeStyle="short" />                                    
+                                <fmt:formatDate value="${entry.end}" type="time" timeStyle="short" />                                    
                             </c:when>
                             <c:otherwise>
-                                <fmt:formatDate value="${row.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                <fmt:formatDate value="${entry.end}" type="both" dateStyle="long" timeStyle="short" />                                
                             </c:otherwise>
                         </c:choose>
-                        <c:if test="${!empty row.comment}">
-                            - ${fn:escapeXml(row.comment)}
+                        <c:if test="${!empty entry.comment}">
+                            - ${fn:escapeXml(entry.comment)}
                         </c:if>
                     </li>
                 </c:forEach>
