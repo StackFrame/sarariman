@@ -101,9 +101,9 @@
                 <tr>
                     <td><a href="${p.employee.URL}">${p.employee.fullName}</a></td>
                     <td><a href="${p.task.URL}">${p.task.id}</a></td>
-                    <td>${p.periodOfPerformance.start}</td>
-                    <td>${p.periodOfPerformance.end}</td>
-                    <td>${p.utilization}</td>
+                    <td class="date">${p.periodOfPerformance.start}</td>
+                    <td class="date">${p.periodOfPerformance.end}</td>
+                    <td class="percentage"><fmt:formatNumber type="percent" value="${p.utilization}"/></td>
                 </tr>
             </c:forEach>
         </table>
@@ -143,9 +143,9 @@
                 <tr>
                     <td><a href="${e.employee.URL}">${e.employee.fullName}</a></td>
                     <td><a href="${e.task.URL}">${e.task.id}</a></td>
-                    <td><fmt:formatDate value="${e.periodOfPerformance.start}" type="date" pattern="yyyy-MM-dd" /></td>
-                    <td><fmt:formatDate value="${e.periodOfPerformance.end}" type="date" pattern="yyyy-MM-dd" /></td>
-                    <td class="duration">${e.hours}</td>
+                    <td class="date"><fmt:formatDate value="${e.periodOfPerformance.start}" type="date" pattern="yyyy-MM-dd" /></td>
+                    <td class="date"><fmt:formatDate value="${e.periodOfPerformance.end}" type="date" pattern="yyyy-MM-dd" /></td>
+                    <td class="duration"><fmt:formatNumber value="${e.hours}" minFractionDigits="2"/></td>
                     <td class="currency"><fmt:formatNumber type="currency" value="${e.cost}"/></td>
                     <c:set var="totalCost" value="${totalCost+e.cost}"/>
                 </tr>
