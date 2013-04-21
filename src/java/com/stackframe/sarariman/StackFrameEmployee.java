@@ -544,7 +544,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         try {
             Connection c = dataSource.getConnection();
             try {
-                PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");
+                PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND end >= DATE(NOW())");
                 try {
                     s.setInt(1, number);
                     ResultSet r = s.executeQuery();
