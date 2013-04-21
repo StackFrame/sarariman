@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +46,7 @@ public class HoursBilled extends HttpServlet {
                 "FROM hours " +
                 "JOIN tasks ON hours.task = tasks.id " +
                 "WHERE date > DATE_SUB(NOW(), INTERVAL ? DAY) AND billable = TRUE " +
-                "GROUP BY date " +
-                "ORDER BY date");
+                "GROUP BY date");
         try {
             s.setInt(1, days);
             ResultSet r = s.executeQuery();
@@ -73,8 +73,7 @@ public class HoursBilled extends HttpServlet {
                 "FROM hours " +
                 "JOIN tasks ON hours.task = tasks.id " +
                 "WHERE date > DATE_SUB(NOW(), INTERVAL ? DAY) AND tasks.billable = FALSE AND hours.task != ? " +
-                "GROUP BY date " +
-                "ORDER BY date");
+                "GROUP BY date");
         try {
             s.setInt(1, days);
             s.setInt(2, sarariman.getPaidTimeOff().getPaidTimeOffTask().getId());
@@ -102,8 +101,7 @@ public class HoursBilled extends HttpServlet {
                 "FROM hours " +
                 "JOIN tasks ON hours.task = tasks.id " +
                 "WHERE date > DATE_SUB(NOW(), INTERVAL ? DAY) AND hours.task = ? " +
-                "GROUP BY date " +
-                "ORDER BY date");
+                "GROUP BY date");
         try {
             s.setInt(1, days);
             s.setInt(2, sarariman.getPaidTimeOff().getPaidTimeOffTask().getId());
@@ -145,9 +143,8 @@ public class HoursBilled extends HttpServlet {
                 Map<Date, BigDecimal> billable = billable(connection);
                 Map<Date, BigDecimal> overhead = overhead(connection);
                 Map<Date, BigDecimal> pto = pto(connection);
-                Set<Date> allDates = Utilities.<Date, BigDecimal>allKeys(ImmutableList.of(billable, overhead));
+                Set<Date> allDates = new TreeSet<Date>(Utilities.<Date, BigDecimal>allKeys(ImmutableList.of(billable, overhead)));
                 for (Date date : allDates) {
-                    out.print(date);
                     BigDecimal b = billable.get(date);
                     if (b == null) {
                         b = BigDecimal.ZERO;
