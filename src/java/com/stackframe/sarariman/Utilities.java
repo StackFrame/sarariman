@@ -6,6 +6,12 @@ package com.stackframe.sarariman;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -39,5 +45,14 @@ public class Utilities {
      * A Predicate that matches for active full time employees.
      */
     public static final Predicate<Employee> activeFulltime = Predicates.and(active, fulltime);
+
+    public static <K, V extends Object> Set<K> allKeys(Iterable<Map<K, V>> maps) {
+        ImmutableSet.Builder<K> builder = ImmutableSet.<K>builder();
+        for (Map<K, V> map : maps) {
+            builder.addAll(map.keySet());
+        }
+
+        return builder.build();
+    }
 
 }
