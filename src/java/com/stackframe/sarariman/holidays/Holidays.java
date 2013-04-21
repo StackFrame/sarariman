@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.holidays;
 
+import com.google.common.collect.Range;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -15,7 +17,9 @@ public interface Holidays {
     boolean isHoliday(Date date);
 
     Iterable<Holiday> getUpcoming();
-    
+
     Holiday getNext();
+
+    Collection<Date> get(Range<Date> range);
 
 }

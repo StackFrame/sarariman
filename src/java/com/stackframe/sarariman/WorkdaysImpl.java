@@ -5,9 +5,9 @@
 package com.stackframe.sarariman;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.stackframe.sarariman.holidays.Holidays;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -34,16 +34,14 @@ public class WorkdaysImpl implements Workdays {
         }
 
     };
-    private final Predicate<Date> isHoliday = new Predicate<Date>() {
-        public boolean apply(Date t) {
-            return holidays.isHoliday(t);
-        }
-
-    };
 
     public Collection<Date> getWorkdays(PeriodOfPerformance pop) {
-        // FIXME: This could be faster if we pull holidays and remove them instead of the other way around.
-        return Collections2.filter(Collections2.filter(pop.getDays(), isWeekDay), Predicates.not(isHoliday));
+        Collection<Date> holidaysToExclude = holidays.get(pop.asRange());
+        Collection<Date> allDays = pop.getDays();
+        Collection<Date> weekDays = Collections2.filter(allDays, isWeekDay);
+        Collection<Date> workingDays = new ArrayList(weekDays);
+        workingDays.removeAll(holidaysToExclude);
+        return workingDays;
     }
 
 }

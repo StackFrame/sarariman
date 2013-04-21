@@ -4,13 +4,17 @@
  */
 package com.stackframe.sarariman.holidays;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Range;
+import com.stackframe.collect.RangeUtilities;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Date;
 import javax.sql.DataSource;
 
@@ -95,6 +99,36 @@ public class HolidaysImpl implements Holidays {
                     ResultSet rs = statement.executeQuery();
                     try {
                         return rs.first();
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    statement.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Collection<Date> get(Range<Date> range) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                String dateRangeExpression = RangeUtilities.toSQL("date", range);
+                PreparedStatement statement = connection.prepareStatement(String.format("SELECT date FROM holidays WHERE %s",
+                                                                                        dateRangeExpression));
+                try {
+                    ResultSet rs = statement.executeQuery();
+                    try {
+                        ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
+                        while (rs.next()) {
+                            listBuilder.add(rs.getDate("date"));
+                        }
+
+                        return listBuilder.build();
                     } finally {
                         rs.close();
                     }
