@@ -4,8 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -47,7 +47,7 @@ public class PeriodOfPerformance {
     }
 
     public Collection<Date> getDays() {
-        Collection<Date> result = new ArrayList<Date>();
+        ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
         Calendar calendar = new GregorianCalendar();
         calendar.clear();
         calendar.set(Calendar.YEAR, start.getYear() + 1900);
@@ -55,11 +55,11 @@ public class PeriodOfPerformance {
         calendar.set(Calendar.DATE, start.getDate());
         while (!calendar.getTime().after(end)) {
             Date date = new Date(calendar.get(Calendar.YEAR) - 1900, calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
-            result.add(date);
+            listBuilder.add(date);
             calendar.add(Calendar.DATE, 1);
         }
 
-        return result;
+        return listBuilder.build();
     }
 
     @Override
