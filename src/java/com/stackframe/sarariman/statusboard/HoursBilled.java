@@ -143,7 +143,7 @@ public class HoursBilled extends HttpServlet {
                 Map<Date, BigDecimal> billable = billable(connection);
                 Map<Date, BigDecimal> overhead = overhead(connection);
                 Map<Date, BigDecimal> pto = pto(connection);
-                Set<Date> allDates = new TreeSet<Date>(Utilities.<Date, BigDecimal>allKeys(ImmutableList.of(billable, overhead)));
+                Set<Date> allDates = new TreeSet<Date>(Utilities.allKeys(ImmutableList.of(billable, overhead)));
                 for (Date date : allDates) {
                     BigDecimal b = billable.get(date);
                     if (b == null) {
