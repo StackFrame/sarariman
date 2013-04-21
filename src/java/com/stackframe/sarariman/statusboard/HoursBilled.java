@@ -69,10 +69,11 @@ public class HoursBilled extends HttpServlet {
                 "SELECT SUM(duration) AS total, date " +
                 "FROM hours " +
                 "JOIN tasks ON hours.task = tasks.id " +
-                "WHERE date > DATE_SUB(NOW(), INTERVAL 30 DAY) AND tasks.billable = FALSE AND hours.task != 5 " +
+                "WHERE date > DATE_SUB(NOW(), INTERVAL 30 DAY) AND tasks.billable = FALSE AND hours.task != ? " +
                 "GROUP BY date " +
                 "ORDER BY date");
         try {
+            s.setInt(1, sarariman.getPaidTimeOff().getPaidTimeOffTask().getId());
             ResultSet r = s.executeQuery();
             try {
                 ImmutableSortedMap.Builder<Date, BigDecimal> mapBuilder = ImmutableSortedMap.<Date, BigDecimal>naturalOrder();
@@ -96,10 +97,11 @@ public class HoursBilled extends HttpServlet {
                 "SELECT SUM(duration) AS total, date " +
                 "FROM hours " +
                 "JOIN tasks ON hours.task = tasks.id " +
-                "WHERE date > DATE_SUB(NOW(), INTERVAL 30 DAY) AND hours.task = 5 " +
+                "WHERE date > DATE_SUB(NOW(), INTERVAL 30 DAY) AND hours.task = ? " +
                 "GROUP BY date " +
                 "ORDER BY date");
         try {
+            s.setInt(1, sarariman.getPaidTimeOff().getPaidTimeOffTask().getId());
             ResultSet r = s.executeQuery();
             try {
                 ImmutableSortedMap.Builder<Date, BigDecimal> mapBuilder = ImmutableSortedMap.<Date, BigDecimal>naturalOrder();

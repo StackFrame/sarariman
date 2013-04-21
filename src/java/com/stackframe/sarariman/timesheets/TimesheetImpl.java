@@ -37,9 +37,9 @@ import javax.sql.DataSource;
  */
 public class TimesheetImpl extends AbstractLinkable implements Timesheet {
 
-    // FIXME: These hard coded task numbers should come from a config file.
+    // FIXME: This hard coded task number should come from a config file or something.
     private static final int holidayTask = 4;
-    private static final int PTOTask = 5;
+    private final int PTOTask;
     private final int employeeNumber;
     private final Week week;
     private final TimesheetEntries entries;
@@ -57,7 +57,7 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
         this.tasks = tasks;
         this.dataSource = dataSource;
         this.directory = directory;
-
+        this.PTOTask = sarariman.getPaidTimeOff().getPaidTimeOffTask().getId();
     }
 
     @Override

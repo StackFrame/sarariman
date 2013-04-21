@@ -107,7 +107,7 @@ public class TimesheetEntryHandler extends HttpServlet {
         }
 
         Date now = new Date();
-        final int PTOtask = 5;
+        final int PTOtask = sarariman.getPaidTimeOff().getPaidTimeOffTask().getId();
         if (date.after(now) && task.getId() != PTOtask) {
             throw new IllegalArgumentException("Cannot record non-PTO time in the future.");
         }
