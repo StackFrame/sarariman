@@ -244,14 +244,14 @@
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT v.employee, v.begin, v.end, v.comment
-            FROM out_of_office AS v
+            SELECT oof.employee, oof.begin, oof.end, oof.comment
+            FROM out_of_office AS oof
             JOIN task_assignments AS ta ON ta.employee = v.employee
             JOIN tasks AS t on t.id = ta.task
             JOIN projects AS p ON p.id = t.project
-            WHERE p.id = ? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))
-            GROUP BY v.employee, v.begin, v.end, v.comment
-            ORDER BY v.begin
+            WHERE p.id = ? AND oof.end >= DATE(NOW()
+            GROUP BY oof.employee, oof.begin, oof.end, oof.comment
+            ORDER BY oof.begin
             <sql:param value="${param.id}"/>
         </sql:query>
         <c:if test="${resultSet.rowCount != 0}">
