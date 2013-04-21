@@ -23,6 +23,6 @@ public interface ProjectedExpense {
 
     BigDecimal getCost();
 
-    int getHours();
+    BigDecimal getHours();
 
 }

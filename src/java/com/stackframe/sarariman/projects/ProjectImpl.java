@@ -10,8 +10,6 @@ import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
-import com.stackframe.sarariman.LaborCategory;
-import com.stackframe.sarariman.LaborCategoryAssignment;
 import com.stackframe.sarariman.NamedResource;
 import com.stackframe.sarariman.NamedResourceImpl;
 import com.stackframe.sarariman.OrganizationHierarchy;
@@ -40,7 +38,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.sql.DataSource;
@@ -60,12 +57,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final String servletPath;
     private final Clients clients;
     private final Workdays workdays;
-    private final Map<Long, LaborCategory> categoriesById;
-    private final Collection<LaborCategoryAssignment> projectBillRates;
 
     ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks,
-                Projects projects, String servletPath, Clients clients, Workdays workdays,
-                Map<Long, LaborCategory> categoriesById, Collection<LaborCategoryAssignment> projectBillRates) {
+                Projects projects, String servletPath, Clients clients, Workdays workdays) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -75,8 +69,6 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.servletPath = servletPath;
         this.clients = clients;
         this.workdays = workdays;
-        this.categoriesById = categoriesById;
-        this.projectBillRates = projectBillRates;
     }
 
     public int getId() {
@@ -1096,17 +1088,73 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     }
 
     public Collection<ProjectedExpense> getProjectedExpenses(PeriodOfPerformance pop) {
-        Collection<ProjectedExpense> result = new ArrayList<ProjectedExpense>();
-        Collection<LaborProjection> laborProjections = getLaborProjections();
-        for (LaborProjection projection : laborProjections) {
-            PeriodOfPerformance intersection = projection.getPeriodOfPerformance().intersection(pop);
-            ProjectedExpense projectedExpense = new ProjectedExpenseImpl(projection.getEmployee(), intersection,
-                                                                         projection.getTask(), projection.getUtilization(),
-                                                                         workdays, categoriesById, projectBillRates, dataSource);
-            result.add(projectedExpense);
-        }
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement(
+                        "SELECT labor_category_assignments.employee AS employee, labor_categories.rate AS rate, " +
+                        "labor_projection.task AS task, labor_projection.utilization AS utilization, " +
+                        "labor_categories.pop_start AS category_start, labor_categories.pop_end AS category_end, " +
+                        "labor_category_assignments.pop_start AS assignment_start, " +
+                        "labor_category_assignments.pop_end AS assignment_end, " +
+                        "labor_projection.pop_start AS projection_start, labor_projection.pop_end AS projection_end " +
+                        "FROM labor_categories " +
+                        "JOIN labor_category_assignments ON labor_categories.id = labor_category_assignments.labor_category " +
+                        "JOIN labor_projection ON labor_projection.employee = labor_category_assignments.employee " +
+                        "JOIN tasks ON labor_projection.task = tasks.id " +
+                        "WHERE labor_categories.project = ? " +
+                        "AND tasks.project = ? " +
+                        "AND labor_categories.pop_start <= labor_category_assignments.pop_start " +
+                        "AND labor_categories.pop_end >= labor_category_assignments.pop_start " +
+                        "AND (labor_category_assignments.pop_start <= ? AND labor_category_assignments.pop_end >= ?) " +
+                        "AND (labor_projection.pop_start <= ? AND labor_projection.pop_end >= ?)");
+                try {
+                    s.setInt(1, id);
+                    s.setInt(2, id);
+                    s.setDate(3, convert(pop.getEnd()));
+                    s.setDate(4, convert(pop.getStart()));
+                    s.setDate(5, convert(pop.getEnd()));
+                    s.setDate(6, convert(pop.getStart()));
+                    ResultSet r = s.executeQuery();
+                    try {
+                        Collection<ProjectedExpense> result = new ArrayList<ProjectedExpense>();
+                        while (r.next()) {
+                            int employeeNumber = r.getInt("employee");
+                            Employee employee = directory.getByNumber().get(employeeNumber);
+                            BigDecimal rate = r.getBigDecimal("rate");
+                            int taskNumber = r.getInt("task");
+                            Task task = tasks.get(taskNumber);
+                            BigDecimal utilization = r.getBigDecimal("utilization");
+                            Date categoryStart = r.getDate("category_start");
+                            Date categoryEnd = r.getDate("category_end");
+                            PeriodOfPerformance category = new PeriodOfPerformance(categoryStart, categoryEnd);
+                            Date assignmentStart = r.getDate("assignment_start");
+                            Date assignmentEnd = r.getDate("assignment_end");
+                            PeriodOfPerformance assignment = new PeriodOfPerformance(assignmentStart, assignmentEnd);
+                            Date projectionStart = r.getDate("projection_start");
+                            Date projectionEnd = r.getDate("projection_end");
+                            PeriodOfPerformance projection = new PeriodOfPerformance(projectionStart, projectionEnd);
+                            PeriodOfPerformance span = pop.intersection(projection).intersection(assignment).intersection(category);
+                            BigDecimal numWorkdays = BigDecimal.valueOf(workdays.getWorkdays(span).size());
+                            BigDecimal hours = BigDecimal.valueOf(8.0).multiply(numWorkdays).multiply(utilization);
+                            BigDecimal cost = hours.multiply(rate);
+                            ProjectedExpense e = new ProjectedExpenseImpl(employee, span, task, cost, hours);
+                            result.add(e);
+                        }
 
-        return result;
+                        return result;
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
