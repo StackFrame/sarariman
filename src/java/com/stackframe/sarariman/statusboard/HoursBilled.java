@@ -37,7 +37,7 @@ public class HoursBilled extends HttpServlet {
         sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
     }
 
-    private final int days = 30;
+    private final int days = 180;
 
     private Map<Date, BigDecimal> billable(Connection connection) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
