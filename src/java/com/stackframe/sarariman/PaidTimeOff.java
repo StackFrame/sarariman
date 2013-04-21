@@ -41,7 +41,9 @@ public class PaidTimeOff {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement checkQuery = connection.prepareStatement("SELECT SUM(amount) AS sum FROM paid_time_off WHERE employee=? AND effective=? AND source=?");
+                PreparedStatement checkQuery = connection.prepareStatement(
+                        "SELECT SUM(amount) AS sum FROM paid_time_off " +
+                        "WHERE employee=? AND effective=? AND source=?");
                 try {
                     checkQuery.setInt(1, employee.getNumber());
                     checkQuery.setString(2, effective.getName());
@@ -64,8 +66,11 @@ public class PaidTimeOff {
         }
     }
 
-    private static void creditPaidTimeOff(Sarariman sarariman, Connection connection, double amount, Employee employee, Date effective, String source, String comment) throws SQLException {
-        PreparedStatement checkQuery = connection.prepareStatement("SELECT * FROM paid_time_off WHERE employee=? AND effective=? AND source=?");
+    private static void creditPaidTimeOff(Sarariman sarariman, Connection connection, double amount, Employee employee,
+                                          Date effective, String source, String comment)
+            throws SQLException {
+        PreparedStatement checkQuery = connection.prepareStatement(
+                "SELECT * FROM paid_time_off WHERE employee=? AND effective=? AND source=?");
         try {
             checkQuery.setInt(1, employee.getNumber());
             checkQuery.setDate(2, effective);
@@ -74,7 +79,8 @@ public class PaidTimeOff {
             try {
                 boolean found = result.first();
                 if (!found) {
-                    PreparedStatement addPTO = connection.prepareStatement("INSERT INTO paid_time_off(employee, amount, comment, effective, source) VALUES(?, ?, ?, ?, ?)");
+                    PreparedStatement addPTO = connection.prepareStatement(
+                            "INSERT INTO paid_time_off(employee, amount, comment, effective, source) VALUES(?, ?, ?, ?, ?)");
                     try {
                         addPTO.setInt(1, employee.getNumber());
                         addPTO.setDouble(2, amount);
@@ -86,7 +92,8 @@ public class PaidTimeOff {
                             throw new AssertionError("Expected there to be 1 row");
                         }
 
-                        sarariman.getEmailDispatcher().send(employee.getEmail(), null, "PTO updated", "Paid time off was updated: " + comment);
+                        sarariman.getEmailDispatcher().send(employee.getEmail(), null, "PTO updated",
+                                                            "Paid time off was updated: " + comment);
                     } finally {
                         addPTO.close();
                     }
