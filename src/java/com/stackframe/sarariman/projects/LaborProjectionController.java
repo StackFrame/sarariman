@@ -81,6 +81,26 @@ public class LaborProjectionController extends HttpServlet {
         System.err.println("LaborProjectionController::doPost");
         if (request.getPathInfo().endsWith("/")) {
             // Handle creation of new entry here.
+            System.err.println("LaborProjectionController::doPost::creatng a new entry");
+            LaborProjections laborProjections = sarariman.getLaborProjections();
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            try {
+                Date start = dateFormat.parse(request.getParameter("start"));
+                Date end = dateFormat.parse(request.getParameter("end"));
+                PeriodOfPerformance pop = new PeriodOfPerformance(start, end);
+
+                double utilization = Double.parseDouble(request.getParameter("utilization"));
+                Task task = sarariman.getTasks().get(Integer.parseInt(request.getParameter("task")));
+                Employee employee = sarariman.getDirectory().getByNumber().get(Integer.parseInt(request.getParameter("employee")));
+
+                LaborProjection laborProjection = laborProjections.create(employee, task, utilization, pop);
+
+                response.sendRedirect(response.encodeRedirectURL("/"));
+            } catch (ParseException pe) {
+                throw new ServletException(pe);
+            }
         } else {
             doPut(request, response);
         }
@@ -149,7 +169,7 @@ public class LaborProjectionController extends HttpServlet {
             request.getRequestDispatcher("/unauthorized").forward(request, response);
             return;
         }
-        
+
         projection.delete();
     }
 
