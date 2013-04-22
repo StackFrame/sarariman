@@ -38,6 +38,7 @@ public class ErrorFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (final Exception e) {
+            e.printStackTrace();
             final String stackTrace = Throwables.getStackTraceAsString(e);
             request.setAttribute("stacktrace", stackTrace);
             if (!response.isCommitted()) {
