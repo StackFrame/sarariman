@@ -232,7 +232,22 @@ public class LaborProjectionImpl extends AbstractLinkable implements LaborProjec
     }
 
     public void delete() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement("DELETE FROM labor_projection WHERE id=?");
+                try {
+                    s.setInt(1, id);
+                    s.execute();
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public URI getURI() {
