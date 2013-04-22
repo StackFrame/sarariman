@@ -149,6 +149,8 @@ public class LaborProjectionController extends HttpServlet {
             request.getRequestDispatcher("/unauthorized").forward(request, response);
             return;
         }
+        
+        projection.delete();
     }
 
     /**
