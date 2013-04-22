@@ -55,7 +55,7 @@
                 <select id="task" name="task">
                     <option selected="selected"></option>
                     <c:forEach var="task" items="${project.tasks}">
-                        <option value="${task.id}">${task.id} (${fn:escapeXml(task.name)}</option>
+                        <option value="${task.id}">${task.id} (${fn:escapeXml(task.name)})</option>
                     </c:forEach>
                 </select><br/>
 

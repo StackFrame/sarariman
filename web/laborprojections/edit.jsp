@@ -42,7 +42,7 @@
                 <label for="task">Task: </label>
                 <select id="task" name="task">
                     <c:forEach var="task" items="${projection.task.project.tasks}">
-                        <option value="${task.id}" <c:if test="${task.id == projection.task.id}">selected="selected"</c:if>>${task.id} (${fn:escapeXml(task.name)}</option>
+                        <option value="${task.id}" <c:if test="${task.id == projection.task.id}">selected="selected"</c:if>>${task.id} (${fn:escapeXml(task.name)})</option>
                     </c:forEach>
                 </select><br/>
 
