@@ -687,10 +687,7 @@
 
         <c:if test="${isCostManager}">
             <p>
-                <c:url var="projection" value="projection.jsp">
-                    <c:param name="project" value="${param.id}"/>
-                </c:url>
-                <a href="${fn:escapeXml(projection)}">Projection</a><br/>
+                <a href="${fn:escapeXml(project.projectedExpenses.URL)}">Projection</a><br/>
 
                 <c:url var="projectBilled" value="projectBilled">
                     <c:param name="project" value="${param.id}"/>

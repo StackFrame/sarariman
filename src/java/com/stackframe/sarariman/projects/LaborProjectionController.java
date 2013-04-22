@@ -53,7 +53,6 @@ public class LaborProjectionController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("LaborProjectionController::doGet");
         LaborProjection projection = getProjection(request);
         Project project = projection.getTask().getProject();
         Employee user = (Employee)request.getAttribute("user");
@@ -78,10 +77,7 @@ public class LaborProjectionController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("LaborProjectionController::doPost");
         if (request.getPathInfo().endsWith("/")) {
-            // Handle creation of new entry here.
-            System.err.println("LaborProjectionController::doPost::creatng a new entry");
             LaborProjections laborProjections = sarariman.getLaborProjections();
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -97,7 +93,7 @@ public class LaborProjectionController extends HttpServlet {
 
                 LaborProjection laborProjection = laborProjections.create(employee, task, utilization, pop);
 
-                response.sendRedirect(response.encodeRedirectURL("/"));
+                response.sendRedirect(response.encodeRedirectURL(task.getProject().getProjectedExpenses().getURL().toString()));
             } catch (ParseException pe) {
                 throw new ServletException(pe);
             }
@@ -117,7 +113,6 @@ public class LaborProjectionController extends HttpServlet {
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("LaborProjectionController::doPut");
         LaborProjection projection = getProjection(request);
         Project project = projection.getTask().getProject();
         Employee user = (Employee)request.getAttribute("user");
@@ -159,9 +154,7 @@ public class LaborProjectionController extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("LaborProjectionController::doDelete");
         LaborProjection projection = getProjection(request);
-        System.err.println("projection=" + projection);
         Project project = projection.getTask().getProject();
         Employee user = (Employee)request.getAttribute("user");
         boolean isCostManager = AccessControlUtilities.isCostManager(user, project);

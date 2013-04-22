@@ -103,7 +103,7 @@ public interface Project extends Linkable {
 
     Collection<LaborProjection> getLaborProjections();
 
-    Collection<ProjectedExpense> getProjectedExpenses(PeriodOfPerformance pop);
+    ProjectedExpenses getProjectedExpenses();
 
     Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice();
 

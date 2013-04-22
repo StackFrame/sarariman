@@ -9,6 +9,7 @@
 <%@page import="com.stackframe.sarariman.Workdays"%>
 <%@page import="com.stackframe.sarariman.PeriodOfPerformance"%>
 <%@page import="com.stackframe.sarariman.projects.ProjectedExpense"%>
+<%@page import="com.stackframe.sarariman.projects.ProjectedExpenses"%>
 <%@page import="java.util.Collection"%>
 <%@page import="java.util.Date"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -147,8 +148,9 @@
 
         <%
             Project project = (Project)pageContext.getAttribute("project");
-            Collection<ProjectedExpense> projectedExpenses = project.getProjectedExpenses(pop);
+            ProjectedExpenses projectedExpenses = project.getProjectedExpenses();
             pageContext.setAttribute("projectedExpenses", projectedExpenses);
+            pageContext.setAttribute("labor", projectedExpenses.getLabor(pop));
         %>
 
         <table>
@@ -162,7 +164,7 @@
                 <th>Cost</th>
             </tr>
             <c:set var="totalCost" value="0"/>
-            <c:forEach var="e" items="${projectedExpenses}">
+            <c:forEach var="e" items="${labor}">
                 <tr>
                     <td><a href="${e.employee.URL}">${e.employee.fullName}</a></td>
                     <td><a href="${e.task.URL}">${e.task.id}</a></td>
