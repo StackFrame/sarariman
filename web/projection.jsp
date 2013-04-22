@@ -170,7 +170,7 @@
                     <td class="date"><fmt:formatDate value="${e.periodOfPerformance.end}" type="date" pattern="yyyy-MM-dd" /></td>
                     <td class="duration"><fmt:formatNumber value="${e.hours}" minFractionDigits="2"/></td>
                     <td class="currency"><fmt:formatNumber type="currency" value="${e.cost}"/></td>
-                    <c:set var="totalCost" value="${totalCost+e.cost}"/>
+                    <c:set var="totalCost" value="${totalCost + e.cost}"/>
                 </tr>
             </c:forEach>
             <tr>
