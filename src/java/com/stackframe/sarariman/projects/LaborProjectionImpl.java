@@ -211,6 +211,26 @@ public class LaborProjectionImpl extends AbstractLinkable implements LaborProjec
         }
     }
 
+    public void setEmployee(Employee employee) {
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement("UPDATE labor_projection SET employee=? WHERE id=?");
+                try {
+                    s.setDouble(1, employee.getNumber());
+                    s.setInt(2, id);
+                    s.execute();
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void delete() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

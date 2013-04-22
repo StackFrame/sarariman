@@ -32,7 +32,12 @@
 
         <form method="POST">
             <p>
-                Employee: ${projection.employee.displayName}</br>
+                <label for="employee">Employee: </label>
+                <select id="employee" name="employee">
+                    <c:forEach var="employee" items="${projection.task.project.currentlyAssigned}">
+                        <option value="${employee.number}" <c:if test="${employee.number == projection.employee.number}">selected="selected"</c:if>>${employee.displayName}</option>
+                    </c:forEach>
+                </select><br/>
 
                 <label for="task">Task: </label>
                 <select id="task" name="task">

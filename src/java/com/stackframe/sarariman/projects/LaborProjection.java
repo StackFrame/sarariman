@@ -18,6 +18,8 @@ public interface LaborProjection extends Linkable {
     int getId();
 
     Employee getEmployee();
+    
+    void setEmployee(Employee employee);
 
     PeriodOfPerformance getPeriodOfPerformance();
 
