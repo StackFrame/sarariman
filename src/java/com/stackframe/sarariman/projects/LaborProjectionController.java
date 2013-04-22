@@ -33,8 +33,7 @@ public class LaborProjectionController extends HttpServlet {
     }
 
     private LaborProjection getProjection(HttpServletRequest request) {
-        return new LaborProjectionImpl(getProjectionId(request), sarariman.getDataSource(), sarariman.getDirectory(),
-                                       sarariman.getTasks(), sarariman.getMountPoint() + "laborprojections/");
+        return sarariman.getLaborProjections().get(getProjectionId(request));
     }
 
     @Override

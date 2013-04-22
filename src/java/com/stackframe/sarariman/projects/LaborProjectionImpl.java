@@ -31,7 +31,7 @@ public class LaborProjectionImpl extends AbstractLinkable implements LaborProjec
     private final Tasks tasks;
     private final String servletPath;
 
-    public LaborProjectionImpl(int id, DataSource dataSource, Directory directory, Tasks tasks, String servletPath) {
+    LaborProjectionImpl(int id, DataSource dataSource, Directory directory, Tasks tasks, String servletPath) {
         this.id = id;
         this.dataSource = dataSource;
         this.directory = directory;

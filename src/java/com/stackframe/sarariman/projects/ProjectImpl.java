@@ -61,10 +61,10 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     private final Clients clients;
     private final Workdays workdays;
     private final OutOfOfficeEntries oofEntries;
-    private final String mountPoint;
+    private final LaborProjections laborProjections;
 
     ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks,
-                Projects projects, String servletPath, Clients clients, Workdays workdays, OutOfOfficeEntries oofEntries, String mountPoint) {
+                Projects projects, String servletPath, Clients clients, Workdays workdays, OutOfOfficeEntries oofEntries, LaborProjections laborProjections) {
         this.id = id;
         this.dataSource = dataSource;
         this.organizationHierarchy = organizationHierarchy;
@@ -75,7 +75,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.clients = clients;
         this.workdays = workdays;
         this.oofEntries = oofEntries;
-        this.mountPoint = mountPoint;
+        this.laborProjections = laborProjections;
     }
 
     public int getId() {
@@ -1076,7 +1076,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         Collection<LaborProjection> list = new ArrayList<LaborProjection>();
                         while (resultSet.next()) {
                             int laborProjectionId = resultSet.getInt("labor_projection.id");
-                            list.add(new LaborProjectionImpl(laborProjectionId, dataSource, directory, tasks, mountPoint + "laborprojections/"));
+                            list.add(laborProjections.get(laborProjectionId));
                         }
 
                         return list;

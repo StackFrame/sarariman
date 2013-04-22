@@ -22,6 +22,8 @@ import com.stackframe.sarariman.holidays.Holidays;
 import com.stackframe.sarariman.holidays.HolidaysImpl;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntries;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntriesImpl;
+import com.stackframe.sarariman.projects.LaborProjections;
+import com.stackframe.sarariman.projects.LaborProjectionsImpl;
 import com.stackframe.sarariman.projects.Projects;
 import com.stackframe.sarariman.projects.ProjectsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
@@ -84,6 +86,7 @@ public class Sarariman implements ServletContextListener {
     private AccessLog accessLog;
     private Workdays workdays;
     private PaidTimeOff paidTimeOff;
+    private LaborProjections laborProjections;
 
     public String getVersion() {
         return Version.version;
@@ -211,6 +214,10 @@ public class Sarariman implements ServletContextListener {
         return vacations;
     }
 
+    public LaborProjections getLaborProjections() {
+        return laborProjections;
+    }
+
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
@@ -326,6 +333,7 @@ public class Sarariman implements ServletContextListener {
             accessLog = new AccessLogImpl(getDataSource(), directory);
             workdays = new WorkdaysImpl(holidays);
             paidTimeOff = new PaidTimeOff(tasks);
+            laborProjections = new LaborProjectionsImpl(getDataSource(), directory, tasks, mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
