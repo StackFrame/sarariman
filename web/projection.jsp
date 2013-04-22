@@ -124,6 +124,13 @@
             </c:forEach>
         </table>
 
+        <p>
+            <c:url var="createLink" value="${sarariman.laborProjections.URL}create">
+                <c:param name="project" value="${project.id}"/>
+            </c:url>
+            <a class="btn" href="${createLink}" title="add a labor projection"><i class="icon-plus"></i></a>
+        </p>
+
         <%
             Date start = (Date)pageContext.getAttribute("start");
             Date end = (Date)pageContext.getAttribute("end");
