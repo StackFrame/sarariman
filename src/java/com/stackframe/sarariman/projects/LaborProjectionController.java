@@ -99,7 +99,6 @@ public class LaborProjectionController extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.err.println("LaborProjectionController::doPut");
         LaborProjection projection = getProjection(request);
-        System.err.println("projection=" + projection);
         Project project = projection.getTask().getProject();
         Employee user = (Employee)request.getAttribute("user");
         boolean isCostManager = AccessControlUtilities.isCostManager(user, project);
@@ -111,12 +110,9 @@ public class LaborProjectionController extends HttpServlet {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date start = dateFormat.parse(request.getParameter("start"));
-            System.err.println("start=" + start);
             Date end = dateFormat.parse(request.getParameter("end"));
-            System.err.println("end=" + end);
             projection.setPeriodOfPerformance(new PeriodOfPerformance(start, end));
             double utilization = Double.parseDouble(request.getParameter("utilization"));
-            System.err.println("utilization=" + utilization);
             projection.setUtilization(utilization);
             response.sendRedirect(projection.getURL().toString());
         } catch (ParseException pe) {
