@@ -66,6 +66,18 @@
                 $("#parameters").change(function() {
                     this.submit();
                 });
+            });            
+
+            $(document).ready(function(){
+                $('.delete').click(function(e) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: $(this).attr('data'),
+                        success: function() {
+                            location.reload();
+                        }
+                    });	        
+                });
             });
         </script>
     </head>
@@ -96,6 +108,7 @@
                 <th>Start</th>
                 <th>End</th>
                 <th>Utilization</th>
+                <th></th>
             </tr>
             <c:forEach var="p" items="${project.laborProjections}">
                 <tr>
@@ -104,6 +117,10 @@
                     <td class="date">${p.periodOfPerformance.start}</td>
                     <td class="date">${p.periodOfPerformance.end}</td>
                     <td class="percentage"><fmt:formatNumber type="percent" value="${p.utilization}"/></td>
+                    <td>
+                        <a href="${p.URL}" class="btn" title="edit this labor projection"><i class="icon-edit"></i></a>
+                        <span class="btn btn-danger delete" data="${p.URL}" title="delete this labor projection"><i class="icon-trash"></i></span>
+                    </td>
                 </tr>
             </c:forEach>
         </table>

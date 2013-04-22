@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.projects;
 
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.tasks.Task;
 
@@ -12,7 +13,7 @@ import com.stackframe.sarariman.tasks.Task;
  *
  * @author mcculley
  */
-public interface LaborProjection {
+public interface LaborProjection extends Linkable {
 
     int getId();
 
@@ -20,8 +21,14 @@ public interface LaborProjection {
 
     PeriodOfPerformance getPeriodOfPerformance();
 
+    void setPeriodOfPerformance(PeriodOfPerformance pop);
+
     Task getTask();
 
     double getUtilization();
+
+    void setUtilization(double utilization);
+
+    void delete();
 
 }
