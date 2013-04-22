@@ -4,12 +4,14 @@
  */
 package com.stackframe.sarariman.projects;
 
+import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sql.SQLUtilities;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +23,7 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class LaborProjectionsImpl implements LaborProjections {
+public class LaborProjectionsImpl extends AbstractLinkable implements LaborProjections {
     
     private final DataSource dataSource;
     private final Directory directory;
@@ -36,7 +38,7 @@ public class LaborProjectionsImpl implements LaborProjections {
     }
     
     public LaborProjection get(int id) {
-        return new LaborProjectionImpl(id, dataSource, directory, tasks, mountPoint + "laborprojections/");
+        return new LaborProjectionImpl(id, dataSource, directory, tasks, getURI().toString());
     }
     
     public LaborProjection create(Employee employee, Task task, double utilization, PeriodOfPerformance pop) {
@@ -71,6 +73,10 @@ public class LaborProjectionsImpl implements LaborProjections {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public URI getURI() {
+        return URI.create(String.format("%slaborprojections/", mountPoint));
     }
     
 }
