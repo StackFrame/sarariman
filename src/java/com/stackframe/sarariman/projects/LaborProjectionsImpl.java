@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.projects;
 
+import static com.google.common.base.Preconditions.*;
 import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
@@ -24,24 +25,28 @@ import javax.sql.DataSource;
  * @author mcculley
  */
 public class LaborProjectionsImpl extends AbstractLinkable implements LaborProjections {
-    
+
     private final DataSource dataSource;
     private final Directory directory;
     private final Tasks tasks;
     private final String mountPoint;
-    
+
     public LaborProjectionsImpl(DataSource dataSource, Directory directory, Tasks tasks, String mountPoint) {
         this.dataSource = dataSource;
         this.directory = directory;
         this.tasks = tasks;
         this.mountPoint = mountPoint;
     }
-    
+
     public LaborProjection get(int id) {
         return new LaborProjectionImpl(id, dataSource, directory, tasks, getURI().toString());
     }
-    
+
     public LaborProjection create(Employee employee, Task task, double utilization, PeriodOfPerformance pop) {
+        checkNotNull(employee);
+        checkNotNull(task);
+        checkArgument(utilization > 0 && utilization <= 1.0, "utilization must be in range (0,1]");
+        checkNotNull(pop);
         try {
             Connection c = dataSource.getConnection();
             try {
@@ -74,9 +79,9 @@ public class LaborProjectionsImpl extends AbstractLinkable implements LaborProje
             throw new RuntimeException(e);
         }
     }
-    
+
     public URI getURI() {
         return URI.create(String.format("%slaborprojections/", mountPoint));
     }
-    
+
 }
