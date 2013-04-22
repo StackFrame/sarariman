@@ -190,6 +190,22 @@
         <servlet-name>PhotoFetcher</servlet-name>
         <servlet-class>com.stackframe.sarariman.PhotoFetcher</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LaborProjectionEditor</servlet-name>
+        <jsp-file>/laborprojections/edit.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LaborProjectionEditor</servlet-name>
+        <url-pattern>/laborprojections/edit</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LaborProjectionController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.projects.LaborProjectionController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LaborProjectionController</servlet-name>
+        <url-pattern>/laborprojections/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DeductPTOHandler</servlet-name>
         <url-pattern>/DeductPTOHandler</url-pattern>
