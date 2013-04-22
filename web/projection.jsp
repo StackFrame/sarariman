@@ -73,6 +73,7 @@
                     $.ajax({
                         type: 'DELETE',
                         url: $(this).attr('data'),
+                        async: false,
                         success: function() {
                             location.reload();
                         }
