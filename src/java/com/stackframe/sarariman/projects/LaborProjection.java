@@ -24,6 +24,8 @@ public interface LaborProjection extends Linkable {
     void setPeriodOfPerformance(PeriodOfPerformance pop);
 
     Task getTask();
+    
+    void setTask(Task task);
 
     double getUtilization();
 

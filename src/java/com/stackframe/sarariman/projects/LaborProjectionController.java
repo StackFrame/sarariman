@@ -8,6 +8,7 @@ import com.stackframe.sarariman.AccessControlUtilities;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.PeriodOfPerformance;
 import com.stackframe.sarariman.Sarariman;
+import com.stackframe.sarariman.tasks.Task;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -112,8 +113,13 @@ public class LaborProjectionController extends HttpServlet {
             Date start = dateFormat.parse(request.getParameter("start"));
             Date end = dateFormat.parse(request.getParameter("end"));
             projection.setPeriodOfPerformance(new PeriodOfPerformance(start, end));
+
             double utilization = Double.parseDouble(request.getParameter("utilization"));
             projection.setUtilization(utilization);
+
+            Task task = sarariman.getTasks().get(Integer.parseInt(request.getParameter("task")));
+            projection.setTask(task);
+
             response.sendRedirect(projection.getURL().toString());
         } catch (ParseException pe) {
             throw new ServletException(pe);

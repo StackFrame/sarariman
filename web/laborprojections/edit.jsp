@@ -33,7 +33,13 @@
         <form method="POST">
             <p>
                 Employee: ${projection.employee.displayName}</br>
-                Task: ${projection.task.id}</br>
+
+                <label for="task">Task: </label>
+                <select id="task" name="task">
+                    <c:forEach var="task" items="${projection.task.project.tasks}">
+                        <option value="${task.id}" <c:if test="${task.id == projection.task.id}">selected="selected"</c:if>>${task.id} (${fn:escapeXml(task.name)}</option>
+                    </c:forEach>
+                </select><br/>
 
                 <label for="pop_start">Period of Performance Start: </label>
                 <input type="text" id="start" name="start" value="${projection.periodOfPerformance.start}"
