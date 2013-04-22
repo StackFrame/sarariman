@@ -137,7 +137,7 @@ public class LaborProjectionController extends HttpServlet {
             Employee employee = sarariman.getDirectory().getByNumber().get(Integer.parseInt(request.getParameter("employee")));
             projection.setEmployee(employee);
 
-            response.sendRedirect(projection.getURL().toString());
+            response.sendRedirect(response.encodeRedirectURL(task.getProject().getProjectedExpenses().getURL().toString()));
         } catch (ParseException pe) {
             throw new ServletException(pe);
         }
