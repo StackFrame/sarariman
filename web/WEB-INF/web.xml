@@ -199,6 +199,14 @@
         <url-pattern>/laborprojections/edit</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>LaborProjectionCreator</servlet-name>
+        <jsp-file>/laborprojections/create.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LaborProjectionCreator</servlet-name>
+        <url-pattern>/laborprojections/create</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>LaborProjectionController</servlet-name>
         <servlet-class>com.stackframe.sarariman.projects.LaborProjectionController</servlet-class>
     </servlet>
