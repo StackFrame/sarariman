@@ -23,6 +23,9 @@ public class PeriodOfPerformance {
     public PeriodOfPerformance(Date start, Date end) {
         this.start = start;
         this.end = end;
+        if (start != null && end != null && start.after(end)) {
+            throw new IllegalArgumentException("end must be after start");
+        }
     }
 
     public PeriodOfPerformance(Range<Date> range) {
