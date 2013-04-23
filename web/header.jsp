@@ -4,6 +4,5 @@
 --%>
 
 <div id="topnav">
-    <a class="icon-home" title="Go to your home page" href="${pageContext.request.contextPath}/"></a> <a href="${pageContext.request.contextPath}/tools">Tools</a>
     <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 </div>
