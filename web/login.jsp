@@ -41,6 +41,7 @@
             <p>
                 <input type="submit" value="Sign In"/>
             </p>
+            <input type="hidden" name="destination" value="${param.destination}"/>
         </form>
     </body>
 </html>

@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,6 +17,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUtils;
 import sun.misc.BASE64Decoder;
 
 /**
@@ -58,7 +60,15 @@ public class AuthenticationFilter implements Filter {
                         httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
                         httpResponse.sendError(401);
                     } else {
-                        httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+                        String destination = httpRequest.getRequestURI();
+                        String queryString = httpRequest.getQueryString();
+                        if (queryString != null) {
+                            destination = destination + '?' + queryString;
+                        }
+
+                        destination = URLEncoder.encode(destination, "UTF-8");
+                        httpResponse.sendRedirect(String.format("%s/login?destination=%s", httpRequest.getContextPath(),
+                                                                destination));
                     }
                 }
             } else {

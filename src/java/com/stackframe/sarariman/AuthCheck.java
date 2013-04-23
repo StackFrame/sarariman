@@ -55,10 +55,15 @@ public class AuthCheck extends HttpServlet {
             request.setAttribute("user", user);
 
             session.setAttribute("authFailed", null);
-            response.sendRedirect(response.encodeRedirectURL(request.getContextPath()));
+            String destination = request.getParameter("destination");
+            if (destination == null) {
+                destination = request.getContextPath();
+            }
+
+            response.sendRedirect(destination);
         } else {
             session.setAttribute("authFailed", true);
-            response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/login"));
+            response.sendRedirect(request.getContextPath() + "/login");
         }
     }
 
