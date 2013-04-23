@@ -1,4 +1,4 @@
-<div class="btn-group" style="float: right">
+<div id="topnav" class="btn-group" style="float: right">
     <a class="btn btn-primary" href="${user.URL}"><img width="18" height="18" onerror="this.style.display='none'" src="${user.photoURL}"/> ${user.userName}</a>
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
