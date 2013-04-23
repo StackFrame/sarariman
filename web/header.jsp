@@ -4,12 +4,6 @@
 --%>
 
 <div id="topnav">
-    <p>
-        <a class="icon-home" title="Go to your home page" href="${pageContext.request.contextPath}/"></a> <a href="${pageContext.request.contextPath}/tools">Tools</a>
-        <span style="float: right">
-            <a href="${user.URL}">${user.userName}</a>
-            <a href="${user.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a>
-            <a href="${pageContext.request.contextPath}/logout">Sign Out</a>
-        </span>
-    </p>
+    <a class="icon-home" title="Go to your home page" href="${pageContext.request.contextPath}/"></a> <a href="${pageContext.request.contextPath}/tools">Tools</a>
+    <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 </div>

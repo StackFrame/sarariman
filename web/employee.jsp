@@ -18,7 +18,10 @@
     <c:set var="employee" value="${directory.byNumber[param.id]}"/>
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>${employee.fullName}</title>
     </head>
     <body>

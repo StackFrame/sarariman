@@ -14,6 +14,7 @@
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Sarariman</title>
@@ -23,6 +24,8 @@
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
         <!-- /jQuery -->
+
+        <script src="js/bootstrap.js"></script>
 
         <!-- TinyMCE -->
         <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
@@ -60,11 +63,7 @@
     <body>
         <a href="tools">Tools</a>
 
-        <span style="float: right">
-            <a href="${user.URL}">${user.userName}</a>
-            <a href="${user.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a>
-            <a href="${pageContext.request.contextPath}/logout">Sign Out</a>
-        </span>
+        <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 
         <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
 

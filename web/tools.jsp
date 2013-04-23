@@ -12,18 +12,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Tools</title>
+        <script src="js/bootstrap.js"></script>
     </head>
 
     <body>
-        <span style="float: right">
-            <a href="${user.URL}">${user.userName}</a>
-            <a href="${user.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a>
-        </span>
+        <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 
         <ul>
-            <li><a class="icon-home" href="./"></a></li>
+            <li><a class="icon-home" href="./" title="go to the home page"></a></li>
             <li><a href="help.xhtml">Help</a></li>
             <li><a href="tickets/">Tickets</a></li>
             <li><a href="orgChart">Org Chart</a></li>
