@@ -436,7 +436,7 @@
 
         <h2 id="scheduledVacation">Scheduled Vacation</h2>
         <p>
-            <a href="vacation/create.jsp" title="Add an entry"><i class="icon-plus"></i></a>
+            <a class="btn" href="vacation/create.jsp" title="Add an entry"><i class="icon-plus"></i></a>
             <ul>
                 <c:forEach var="entry" items="${user.upcomingVacation}">
                     <li>
@@ -470,7 +470,7 @@
 
         <h2 id="outOfOffice">Scheduled Out of Office</h2>
         <p>
-            <a href="outOfOffice/create.jsp" title="Add an entry"><i class="icon-plus"></i></a>
+            <a class="btn" href="outOfOffice/create.jsp" title="Add an entry"><i class="icon-plus"></i></a>
             <ul>
                 <c:forEach var="entry" items="${user.upcomingOutOfOffice}">
                     <li>
