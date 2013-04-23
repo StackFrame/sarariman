@@ -37,7 +37,9 @@ public class AuthenticationFilter implements Filter {
      *
      * FIXME: This should come from a config file.
      */
-    private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check");
+    private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check", "/css/bootstrap.css",
+                                                                   "/css/bootstrap-responsive.css", "/style/font-awesome.css",
+                                                                   "/jquery/js/jquery-1.7.2.min.js", "/js/bootstrap.js");
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         assert request instanceof HttpServletRequest;
