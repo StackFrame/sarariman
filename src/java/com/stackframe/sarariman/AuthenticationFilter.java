@@ -6,7 +6,6 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
