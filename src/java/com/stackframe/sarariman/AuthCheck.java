@@ -5,7 +5,6 @@
 package com.stackframe.sarariman;
 
 import java.io.IOException;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +38,7 @@ public class AuthCheck extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        username = username.toLowerCase();
 
         int domainIndex = username.indexOf('@');
         if (domainIndex != -1) {
@@ -50,9 +50,6 @@ public class AuthCheck extends HttpServlet {
         if (valid) {
             Employee user = directory.getByUserName().get(username);
             session.setAttribute("user", user);
-
-            // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use the session?
-            request.setAttribute("user", user);
 
             session.setAttribute("authFailed", null);
             String destination = request.getParameter("destination");
