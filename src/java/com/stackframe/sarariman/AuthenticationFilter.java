@@ -53,18 +53,15 @@ public class AuthenticationFilter implements Filter {
                     chain.doFilter(request, response);
                 } else {
                     String userAgent = httpRequest.getHeader("User-Agent");
-                    
+
                     // FIXME: This is an ugly hack to deal with a particular client that needs to do Basic auth.
                     if (userAgent.startsWith("Status%20Board/")) {
                         httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
                         httpResponse.sendError(401);
-                        return;
                     } else {
                         httpResponse.sendRedirect(httpResponse.encodeRedirectURL(httpRequest.getContextPath() + "/login"));
                     }
                 }
-
-                return;
             } else {
                 BASE64Decoder decoder = new BASE64Decoder();
                 String[] split = authorizationHeader.split(" ");
@@ -83,16 +80,21 @@ public class AuthenticationFilter implements Filter {
                 if (valid) {
                     user = directory.getByUserName().get(username);
                     session.setAttribute("user", user);
+
+                    // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
+                    // the session?
+                    request.setAttribute("user", user);
+                    chain.doFilter(request, response);
                 } else {
                     httpResponse.sendError(401, "invalid username or password");
-                    return;
                 }
             }
+        } else {
+            // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
+            // the session?
+            request.setAttribute("user", user);
+            chain.doFilter(request, response);
         }
-
-        // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use the session?
-        request.setAttribute("user", user);
-        chain.doFilter(request, response);
     }
 
     public void destroy() {
