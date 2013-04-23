@@ -17,7 +17,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
 import sun.misc.BASE64Decoder;
 
 /**
@@ -66,9 +65,13 @@ public class AuthenticationFilter implements Filter {
                             destination = destination + '?' + queryString;
                         }
 
-                        destination = URLEncoder.encode(destination, "UTF-8");
-                        httpResponse.sendRedirect(String.format("%s/login?destination=%s", httpRequest.getContextPath(),
-                                                                destination));
+                        String redirectURL = String.format("%s/login", httpRequest.getContextPath());
+                        String defaultDestination = httpRequest.getContextPath() + "/";
+                        if (!destination.equals(defaultDestination)) {
+                            redirectURL = redirectURL + String.format("?destination=%s", URLEncoder.encode(destination, "UTF-8"));
+                        }
+
+                        httpResponse.sendRedirect(redirectURL);
                     }
                 }
             } else {
