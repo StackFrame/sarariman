@@ -58,7 +58,7 @@ public class AuthenticationFilter implements Filter {
                         httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
                         httpResponse.sendError(401);
                     } else {
-                        httpResponse.sendRedirect(httpResponse.encodeRedirectURL(httpRequest.getContextPath() + "/login"));
+                        httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
                     }
                 }
             } else {
