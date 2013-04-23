@@ -20,7 +20,6 @@
         <script src="js/bootstrap.js"></script>
         <title>Tools</title>
     </head>
-
     <body>
         <div class="container">
             <%@include file="WEB-INF/jspf/userMenu.jspf" %>
