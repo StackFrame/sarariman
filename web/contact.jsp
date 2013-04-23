@@ -3,7 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 
@@ -11,11 +11,16 @@
     <jsp:forward page="unauthorized"/>
 </c:if>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Contact</title>
         <style type="text/css">
             label {
@@ -60,91 +65,93 @@
         </style>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 
-        <c:if test="${param.action != 'create'}">
-            <sql:query dataSource="jdbc/sarariman" var="result">
-                SELECT * FROM contacts WHERE id = ?
-                <sql:param value="${param.id}"></sql:param>
-            </sql:query>
-            <c:set var="contact" value="${result.rows[0]}"/>
-        </c:if>
+            <c:if test="${param.action != 'create'}">
+                <sql:query dataSource="jdbc/sarariman" var="result">
+                    SELECT * FROM contacts WHERE id = ?
+                    <sql:param value="${param.id}"></sql:param>
+                </sql:query>
+                <c:set var="contact" value="${result.rows[0]}"/>
+            </c:if>
 
-        <form method="POST" action="ContactController">
-            <ol>
-                <li>
-                    <label for="name">Name </label>
-                    <input type="text" id="name" name="name" value="${contact.name}"/>
-                </li>
-
-                <li>
-                    <label for="title">Title </label>
-                    <input type="text" id="title" name="title" value="${contact.title}"/>
-                </li>
-
-                <li>
-                    <label for="email">Email </label>
-                    <input type="text" id="email" name="email" size="30" value="${contact.email}"/>
-                </li>
-            </ol>
-
-            <fieldset>
-                <legend>Phone Numbers</legend>
+            <form method="POST" action="ContactController">
                 <ol>
                     <li>
-                        <label for="phone">Phone </label>
-                        <input type="text" id="phone" name="phone" value="${contact.phone}"/>
+                        <label for="name">Name </label>
+                        <input type="text" id="name" name="name" value="${contact.name}"/>
                     </li>
 
                     <li>
-                        <label for="fax">Fax </label>
-                        <input type="text" id="fax" name="fax" value="${contact.fax}"/>
+                        <label for="title">Title </label>
+                        <input type="text" id="title" name="title" value="${contact.title}"/>
                     </li>
 
                     <li>
-                        <label for="mobile">Mobile </label>
-                        <input type="text" id="mobile" name="mobile" value="${contact.mobile}"/>
+                        <label for="email">Email </label>
+                        <input type="text" id="email" name="email" size="30" value="${contact.email}"/>
                     </li>
                 </ol>
-            </fieldset>
 
-            <fieldset>
-                <legend>Address</legend>
-                <ol>
-                    <li>
-                        <label for="mobile">Street </label>
-                        <input type="text" id="street" name="street" value="${contact.street}"/>
-                    </li>
+                <fieldset>
+                    <legend>Phone Numbers</legend>
+                    <ol>
+                        <li>
+                            <label for="phone">Phone </label>
+                            <input type="text" id="phone" name="phone" value="${contact.phone}"/>
+                        </li>
 
-                    <li>
-                        <label for="mobile">City </label>
-                        <input type="text" id="city" name="city" value="${contact.city}"/>
-                    </li>
+                        <li>
+                            <label for="fax">Fax </label>
+                            <input type="text" id="fax" name="fax" value="${contact.fax}"/>
+                        </li>
 
-                    <li>
-                        <label for="mobile">State </label>
-                        <input type="text" id="state" name="state" size="2" value="${contact.state}"/>
-                    </li>
+                        <li>
+                            <label for="mobile">Mobile </label>
+                            <input type="text" id="mobile" name="mobile" value="${contact.mobile}"/>
+                        </li>
+                    </ol>
+                </fieldset>
 
-                    <li>
-                        <label for="mobile">ZIP </label>
-                        <input type="text" id="zip" name="zip" size="10" value="${contact.zip}"/>
-                    </li></ol>
-            </fieldset>
+                <fieldset>
+                    <legend>Address</legend>
+                    <ol>
+                        <li>
+                            <label for="mobile">Street </label>
+                            <input type="text" id="street" name="street" value="${contact.street}"/>
+                        </li>
 
-            <c:choose>
-                <c:when test="${param.action == 'create'}">
-                    <input class="submit" type="submit" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
-                </c:when>
-                <c:otherwise>
-                    <input type="hidden" name="id" value="${param.id}"/>
-                    <input class="submit" type="submit" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
-                </c:otherwise>
-            </c:choose>
+                        <li>
+                            <label for="mobile">City </label>
+                            <input type="text" id="city" name="city" value="${contact.city}"/>
+                        </li>
 
-            <input type="hidden" name="action" value="${param.action}"/>
-        </form>
+                        <li>
+                            <label for="mobile">State </label>
+                            <input type="text" id="state" name="state" size="2" value="${contact.state}"/>
+                        </li>
 
-        <%@include file="footer.jsp" %>
+                        <li>
+                            <label for="mobile">ZIP </label>
+                            <input type="text" id="zip" name="zip" size="10" value="${contact.zip}"/>
+                        </li></ol>
+                </fieldset>
+
+                <c:choose>
+                    <c:when test="${param.action == 'create'}">
+                        <input class="submit" type="submit" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="hidden" name="id" value="${param.id}"/>
+                        <input class="submit" type="submit" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                    </c:otherwise>
+                </c:choose>
+
+                <input type="hidden" name="action" value="${param.action}"/>
+            </form>
+
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
