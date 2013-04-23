@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,7 +33,7 @@ public class AuthenticationFilter implements Filter {
     }
 
     /**
-     * Paths to functions which do not require authentication.
+     * Paths to resources which do not require authentication.
      *
      * FIXME: This should come from a config file.
      */
@@ -51,7 +52,16 @@ public class AuthenticationFilter implements Filter {
                 if (publicPaths.contains(requestPath)) {
                     chain.doFilter(request, response);
                 } else {
-                    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(httpRequest.getContextPath() + "/login"));
+                    String userAgent = httpRequest.getHeader("User-Agent");
+                    
+                    // FIXME: This is an ugly hack to deal with a particular client that needs to do Basic auth.
+                    if (userAgent.startsWith("Status%20Board/")) {
+                        httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
+                        httpResponse.sendError(401);
+                        return;
+                    } else {
+                        httpResponse.sendRedirect(httpResponse.encodeRedirectURL(httpRequest.getContextPath() + "/login"));
+                    }
                 }
 
                 return;
