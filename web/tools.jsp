@@ -22,7 +22,7 @@
     </head>
     <body>
         <div class="container">
-            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
             <ul>
                 <li><a href="help.xhtml">Help</a></li>

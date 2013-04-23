@@ -3,42 +3,49 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <fmt:parseNumber var="task" value="${param.task}"/>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
-        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Hours for task ${task}</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>Hours for task ${task}</h1>
-        <sql:query dataSource="jdbc/sarariman" var="result">
-            SELECT * FROM hours WHERE task = ? ORDER BY date DESC
-            <sql:param value="${task}"/>
-        </sql:query>
+            <h1>Hours for task ${task}</h1>
+            <sql:query dataSource="jdbc/sarariman" var="result">
+                SELECT * FROM hours WHERE task = ? ORDER BY date DESC
+                <sql:param value="${task}"/>
+            </sql:query>
 
-        <table id="hours">
-            <tr><th>Date</th><th>Employee</th><th>Duration</th><th>Description</th></tr>
-            <c:set var="total" value="0.0"/>
-            <c:forEach var="row" items="${result.rows}">
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${directory.byNumber[row.employee].fullName}</td>
-                    <td class="duration">${row.duration}</td>
-                    <td>${fn:escapeXml(row.description)}</td><%-- FIXME: Need to do something smarter here. --%>
-                </tr>
-                <c:set var="total" value="${total+row.duration}"/>
-            </c:forEach>
-            <tr><td colspan="2">Total</td><td class="duration">${total}</td><td></td></tr>
-        </table>
-        <%@include file="footer.jsp" %>
+            <table id="hours">
+                <tr><th>Date</th><th>Employee</th><th>Duration</th><th>Description</th></tr>
+                <c:set var="total" value="0.0"/>
+                <c:forEach var="row" items="${result.rows}">
+                    <tr>
+                        <td class="date">${row.date}</td>
+                        <td>${directory.byNumber[row.employee].fullName}</td>
+                        <td class="duration">${row.duration}</td>
+                        <td>${fn:escapeXml(row.description)}</td><%-- FIXME: Need to do something smarter here. --%>
+                    </tr>
+                    <c:set var="total" value="${total+row.duration}"/>
+                </c:forEach>
+                <tr><td colspan="2">Total</td><td class="duration">${total}</td><td></td></tr>
+            </table>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
