@@ -6,7 +6,7 @@
 <%@page import="java.util.Collection" %>
 <%@page import="com.stackframe.sarariman.Sarariman" %>
 <%@page import="com.stackframe.sarariman.Employee" %>
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
@@ -29,43 +29,50 @@
     <jsp:forward page="unauthorized"/>
 </c:if>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
-        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>PTO Details</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>PTO Details for ${directory.byNumber[param.employee].fullName}</h1>
+            <h1>PTO Details for ${directory.byNumber[param.employee].fullName}</h1>
 
-        <sql:query dataSource="jdbc/sarariman" var="ptoResultSet">
-            SELECT SUM(amount) AS total
-            FROM paid_time_off
-            WHERE employee = ?
-            <sql:param value="${param.employee}"/>
-        </sql:query>
-        <p>Total Available: <span class="duration">${ptoResultSet.rows[0].total}</span> hours</p>
+            <sql:query dataSource="jdbc/sarariman" var="ptoResultSet">
+                SELECT SUM(amount) AS total
+                FROM paid_time_off
+                WHERE employee = ?
+                <sql:param value="${param.employee}"/>
+            </sql:query>
+            <p>Total Available: <span class="duration">${ptoResultSet.rows[0].total}</span> hours</p>
 
-        <sql:query dataSource="jdbc/sarariman" var="resultSet">
-            SELECT * FROM paid_time_off WHERE employee=? ORDER BY effective DESC, created DESC
-            <sql:param value="${param.employee}"></sql:param>
-        </sql:query>
+            <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                SELECT * FROM paid_time_off WHERE employee=? ORDER BY effective DESC, created DESC
+                <sql:param value="${param.employee}"></sql:param>
+            </sql:query>
 
-        <table id="pto">
-            <tr><th>Amount</th><th>Comment</th><th>Date</th><th>Added</th></tr>
-            <c:forEach var="row" items="${resultSet.rows}">
-                <tr>
-                    <td class="duration">${row.amount}</td>
-                    <td>${row.comment}</td>
-                    <td class="date">${row.effective}</td>
-                    <td>${row.created}</td>
-                </tr>
-            </c:forEach>
-        </table>
+            <table id="pto">
+                <tr><th>Amount</th><th>Comment</th><th>Date</th><th>Added</th></tr>
+                <c:forEach var="row" items="${resultSet.rows}">
+                    <tr>
+                        <td class="duration">${row.amount}</td>
+                        <td>${row.comment}</td>
+                        <td class="date">${row.effective}</td>
+                        <td>${row.created}</td>
+                    </tr>
+                </c:forEach>
+            </table>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
