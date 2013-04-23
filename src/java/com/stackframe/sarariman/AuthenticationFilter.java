@@ -70,6 +70,7 @@ public class AuthenticationFilter implements Filter {
                 String decodedString = new String(decodedBytes);
                 int firstColon = decodedString.indexOf(':');
                 String username = decodedString.substring(0, firstColon);
+                username = username.toLowerCase();
                 String password = decodedString.substring(firstColon + 1);
                 int domainIndex = username.indexOf('@');
                 if (domainIndex != -1) {
