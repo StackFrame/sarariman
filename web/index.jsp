@@ -405,7 +405,7 @@
 
         <h2 id="events">Events</h2>
         <p>
-            <a href="events/create.jsp" title="Add an event"><i class="icon-plus"></i></a>
+            <a class="btn" href="events/create.jsp" title="add an event"><i class="icon-plus"></i></a>
             <ul>
                 <c:forEach var="event" items="${sarariman.events.current}">
                     <li>
