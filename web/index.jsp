@@ -14,9 +14,10 @@
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
-        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <title>Sarariman</title>
 
         <!-- jQuery -->
@@ -63,17 +64,15 @@
     <body>
         <a href="tools">Tools</a>
 
+        <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
+        <c:choose>
+            <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when> 
+            <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
+        </c:choose>
+
         <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 
         <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
-
-        <p>
-            <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
-            <c:choose>
-                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when> 
-                <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
-            </c:choose>
-        </p>
 
         <c:set var="relatedProjects" value="${user.relatedProjects}"/>
 
