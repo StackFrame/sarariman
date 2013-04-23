@@ -4,7 +4,9 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
+import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,6 +31,13 @@ public class AuthenticationFilter implements Filter {
         directory = sarariman.getDirectory();
     }
 
+    /**
+     * Paths to functions which do not require authentication.
+     *
+     * FIXME: This should come from a config file.
+     */
+    private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check");
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         assert request instanceof HttpServletRequest;
         HttpServletRequest httpRequest = (HttpServletRequest)request;
@@ -38,8 +47,13 @@ public class AuthenticationFilter implements Filter {
             String authorizationHeader = httpRequest.getHeader("Authorization");
             HttpServletResponse httpResponse = (HttpServletResponse)response;
             if (authorizationHeader == null) {
-                httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
-                httpResponse.sendError(401);
+                String requestPath = httpRequest.getServletPath();
+                if (publicPaths.contains(requestPath)) {
+                    chain.doFilter(request, response);
+                } else {
+                    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(httpRequest.getContextPath() + "/login"));
+                }
+
                 return;
             } else {
                 BASE64Decoder decoder = new BASE64Decoder();

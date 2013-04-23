@@ -63,6 +63,7 @@
         <span style="float: right">
             <a href="${user.URL}">${user.userName}</a>
             <a href="${user.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${user.photoURL}"/></a>
+            <a href="${pageContext.request.contextPath}/logout">Sign Out</a>
         </span>
 
         <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
