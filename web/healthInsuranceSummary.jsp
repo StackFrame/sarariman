@@ -3,7 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -11,46 +11,53 @@
     <jsp:forward page="unauthorized"/>
 </c:if>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
-        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Health Insurance Summary</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>Health Insurance Summary</h1>
-        <h2>Current Rates and Participation</h2>
-        <!-- FIXME: Add coverage type? -->
+            <h1>Health Insurance Summary</h1>
+            <h2>Current Rates and Participation</h2>
+            <!-- FIXME: Add coverage type? -->
 
-        <table>
-            <tr>
-                <th>Employee</th>
-                <th>Premium</th>
-            </tr>
-            <c:set var="totalPremium" value="0.0"/>
-            <c:set var="employeeCount" value="0"/>
-            <c:forEach var="entry" items="${directory.byUserName}">
-                <c:set var="employee" value="${entry.value}"/>
-                <c:if test="${employee.active and employee.fulltime}">
-                    <tr>
-                        <td>${entry.value.fullName}</td>
-                        <c:set var="premium" value="${entry.value.monthlyHealthInsurancePremium}"/>
-                        <td class="currency"><fmt:formatNumber type="currency" value="${premium}"/></td>
-                        <c:set var="totalPremium" value="${totalPremium + premium}"/>
-                        <c:set var="employeeCount" value="${employeeCount + 1}"/>
-                    </tr>
-                </c:if>
-            </c:forEach>
-            <tr>
-                <td><strong>Total</strong></td><td class="currency"><fmt:formatNumber type="currency" value="${totalPremium}"/></td>
-            </tr>
-        </table>
+            <table>
+                <tr>
+                    <th>Employee</th>
+                    <th>Premium</th>
+                </tr>
+                <c:set var="totalPremium" value="0.0"/>
+                <c:set var="employeeCount" value="0"/>
+                <c:forEach var="entry" items="${directory.byUserName}">
+                    <c:set var="employee" value="${entry.value}"/>
+                    <c:if test="${employee.active and employee.fulltime}">
+                        <tr>
+                            <td>${entry.value.fullName}</td>
+                            <c:set var="premium" value="${entry.value.monthlyHealthInsurancePremium}"/>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${premium}"/></td>
+                            <c:set var="totalPremium" value="${totalPremium + premium}"/>
+                            <c:set var="employeeCount" value="${employeeCount + 1}"/>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+                <tr>
+                    <td><strong>Total</strong></td><td class="currency"><fmt:formatNumber type="currency" value="${totalPremium}"/></td>
+                </tr>
+            </table>
 
-        <p>Average per salaried employee: <fmt:formatNumber type="currency" value="${totalPremium / employeeCount}"/></p>
+            <p>Average per salaried employee: <fmt:formatNumber type="currency" value="${totalPremium / employeeCount}"/></p>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>

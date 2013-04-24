@@ -3,7 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -13,57 +13,64 @@
     <jsp:forward page="unauthorized"/>
 </c:if>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
-        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Invoices</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>Invoices</h1>
+            <h1>Invoices</h1>
 
-        <!-- FIXME: use invoice_info directly once we have fixed all of the entries. -->
+            <!-- FIXME: use invoice_info directly once we have fixed all of the entries. -->
 
-        <sql:query dataSource="jdbc/sarariman" var="invoices">
-            SELECT DISTINCT(id) FROM invoice_info ORDER BY id DESC
-        </sql:query>
+            <sql:query dataSource="jdbc/sarariman" var="invoices">
+                SELECT DISTINCT(id) FROM invoice_info ORDER BY id DESC
+            </sql:query>
 
-        <table id="invoices">
-            <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
-            <c:forEach var="invoice" items="${invoices.rows}">
-                <tr>
-                    <c:url var="link" value="invoice">
-                        <c:param name="invoice" value="${invoice.id}"/>
-                    </c:url>
-                    <td><a href="${link}">${invoice.id}</a></td>
-                    <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-                        SELECT project, customer, sent
-                        FROM invoice_info AS i
-                        WHERE i.id = ?
-                        <sql:param value="${invoice.id}"/>
-                    </sql:query>
-                    <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
-                    <c:set var="project" value="${sarariman.projects[invoice_info.project]}"/>
-                    <c:set var="customer" value="${sarariman.customers[invoice_info.customer]}"/>
-                    <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
+            <table id="invoices">
+                <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
+                <c:forEach var="invoice" items="${invoices.rows}">
+                    <tr>
+                        <c:url var="link" value="invoice">
+                            <c:param name="invoice" value="${invoice.id}"/>
+                        </c:url>
+                        <td><a href="${link}">${invoice.id}</a></td>
+                        <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
+                            SELECT project, customer, sent
+                            FROM invoice_info AS i
+                            WHERE i.id = ?
+                            <sql:param value="${invoice.id}"/>
+                        </sql:query>
+                        <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
+                        <c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
+                        <c:set var="customer" value="${project.client}"/>
+                        <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
 
-                    <c:choose>
-                        <c:when test="${empty sent}">
-                            <td class="error">no date</td>
-                        </c:when>
-                        <c:otherwise>
-                            <td>${sent}</td>                            
-                        </c:otherwise>
-                    </c:choose>
-                    <td>${fn:escapeXml(project.name)}</td>
-                    <td>${fn:escapeXml(customer.name)}</td>
-                </tr>
-            </c:forEach>
-        </table>
+                        <c:choose>
+                            <c:when test="${empty sent}">
+                                <td class="error">no date</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td>${sent}</td>
+                            </c:otherwise>
+                        </c:choose>
+                        <td>${fn:escapeXml(project.name)}</td>
+                        <td>${fn:escapeXml(customer.name)}</td>
+                    </tr>
+                </c:forEach>
+            </table>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>

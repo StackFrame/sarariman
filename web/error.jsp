@@ -8,25 +8,33 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Error</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>Error</h1>
+            <h1>Error</h1>
 
-        <p>Yikes! There was an error.</p>
+            <p>Yikes! There was an error.</p>
 
-        <p>The error has been logged and whoever is responsible will be found and flogged.</p>
+            <p>The error has been logged and whoever is responsible will be found and flogged.</p>
 
-        <c:if test="${not empty stacktrace}">
-            <p>There was an exception:</p>
-            <pre>
-${stacktrace}
-            </pre>
-        </c:if>
+            <c:if test="${not empty stacktrace}">
+                <p>There was an exception:</p>
+                <pre>
+                    ${stacktrace}
+                </pre>
+            </c:if>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
