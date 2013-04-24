@@ -33,7 +33,7 @@
                     <input id="password" type="password" size="25" name="password"/>
                 </p>
                 <p>
-                    <input type="submit" value="Sign In"/>
+                    <input type="submit" value="Sign In" class="btn"/>
                 </p>
                 <input type="hidden" name="destination" value="${param.destination}"/>
             </form>
