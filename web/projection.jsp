@@ -3,8 +3,8 @@
   This code is licensed under GPLv2.
 --%>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.stackframe.sarariman.projects.Project"%>
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%@page import="com.stackframe.sarariman.Sarariman"%>
 <%@page import="com.stackframe.sarariman.Workdays"%>
 <%@page import="com.stackframe.sarariman.PeriodOfPerformance"%>
@@ -44,16 +44,20 @@
     </c:otherwise>
 </c:choose>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Projection for ${fn:escapeXml(project.name)}</title>
 
         <!-- jQuery -->
         <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
-        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
         <!-- /jQuery -->
 
@@ -83,105 +87,107 @@
         </script>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>Projection for <a href="${project.URL}">${fn:escapeXml(project.name)}</a></h1>
+            <h1>Projection for <a href="${project.URL}">${fn:escapeXml(project.name)}</a></h1>
 
-        <form id="parameters">
-            <label for="start">Start:</label>
-            <fmt:formatDate var="startFormatted" value="${start}" type="date" pattern="yyyy-MM-dd" />
-            <input type="text" name="start" id="start" value="${startFormatted}" class="hasDatePicker"/>
+            <form id="parameters">
+                <label for="start">Start:</label>
+                <fmt:formatDate var="startFormatted" value="${start}" type="date" pattern="yyyy-MM-dd" />
+                <input type="text" name="start" id="start" value="${startFormatted}" class="hasDatePicker"/>
 
-            <label for="end">End:</label>
-            <fmt:formatDate var="endFormatted" value="${end}" type="date" pattern="yyyy-MM-dd" />
-            <input type="text" name="end" id="end" value="${endFormatted}" class="hasDatePicker"/>
+                <label for="end">End:</label>
+                <fmt:formatDate var="endFormatted" value="${end}" type="date" pattern="yyyy-MM-dd" />
+                <input type="text" name="end" id="end" value="${endFormatted}" class="hasDatePicker"/>
 
-            <input type="hidden" name="project" value="${param.project}"/>
+                <input type="hidden" name="project" value="${param.project}"/>
 
-            <input type="submit" value="Submit"/>
-        </form>
+                <input type="submit" value="Submit"/>
+            </form>
 
-        <table>
-            <caption>Labor Projections</caption>
-            <tr>
-                <th>Employee</th>
-                <th>Task</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Utilization</th>
-                <th></th>
-            </tr>
-            <c:forEach var="p" items="${project.laborProjections}">
+            <table>
+                <caption>Labor Projections</caption>
                 <tr>
-                    <td><a href="${p.employee.URL}">${p.employee.fullName}</a></td>
-                    <td><a href="${p.task.URL}">${p.task.id}</a></td>
-                    <td class="date">${p.periodOfPerformance.start}</td>
-                    <td class="date">${p.periodOfPerformance.end}</td>
-                    <td class="percentage"><fmt:formatNumber type="percent" value="${p.utilization}"/></td>
-                    <td>
-                        <a href="${p.URL}" class="btn" title="edit this labor projection"><i class="icon-edit"></i></a>
-                        <span class="btn btn-danger delete" data="${p.URL}" title="delete this labor projection"><i class="icon-trash"></i></span>
-                    </td>
+                    <th>Employee</th>
+                    <th>Task</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Utilization</th>
+                    <th></th>
                 </tr>
-            </c:forEach>
-        </table>
+                <c:forEach var="p" items="${project.laborProjections}">
+                    <tr>
+                        <td><a href="${p.employee.URL}">${p.employee.fullName}</a></td>
+                        <td><a href="${p.task.URL}">${p.task.id}</a></td>
+                        <td class="date">${p.periodOfPerformance.start}</td>
+                        <td class="date">${p.periodOfPerformance.end}</td>
+                        <td class="percentage"><fmt:formatNumber type="percent" value="${p.utilization}"/></td>
+                        <td>
+                            <a href="${p.URL}" class="btn" title="edit this labor projection"><i class="icon-edit"></i></a>
+                            <span class="btn btn-danger delete" data="${p.URL}" title="delete this labor projection"><i class="icon-trash"></i></span>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
 
-        <p>
-            <c:url var="createLink" value="${sarariman.laborProjections.URL}create">
-                <c:param name="project" value="${project.id}"/>
-            </c:url>
-            <a class="btn" href="${createLink}" title="add a labor projection"><i class="icon-plus"></i></a>
-        </p>
+            <p>
+                <c:url var="createLink" value="${sarariman.laborProjections.URL}create">
+                    <c:param name="project" value="${project.id}"/>
+                </c:url>
+                <a class="btn" href="${createLink}" title="add a labor projection"><i class="icon-plus"></i></a>
+            </p>
 
-        <%
-            Date start = (Date)pageContext.getAttribute("start");
-            Date end = (Date)pageContext.getAttribute("end");
-            Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-            Workdays workdays = sarariman.getWorkdays();
-            PeriodOfPerformance pop = new PeriodOfPerformance(start, end);
-            Collection<Date> workingDays = workdays.getWorkdays(pop);
-            pageContext.setAttribute("workingDays", workingDays);
-        %>
+            <%
+                Date start = (Date)pageContext.getAttribute("start");
+                Date end = (Date)pageContext.getAttribute("end");
+                Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+                Workdays workdays = sarariman.getWorkdays();
+                PeriodOfPerformance pop = new PeriodOfPerformance(start, end);
+                Collection<Date> workingDays = workdays.getWorkdays(pop);
+                pageContext.setAttribute("workingDays", workingDays);
+            %>
 
-        <p>
-            Working days in projected period (total days minus weekends and holidays): ${fn:length(workingDays)}
-        </p>
+            <p>
+                Working days in projected period (total days minus weekends and holidays): ${fn:length(workingDays)}
+            </p>
 
-        <%
-            Project project = (Project)pageContext.getAttribute("project");
-            ProjectedExpenses projectedExpenses = project.getProjectedExpenses();
-            pageContext.setAttribute("projectedExpenses", projectedExpenses);
-            pageContext.setAttribute("labor", projectedExpenses.getLabor(pop));
-        %>
+            <%
+                Project project = (Project)pageContext.getAttribute("project");
+                ProjectedExpenses projectedExpenses = project.getProjectedExpenses();
+                pageContext.setAttribute("projectedExpenses", projectedExpenses);
+                pageContext.setAttribute("labor", projectedExpenses.getLabor(pop));
+            %>
 
-        <table>
-            <caption>Projected Expenses</caption>
-            <tr>
-                <th>Employee</th>
-                <th>Task</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Hours</th>
-                <th>Cost</th>
-            </tr>
-            <c:set var="totalCost" value="0"/>
-            <c:forEach var="e" items="${labor}">
+            <table>
+                <caption>Projected Expenses</caption>
                 <tr>
-                    <td><a href="${e.employee.URL}">${e.employee.fullName}</a></td>
-                    <td><a href="${e.task.URL}">${e.task.id}</a></td>
-                    <td class="date"><fmt:formatDate value="${e.periodOfPerformance.start}" type="date" pattern="yyyy-MM-dd" /></td>
-                    <td class="date"><fmt:formatDate value="${e.periodOfPerformance.end}" type="date" pattern="yyyy-MM-dd" /></td>
-                    <td class="duration"><fmt:formatNumber value="${e.hours}" minFractionDigits="2"/></td>
-                    <td class="currency"><fmt:formatNumber type="currency" value="${e.cost}"/></td>
-                    <c:set var="totalCost" value="${totalCost + e.cost}"/>
+                    <th>Employee</th>
+                    <th>Task</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Hours</th>
+                    <th>Cost</th>
                 </tr>
-            </c:forEach>
-            <tr>
-                <td colspan="5"><b>Total</b></td>
-                <td class="currency"><b><fmt:formatNumber type="currency" value="${totalCost}"/></b></td>
-            </tr>
-        </table>
+                <c:set var="totalCost" value="0"/>
+                <c:forEach var="e" items="${labor}">
+                    <tr>
+                        <td><a href="${e.employee.URL}">${e.employee.fullName}</a></td>
+                        <td><a href="${e.task.URL}">${e.task.id}</a></td>
+                        <td class="date"><fmt:formatDate value="${e.periodOfPerformance.start}" type="date" pattern="yyyy-MM-dd" /></td>
+                        <td class="date"><fmt:formatDate value="${e.periodOfPerformance.end}" type="date" pattern="yyyy-MM-dd" /></td>
+                        <td class="duration"><fmt:formatNumber value="${e.hours}" minFractionDigits="2"/></td>
+                        <td class="currency"><fmt:formatNumber type="currency" value="${e.cost}"/></td>
+                        <c:set var="totalCost" value="${totalCost + e.cost}"/>
+                    </tr>
+                </c:forEach>
+                <tr>
+                    <td colspan="5"><b>Total</b></td>
+                    <td class="currency"><b><fmt:formatNumber type="currency" value="${totalCost}"/></b></td>
+                </tr>
+            </table>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
