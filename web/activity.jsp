@@ -3,7 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.google.common.base.Predicate" %>
 <%@page import="com.google.common.collect.Iterables" %>
 <%@page import="com.google.common.collect.Lists"%>
@@ -45,54 +45,61 @@
     pageContext.setAttribute("entries", Lists.newArrayList(entries));
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>Timesheet Activity</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <div class="container">
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
-        <h1>Timesheet Activity</h1>
-        <table id="activity">
-            <tr>
-                <th>Date</th>
-                <th>Employee</th>
-                <th>Duration</th>
-                <th>Task</th>
-                <th>Project</th>
-                <th>Client</th>
-                <th>Description</th>
-            </tr>
-            <c:forEach var="entry" items="${entries}">
+            <h1>Timesheet Activity</h1>
+            <table id="activity">
                 <tr>
-                    <td class="date"><a href="${fn:escapeXml(entry.URL)}"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></a></td>
-                    <td>
-                        <a href="${entry.employee.URL}">${entry.employee.displayName}</a>
-                        <a href="${entry.employee.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${entry.employee.photoURL}"/></a>
-                    </td>
-                    <td class="duration">${fn:escapeXml(entry.duration)}</td>
-                    <c:set var="task" value="${entry.task}"/>
-                    <c:set var="project" value="${task.project}"/>
-                    <c:choose>
-                        <c:when test="${not empty project}">
-                            <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
-                            <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
-                            <td><a href="${project.client.URL}">${fn:escapeXml(project.client.name)}</a></td>
-                        </c:when>
-                        <c:otherwise>
-                            <td colspan="3">
-                                <a href="${task.URL}">${fn:escapeXml(task.name)}</a>
-                            </td>
-                        </c:otherwise>
-                    </c:choose>
-                    <td>${entry.description}<a class="icon-link" title="go to this entry" href="${fn:escapeXml(entry.URL)}"></a></td>
+                    <th>Date</th>
+                    <th>Employee</th>
+                    <th>Duration</th>
+                    <th>Task</th>
+                    <th>Project</th>
+                    <th>Client</th>
+                    <th>Description</th>
                 </tr>
-            </c:forEach>
-        </table>
+                <c:forEach var="entry" items="${entries}">
+                    <tr>
+                        <td class="date"><a href="${fn:escapeXml(entry.URL)}"><fmt:formatDate value="${entry.date}" pattern="E, MMM d"/></a></td>
+                        <td>
+                            <a href="${entry.employee.URL}">${entry.employee.displayName}</a>
+                            <a href="${entry.employee.URL}"><img width="25" height="25" onerror="this.style.display='none'" src="${entry.employee.photoURL}"/></a>
+                        </td>
+                        <td class="duration">${fn:escapeXml(entry.duration)}</td>
+                        <c:set var="task" value="${entry.task}"/>
+                        <c:set var="project" value="${task.project}"/>
+                        <c:choose>
+                            <c:when test="${not empty project}">
+                                <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
+                                <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
+                                <td><a href="${project.client.URL}">${fn:escapeXml(project.client.name)}</a></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td colspan="3">
+                                    <a href="${task.URL}">${fn:escapeXml(task.name)}</a>
+                                </td>
+                            </c:otherwise>
+                        </c:choose>
+                        <td>${entry.description}<a class="icon-link" title="go to this entry" href="${fn:escapeXml(entry.URL)}"></a></td>
+                    </tr>
+                </c:forEach>
+            </table>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
