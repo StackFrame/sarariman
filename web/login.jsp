@@ -26,7 +26,7 @@
             <form id="login" name="login" method="POST" action="auth_check">
                 <p>
                     <strong>email address: </strong>
-                    <input id="username" type="text" name="username" size="40"/>
+                    <input id="username" type="email" name="username" size="40"/>
                 </p>
                 <p>
                     <strong>password: </strong>
