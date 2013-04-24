@@ -138,7 +138,7 @@
             <input type="hidden" name="employee" value="${param.employee}"/>
             <input type="hidden" name="task" value="${entry.task}"/>
             <label for="duration">Duration:</label>
-            <input size="5" type="text" name="duration" id="duration" value="${entry.duration}"/>
+            <input size="5" type="number" step="any" name="duration" id="duration" value="${entry.duration}"/>
             <br/>
             <label for="description">Description: </label><br/>
             <textarea cols="80" rows="10" name="description" id="description">${fn:escapeXml(entry.description)}</textarea><br/>

@@ -22,7 +22,7 @@
         <title>Sarariman</title>
 
         <!-- jQuery -->
-        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
         <!-- /jQuery -->
@@ -45,7 +45,7 @@
                 var element = document.getElementById(id);
                 element.disabled = false;
             }
-            
+
             $(function() {
                 $( "#date" ).datepicker({dateFormat: 'yy-mm-dd'});
             });
@@ -54,10 +54,10 @@
             function gotCurrentPosition(position) {
                 $("input[name='geolocation']").val(position.coords.latitude + "," + position.coords.longitude);
             }
-            
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(gotCurrentPosition);
-            } 
+            }
         </script>
     </head>
 
@@ -67,7 +67,7 @@
 
             <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
             <c:choose>
-                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when> 
+                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when>
                 <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
             </c:choose>
 
@@ -194,7 +194,7 @@
                         <br/>
 
                         <label for="duration">Duration:</label>
-                        <input size="5" type="text" name="duration" id="duration"/>
+                        <input size="5" type="number" step="any" name="duration" id="duration"/>
                         <br/>
                         <label for="description">Description:</label><br/>
                         <textarea cols="80" rows="10" name="description" id="description"></textarea>
@@ -417,10 +417,10 @@
                                 <fmt:formatDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
                                 <c:choose>
                                     <c:when test="${beginDate eq endDate}">
-                                        <fmt:formatDate value="${end}" type="time" timeStyle="short" />                                    
+                                        <fmt:formatDate value="${end}" type="time" timeStyle="short" />
                                     </c:when>
                                     <c:otherwise>
-                                        <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                        <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />
                                     </c:otherwise>
                                 </c:choose>
                                 - ${fn:escapeXml(event.name)}</a>
@@ -481,10 +481,10 @@
                             <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
                             <c:choose>
                                 <c:when test="${beginDate eq endDate}">
-                                    <fmt:formatDate value="${end}" type="time" timeStyle="short" />                                    
+                                    <fmt:formatDate value="${end}" type="time" timeStyle="short" />
                                 </c:when>
                                 <c:otherwise>
-                                    <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                    <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />
                                 </c:otherwise>
                             </c:choose>
                             <c:set var="comment" value="${entry.comment}"/>
