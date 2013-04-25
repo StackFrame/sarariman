@@ -59,19 +59,39 @@
                 navigator.geolocation.getCurrentPosition(gotCurrentPosition);
             }
         </script>
+        <style type="text/css">
+
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+
+            .latencyStatus {
+                vertical-align: middle;
+            }
+
+        </style>
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <span class="brand">Sarariman</span>
+
+                    <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
+                    <c:choose>
+                        <c:when test="${good}"><span class="latencyStatus" title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when>
+                        <c:otherwise><span class="latencyStatus" title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
+                    </c:choose>
+
+                    <%@include file="WEB-INF/jspf/userMenu.jspf" %>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid">
-
-            <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
-            <c:choose>
-                <c:when test="${good}"><span title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when>
-                <c:otherwise><span title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
-            </c:choose>
-
-            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
 
             <c:set var="isBoss" value="${sarariman:isBoss(sarariman, user)}"/>
 
