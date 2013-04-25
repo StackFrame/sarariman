@@ -336,18 +336,26 @@
                     <c:set var="canSubmit" value="false"/>
                 </c:if>
 
-                <form action="${request.requestURI}" method="post">
-                    <label for="submitted">Submitted: </label>
-                    <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                    <c:set var="approved" value="${timesheet.approved}"/>
-                    <label for="approved">Approved: </label>
-                    <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                    <c:if test="${!submitted && canSubmit}">
-                        <input type="hidden" value="true" name="submit"/>
-                        <input type="submit" value="Submit"/>
-                        <fmt:formatDate var="weekString" value="${week.start.time}" pattern="yyyy-MM-dd"/>
-                        <input type="hidden" name="week" value="${weekString}"/>
-                    </c:if>
+                <form class="form-horizontal" action="${request.requestURI}" method="post">
+                    <div class="control-group">
+                        <div class="controls">
+                            <label class="checkbox" for="submitted">
+                                <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
+                                Submitted
+                            </label>
+                            <c:set var="approved" value="${timesheet.approved}"/>
+                            <label class="checkbox" for="approved">
+                                <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
+                                Approved
+                            </label>
+                            <c:if test="${!submitted && canSubmit}">
+                                <input type="hidden" value="true" name="submit"/>
+                                <input class="btn" type="submit" value="Submit"/>
+                                <fmt:formatDate var="weekString" value="${week.start.time}" pattern="yyyy-MM-dd"/>
+                                <input type="hidden" name="week" value="${weekString}"/>
+                            </c:if>
+                        </div>
+                    </div>
                 </form>
 
             </div>
