@@ -15,10 +15,10 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
         <title>Sarariman</title>
 
         <!-- jQuery -->
@@ -63,7 +63,7 @@
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
-        <div class="container">
+        <div class="container-fluid">
 
             <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
             <c:choose>
@@ -201,7 +201,7 @@
                         <fmt:formatDate var="weekString" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
                         <input type="hidden" name="week" value="${weekString}"/><br/>
                         <input type="hidden" id="geolocation" name="geolocation" value=""/>
-                        <input type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
+                        <input class="btn" type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
                     </form>
                 </div>
             </c:if>
@@ -210,9 +210,9 @@
                 <h2>Navigate to another week</h2>
                 <form action="${request.requestURI}" method="post">
                     <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
-                    <input type="submit" name="week" value="${prevWeekString}"/>
+                    <input class="btn" type="submit" name="week" value="${prevWeekString}"/>
                     <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
-                    <input type="submit" name="week" value="${nextWeekString}"/>
+                    <input class="btn" type="submit" name="week" value="${nextWeekString}"/>
                 </form>
             </div>
 
@@ -221,19 +221,24 @@
 
                 <h2>Timesheet for the week of ${thisWeekStart}</h2>
 
-                <table id="days">
+                <table id="days" class="table">
                     <c:set var="dayTotals" value="${timesheet.hoursByDay}"/>
-                    <tr>
-                        <c:forEach items="${dayTotals}" var="entry">
-                            <fmt:formatDate var="day" value="${entry.key.time}" pattern="E"/>
-                            <th>${day}</th>
-                        </c:forEach>
-                    </tr>
-                    <tr>
-                        <c:forEach items="${dayTotals}" var="entry">
-                            <td class="duration">${entry.value}</td>
-                        </c:forEach>
-                    </tr>
+                    <caption>Hours by Day</caption>
+                    <thead>
+                        <tr>
+                            <c:forEach items="${dayTotals}" var="entry">
+                                <fmt:formatDate var="day" value="${entry.key.time}" pattern="E"/>
+                                <th>${day}</th>
+                            </c:forEach>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <c:forEach items="${dayTotals}" var="entry">
+                                <td><span class="duration">${entry.value}</span></td>
+                            </c:forEach>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <br/>
@@ -241,59 +246,75 @@
                 <c:set var="totalHours" value="0.0"/>
                 <c:set var="totalRegular" value="0.0"/>
                 <c:set var="totalPTO" value="0.0"/>
-                <table id="hours">
-                    <tr><th rowspan="2">Date</th><th colspan="2">Task</th><th rowspan="2">Project</th><th rowspan="2">Customer</th><th rowspan="2">Duration</th><th rowspan="2">Description</th>
-                        <c:if test="${!timesheet.submitted}">
-                            <th rowspan="2"></th>
-                        </c:if>
-                    </tr>
-                    <tr><th>Name</th><th>#</th></tr>
-                    <c:forEach var="entry" items="${timesheet.entries}">
+                <table id="hours" class="table table-striped">
+                    <caption>Timesheet Entries</caption>
+                    <thead>
                         <tr>
-                            <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
-                            <td class="date">${entryDate}</td>
-                            <td>${fn:escapeXml(entry.task.name)}</td>
-                            <td class="task">${entry.task.id}</td>
-                            <c:set var="project" value="${entry.task.project}"/>
-                            <td>${fn:escapeXml(project.name)}</td>
-                            <td>${fn:escapeXml(project.client.name)}</td>
-                            <td class="duration">${entry.duration}</td>
-                            <c:set var="entryDescription" value="${entry.description}"/>
-                            <c:if test="${sarariman:containsHTML(entryDescription)}">
-                                <!-- FIXME: I really only want to escape XML entities in the above fixup. -->
-                                <c:set var="entryDescription" value="${entryDescription}"/>
-                            </c:if>
-                            <td>${entryDescription}</td>
+                            <th rowspan="2">Date</th>
+                            <th colspan="2">Task</th>
+                            <th rowspan="2">Project</th>
+                            <th rowspan="2">Customer</th>
+                            <th rowspan="2">Duration</th>
+                            <th rowspan="2">Description</th>
                             <c:if test="${!timesheet.submitted}">
-                                <td><a href="${fn:escapeXml(entry.URL)}">Edit</a></td>
+                                <th rowspan="2"></th>
                             </c:if>
-                            <c:set var="totalHours" value="${totalHours + entry.duration}"/>
-                            <c:choose>
-                                <%-- FIXME: This needs to look this up somewhere. --%>
-                                <c:when test="${entry.task.id == 5}">
-                                    <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
-                                </c:otherwise>
-                            </c:choose>
                         </tr>
-                    </c:forEach>
-                    <tr>
-                        <td colspan="5"><b>Total</b></td>
-                        <td class="duration"><b>${totalHours}</b></td>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><b>Total Regular</b></td>
-                        <td class="duration"><b>${totalRegular}</b></td>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><b>Total PTO</b></td>
-                        <td class="duration"><b>${totalPTO}</b></td>
-                        <td colspan="2"></td>
-                    </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="entry" items="${timesheet.entries}">
+                            <tr>
+                                <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
+                                <td class="date">${entryDate}</td>
+                                <td>${fn:escapeXml(entry.task.name)}</td>
+                                <td class="task">${entry.task.id}</td>
+                                <c:set var="project" value="${entry.task.project}"/>
+                                <td>${fn:escapeXml(project.name)}</td>
+                                <td>${fn:escapeXml(project.client.name)}</td>
+                                <td class="duration">${entry.duration}</td>
+                                <c:set var="entryDescription" value="${entry.description}"/>
+                                <c:if test="${sarariman:containsHTML(entryDescription)}">
+                                    <!-- FIXME: I really only want to escape XML entities in the above fixup. -->
+                                    <c:set var="entryDescription" value="${entryDescription}"/>
+                                </c:if>
+                                <td>${entryDescription}</td>
+                                <c:if test="${!timesheet.submitted}">
+                                    <td><a class="btn" href="${fn:escapeXml(entry.URL)}">Edit</a></td>
+                                </c:if>
+                                <c:set var="totalHours" value="${totalHours + entry.duration}"/>
+                                <c:choose>
+                                    <%-- FIXME: This needs to look this up somewhere. --%>
+                                    <c:when test="${entry.task.id == 5}">
+                                        <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">Total</td>
+                            <td class="duration">${totalHours}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">Total Regular</td>
+                            <td class="duration">${totalRegular}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">Total PTO</td>
+                            <td class="duration">${totalPTO}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
                 </table>
 
                 <c:set var="hoursNeeded" value="0.0" />
@@ -406,79 +427,15 @@
             <h2 id="events">Events</h2>
             <p>
                 <a class="btn" href="events/create.jsp" title="add an event"><i class="icon-plus"></i></a>
-                <ul>
-                    <c:forEach var="event" items="${sarariman.events.current}">
-                        <li>
-                            <a href="${event.URL}">
-                                <c:set var="begin" value="${event.begin}"/>
-                                <c:set var="end" value="${event.end}"/>
-                                <fmt:formatDate value="${begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                                <fmt:formatDate var="beginDate" pattern="yyyy-MM-dd" value="${begin}"/>
-                                <fmt:formatDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
-                                <c:choose>
-                                    <c:when test="${beginDate eq endDate}">
-                                        <fmt:formatDate value="${end}" type="time" timeStyle="short" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />
-                                    </c:otherwise>
-                                </c:choose>
-                                - ${fn:escapeXml(event.name)}</a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </p>
-
-            <h2>Holidays</h2>
-            <p><a href="holidays/upcoming.jsp">Holiday Schedule</a><br/>
-                <c:set var="nextHoliday" value="${sarariman.holidays.next}"/>
-                Next holiday: <fmt:formatDate value="${nextHoliday.date}" type="date" pattern="MMM d" />, ${nextHoliday.description}</p>
-
-            <h2 id="scheduledVacation">Scheduled Vacation</h2>
-            <p>
-                <a class="btn" href="vacation/create.jsp" title="add a vacation entry"><i class="icon-plus"></i></a>
-                <ul>
-                    <c:forEach var="entry" items="${user.upcomingVacation}">
-                        <li>
-                            <c:set var="begin" value="${entry.begin}"/>
-                            <c:set var="end" value="${entry.end}"/>
-                            <c:choose>
-                                <c:when test="${begin eq end}">
-                                    <fmt:formatDate value="${begin}" type="date" dateStyle="long" />
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatDate value="${begin}" type="date" dateStyle="long" /> -
-                                    <fmt:formatDate value="${end}" type="date" dateStyle="long" />
-                                </c:otherwise>
-                            </c:choose>
-                            <c:set var="comment" value="${entry.comment}"/>
-                            <c:if test="${!empty comment}">
-                                - ${fn:escapeXml(comment)}
-                            </c:if>
-                            <form style="display:inline" method="GET" action="vacation/edit.jsp">
-                                <input type="hidden" name="id" value="${entry.id}"/>
-                                <button class="btn" type="submit" name="Edit" value="edit" title="edit this entry"><i class="icon-edit"></i></button>
-                            </form>
-                            <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
-                                <input type="hidden" name="id" value="${entry.id}"/>
-                                <button class="btn btn-danger" type="submit" name="Delete" value="delete" title="delete this entry"><i class="icon-trash"></i></button>
-                            </form>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </p>
-
-            <h2 id="outOfOffice">Scheduled Out of Office</h2>
-            <p>
-                <a class="btn" href="outOfOffice/create.jsp" title="add an out of office entry"><i class="icon-plus"></i></a>
-                <ul>
-                    <c:forEach var="entry" items="${user.upcomingOutOfOffice}">
-                        <li>
-                            <c:set var="begin" value="${entry.begin}"/>
-                            <c:set var="end" value="${entry.end}"/>
+            <ul>
+                <c:forEach var="event" items="${sarariman.events.current}">
+                    <li>
+                        <a href="${event.URL}">
+                            <c:set var="begin" value="${event.begin}"/>
+                            <c:set var="end" value="${event.end}"/>
                             <fmt:formatDate value="${begin}" type="both" dateStyle="long" timeStyle="short" /> -
-                            <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${begin}"/>
-                            <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
+                            <fmt:formatDate var="beginDate" pattern="yyyy-MM-dd" value="${begin}"/>
+                            <fmt:formatDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
                             <c:choose>
                                 <c:when test="${beginDate eq endDate}">
                                     <fmt:formatDate value="${end}" type="time" timeStyle="short" />
@@ -487,39 +444,103 @@
                                     <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />
                                 </c:otherwise>
                             </c:choose>
-                            <c:set var="comment" value="${entry.comment}"/>
-                            <c:if test="${!empty comment}">
-                                - ${fn:escapeXml(comment)}
-                            </c:if>
-                            <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
-                                <input type="hidden" name="id" value="${entry.id}"/>
-                                <button class="btn" type="submit" name="Edit" value="edit" title="edit this entry"><i class="icon-edit"></i></button>
-                            </form>
-                            <form style="display:inline" method="POST" action="outOfOffice/handleDelete.jsp">
-                                <input type="hidden" name="id" value="${entry.id}"/>
-                                <button class="btn btn-danger" type="submit" name="Delete" value="delete" title="delete this entry"><i class="icon-trash"></i></button>
-                            </form>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </p>
+                            - ${fn:escapeXml(event.name)}</a>
+                    </li>
+                </c:forEach>
+            </ul>
+        </p>
 
-            <c:set var="reports" value="${user.reports}"/>
-            <c:if test="${not empty reports}">
-                <h2>Reports</h2>
-                <a href="activity">Recent timesheet activity for your reports</a>
-                <ol>
-                    <c:forEach var="report" items="${reports}">
-                        <li>
-                            <a href="employee?id=${report.number}">${report.fullName}</a>
-                            <a href="employee?id=${report.number}"><img width="25" height="25" onerror="this.style.display='none'" src="${report.photoURL}"/></a>
-                        </li>
-                    </c:forEach>
-                </ol>
-            </c:if>
+        <h2>Holidays</h2>
+        <p><a href="holidays/upcoming.jsp">Holiday Schedule</a><br/>
+            <c:set var="nextHoliday" value="${sarariman.holidays.next}"/>
+            Next holiday: <fmt:formatDate value="${nextHoliday.date}" type="date" pattern="MMM d" />, ${nextHoliday.description}</p>
 
-        </div>
+        <h2 id="scheduledVacation">Scheduled Vacation</h2>
+        <p>
+            <a class="btn" href="vacation/create.jsp" title="add a vacation entry"><i class="icon-plus"></i></a>
+        <ul>
+            <c:forEach var="entry" items="${user.upcomingVacation}">
+                <li>
+                    <c:set var="begin" value="${entry.begin}"/>
+                    <c:set var="end" value="${entry.end}"/>
+                    <c:choose>
+                        <c:when test="${begin eq end}">
+                            <fmt:formatDate value="${begin}" type="date" dateStyle="long" />
+                        </c:when>
+                        <c:otherwise>
+                            <fmt:formatDate value="${begin}" type="date" dateStyle="long" /> -
+                            <fmt:formatDate value="${end}" type="date" dateStyle="long" />
+                        </c:otherwise>
+                    </c:choose>
+                    <c:set var="comment" value="${entry.comment}"/>
+                    <c:if test="${!empty comment}">
+                        - ${fn:escapeXml(comment)}
+                    </c:if>
+                    <form style="display:inline" method="GET" action="vacation/edit.jsp">
+                        <input type="hidden" name="id" value="${entry.id}"/>
+                        <button class="btn" type="submit" name="Edit" value="edit" title="edit this entry"><i class="icon-edit"></i></button>
+                    </form>
+                    <form style="display:inline" method="POST" action="vacation/handleDelete.jsp">
+                        <input type="hidden" name="id" value="${entry.id}"/>
+                        <button class="btn btn-danger" type="submit" name="Delete" value="delete" title="delete this entry"><i class="icon-trash"></i></button>
+                    </form>
+                </li>
+            </c:forEach>
+        </ul>
+    </p>
 
-        <%@include file="footer.jsp" %>
-    </body>
+    <h2 id="outOfOffice">Scheduled Out of Office</h2>
+    <p>
+        <a class="btn" href="outOfOffice/create.jsp" title="add an out of office entry"><i class="icon-plus"></i></a>
+    <ul>
+        <c:forEach var="entry" items="${user.upcomingOutOfOffice}">
+            <li>
+                <c:set var="begin" value="${entry.begin}"/>
+                <c:set var="end" value="${entry.end}"/>
+                <fmt:formatDate value="${begin}" type="both" dateStyle="long" timeStyle="short" /> -
+                <fmt:parseDate var="beginDate" pattern="yyyy-MM-dd" value="${begin}"/>
+                <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${end}"/>
+                <c:choose>
+                    <c:when test="${beginDate eq endDate}">
+                        <fmt:formatDate value="${end}" type="time" timeStyle="short" />
+                    </c:when>
+                    <c:otherwise>
+                        <fmt:formatDate value="${end}" type="both" dateStyle="long" timeStyle="short" />
+                    </c:otherwise>
+                </c:choose>
+                <c:set var="comment" value="${entry.comment}"/>
+                <c:if test="${!empty comment}">
+                    - ${fn:escapeXml(comment)}
+                </c:if>
+                <form style="display:inline" method="GET" action="outOfOffice/edit.jsp">
+                    <input type="hidden" name="id" value="${entry.id}"/>
+                    <button class="btn" type="submit" name="Edit" value="edit" title="edit this entry"><i class="icon-edit"></i></button>
+                </form>
+                <form style="display:inline" method="POST" action="outOfOffice/handleDelete.jsp">
+                    <input type="hidden" name="id" value="${entry.id}"/>
+                    <button class="btn btn-danger" type="submit" name="Delete" value="delete" title="delete this entry"><i class="icon-trash"></i></button>
+                </form>
+            </li>
+        </c:forEach>
+    </ul>
+</p>
+
+<c:set var="reports" value="${user.reports}"/>
+<c:if test="${not empty reports}">
+    <h2>Reports</h2>
+    <a href="activity">Recent timesheet activity for your reports</a>
+    <ol>
+        <c:forEach var="report" items="${reports}">
+            <li>
+                <a href="employee?id=${report.number}">${report.fullName}</a>
+                <a href="employee?id=${report.number}"><img width="25" height="25" onerror="this.style.display='none'" src="${report.photoURL}"/></a>
+            </li>
+        </c:forEach>
+    </ol>
+</c:if>
+
+<%@include file="footer.jsp" %>
+</div>
+
+</body>
 </html>
