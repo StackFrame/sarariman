@@ -1,0 +1,13 @@
+/*
+  Copyright (C) 2013 StackFrame, LLC
+  This code is licensed under GPLv2.
+*/
+
+.quantity, .duration, .task, .currency, .line_item, .percentage {
+    text-align: right !important;
+    font-family: monospace;
+}
+
+tfoot td {
+    font-weight: bold;
+}
