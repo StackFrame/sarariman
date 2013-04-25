@@ -19,14 +19,24 @@
             h1.title {
                 text-align: center;
             }
+
+            .center {
+                float: none;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .message {
+                text-align: center;
+            }
         </style>
     </head>
     <body onload="document.login.username.focus()">
-        <div class="container-fluid">
+        <div class="span7 center">
             <h1 class="title">Sarariman Sign In</h1>
             <form class="form-horizontal" id="login" name="login" method="POST" action="auth_check">
                 <c:if test="${authFailed}">
-                    <p class="text-error">The email address or password you entered was incorrect.</p>
+                    <p class="text-error message">The email address or password you entered was incorrect.</p>
                 </c:if>
 
                 <div class="control-group">
