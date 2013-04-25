@@ -235,7 +235,9 @@
                         <tr>
                             <c:forEach items="${dayTotals}" var="entry">
                                 <td>
-                                    <span class="duration"><fmt:formatNumber value="${entry.value}" minFractionDigits="2"/></span>
+                                    <c:if test="${entry.value > 0}">
+                                        <span class="duration"><fmt:formatNumber value="${entry.value}" minFractionDigits="2"/></span>
+                                    </c:if>
                                 </td>
                             </c:forEach>
                         </tr>
