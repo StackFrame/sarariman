@@ -14,27 +14,41 @@
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
-        <title>Login</title>
+        <title>Sarariman Sign In</title>
+        <style>
+            h1.title {
+                text-align: center;
+            }
+        </style>
     </head>
     <body onload="document.login.username.focus()">
-        <div class="container">
-            <h1>Login</h1>
-            <c:if test="${authFailed}">
-                <p class="text-error">The email address or password you entered was incorrect.</p>
-            </c:if>
+        <div class="container-fluid">
+            <h1 class="title">Sarariman Sign In</h1>
+            <form class="form-horizontal" id="login" name="login" method="POST" action="auth_check">
+                <c:if test="${authFailed}">
+                    <p class="text-error">The email address or password you entered was incorrect.</p>
+                </c:if>
 
-            <form id="login" name="login" method="POST" action="auth_check">
-                <p>
-                    <strong>email address: </strong>
-                    <input id="username" type="email" name="username" size="40"/>
-                </p>
-                <p>
-                    <strong>password: </strong>
-                    <input id="password" type="password" size="25" name="password"/>
-                </p>
-                <p>
-                    <input type="submit" value="Sign In" class="btn"/>
-                </p>
+                <div class="control-group">
+                    <label class="control-label" for="username">Email</label>
+                    <div class="controls">
+                        <input type="text" id="username" name="username" placeholder="Email">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="password">Password</label>
+                    <div class="controls">
+                        <input type="password" id="password" name="password" placeholder="Password">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" name="remember"> Remember me
+                        </label>
+                        <button type="submit" class="btn">Sign In</button>
+                    </div>
+                </div>
                 <input type="hidden" name="destination" value="${param.destination}"/>
             </form>
         </div>
