@@ -42,7 +42,7 @@
                 <div class="control-group">
                     <label class="control-label" for="username">Email</label>
                     <div class="controls">
-                        <input type="text" id="username" name="username" placeholder="Email">
+                        <input type="email" id="username" name="username" placeholder="Email">
                     </div>
                 </div>
                 <div class="control-group">
