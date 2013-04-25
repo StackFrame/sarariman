@@ -227,15 +227,16 @@
                     <thead>
                         <tr>
                             <c:forEach items="${dayTotals}" var="entry">
-                                <fmt:formatDate var="day" value="${entry.key.time}" pattern="E"/>
-                                <th>${day}</th>
+                                <th><fmt:formatDate value="${entry.key.time}" pattern="E"/></th>
                             </c:forEach>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <c:forEach items="${dayTotals}" var="entry">
-                                <td><span class="duration">${entry.value}</span></td>
+                                <td>
+                                    <span class="duration"><fmt:formatNumber value="${entry.value}" minFractionDigits="2"/></span>
+                                </td>
                             </c:forEach>
                         </tr>
                     </tbody>
