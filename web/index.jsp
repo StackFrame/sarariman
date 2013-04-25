@@ -173,35 +173,54 @@
             <c:if test="${!timesheet.submitted}">
                 <div id="recordTime">
                     <h2>Record time worked</h2>
-                    <form action="TimesheetEntryHandler" method="post">
-                        <label for="date">Date:</label>
-                        <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
-                        <input size="10" type="text" name="date" id="date" value="${now}"/>
-                        <br/>
+                    <form class="form-horizontal" action="TimesheetEntryHandler" method="post">
+                        <div class="control-group">
+                            <label class="control-label" for="date">Date</label>
+                            <div class="controls">
+                                <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
+                                <input size="10" type="text" name="date" id="date" value="${now}"/>
+                            </div>
+                        </div>
 
-                        <label for="task">Task:</label>
-                        <select name="task" id="task" onchange="enable('submit');">
-                            <option selected="true"></option>
-                            <c:forEach var="task" items="${user.tasks}">
-                                <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
-                                    <c:set var="project" value="${task.project}"/>
-                                    <c:if test="${!empty project}">
-                                        - ${fn:escapeXml(project.name)}:${fn:escapeXml(project.client.name)}
-                                    </c:if>
-                                </option>
-                            </c:forEach>
-                        </select>
-                        <br/>
+                        <div class="control-group">
+                            <label class="control-label" for="task">Task</label>
+                            <div class="controls">
+                                <select name="task" id="task" onchange="enable('submit');">
+                                    <option selected="true"></option>
+                                    <c:forEach var="task" items="${user.tasks}">
+                                        <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
+                                            <c:set var="project" value="${task.project}"/>
+                                            <c:if test="${!empty project}">
+                                                - ${fn:escapeXml(project.name)}:${fn:escapeXml(project.client.name)}
+                                            </c:if>
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
 
-                        <label for="duration">Duration:</label>
-                        <input size="5" type="number" step="any" name="duration" id="duration"/>
-                        <br/>
-                        <label for="description">Description:</label><br/>
-                        <textarea cols="80" rows="10" name="description" id="description"></textarea>
-                        <fmt:formatDate var="weekString" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
-                        <input type="hidden" name="week" value="${weekString}"/><br/>
-                        <input type="hidden" id="geolocation" name="geolocation" value=""/>
-                        <input class="btn" type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
+                        <div class="control-group">
+                            <label class="control-label" for="duration">Duration</label>
+                            <div class="controls">
+                                <input type="number" step="any" name="duration" id="duration"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="description">Description</label><br/>
+                            <div class="controls">
+                                <textarea rows="10" name="description" id="description"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <fmt:formatDate var="weekString" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
+                            <input type="hidden" name="week" value="${weekString}"/><br/>
+                            <input type="hidden" id="geolocation" name="geolocation" value=""/>
+                            <div class="controls">
+                                <input class="btn" type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </c:if>
