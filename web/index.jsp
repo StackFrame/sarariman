@@ -59,18 +59,6 @@
                 navigator.geolocation.getCurrentPosition(gotCurrentPosition);
             }
         </script>
-        <style type="text/css">
-
-            body {
-                padding-top: 60px;
-                padding-bottom: 40px;
-            }
-
-            .latencyStatus {
-                vertical-align: middle;
-            }
-
-        </style>
     </head>
 
     <!-- FIXME: error if param.week is not a Saturday -->
