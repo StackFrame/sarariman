@@ -1,7 +1,5 @@
 <div id="topnav" class="btn-group pull-right">
-    <a class="btn btn-primary" href="${user.URL}">
-        <img class="hidden-phone hidden-tablet" width="18" height="18" onerror="this.style.display='none'" src="${user.photoURL}"/> ${user.userName}
-    </a>
+    <a class="btn btn-primary" href="${user.URL}">${user.userName}</a>
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
         <li><a href="${pageContext.request.contextPath}/"><i class="icon-home"></i> Home</a></li>
