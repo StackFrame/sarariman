@@ -16,6 +16,14 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+
+        <style type="text/css">
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+        </style>
+
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <link href="css/style.css" rel="stylesheet" media="screen"/>
@@ -65,9 +73,8 @@
     <body>
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
-                <div class="container">
+                <div class="container-fluid">
                     <span class="brand">Sarariman</span>
-
                     <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
                     <c:choose>
                         <c:when test="${good}"><span class="latencyStatus" title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when>
