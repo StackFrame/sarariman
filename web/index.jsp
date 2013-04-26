@@ -230,7 +230,7 @@
                         <div class="control-group">
                             <label class="control-label" for="description">Description</label><br/>
                             <div class="controls">
-                                <textarea rows="10" name="description" id="description"></textarea>
+                                <textarea class="input-block-level" rows="10" name="description" id="description"></textarea>
                             </div>
                         </div>
 
