@@ -23,8 +23,8 @@ import org.xhtmlrenderer.resource.FSEntityResolver;
 import org.xml.sax.InputSource;
 
 /**
- * A Filter which converts the filtered document to PDF.  It looks for a special request parameter, outputType.  If outputType is
- * "pdf" then the filtered document is rendered using Flying Saucer and iText.  If outputType is not set then the document is passed
+ * A Filter which converts the filtered document to PDF. It looks for a special request parameter, outputType. If outputType is
+ * "pdf" then the filtered document is rendered using Flying Saucer and iText. If outputType is not set then the document is passed
  * through unaltered.
  *
  * @author mcculley
@@ -62,14 +62,14 @@ public class PDFRendererFilter implements Filter {
 
                 String preferredFilename = request.getParameter("preferredFilename");
                 if (preferredFilename != null) {
-                    response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"",preferredFilename));
+                    response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", preferredFilename));
                 }
 
                 OutputStream browserStream = response.getOutputStream();
                 renderer.createPDF(browserStream);
                 return;
             } catch (Exception e) {
-                throw new IOException(e);
+                throw new IOException("error processing " + request.getRequestURI(), e);
             }
         } else {
             throw new RuntimeException("unknown output type " + outputType);

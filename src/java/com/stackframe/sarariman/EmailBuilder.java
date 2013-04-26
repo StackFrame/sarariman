@@ -43,19 +43,23 @@ public class EmailBuilder extends HttpServlet {
         String[] documentLinks = request.getParameterValues("documentLink");
         String[] documentNames = request.getParameterValues("documentName");
         for (int i = 0; i < documentLinks.length; i++) {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher(documentLinks[i]);
-            ModifiableRequest tmpRequest = new ModifiableRequest(request);
-            tmpRequest.setMethod("GET");
-            ContentCaptureServletResponse capContent = new ContentCaptureServletResponse(response);
-            requestDispatcher.include(tmpRequest, capContent);
-            byte[] data = capContent.getContentBytes();
-            MimeBodyPart mbp = new MimeBodyPart();
             try {
-                mbp.setContent(data, capContent.getContentType());
-                mbp.setFileName(documentNames[i]);
-                attachments.add(mbp);
-            } catch (MessagingException me) {
-                throw new IOException(me);
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher(documentLinks[i]);
+                ModifiableRequest tmpRequest = new ModifiableRequest(request);
+                tmpRequest.setMethod("GET");
+                ContentCaptureServletResponse capContent = new ContentCaptureServletResponse(response);
+                requestDispatcher.include(tmpRequest, capContent);
+                byte[] data = capContent.getContentBytes();
+                MimeBodyPart mbp = new MimeBodyPart();
+                try {
+                    mbp.setContent(data, capContent.getContentType());
+                    mbp.setFileName(documentNames[i]);
+                    attachments.add(mbp);
+                } catch (MessagingException me) {
+                    throw new IOException(me);
+                }
+            } catch (Exception e) {
+                throw new IOException("trouble rendering " + documentLinks[i], e);
             }
         }
 
