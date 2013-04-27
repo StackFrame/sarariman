@@ -1,7 +1,7 @@
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-fixed-top hidden-print">
     <div class="navbar-inner">
         <div class="container">
-            <span class="brand">Sarariman</span>
+            <span class="brand hidden-phone">Sarariman</span>
 
             <ul class="nav">
                 <c:forEach var="link" items="${sarariman.navbarLinks}">
