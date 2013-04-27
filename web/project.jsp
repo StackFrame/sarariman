@@ -23,14 +23,16 @@
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>${fn:escapeXml(project.name)} (project ${project.id})</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="header.jsp" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
+        <div class="container">
             <h1>${fn:escapeXml(project.name)} (project ${project.id})</h1>
 
             <c:if test="${user.administrator || isManager || isCostManager}">
@@ -260,10 +262,10 @@
                             <fmt:parseDate var="endDate" pattern="yyyy-MM-dd" value="${entry.end}"/>
                             <c:choose>
                                 <c:when test="${beginDate eq endDate}">
-                                    <fmt:formatDate value="${entry.end}" type="time" timeStyle="short" />                                    
+                                    <fmt:formatDate value="${entry.end}" type="time" timeStyle="short" />
                                 </c:when>
                                 <c:otherwise>
-                                    <fmt:formatDate value="${entry.end}" type="both" dateStyle="long" timeStyle="short" />                                
+                                    <fmt:formatDate value="${entry.end}" type="both" dateStyle="long" timeStyle="short" />
                                 </c:otherwise>
                             </c:choose>
                             <c:if test="${!empty entry.comment}">
@@ -336,7 +338,7 @@
                                         <td>NaN</td>
                                     </c:when>
                                     <c:otherwise>
-                                        <td class="percentage"><fmt:formatNumber value="${invoicedCost / lineItem.funded}" type="percent"/></td>                                    
+                                        <td class="percentage"><fmt:formatNumber value="${invoicedCost / lineItem.funded}" type="percent"/></td>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:set var="invoicedDollarsTotal" value="${invoicedDollarsTotal + invoicedCost}"/>
@@ -348,7 +350,7 @@
                                     <c:otherwise><c:set var="error" value=""/></c:otherwise>
                                 </c:choose>
                                 <td class="currency ${error}">
-                                    <fmt:formatNumber type="currency" value="${remaining}"/>                                       
+                                    <fmt:formatNumber type="currency" value="${remaining}"/>
                                 </td>
 
                                 <sql:query dataSource="jdbc/sarariman" var="resultSet">
@@ -372,7 +374,7 @@
                                         <td>NaN</td>
                                     </c:when>
                                     <c:otherwise>
-                                        <td class="percentage"><fmt:formatNumber value="${expendedCost / lineItem.funded}" type="percent"/></td>                                    
+                                        <td class="percentage"><fmt:formatNumber value="${expendedCost / lineItem.funded}" type="percent"/></td>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:set var="expendedDollarsTotal" value="${expendedDollarsTotal + expendedCost}"/>
@@ -384,10 +386,10 @@
                                     <c:otherwise><c:set var="error" value=""/></c:otherwise>
                                 </c:choose>
                                 <td class="currency ${error}">
-                                    <fmt:formatNumber type="currency" value="${remaining}"/>                                       
+                                    <fmt:formatNumber type="currency" value="${remaining}"/>
                                 </td>
 
-                                <td>   
+                                <td>
                                     <form style="display:inline" method="GET" action="lineItems/edit.jsp">
                                         <input type="hidden" name="id" value="${lineItem.id}"/>
                                         <input type="hidden" name="project" value="${project.id}"/>
@@ -412,7 +414,7 @@
                     </table>
                     <c:if test="${fundedTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
                     <c:if test="${project.expended != expendedDollarsTotal}"><p class="error">Project expended amount does not match line item expended.</p></c:if>
-                </c:if>                
+                </c:if>
             </c:if>
 
             <c:if test="${isManager || isCostManager}">
