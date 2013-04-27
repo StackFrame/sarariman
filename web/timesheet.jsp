@@ -23,10 +23,11 @@
 
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <style type="text/css">
@@ -40,10 +41,9 @@
     </head>
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
         <div class="container">
-
-            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
-
             <c:choose>
                 <c:when test="${!empty param.week}">
                     <fmt:parseDate var="parsedWeek" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
@@ -67,7 +67,7 @@
                     </c:forEach>
                 </select>
                 <input type="hidden" name="week" value="${week.name}"/>
-                <input type="submit" value="Retrieve"/>
+                <input class="btn" type="submit" value="Retrieve"/>
             </form>
 
             <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
@@ -76,10 +76,10 @@
                     <input type="hidden" value="${week.name}" name="week"/>
                     <input type="hidden" value="${employee.number}" name="employee"/>
                     <c:if test="${!timesheet.approved}">
-                        <input type="submit" name="action" value="Approve" <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+                        <input class="btn" type="submit" name="action" value="Approve" <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
                     </c:if>
                     <!-- FIXME: Only allow this if the time has not been invoiced. -->
-                    <input type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+                    <input class="btn btn-danger" type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
                 </form>
             </c:if>
 
@@ -96,85 +96,91 @@
             <c:set var="totalUnbillable" value="0.0"/>
             <c:set var="totalPTO" value="0.0"/>
             <c:set var="totalHoliday" value="0.0"/>
-            <table id="timesheet">
-                <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
-                <c:forEach var="entry" items="${employee.timesheets[week].entries}">
-                    <c:if test="${user.administrator ||
-                                  user.invoiceManager ||
-                                  (!empty entry.task.project && (sarariman:isManager(user, entry.task.project) ||
-                                  sarariman:contains(user.projectsAdministrativelyAssisting, entry.task.project))) ||
-                                  sarariman:contains(user.reports, employee)}">
-                          <tr>
-                              <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
-                              <td class="date">${entryDate}</td>
-                              <c:set var="task" value="${entry.task}"/>
-                              <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
-                              <td class="task"><a href="${task.URL}">${task.id}</a></td>
-                              <c:set var="customer" value="${task.project.client}"/>
-                              <c:url var="projectLink" value="project">
-                                  <c:param name="id" value="${task.project.id}"/>
-                              </c:url>
-                              <td>
-                                  <c:if test="${!empty task.project}">
-                                      <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(task.project.name)}</a>
-                                  </c:if>
-                              </td>
-                              <c:url var="customerLink" value="customer">
-                                  <c:param name="id" value="${task.project.client.id}"/>
-                              </c:url>
-                              <td>
-                                  <c:if test="${!empty customer}">
-                                      <a href="${fn:escapeXml(customerLink)}">${fn:escapeXml(customer.name)}</a>
-                                  </c:if>
-                              </td>
-
-                              <c:choose>
-                                  <%-- FIXME: This needs to look this up somewhere. --%>
-                                  <c:when test="${entry.task.id == 5}">
-                                      <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
-                                  </c:when>
-                                  <c:when test="${entry.task.id == 4}">
-                                      <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                      <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
-                                      <c:if test="${!entry.task.billable}">
-                                          <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
+            <table id="timesheet" class="table table-striped">
+                <thead>
+                    <tr><th>Date</th><th>Task</th><th>Task #</th><th>Project</th><th>Customer</th><th>Duration</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="entry" items="${employee.timesheets[week].entries}">
+                        <c:if test="${user.administrator ||
+                                      user.invoiceManager ||
+                                      (!empty entry.task.project && (sarariman:isManager(user, entry.task.project) ||
+                                      sarariman:contains(user.projectsAdministrativelyAssisting, entry.task.project))) ||
+                                      sarariman:contains(user.reports, employee)}">
+                              <tr>
+                                  <fmt:formatDate var="entryDate" value="${entry.date}" pattern="E, MMM d"/>
+                                  <td class="date">${entryDate}</td>
+                                  <c:set var="task" value="${entry.task}"/>
+                                  <td><a href="${task.URL}">${fn:escapeXml(task.name)}</a></td>
+                                  <td class="task"><a href="${task.URL}">${task.id}</a></td>
+                                  <c:set var="customer" value="${task.project.client}"/>
+                                  <c:url var="projectLink" value="project">
+                                      <c:param name="id" value="${task.project.id}"/>
+                                  </c:url>
+                                  <td>
+                                      <c:if test="${!empty task.project}">
+                                          <a href="${fn:escapeXml(projectLink)}">${fn:escapeXml(task.project.name)}</a>
                                       </c:if>
-                                  </c:otherwise>
-                              </c:choose>
+                                  </td>
+                                  <c:url var="customerLink" value="customer">
+                                      <c:param name="id" value="${task.project.client.id}"/>
+                                  </c:url>
+                                  <td>
+                                      <c:if test="${!empty customer}">
+                                          <a href="${fn:escapeXml(customerLink)}">${fn:escapeXml(customer.name)}</a>
+                                      </c:if>
+                                  </td>
 
-                              <td class="duration">${entry.duration}</td>
-                              <td>${entry.description}</td>
-                              <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
-                          </tr>
-                    </c:if>
-                </c:forEach>
-                <tr>
-                    <td colspan="5">Total</td>
-                    <td class="duration">${totalHoursWorked}</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td colspan="5">Total Regular</td>
-                    <td class="duration">${totalRegular}</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td colspan="5">Total Unbillable</td>
-                    <td class="duration">${totalUnbillable}</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td colspan="5">Total PTO</td>
-                    <td class="duration">${totalPTO}</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td colspan="5">Total Holiday</td>
-                    <td class="duration">${totalHoliday}</td>
-                    <td></td>
-                </tr>
+                                  <c:choose>
+                                      <%-- FIXME: This needs to look this up somewhere. --%>
+                                      <c:when test="${entry.task.id == 5}">
+                                          <c:set var="totalPTO" value="${totalPTO + entry.duration}"/>
+                                      </c:when>
+                                      <c:when test="${entry.task.id == 4}">
+                                          <c:set var="totalHoliday" value="${totalHoliday + entry.duration}"/>
+                                      </c:when>
+                                      <c:otherwise>
+                                          <c:set var="totalRegular" value="${totalRegular + entry.duration}"/>
+                                          <c:if test="${!entry.task.billable}">
+                                              <c:set var="totalUnbillable" value="${totalUnbillable + entry.duration}"/>
+                                          </c:if>
+                                      </c:otherwise>
+                                  </c:choose>
+
+                                  <td class="duration">${entry.duration}</td>
+                                  <td>${entry.description}</td>
+                                  <c:set var="totalHoursWorked" value="${totalHoursWorked + entry.duration}"/>
+                              </tr>
+                        </c:if>
+                    </c:forEach>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">Total</td>
+                        <td class="duration">${totalHoursWorked}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">Total Regular</td>
+                        <td class="duration">${totalRegular}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">Total Unbillable</td>
+                        <td class="duration">${totalUnbillable}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">Total PTO</td>
+                        <td class="duration">${totalPTO}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">Total Holiday</td>
+                        <td class="duration">${totalHoliday}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
             </table>
 
             <div>
@@ -193,7 +199,7 @@
                 <!-- FIXME: Add totals by task. -->
                 <!-- FIXME: Add totals by line item. -->
 
-                <table id="summary">
+                <table id="summary" class="table table-striped">
                     <caption>Summary</caption>
                     <tr><th>Client</th><th>Project</th><th>Hours</th></tr>
                     <c:forEach var="entry" items="${customerEntries.rows}">
