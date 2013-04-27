@@ -55,7 +55,7 @@
 
         </style>
     </head>
-    <body onload="document.login.username.focus()">
+    <body>
         <div class="span7 center">
             <form class="form-signin" id="login" name="login" method="POST" action="auth_check">
                 <h1 class="form-signin-heading title">Sign In</h1>
@@ -66,7 +66,7 @@
 
                 <div class="input-prepend">
                     <span class="add-on"><i class="icon-envelope"></i></span>
-                    <input type="email" id="username" name="username" placeholder="Email">
+                    <input type="email" id="username" name="username" placeholder="Email" autofocus="true">
                 </div>
                 <div class="input-prepend">
                     <span class="add-on"><i class="icon-key"></i></span>
