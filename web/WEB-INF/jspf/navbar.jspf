@@ -18,13 +18,11 @@
                     </li>
                 </c:forEach>
                 <li>
-                    <a>
-                        <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
-                        <c:choose>
-                            <c:when test="${good}"><span title="Your recent timesheet entries have been on time!">&#x263A;</span></c:when>
-                            <c:otherwise><span title="Your recent timesheet entries have been late.">&#x2639;</span></c:otherwise>
-                        </c:choose>
-                    </a>
+                <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
+                <c:choose>
+                    <c:when test="${good}"><a title="Your recent timesheet entries have been on time!">&#x263A;</a></c:when>
+                    <c:otherwise><a title="Your recent timesheet entries have been late.">&#x2639;</a></c:otherwise>
+                </c:choose>
                 </li>
             </ul>
 
