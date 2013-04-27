@@ -2,8 +2,6 @@
     <a class="btn btn-primary" href="${user.URL}">${user.userName}</a>
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
-        <li><a href="${pageContext.request.contextPath}/"><i class="icon-home"></i> Home</a></li>
-        <li><a href="${pageContext.request.contextPath}/tools"><i class="icon-wrench"></i> Tools</a></li>
-        <li><a href="${pageContext.request.contextPath}/logout"><i class="i"></i>Sign Out</a></li>
+        <li><a href="${pageContext.request.contextPath}/logout"><i class="icon-signout"></i>Sign Out</a></li>
     </ul>
 </div>
