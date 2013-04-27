@@ -36,7 +36,6 @@ import com.stackframe.sarariman.timesheets.TimesheetsImpl;
 import com.stackframe.sarariman.vacation.Vacations;
 import com.stackframe.sarariman.vacation.VacationsImpl;
 import java.net.InetAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -304,7 +303,7 @@ public class Sarariman implements ServletContextListener {
     public Collection<UIResource> getNavbarLinks() {
         return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
                                             new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),
-                                            new UIResourceImpl(getMountPoint() + "holidays/upcoming.jsp", "Holidays"));
+                                            new UIResourceImpl(getMountPoint() + "holidays/upcoming.jsp", "&#x1f384;"));
     }
 
     public void contextInitialized(ServletContextEvent sce) {
