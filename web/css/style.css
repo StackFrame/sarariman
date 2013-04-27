@@ -3,6 +3,17 @@
   This code is licensed under GPLv2.
 */
 
+body {
+    padding-top: 60px;
+}
+
+/** This keeps the padding-top defined above from interfering with the responsive bootstrap CSS. */
+@media (max-width: 979px) {
+    body {
+       padding-top: 0;
+    }
+}
+
 .quantity, .duration, .task, .currency, .line_item, .percentage {
     text-align: right !important;
     font-family: monospace;
