@@ -1,8 +1,17 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <div id="topnav" class="btn-group pull-right">
     <a class="btn btn-primary" href="${user.URL}">${user.userName}</a>
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
+        <li>
+            <c:url var="myTicketsURL" value="${request.contextPath}tickets/">
+                <c:param name="assignee" value="${user.number}"/>
+                <c:param name="notStatus" value="closed"/>
+            </c:url>
+            <a href="${fn:escapeXml(myTicketsURL)}"><i class="icon-tasks"></i> Tickets</a>
+        </li>
         <c:if test="${user.fulltime}">
             <li>
                 <c:url var="PTOLink" value="PTODetails">
