@@ -36,10 +36,13 @@ public class AuthenticationFilter implements Filter {
      * Paths to resources which do not require authentication.
      *
      * FIXME: This should come from a config file.
+     * FIXME: This should be a set of regex patterns.
      */
     private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check", "/css/bootstrap.css",
                                                                    "/css/bootstrap-responsive.css", "/style/font-awesome.css",
-                                                                   "/jquery/js/jquery-1.7.2.min.js", "/js/bootstrap.js");
+                                                                   "/jquery/js/jquery-1.7.2.min.js", "/js/bootstrap.js",
+                                                                   "/font/fontawesome-webfont.ttf",
+                                                                   "/font/fontawesome-webfont.woff");
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         assert request instanceof HttpServletRequest;
