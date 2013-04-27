@@ -303,7 +303,8 @@ public class Sarariman implements ServletContextListener {
     public Collection<UIResource> getNavbarLinks() {
         return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
                                             new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),
-                                            new UIResourceImpl(getMountPoint() + "holidays/upcoming.jsp", "Holidays"));
+                                            new UIResourceImpl(getMountPoint() + "holidays/upcoming.jsp", "Holidays",
+                                                               "icon-calendar"));
     }
 
     public void contextInitialized(ServletContextEvent sce) {
