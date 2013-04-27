@@ -8,7 +8,9 @@
                 <c:url var="PTOLink" value="PTODetails">
                     <c:param name="employee" value="${user.number}"/>
                 </c:url>
-                <a href="${PTOLink}"> <abbr title="Paid Time Off">PTO</abbr>: <span class="duration">${user.paidTimeOff}</span></a>
+                <a href="${PTOLink}" title="You have accrued ${user.paidTimeOff} hours of paid time off.">
+                    <abbr title="Paid Time Off">PTO</abbr>: <span class="duration">${user.paidTimeOff}</span>
+                </a>
             </li>
         </c:if>
         <li class="divider"></li>
