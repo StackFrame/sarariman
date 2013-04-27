@@ -22,3 +22,7 @@ body {
 tfoot td {
     font-weight: bold;
 }
+
+#footer {
+    text-align: center;
+}
