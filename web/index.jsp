@@ -77,20 +77,7 @@
 
     <!-- FIXME: error if param.week is not a Saturday -->
     <body>
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <span class="brand">Sarariman</span>
-                    <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
-                    <c:choose>
-                        <c:when test="${good}"><span class="latencyStatus" title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when>
-                        <c:otherwise><span class="latencyStatus" title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
-                    </c:choose>
-
-                    <%@include file="WEB-INF/jspf/userMenu.jspf" %>
-                </div>
-            </div>
-        </div>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
         <div class="container-fluid">
 
@@ -381,13 +368,13 @@
                         <div class="controls">
                             <label class="checkbox" for="submitted">
                                 <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                                Submitted
-                            </label>
+                                    Submitted
+                                </label>
                             <c:set var="approved" value="${timesheet.approved}"/>
                             <label class="checkbox" for="approved">
                                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                                Approved
-                            </label>
+                                    Approved
+                                </label>
                             <c:if test="${!submitted && canSubmit}">
                                 <input type="hidden" value="true" name="submit"/>
                                 <input class="btn" type="submit" value="Submit"/>

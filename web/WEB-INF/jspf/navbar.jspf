@@ -1,0 +1,34 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <span class="brand">Sarariman</span>
+
+            <ul class="nav">
+                <c:forEach var="link" items="${sarariman.navbarLinks}">
+                    <c:set var="class" value="${pageContext.request.requestURI eq link.URL.path ? 'active' : ''}"/>
+                    <li class="${class}">
+                        <a href="${link.URL}">
+                            <c:choose>
+                                <c:when test="${not empty link.iconName}">
+                                    <i class="${link.iconName}" title="${link.name}"></i>
+                                </c:when>
+                                <c:otherwise>${link.name}</c:otherwise>
+                            </c:choose>
+                        </a>
+                    </li>
+                </c:forEach>
+                <li>
+                    <a href="#">
+                        <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
+                        <c:choose>
+                            <c:when test="${good}"><span class="latencyStatus" title="Your recent timesheet entries have been on time!" style="font-size: 14pt">&#x263A;</span></c:when>
+                            <c:otherwise><span class="latencyStatus" title="Your recent timesheet entries have been late." style="font-size: 14pt">&#x2639;</span></c:otherwise>
+                        </c:choose>
+                    </a>
+                </li>
+            </ul>
+
+            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        </div>
+    </div>
+</div>
