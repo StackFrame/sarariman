@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Sarariman Sign In</title>
@@ -29,36 +30,52 @@
             .message {
                 text-align: center;
             }
+
+
+            body {
+                padding-top: 40px;
+                padding-bottom: 40px;
+                background-color: #f5f5f5;
+            }
+
+            .form-signin {
+                max-width: 300px;
+                padding: 19px 29px 29px;
+                margin: 0 auto 20px;
+                background-color: #fff;
+                border: 1px solid #e5e5e5;
+                border-radius: 5px;
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            }
+
+            .form-signin .form-signin-heading,
+            .form-signin .checkbox {
+                margin-bottom: 10px;
+            }
+
         </style>
     </head>
     <body onload="document.login.username.focus()">
         <div class="span7 center">
-            <h1 class="title">Sarariman Sign In</h1>
-            <form class="form-horizontal" id="login" name="login" method="POST" action="auth_check">
+            <form class="form-signin" id="login" name="login" method="POST" action="auth_check">
+                <h1 class="form-signin-heading">Sign In</h1>
+
                 <c:if test="${authFailed}">
                     <p class="text-error message">The email address or password you entered was incorrect.</p>
                 </c:if>
 
-                <div class="control-group">
-                    <label class="control-label" for="username">Email</label>
-                    <div class="controls">
-                        <input type="email" id="username" name="username" placeholder="Email">
-                    </div>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-envelope"></i></span>
+                    <input type="email" id="username" name="username" placeholder="Email">
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="password">Password</label>
-                    <div class="controls">
-                        <input type="password" id="password" name="password" placeholder="Password">
-                    </div>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-key"></i></span>
+                    <input type="password" id="password" name="password" placeholder="Password">
                 </div>
-                <div class="control-group">
-                    <div class="controls">
-                        <label class="checkbox">
-                            <input type="checkbox" name="remember"> Remember me
-                        </label>
-                        <button type="submit" class="btn">Sign In</button>
-                    </div>
-                </div>
+                <label class="checkbox">
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <button type="submit" class="btn">Sign In</button>
                 <input type="hidden" name="destination" value="${param.destination}"/>
             </form>
         </div>
