@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.stackframe.reflect.ReflectionUtils;
 import com.stackframe.sarariman.accesslog.AccessLog;
 import com.stackframe.sarariman.accesslog.AccessLogImpl;
@@ -35,6 +36,7 @@ import com.stackframe.sarariman.timesheets.TimesheetsImpl;
 import com.stackframe.sarariman.vacation.Vacations;
 import com.stackframe.sarariman.vacation.VacationsImpl;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -297,6 +299,12 @@ public class Sarariman implements ServletContextListener {
 
     public PaidTimeOff getPaidTimeOff() {
         return paidTimeOff;
+    }
+
+    public Collection<UIResource> getNavbarLinks() {
+        return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
+                                            new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),
+                                            new UIResourceImpl(getMountPoint() + "holidays/upcoming.jsp", "Holidays"));
     }
 
     public void contextInitialized(ServletContextEvent sce) {
