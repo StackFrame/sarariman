@@ -14,17 +14,18 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="../style.css" rel="stylesheet" type="text/css"/>
         <link href="../css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="../css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="../style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="../css/style.css" rel="stylesheet" type="text/css"/>
         <script type="text/javascript" src="../jquery/js/jquery-1.7.2.min.js"></script>
         <script src="../js/bootstrap.js"></script>
         <title>Tickets</title>
     </head>
     <body>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
         <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
             <h1>Tickets</h1>
 
             <a href="create">Create a Ticket</a>
@@ -63,7 +64,7 @@
                 <input type="submit" value="Search"/>
             </form>
 
-            <table>
+            <table class="table table-striped">
                 <tr>
                     <th>#</th>
                     <th>Name</th>
@@ -108,7 +109,7 @@
                                             <c:forEach var="assignee" items="${assignees}">
                                                 <li>${assignee.displayName}</li>
                                             </c:forEach>
-                                        </ul>                                    
+                                        </ul>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
