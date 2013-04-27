@@ -25,7 +25,7 @@
         <div class="container">
             <h1>Upcoming Holidays</h1>
 
-            <table id="holidays">
+            <table class="table" id="holidays">
                 <tr><th>Date</th><th>Holiday</th></tr>
                 <c:forEach var="holiday" items="${sarariman.holidays.upcoming}">
                     <tr>
