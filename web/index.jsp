@@ -439,16 +439,6 @@
                 </c:forEach>
             </c:if>
 
-            <c:if test="${user.fulltime}">
-                <p>
-                    PTO available: <span class="duration">${user.paidTimeOff}</span> hours
-                    <c:url var="PTOLink" value="PTODetails">
-                        <c:param name="employee" value="${employeeNumber}"/>
-                    </c:url>
-                    <a href="${PTOLink}">history</a>
-                </p>
-            </c:if>
-
             <h2 id="events">Events</h2>
             <p>
                 <a class="btn" href="events/create.jsp" title="add an event"><i class="icon-plus"></i></a>
