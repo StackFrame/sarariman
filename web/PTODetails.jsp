@@ -37,14 +37,16 @@
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>PTO Details</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
+        <div class="container">
             <h1>PTO Details for ${directory.byNumber[param.employee].fullName}</h1>
 
             <sql:query dataSource="jdbc/sarariman" var="ptoResultSet">
