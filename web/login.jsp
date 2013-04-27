@@ -39,7 +39,7 @@
             }
 
             .form-signin {
-                max-width: 300px;
+                max-width: 250px;
                 padding: 19px 29px 29px;
                 margin: 0 auto 20px;
                 background-color: #fff;
@@ -58,7 +58,7 @@
     <body onload="document.login.username.focus()">
         <div class="span7 center">
             <form class="form-signin" id="login" name="login" method="POST" action="auth_check">
-                <h1 class="form-signin-heading">Sign In</h1>
+                <h1 class="form-signin-heading title">Sign In</h1>
 
                 <c:if test="${authFailed}">
                     <p class="text-error message">The email address or password you entered was incorrect.</p>
@@ -75,7 +75,7 @@
                 <label class="checkbox">
                     <input type="checkbox" name="remember"> Remember me
                 </label>
-                <button type="submit" class="btn">Sign In</button>
+                <button type="submit" class="btn btn-primary" title="Sign In"><i class="icon-signin"></i></button>
                 <input type="hidden" name="destination" value="${param.destination}"/>
             </form>
         </div>
