@@ -3,12 +3,14 @@
     <a class="btn btn-primary" href="${user.URL}">${user.userName}</a>
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
-        <li>
-            <c:url var="PTOLink" value="PTODetails">
-                <c:param name="employee" value="${user.number}"/>
-            </c:url>
-            <a href="${PTOLink}"> <abbr title="Paid Time Off">PTO</abbr>: <span class="duration">${user.paidTimeOff}</span></a>
-        </li>
+        <c:if test="${user.fulltime}">
+            <li>
+                <c:url var="PTOLink" value="PTODetails">
+                    <c:param name="employee" value="${user.number}"/>
+                </c:url>
+                <a href="${PTOLink}"> <abbr title="Paid Time Off">PTO</abbr>: <span class="duration">${user.paidTimeOff}</span></a>
+            </li>
+        </c:if>
         <li class="divider"></li>
         <li><a href="${pageContext.request.contextPath}/logout"><i class="icon-signout"></i>Sign Out</a></li>
     </ul>
