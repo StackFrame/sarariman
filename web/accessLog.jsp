@@ -9,18 +9,19 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Access Log</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
+        <div class="container">
             <h1>Access Log</h1>
             <h2>Activity for the last 24 hours</h2>
 
@@ -30,7 +31,7 @@
                 Average time: ${sarariman.accessLog.averageTime}
             </p>
 
-            <table id="worstPerforming">
+            <table id="worstPerforming" class="table table-striped">
                 <caption>Worst Performing Pages</caption>
                 <tr>
                     <th>Timestamp</th>
@@ -69,7 +70,7 @@
                 </c:forEach>
             </ul>
 
-            <table id="dayEntries">
+            <table id="dayEntries" class="table table-striped">
                 <caption>All Entries</caption>
                 <tr>
                     <th>Timestamp</th>
