@@ -135,18 +135,34 @@
             Employee: ${directory.byNumber[param.employee].fullName}<br/>
             Date: ${entry.date}<br/>
             Task: ${fn:escapeXml(entry.name)} (${entry.task})<br/>
-            <form action="${request.requestURI}" method="post">
+            <form action="${request.requestURI}" method="post" class="form-horizontal">
                 <input type="hidden" name="date" value="${entry.date}"/>
                 <input type="hidden" name="employee" value="${param.employee}"/>
                 <input type="hidden" name="task" value="${entry.task}"/>
-                <label for="duration">Duration:</label>
-                <input size="5" type="number" step="any" name="duration" id="duration" value="${entry.duration}"/>
-                <br/>
-                <label for="description">Description: </label><br/>
-                <textarea cols="80" rows="10" name="description" id="description">${fn:escapeXml(entry.description)}</textarea><br/>
-                <label for="reason">Reason: </label>
-                <input size="40" type="text" name="reason" id="reason"/>
-                <input type="submit" enabled="${canModify}" name="modifyEntry" value="Modify"/>
+                <div class="control-group">
+                    <label class="control-label" for="duration">Duration:</label>
+                    <div class="controls">
+                        <input size="5" type="number" step="any" name="duration" id="duration" value="${entry.duration}"/>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="description">Description: </label>
+                    <div class="controls">
+                        <textarea class="input-block-level" cols="80" rows="10" name="description" id="description">${fn:escapeXml(entry.description)}</textarea>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="reason">Reason: </label>
+                    <div class="controls">
+                        <input class="input-block-level" size="40" type="text" name="reason" id="reason"/>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <input class="btn" type="submit" enabled="${canModify}" name="modifyEntry" value="Modify"/>
+                </div>
             </form>
 
             <h2>Audit log for this entry</h2>
@@ -156,7 +172,7 @@
                 <sql:param value="${param.employee}"/>
                 <sql:param value="${param.date}"/>
             </sql:query>
-            <table id="entries">
+            <table id="entries" class="table table-striped">
                 <tr><th>Timestamp</th><th>Date</th><th>Task #</th><th>Duration</th><th>Employee</th><th>Remote Address</th><th>Remote User</th><th>Reason</th></tr>
                 <c:forEach var="entry" items="${entries.rows}">
                     <tr>
