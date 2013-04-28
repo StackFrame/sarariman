@@ -59,15 +59,19 @@
                 <input class="btn" type="submit" name="week" value="${week.next.name}"/>
                 <input type="hidden" name="employee" value="${employee.number}"/>
             </form>
-            <form>
-                <label for="employee">Employee: </label>
-                <select name="employee" id="employee">
-                    <c:forEach var="e" items="${directory.byUserName}">
-                        <option value="${e.value.number}" <c:if test="${e.value.number == employee.number}">selected="selected"</c:if>>${e.value.fullName}</option>
-                    </c:forEach>
-                </select>
-                <input type="hidden" name="week" value="${week.name}"/>
-                <input class="btn" type="submit" value="Retrieve"/>
+            <form class="form-horizontal">
+                <label class="control-label" for="employee">Employee: </label>
+                <div class="control-group">
+                    <div class="controls">
+                        <select name="employee" id="employee">
+                            <c:forEach var="e" items="${directory.byUserName}">
+                                <option value="${e.value.number}" <c:if test="${e.value.number == employee.number}">selected="selected"</c:if>>${e.value.fullName}</option>
+                            </c:forEach>
+                        </select>
+                        <input type="hidden" name="week" value="${week.name}"/>
+                        <input class="btn" type="submit" value="Retrieve"/>
+                    </div>
+                </div>
             </form>
 
             <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
@@ -80,7 +84,7 @@
                     </c:if>
                     <!-- FIXME: Only allow this if the time has not been invoiced. -->
                     <input class="btn btn-danger" type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
-                </form>
+                    </form>
             </c:if>
 
             <!-- FIXME: Make this render without hyperlink in printable page? -->
