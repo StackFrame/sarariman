@@ -55,8 +55,8 @@
             </c:choose>
 
             <form action="${request.requestURI}" method="get">
-                <input type="submit" name="week" value="${week.previous.name}"/>
-                <input type="submit" name="week" value="${week.next.name}"/>
+                <input class="btn" type="submit" name="week" value="${week.previous.name}"/>
+                <input class="btn" type="submit" name="week" value="${week.next.name}"/>
                 <input type="hidden" name="employee" value="${employee.number}"/>
             </form>
             <form>
