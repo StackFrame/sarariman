@@ -142,7 +142,7 @@
                 <div class="control-group">
                     <label class="control-label" for="duration">Duration:</label>
                     <div class="controls">
-                        <input size="5" type="number" step="any" name="duration" id="duration" value="${entry.duration}"/>
+                        <input type="number" step="any" name="duration" id="duration" value="${entry.duration}"/>
                     </div>
                 </div>
 
