@@ -54,10 +54,14 @@
                 </c:otherwise>
             </c:choose>
 
-            <form action="${request.requestURI}" method="get">
-                <input class="btn" type="submit" name="week" value="${week.previous.name}"/>
-                <input class="btn" type="submit" name="week" value="${week.next.name}"/>
-                <input type="hidden" name="employee" value="${employee.number}"/>
+            <form class="form-horizontal" action="${request.requestURI}" method="get">
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn" type="submit" name="week" value="${week.previous.name}"/>
+                        <input class="btn" type="submit" name="week" value="${week.next.name}"/>
+                        <input type="hidden" name="employee" value="${employee.number}"/>
+                    </div>
+                </div>
             </form>
             <form class="form-horizontal">
                 <label class="control-label" for="employee">Employee: </label>
@@ -76,15 +80,19 @@
 
             <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
             <c:if test="${user.administrator}">
-                <form method="post" action="timesheetController">
+                <form class="form-horizontal" method="post" action="timesheetController">
                     <input type="hidden" value="${week.name}" name="week"/>
                     <input type="hidden" value="${employee.number}" name="employee"/>
-                    <c:if test="${!timesheet.approved}">
-                        <input class="btn" type="submit" name="action" value="Approve" <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
-                    </c:if>
-                    <!-- FIXME: Only allow this if the time has not been invoiced. -->
-                    <input class="btn btn-danger" type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
-                    </form>
+                    <div class="control-group">
+                        <div class="controls">
+                            <c:if test="${!timesheet.approved}">
+                                <input class="btn" type="submit" name="action" value="Approve" <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+                            </c:if>
+                            <!-- FIXME: Only allow this if the time has not been invoiced. -->
+                            <input class="btn btn-danger" type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+                        </div>
+                    </div>
+                </form>
             </c:if>
 
             <!-- FIXME: Make this render without hyperlink in printable page? -->
