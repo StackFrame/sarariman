@@ -31,7 +31,7 @@
             <c:if test="${not empty stacktrace}">
                 <p>There was an exception:</p>
                 <pre>
-                    ${stacktrace}
+${stacktrace}
                 </pre>
             </c:if>
 

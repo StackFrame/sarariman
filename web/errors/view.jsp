@@ -42,7 +42,7 @@
             </p>
 
             <pre>
-                ${error.stackTrace}
+${error.stackTrace}
             </pre>
 
             <%@include file="../footer.jsp" %>
