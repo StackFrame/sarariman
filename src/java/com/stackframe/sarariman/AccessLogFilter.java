@@ -42,7 +42,7 @@ public class AccessLogFilter implements Filter {
         chain.doFilter(request, sesr);
         long stop = System.currentTimeMillis();
         final long took = stop - start;
-        
+
         // One would think that the httpServletRequest could just be marked final and used in the Runnable, but it gets reused after
         // this call.
         HttpServletRequest httpServletRequest = (HttpServletRequest)request;
@@ -51,7 +51,8 @@ public class AccessLogFilter implements Filter {
         final String method = httpServletRequest.getMethod();
         final String userAgent = httpServletRequest.getHeader("User-Agent");
         final String remoteAddress = httpServletRequest.getRemoteAddr();
-        
+        final String referrer = httpServletRequest.getHeader("Referer");
+
         final Employee employee = (Employee)request.getAttribute("user");
         Runnable insertTask = new Runnable() {
             public void run() {
@@ -59,8 +60,8 @@ public class AccessLogFilter implements Filter {
                     Connection c = dataSource.getConnection();
                     try {
                         PreparedStatement s = c.prepareStatement(
-                                "INSERT INTO access_log (path, query, method, employee, status, time, user_agent, remote_address) " +
-                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+                                "INSERT INTO access_log (path, query, method, employee, status, time, user_agent, remote_address, referrer) " +
+                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         try {
                             s.setString(1, path);
                             s.setString(2, queryString);
@@ -81,6 +82,7 @@ public class AccessLogFilter implements Filter {
                             s.setLong(6, took);
                             s.setString(7, userAgent);
                             s.setString(8, remoteAddress);
+                            s.setString(9, referrer);
                             int numRowsInserted = s.executeUpdate();
                             assert numRowsInserted == 1;
                         } finally {

@@ -53,6 +53,7 @@ public class ErrorFilter implements Filter {
             final String method = httpServletRequest.getMethod();
             final String userAgent = httpServletRequest.getHeader("User-Agent");
             final String remoteAddress = httpServletRequest.getRemoteAddr();
+            final String referrer = httpServletRequest.getHeader("Referer");
 
             final Employee employee = (Employee)request.getAttribute("user");
             Runnable insertTask = new Runnable() {
@@ -61,8 +62,8 @@ public class ErrorFilter implements Filter {
                         Connection c = dataSource.getConnection();
                         try {
                             PreparedStatement s = c.prepareStatement(
-                                    "INSERT INTO error_log (path, query, method, employee, user_agent, remote_address, exception) " +
-                                    "VALUES(?, ?, ?, ?, ?, ?, ?)");
+                                    "INSERT INTO error_log (path, query, method, employee, user_agent, remote_address, exception, referrer) " +
+                                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
                             try {
                                 s.setString(1, path);
                                 s.setString(2, queryString);
@@ -76,6 +77,7 @@ public class ErrorFilter implements Filter {
                                 s.setString(5, userAgent);
                                 s.setString(6, remoteAddress);
                                 s.setString(7, stackTrace);
+                                s.setString(8, referrer);
                                 int numRowsInserted = s.executeUpdate();
                                 assert numRowsInserted == 1;
                             } finally {
