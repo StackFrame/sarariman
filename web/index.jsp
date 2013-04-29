@@ -52,12 +52,20 @@
             });
         </script>
         <script>
-            function gotCurrentPosition(position) {
-                $("input[name='geolocation']").val(position.coords.latitude + "," + position.coords.longitude);
-            }
-
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(gotCurrentPosition);
+                navigator.geolocation.watchPosition(function(position) {
+                    var c = position.coords;
+                    $("input[name='geolocation']").val(c.latitude + "," + c.longitude);
+                    $.ajax({
+                        type: 'POST',
+                        url: "loglocation",
+                        data: "latitude=" + c.latitude + "&longitude=" +
+                            c.longitude + "&altitude=" + c.altitude + "&accuracy=" +
+                            c.accuracy + "&altitudeAccuracy=" + c.altitudeAccuracy + "&heading=" +
+                            c.heading + "&speed=" + c.speed,
+                        async: true
+                    });
+                });
             }
         </script>
     </head>
@@ -355,13 +363,13 @@
                         <div class="controls">
                             <label class="checkbox" for="submitted">
                                 <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                                    Submitted
-                                </label>
+                                Submitted
+                            </label>
                             <c:set var="approved" value="${timesheet.approved}"/>
                             <label class="checkbox" for="approved">
                                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
-                                    Approved
-                                </label>
+                                Approved
+                            </label>
                             <c:if test="${!submitted && canSubmit}">
                                 <input type="hidden" value="true" name="submit"/>
                                 <input class="btn" type="submit" value="Submit"/>

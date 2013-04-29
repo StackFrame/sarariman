@@ -194,6 +194,10 @@
         <servlet-name>LaborProjectionEditor</servlet-name>
         <jsp-file>/laborprojections/edit.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>LogLocation</servlet-name>
+        <servlet-class>com.stackframe.sarariman.LogLocation</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -725,6 +729,10 @@
     <servlet-mapping>
         <servlet-name>PhotoFetcher</servlet-name>
         <url-pattern>/photo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogLocation</servlet-name>
+        <url-pattern>/loglocation</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
