@@ -6,7 +6,7 @@
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
         <li>
-            <c:url var="myTicketsURL" value="${request.contextPath}tickets/">
+            <c:url var="myTicketsURL" value="${sarariman.mountPoint}tickets/">
                 <c:param name="assignee" value="${user.number}"/>
                 <c:param name="notStatus" value="closed"/>
             </c:url>
