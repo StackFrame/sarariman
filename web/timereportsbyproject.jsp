@@ -26,25 +26,26 @@
 
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Projects - ${week}</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+        <div class="container-fluid">
 
             <h1>Projects - ${week}</h1>
 
             <form action="${request.requestURI}" method="get">
                 <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
-                <input type="submit" name="week" value="${prevWeekString}"/>
+                <input class="btn" type="submit" name="week" value="${prevWeekString}"/>
                 <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
-                <input type="submit" name="week" value="${nextWeekString}"/>
+                <input class="btn" type="submit" name="week" value="${nextWeekString}"/>
             </form>
 
             <sql:query dataSource="jdbc/sarariman" var="result">

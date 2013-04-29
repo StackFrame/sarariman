@@ -20,14 +20,15 @@
     <c:set var="customer" value="${project.client}"/>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <style type="text/css">
-            @media screen, print {
+            @media print {
                 body {
                     margin: 0px auto;
                     padding: 15px;
@@ -67,6 +68,10 @@
             }
 
             @media print {
+                .navbar {
+                    display: none;
+                }
+
                 a {
                     color: #000;
                     text-decoration: none;
@@ -100,8 +105,8 @@
     </head>
 
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+        <div class="container-fluid">
 
             <img style="float:right" src="${sarariman.logoURL}"/>
             <h1>Timesheet</h1>
@@ -142,7 +147,7 @@
                     <sql:param value="${param.week}"/>
                     <sql:param value="${param.week}"/>
                 </sql:query>
-                <table class="timereport">
+                <table class="timereport table table-striped table-rounded table-bordered">
                     <tr>
                         <th>Task</th>
                         <th>Name</th>

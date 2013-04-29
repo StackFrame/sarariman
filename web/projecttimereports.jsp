@@ -17,9 +17,10 @@
     <c:set var="customer" value="${project.client}"/>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
@@ -27,8 +28,8 @@
     </head>
 
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+        <div class="container-fluid">
 
             <c:url var="customerURL" value="customer"><c:param name="id" value="${customer.id}"/></c:url>
             <c:url var="projectURL" value="project"><c:param name="id" value="${project_id}"/></c:url>
@@ -59,7 +60,7 @@
                                  value="Timesheet ${directory.byNumber[row.employee].fullName} ${param.week}.pdf"/>
                     </c:url>
                     <li>
-                        <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a> <img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/>
+                        <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a> <img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/>
                         <a href="${fn:escapeXml(pdf)}">[PDF]</a>
                         <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
                         <c:set var="week" value="${du:week(startDay)}"/>
@@ -93,7 +94,7 @@
                     <c:forEach var="row" items="${noHoursResult.rows}">
                         <c:set var="employee" value="${directory.byNumber[row.employee]}"/>
                         <c:if test="${employee.active}">
-                            <li>${employee.fullName} <img width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></li>
+                            <li>${employee.fullName} <img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/></li>
                             </c:if>
                         </c:forEach>
                 </ul>
@@ -161,7 +162,7 @@
                     </c:forEach>
 
                     <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
-                    <input type="submit" value="Send"/>
+                    <input class="btn" type="submit" value="Send"/>
                 </form>
             </c:if>
 
