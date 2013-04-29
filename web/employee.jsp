@@ -29,7 +29,7 @@
         <%@include file="/WEB-INF/jspf/navbar.jspf" %>
         <div class="container-fluid">
             <h1>${employee.fullName}</h1>
-            <img id="photo" width="100" height="100" onerror="this.style.display='none'" src="${employee.photoURL}"/>
+            <img class="img-rounded pull-right" id="photo" width="100" height="100" onerror="this.style.display='none'" src="${employee.photoURL}"/>
 
             <%
                 Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
@@ -84,27 +84,27 @@
                 <input type="checkbox" id="administrator" name="administrator"
                        <c:if test="${employee.administrator}">checked="checked"</c:if>
                        <c:if test="${not user.administrator}">disabled="true"</c:if>
-                           onchange="this.form.submit();"/>
-                </form>
-                <form action="employeeController" method="POST">
-                    <input type="hidden" name="employee" value="${employee.number}"/>
+                       onchange="this.form.submit();"/>
+            </form>
+            <form action="employeeController" method="POST">
+                <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setBenefitsAdministrator"/>
                 <label for="administrator">Benefits Administrator:</label>
                 <input type="checkbox" id="administrator" name="administrator"
                        <c:if test="${employee.benefitsAdministrator}">checked="checked"</c:if>
                        <c:if test="${not user.administrator}">disabled="true"</c:if>
-                           onchange="this.form.submit();"/>
-                </form>
-                <form action="employeeController" method="POST">
-                    <input type="hidden" name="employee" value="${employee.number}"/>
+                       onchange="this.form.submit();"/>
+            </form>
+            <form action="employeeController" method="POST">
+                <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setPayrollAdministrator"/>
                 <label for="administrator">Payroll Administrator:</label>
                 <input type="checkbox" id="administrator" name="administrator"
                        <c:if test="${employee.payrollAdministrator}">checked="checked"</c:if>
                        <c:if test="${not user.administrator}">disabled="true"</c:if>
-                           onchange="this.form.submit();"/>
-                </form>
-                <br/>
+                       onchange="this.form.submit();"/>
+            </form>
+            <br/>
 
             <c:if test="${user == employee or user.administrator}">
                 Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
@@ -148,18 +148,22 @@
                     ORDER BY effective DESC
                     <sql:param value="${param.id}"/>
                 </sql:query>
-                <table>
-                    <tr><th>Rate</th><th>Effective Date</th><th>Duration</th></tr>
-                    <c:set var="endDate" value="${du:now()}"/>
-                    <c:forEach var="rate_row" items="${resultSet.rows}" varStatus="varStatus">
-                        <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
-                            <td class="currency"><fmt:formatNumber type="currency" value="${rate_row.rate}"/></td>
-                            <fmt:parseDate var="effective" value="${rate_row.effective}" pattern="yyyy-MM-dd"/>
-                            <td><fmt:formatDate value="${effective}" pattern="yyyy-MM-dd"/></td>
-                            <td>${du:daysBetween(effective, endDate)} days</td>
-                            <c:set var="endDate" value="${effective}"/>
-                        </tr>
-                    </c:forEach>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr><th>Rate</th><th>Effective Date</th><th>Duration</th></tr>
+                    </thead>
+                    <tbody>
+                        <c:set var="endDate" value="${du:now()}"/>
+                        <c:forEach var="rate_row" items="${resultSet.rows}" varStatus="varStatus">
+                            <tr class="${varStatus.index % 2 == 0 ? 'evenrow' : 'oddrow'}">
+                                <td class="currency"><fmt:formatNumber type="currency" value="${rate_row.rate}"/></td>
+                                <fmt:parseDate var="effective" value="${rate_row.effective}" pattern="yyyy-MM-dd"/>
+                                <td><fmt:formatDate value="${effective}" pattern="yyyy-MM-dd"/></td>
+                                <td>${du:daysBetween(effective, endDate)} days</td>
+                                <c:set var="endDate" value="${effective}"/>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
                 </table>
             </c:if>
 
@@ -247,7 +251,9 @@
                                 </c:if>
                             </a>
                             <c:if test="${isProjectManager || isProjectCostManager || user.administrator}">
-                                <button type="submit" name="task" value="${task.id}">X</button>
+                                <button class="btn" type="submit" name="task" value="${task.id}" title="remove this assignment">
+                                    <i class="icon-remove"></i>
+                                </button>
                             </c:if>
                         </li>
                     </c:forEach>
@@ -282,7 +288,9 @@
                         </c:if>
                     </c:forEach>
                 </select>
-                <input type="submit" name="Add" value="Add"/>
+                <button title="assign this task" class="btn" type="submit" name="Add" value="Add">
+                    <i class="icon-plus"></i>
+                </button>
             </form>
 
             <c:if test="${user.administrator}">
