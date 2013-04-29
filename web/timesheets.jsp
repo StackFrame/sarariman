@@ -22,10 +22,11 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Timesheets</title>
@@ -33,8 +34,9 @@
     <!-- FIXME: error if param.week is not a Saturday -->
     <!-- FIXME: Need to make PTO stand out for easier payroll processing. -->
     <body>
-        <div class="container">
-            <%@include file="header.jsp" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
 
             <c:choose>
                 <c:when test="${!empty param.week}">
@@ -50,17 +52,18 @@
 
             <form action="${request.requestURI}" method="get">
                 <fmt:formatDate var="prevWeekString" value="${week.previous.start.time}" type="date" pattern="yyyy-MM-dd"/>
-                <input type="submit" name="week" value="${prevWeekString}"/>
+                <input class="btn" type="submit" name="week" value="${prevWeekString}"/>
                 <fmt:formatDate var="nextWeekString" value="${week.next.start.time}" type="date" pattern="yyyy-MM-dd"/>
-                <input type="submit" name="week" value="${nextWeekString}"/>
+                <input class="btn" type="submit" name="week" value="${nextWeekString}"/>
                 <c:if test="${param.showInactive == 'on'}"><input type="hidden" name="showInactive" value="on"/></c:if>
-                </form>
+            </form>
 
-                <form action="${request.requestURI}" method="get">
+            <form action="${request.requestURI}" method="get">
                 <input type="hidden" name="week" value="${param.week}"/>
                 <label for="showInactive">Show Inactive</label>
-                <input type="checkbox" name="showInactive" id="showInactive" <c:if test="${param.showInactive == 'on'}">checked="checked"</c:if> /><input type="submit" value="Update"/>
-                </form>
+                <input type="checkbox" name="showInactive" id="showInactive" <c:if test="${param.showInactive == 'on'}">checked="checked"</c:if> />
+                <input class="btn" type="submit" value="Update"/>
+            </form>
 
             <fmt:formatDate var="thisWeekStart" value="${week.start.time}" type="date" pattern="yyyy-MM-dd" />
 
@@ -69,7 +72,7 @@
                     <c:param name="week" value="${thisWeekStart}"/>
                 </c:url>
                 <a href="${deductPTOLink}">Deduct PTO</a>
-            </c:if>        
+            </c:if>
 
             <h2>Timesheets for the week of ${thisWeekStart}</h2>
 
@@ -89,40 +92,43 @@
                 }
             %>
 
-            <table id="timesheets">
-                <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>On Time</th></tr>
-                <c:forEach var="employeeEntry" items="${directory.byUserName}">
-                    <c:set var="employee" value="${employeeEntry.value}"/>
-                    <c:if test="${(employee.active || param.showInactive == 'on') && (sarariman:contains(reports, employee.number) or sarariman:contains(administrativelyAssisting, employee))}">
-                        <tr>
-                            <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
-                            <c:set var="PTO" value="${timesheet.PTOHours}"/>
-                            <c:set var="holiday" value="${timesheet.holidayHours}"/>
-                            <c:set var="hours" value="${timesheet.totalHours}"/>
-                            <td>
-                                <c:url var="timesheetLink" value="timesheet">
-                                    <c:param name="employee" value="${employee.number}"/>
-                                    <c:param name="week" value="${thisWeekStart}"/>
-                                </c:url>
-                                <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
-                            </td>
-                            <td class="duration"><fmt:formatNumber value="${hours - (PTO + holiday)}" minFractionDigits="2"/></td>
-                            <td class="duration"><fmt:formatNumber value="${PTO}" minFractionDigits="2"/></td>
-                            <td class="duration"><fmt:formatNumber value="${holiday}" minFractionDigits="2"/></td>
-                            <td class="duration"><fmt:formatNumber value="${hours}" minFractionDigits="2"/></td>
-                            <c:choose>
-                                <c:when test="${!timesheet.submitted}">
-                                    <c:set var="approved" value="false"/>
-                                    <c:set var="submitted" value="false"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="approved" value="${timesheet.approved}"/>
-                                    <c:set var="submitted" value="true"/>
-                                </c:otherwise>
-                            </c:choose>
-                            <td class="checkbox">
-                                <form>
-                                    <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
+            <table id="timesheets" class="table table-striped table-bordered">
+                <thead>
+                    <tr><th>Employee</th><th>Regular</th><th>PTO</th><th>Holiday</th><th>Total</th><th>Approved</th><th>Submitted</th><th>On Time</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="employeeEntry" items="${directory.byUserName}">
+                        <c:set var="employee" value="${employeeEntry.value}"/>
+                        <c:if test="${(employee.active || param.showInactive == 'on') && (sarariman:contains(reports, employee.number) or sarariman:contains(administrativelyAssisting, employee))}">
+                            <tr>
+                                <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
+                                <c:set var="PTO" value="${timesheet.PTOHours}"/>
+                                <c:set var="holiday" value="${timesheet.holidayHours}"/>
+                                <c:set var="hours" value="${timesheet.totalHours}"/>
+                                <td>
+                                    <c:url var="timesheetLink" value="timesheet">
+                                        <c:param name="employee" value="${employee.number}"/>
+                                        <c:param name="week" value="${thisWeekStart}"/>
+                                    </c:url>
+                                    <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
+                                </td>
+                                <td class="duration"><fmt:formatNumber value="${hours - (PTO + holiday)}" minFractionDigits="2"/></td>
+                                <td class="duration"><fmt:formatNumber value="${PTO}" minFractionDigits="2"/></td>
+                                <td class="duration"><fmt:formatNumber value="${holiday}" minFractionDigits="2"/></td>
+                                <td class="duration"><fmt:formatNumber value="${hours}" minFractionDigits="2"/></td>
+                                <c:choose>
+                                    <c:when test="${!timesheet.submitted}">
+                                        <c:set var="approved" value="false"/>
+                                        <c:set var="submitted" value="false"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:set var="approved" value="${timesheet.approved}"/>
+                                        <c:set var="submitted" value="true"/>
+                                    </c:otherwise>
+                                </c:choose>
+                                <td class="checkbox">
+                                    <form>
+                                        <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
                                     </form>
                                 </td>
                                 <td class="checkbox">
@@ -131,27 +137,28 @@
                                     </form>
                                 </td>
 
-                            <sql:query dataSource="jdbc/sarariman" var="averageEntry">
-                                SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average
-                                FROM hours
-                                JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date
-                                WHERE hours.employee = ? AND hours.date >= ?
-                                <sql:param value="${employee.number}"/>
-                                <sql:param value="${thisWeekStart}"/>
-                            </sql:query>
-                            <c:set var="good" value="${empty averageEntry.rows[0].average || averageEntry.rows[0].average < 0.25}"/>
-                            <td>
-                                <span style="font-size: 14pt">
-                                    <c:choose>
-                                        <c:when test="${good}">&#x263A;</c:when> 
-                                        <c:otherwise>&#x2639;</c:otherwise>
-                                    </c:choose>
-                                </span>
-                            </td>
+                                <sql:query dataSource="jdbc/sarariman" var="averageEntry">
+                                    SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average
+                                    FROM hours
+                                    JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date
+                                    WHERE hours.employee = ? AND hours.date >= ?
+                                    <sql:param value="${employee.number}"/>
+                                    <sql:param value="${thisWeekStart}"/>
+                                </sql:query>
+                                <c:set var="good" value="${empty averageEntry.rows[0].average || averageEntry.rows[0].average < 0.25}"/>
+                                <td>
+                                    <span style="font-size: 14pt">
+                                        <c:choose>
+                                            <c:when test="${good}">&#x263A;</c:when>
+                                            <c:otherwise>&#x2639;</c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                </td>
 
-                        </tr>
-                    </c:if>
-                </c:forEach>
+                            </tr>
+                        </c:if>
+                    </c:forEach>
+                </tbody>
             </table>
 
             <%@include file="footer.jsp" %>
