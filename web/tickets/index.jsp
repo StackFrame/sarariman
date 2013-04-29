@@ -25,7 +25,7 @@
     <body>
         <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
-        <div class="container">
+        <div class="container-fluid">
             <h1>Tickets</h1>
 
             <a class="btn" href="create" title="create a ticket"><i class="icon-plus"></i></a>
@@ -67,7 +67,7 @@
                 <button class="btn" type="submit" value="Search" title="search"><i class="icon-search"></i></button>
             </form>
 
-            <table class="table table-striped">
+            <table class="table table-striped table-rounded table-bordered">
                 <tr>
                     <th>#</th>
                     <th>Name</th>
