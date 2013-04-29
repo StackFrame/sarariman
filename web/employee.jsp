@@ -263,34 +263,36 @@
             <form method="POST" action="TaskAssignmentController">
                 <input type="hidden" name="employee" value="${param.id}"/>
                 <input type="hidden" name="action" value="add"/>
-                <select name="task">
-                    <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                        SELECT tasks.id, tasks.name, tasks.project
-                        FROM tasks
-                        LEFT JOIN projects ON projects.id = tasks.project
-                        LEFT JOIN customers ON customers.id = projects.customer
-                        WHERE tasks.id NOT IN
-                        (SELECT task_assignments.task FROM task_assignments WHERE task_assignments.employee = ?)
-                        AND tasks.active = TRUE
-                        AND (projects.id IS NULL OR projects.active = TRUE)
-                        AND (customers.id IS NULL OR customers.active = TRUE)
-                        <sql:param value="${param.id}"/>
-                    </sql:query>
-                    <c:forEach var="row" items="${resultSet.rows}">
-                        <!-- FIXME: Add customer name. -->
-                        <c:if test="${!empty row.project}">
-                            <c:set var="project" value="${sarariman.projects.map[row.project]}"/>
-                            <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
-                            <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
-                        </c:if>
-                        <c:if test="${empty row.project || isProjectManager || isProjectCostManager || user.administrator}">
-                            <option value="${row.id}">${row.id} - ${fn:escapeXml(row.name)}</option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-                <button title="assign this task" class="btn" type="submit" name="Add" value="Add">
-                    <i class="icon-plus"></i>
-                </button>
+                <div class="input-append">
+                    <select name="task">
+                        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                            SELECT tasks.id, tasks.name, tasks.project
+                            FROM tasks
+                            LEFT JOIN projects ON projects.id = tasks.project
+                            LEFT JOIN customers ON customers.id = projects.customer
+                            WHERE tasks.id NOT IN
+                            (SELECT task_assignments.task FROM task_assignments WHERE task_assignments.employee = ?)
+                            AND tasks.active = TRUE
+                            AND (projects.id IS NULL OR projects.active = TRUE)
+                            AND (customers.id IS NULL OR customers.active = TRUE)
+                            <sql:param value="${param.id}"/>
+                        </sql:query>
+                        <c:forEach var="row" items="${resultSet.rows}">
+                            <!-- FIXME: Add customer name. -->
+                            <c:if test="${!empty row.project}">
+                                <c:set var="project" value="${sarariman.projects.map[row.project]}"/>
+                                <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
+                                <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
+                            </c:if>
+                            <c:if test="${empty row.project || isProjectManager || isProjectCostManager || user.administrator}">
+                                <option value="${row.id}">${row.id} - ${fn:escapeXml(row.name)}</option>
+                            </c:if>
+                        </c:forEach>
+                    </select>
+                    <button title="assign this task" class="btn" type="submit" name="Add" value="Add">
+                        <i class="icon-plus"></i>
+                    </button>
+                </div>
             </form>
 
             <c:if test="${user.administrator}">
