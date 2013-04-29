@@ -5,13 +5,11 @@
 package com.stackframe.sarariman;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +23,8 @@ import javax.sql.DataSource;
 public class LogLocation extends HttpServlet {
 
     private DataSource dataSource;
+
+    // FIXME: Use a single executor for background SQL tasks.
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
     @Override
