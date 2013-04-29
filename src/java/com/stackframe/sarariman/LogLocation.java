@@ -46,31 +46,21 @@ public class LogLocation extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-        System.err.println("entering loglocation");
         final double latitude = Double.parseDouble(request.getParameter("latitude"));
-        System.err.println("latitude=" + latitude);
         final double longitude = Double.parseDouble(request.getParameter("longitude"));
-        System.err.println("longitude=" + longitude);
         final double altitude = Double.parseDouble(request.getParameter("altitude"));
-        System.err.println("altitude=" + altitude);
         final double accuracy = Double.parseDouble(request.getParameter("accuracy"));
-        System.err.println("accuracy=" + accuracy);
         final double altitudeAccuracy = Double.parseDouble(request.getParameter("altitudeAccuracy"));
-        System.err.println("altitudeAccuracy=" + altitudeAccuracy);
         String headingString = request.getParameter("heading");
         final Double heading = headingString.equals("null") ? null : Double.parseDouble(headingString);
-        System.err.println("heading=" + heading);
 
         String speedString = request.getParameter("speed");
         final Double speed = speedString.equals("null") ? null : Double.parseDouble(speedString);
-        System.err.println("speed=" + speed);
-        System.err.println();
 
         final String userAgent = httpServletRequest.getHeader("User-Agent");
         final String remoteAddress = httpServletRequest.getRemoteAddr();
-
-
         final Employee employee = (Employee)request.getAttribute("user");
+
         Runnable insertTask = new Runnable() {
             public void run() {
                 try {
