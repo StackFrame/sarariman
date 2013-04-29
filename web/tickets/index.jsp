@@ -28,7 +28,7 @@
         <div class="container">
             <h1>Tickets</h1>
 
-            <a href="create">Create a Ticket</a>
+            <a class="btn" href="create" title="create a ticket"><i class="icon-plus"></i></a>
             <br/>
             <br/>
 
