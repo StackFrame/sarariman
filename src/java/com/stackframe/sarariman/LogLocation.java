@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 public class LogLocation extends HttpServlet {
 
     private DataSource dataSource;
-
     // FIXME: Use a single executor for background SQL tasks.
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
@@ -32,6 +31,15 @@ public class LogLocation extends HttpServlet {
         super.init();
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         dataSource = sarariman.getDataSource();
+    }
+
+    private static Double getDouble(HttpServletRequest request, String name) {
+        String s = request.getParameter("name");
+        if (s == null || s.equals("null")) {
+            return null;
+        } else {
+            return Double.parseDouble(s);
+        }
     }
 
     /**
@@ -45,20 +53,18 @@ public class LogLocation extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+        // Per the specification (http://www.w3.org/TR/geolocation-API/), altitude, altitudeAccuracy, heading, and speed may be
+        // null.
         final double latitude = Double.parseDouble(request.getParameter("latitude"));
         final double longitude = Double.parseDouble(request.getParameter("longitude"));
-        final double altitude = Double.parseDouble(request.getParameter("altitude"));
+        final Double altitude = getDouble(request, "altitude");
         final double accuracy = Double.parseDouble(request.getParameter("accuracy"));
-        final double altitudeAccuracy = Double.parseDouble(request.getParameter("altitudeAccuracy"));
-        String headingString = request.getParameter("heading");
-        final Double heading = headingString.equals("null") ? null : Double.parseDouble(headingString);
+        final Double altitudeAccuracy = getDouble(request, "altitudeAccuracy");
+        final Double heading = getDouble(request, "heading");
+        final Double speed = getDouble(request, "speed");
 
-        String speedString = request.getParameter("speed");
-        final Double speed = speedString.equals("null") ? null : Double.parseDouble(speedString);
-
-        final String userAgent = httpServletRequest.getHeader("User-Agent");
-        final String remoteAddress = httpServletRequest.getRemoteAddr();
+        final String userAgent = request.getHeader("User-Agent");
+        final String remoteAddress = request.getRemoteAddr();
         final Employee employee = (Employee)request.getAttribute("user");
 
         Runnable insertTask = new Runnable() {
@@ -77,10 +83,23 @@ public class LogLocation extends HttpServlet {
                             }
 
                             s.setDouble(2, latitude);
+
                             s.setDouble(3, longitude);
-                            s.setDouble(4, altitude);
+
+                            if (altitude == null) {
+                                s.setObject(4, null);
+                            } else {
+                                s.setDouble(4, altitude);
+                            }
+
                             s.setDouble(5, accuracy);
-                            s.setDouble(6, altitudeAccuracy);
+
+                            if (altitudeAccuracy == null) {
+                                s.setObject(6, null);
+                            } else {
+                                s.setDouble(6, altitudeAccuracy);
+                            }
+
                             if (heading == null) {
                                 s.setObject(7, null);
                             } else {
@@ -94,6 +113,7 @@ public class LogLocation extends HttpServlet {
                             }
 
                             s.setString(9, userAgent);
+
                             s.setString(10, remoteAddress);
 
                             int numRowsInserted = s.executeUpdate();
