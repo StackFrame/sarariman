@@ -69,6 +69,8 @@ public class AuthenticationFilter implements Filter {
                             destination = destination + '?' + queryString;
                         }
 
+                        // FIXME: If the method requested was a POST, redirect to home page or something.
+
                         String redirectURL = String.format("%s/login", httpRequest.getContextPath());
                         String defaultDestination = httpRequest.getContextPath() + "/";
                         if (!destination.equals(defaultDestination)) {
