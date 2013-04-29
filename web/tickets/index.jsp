@@ -32,36 +32,39 @@
             <br/>
             <br/>
 
-            <form method="GET">
-                <label for="assignee">Assignee:</label>
-                <select name="assignee" id="assignee">
-                    <option value="" <c:if test="${empty param.assignee}">selected="selected"</c:if>></option>
-                    <c:forEach var="e" items="${directory.byUserName}">
-                        <c:if test="${e.value.active}">
-                            <option value="${e.value.number}" <c:if test="${param.assignee eq e.value.number}">selected="selected"</c:if>>${e.value.displayName}</option>
-                        </c:if>
-                    </c:forEach>
-                </select>
+            <form class="form-inline" method="GET">
+                <label for="assignee">Assignee
+                    <select name="assignee" id="assignee">
+                        <option value="" <c:if test="${empty param.assignee}">selected="selected"</c:if>></option>
+                        <c:forEach var="e" items="${directory.byUserName}">
+                            <c:if test="${e.value.active}">
+                                <option value="${e.value.number}" <c:if test="${param.assignee eq e.value.number}">selected="selected"</c:if>>${e.value.displayName}</option>
+                            </c:if>
+                        </c:forEach>
+                    </select>
+                </label>
 
-                <label for="status">Status:</label>
-                <select name="status" id="status">
-                    <option value="" <c:if test="${empty param.status}">selected="selected"</c:if>></option>
-                    <c:forEach var="type" items="${tickets.statusTypes}">
-                        <option value="${type}" <c:if test="${param.status eq type}">selected="selected"</c:if>>${type}</option>
-                    </c:forEach>
-                </select>
+                <label for="status">Status
+                    <select name="status" id="status">
+                        <option value="" <c:if test="${empty param.status}">selected="selected"</c:if>></option>
+                        <c:forEach var="type" items="${tickets.statusTypes}">
+                            <option value="${type}" <c:if test="${param.status eq type}">selected="selected"</c:if>>${type}</option>
+                        </c:forEach>
+                    </select>
+                </label>
 
-                <label for="notStatus">Not Status:</label>
-                <select name="notStatus" id="notStatus">
-                    <option value="" <c:if test="${empty param.notStatus}">selected="selected"</c:if>></option>
-                    <c:forEach var="type" items="${tickets.statusTypes}">
-                        <option value="${type}" <c:if test="${param.notStatus eq type}">selected="selected"</c:if>>${type}</option>
-                    </c:forEach>
-                </select>
+                <label for="notStatus">Not Status
+                    <select name="notStatus" id="notStatus">
+                        <option value="" <c:if test="${empty param.notStatus}">selected="selected"</c:if>></option>
+                        <c:forEach var="type" items="${tickets.statusTypes}">
+                            <option value="${type}" <c:if test="${param.notStatus eq type}">selected="selected"</c:if>>${type}</option>
+                        </c:forEach>
+                    </select>
+                </label>
 
                 <!-- FIXME: Use some JavaScript to make these pickers exclusive. -->
 
-                <input type="submit" value="Search"/>
+                <button class="btn" type="submit" value="Search" title="search"><i class="icon-search"></i></button>
             </form>
 
             <table class="table table-striped">
