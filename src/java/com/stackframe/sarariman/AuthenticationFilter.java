@@ -35,10 +35,9 @@ public class AuthenticationFilter implements Filter {
     /**
      * Paths to resources which do not require authentication.
      *
-     * FIXME: This should come from a config file.
-     * FIXME: This should be a set of regex patterns.
+     * FIXME: This should come from a config file. FIXME: This should be a set of regex patterns.
      */
-    private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check", "/css/bootstrap.css",
+    private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check", "/css/bootstrap.css", "/favicon.ico",
                                                                    "/css/bootstrap-responsive.css", "/style/font-awesome.css",
                                                                    "/jquery/js/jquery-1.7.2.min.js", "/js/bootstrap.js",
                                                                    "/font/fontawesome-webfont.ttf",
