@@ -40,8 +40,6 @@ public class TaskAssignmentsGlobalAudit implements Audit {
     }
 
     private Collection<TaskAssignment> unusedTaskAssignments() throws SQLException {
-        Collection<TaskAssignment> c = new ArrayList<TaskAssignment>();
-
         Connection connection = dataSource.getConnection();
         try {
             Statement s = connection.createStatement();
@@ -51,6 +49,7 @@ public class TaskAssignmentsGlobalAudit implements Audit {
                         "LEFT JOIN hours ON hours.task = task_assignments.task AND hours.employee = task_assignments.employee " +
                         "WHERE date IS NULL");
                 try {
+                    Collection<TaskAssignment> c = new ArrayList<TaskAssignment>();
                     while (r.next()) {
                         int employeeNumber = r.getInt("employee");
                         int taskNumber = r.getInt("task");
@@ -58,6 +57,7 @@ public class TaskAssignmentsGlobalAudit implements Audit {
                         Task task = tasks.get(taskNumber);
                         c.add(taskAssignments.get(employee, task));
                     }
+                    return c;
                 } finally {
                     r.close();
                 }
@@ -67,17 +67,54 @@ public class TaskAssignmentsGlobalAudit implements Audit {
         } finally {
             connection.close();
         }
+    }
 
-        return c;
+    private Collection<TaskAssignment> duplicateTaskAssignments() throws SQLException {
+        Connection connection = dataSource.getConnection();
+        try {
+            Statement s = connection.createStatement();
+            try {
+                ResultSet r = s.executeQuery(
+                        "SELECT task_assignments.employee, task_assignments.task FROM task_assignments " +
+                        "LEFT JOIN default_task_assignment ON task_assignments.task = default_task_assignment.task " +
+                        "WHERE default_task_assignment.task IS NOT NULL");
+                try {
+                    Collection<TaskAssignment> c = new ArrayList<TaskAssignment>();
+                    while (r.next()) {
+                        int employeeNumber = r.getInt("employee");
+                        int taskNumber = r.getInt("task");
+                        Employee employee = directory.getByNumber().get(employeeNumber);
+                        Task task = tasks.get(taskNumber);
+                        c.add(taskAssignments.get(employee, task));
+                    }
+
+                    return c;
+
+                } finally {
+                    r.close();
+                }
+            } finally {
+                s.close();
+            }
+        } finally {
+            connection.close();
+        }
     }
 
     public Collection<AuditResult> getResults() {
         try {
             ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
-            Collection<TaskAssignment> unused = unusedTaskAssignments();
-            for (TaskAssignment a : unused) {
+            for (TaskAssignment a : unusedTaskAssignments()) {
                 listBuilder.add(new AuditResult(AuditResultType.warning,
                                                 String.format("task assignment for task %s (%d) to %s has never been used",
+                                                              a.getTask().getName(), a.getTask().getId(),
+                                                              a.getEmployee().getDisplayName()),
+                                                a.getEmployee().getURL()));
+            }
+
+            for (TaskAssignment a : duplicateTaskAssignments()) {
+                listBuilder.add(new AuditResult(AuditResultType.warning,
+                                                String.format("task assignment for task %s (%d) to %s that is on default list",
                                                               a.getTask().getName(), a.getTask().getId(),
                                                               a.getEmployee().getDisplayName()),
                                                 a.getEmployee().getURL()));
