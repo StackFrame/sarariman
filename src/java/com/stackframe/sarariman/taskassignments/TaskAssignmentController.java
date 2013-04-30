@@ -63,6 +63,7 @@ public class TaskAssignmentController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // FIXME: Check that user is authorized.
         int employeeNumber = Integer.parseInt(request.getParameter("employee"));
         int taskNumber = Integer.parseInt(request.getParameter("task"));
         Employee employee = sarariman.getDirectory().getByNumber().get(employeeNumber);
@@ -81,6 +82,7 @@ public class TaskAssignmentController extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // FIXME: Check that user is authorized.
         TaskAssignment taskAssignment = getAssignment(request);
         taskAssignment.delete();
     }
