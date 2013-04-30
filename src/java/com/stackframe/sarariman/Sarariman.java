@@ -235,6 +235,7 @@ public class Sarariman implements ServletContextListener {
         c.add(new ProjectManagerGlobalAudit(getDataSource(), projects));
         c.add(new ProjectCostManagerGlobalAudit(getDataSource(), projects));
         c.add(new DirectRateAudit(directory));
+        c.add(new TaskAssignmentsGlobalAudit(getDataSource(), directory, tasks, taskAssignments));
         return c;
     }
 

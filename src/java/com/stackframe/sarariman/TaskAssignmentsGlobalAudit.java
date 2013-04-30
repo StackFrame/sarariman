@@ -5,95 +5,81 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.stackframe.sarariman.contacts.Contact;
-import com.stackframe.sarariman.contacts.Contacts;
+import com.stackframe.sarariman.taskassignments.TaskAssignment;
+import com.stackframe.sarariman.taskassignments.TaskAssignments;
+import com.stackframe.sarariman.tasks.Task;
+import com.stackframe.sarariman.tasks.Tasks;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import javax.sql.DataSource;
 
 /**
  *
  * @author mcculley
  */
-public class ContactsGlobalAudit implements Audit {
+public class TaskAssignmentsGlobalAudit implements Audit {
 
     private final DataSource dataSource;
-    private final Contacts contacts;
+    private final Directory directory;
+    private final Tasks tasks;
+    private final TaskAssignments taskAssignments;
 
-    public ContactsGlobalAudit(DataSource dataSource, Contacts contacts) {
+    public TaskAssignmentsGlobalAudit(DataSource dataSource, Directory directory, Tasks tasks, TaskAssignments taskAssignments) {
         this.dataSource = dataSource;
-        this.contacts = contacts;
+        this.directory = directory;
+        this.tasks = tasks;
+        this.taskAssignments = taskAssignments;
     }
 
     public String getDisplayName() {
-        return "Contacts";
+        return "Task Assignments";
     }
 
-    private Set<Integer> projectTimesheetContacts() throws SQLException {
+    private Collection<TaskAssignment> unusedTaskAssignments() throws SQLException {
+        Collection<TaskAssignment> c = new ArrayList<TaskAssignment>();
+
         Connection connection = dataSource.getConnection();
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_timesheet_contacts");
+            Statement s = connection.createStatement();
             try {
-                ResultSet rs = ps.executeQuery();
-                ImmutableSet.Builder<Integer> setBuilder = ImmutableSet.<Integer>builder();
-                while (rs.next()) {
-                    setBuilder.add(rs.getInt("contact"));
+                ResultSet r = s.executeQuery(
+                        "SELECT task_assignments.employee, task_assignments.task FROM task_assignments " +
+                        "LEFT JOIN hours ON hours.task = task_assignments.task AND hours.employee = task_assignments.employee " +
+                        "WHERE date IS NULL");
+                try {
+                    while (r.next()) {
+                        int employeeNumber = r.getInt("employee");
+                        int taskNumber = r.getInt("task");
+                        Employee employee = directory.getByNumber().get(employeeNumber);
+                        Task task = tasks.get(taskNumber);
+                        c.add(taskAssignments.get(employee, task));
+                    }
+                } finally {
+                    r.close();
                 }
-
-                return setBuilder.build();
             } finally {
-                ps.close();
+                s.close();
             }
         } finally {
             connection.close();
         }
-    }
 
-    private Set<Integer> projectInvoiceContacts() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_invoice_contacts");
-            try {
-                ResultSet rs = ps.executeQuery();
-                ImmutableSet.Builder<Integer> setBuilder = ImmutableSet.<Integer>builder();
-                while (rs.next()) {
-                    setBuilder.add(rs.getInt("contact"));
-                }
-
-                return setBuilder.build();
-            } finally {
-                ps.close();
-            }
-        } finally {
-            connection.close();
-        }
-    }
-
-    private Collection<Contact> orphanedContacts() throws SQLException {
-        Map<Integer, Contact> map = new HashMap<Integer, Contact>();
-        for (Contact contact : contacts.getAll()) {
-            map.put(contact.getId(), contact);
-        }
-
-        Set<Integer> keys = map.keySet();
-        keys.removeAll(projectTimesheetContacts());
-        keys.removeAll(projectInvoiceContacts());
-        return map.values();
+        return c;
     }
 
     public Collection<AuditResult> getResults() {
         try {
-            Collection<Contact> orphanedContacts = orphanedContacts();
             ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
-            for (Contact contact : orphanedContacts) {
-                listBuilder.add(new AuditResult(AuditResultType.warning, String.format("%s is an orphaned contact", contact.getName()), contact.getURL()));
+            Collection<TaskAssignment> unused = unusedTaskAssignments();
+            for (TaskAssignment a : unused) {
+                listBuilder.add(new AuditResult(AuditResultType.warning,
+                                                String.format("task assignment for task %d to %s has never been used",
+                                                              a.getTask().getId(), a.getEmployee().getDisplayName()),
+                                                a.getURL()));
             }
 
             return listBuilder.build();
