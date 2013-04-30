@@ -14,6 +14,7 @@ import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.taskassignments.DefaultTaskAssignment;
 import com.stackframe.sarariman.taskassignments.TaskAssignment;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
@@ -373,6 +374,17 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    public Collection<Task> getDefaultTasks() {
+        Collection<Task> tasks = new ArrayList<Task>();
+        for (DefaultTaskAssignment a : sarariman.getDefaultTaskAssignments().getAll()) {
+            if (fulltime || !a.isFullTimeOnly()) {
+                tasks.add(a.getTask());
+            }
+        }
+
+        return tasks;
+    }
+
     public Iterable<Task> getTasks() {
         try {
             Connection connection = dataSource.getConnection();
@@ -394,6 +406,8 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                             int id = resultSet.getInt("id");
                             list.add(sarariman.getTasks().get(id));
                         }
+
+                        list.addAll(getDefaultTasks());
                         return list;
                     } finally {
                         resultSet.close();
