@@ -17,54 +17,64 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <link href="../style/font-awesome.css" rel="stylesheet" type="text/css"/>
-        <link href="../style.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+
         <title>Task Management</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
-        <h1>Task Management</h1>
+        <div class="container-fluid">
 
-        <h2>Create a Task</h2>
-        <form method="POST" action="task">
-            <label for="task_name">Name: </label>
-            <input type="text" id="task_name" name="task_name"/><br/>
-            <label for="task_project">Project: </label>
-            <select id="task_project" name="task_project">
-                <option value=""></option>
-                <sql:query dataSource="jdbc/sarariman" var="project_rows">
-                    SELECT * FROM projects
-                </sql:query>
-                <c:forEach var="project_row" items="${project_rows.rows}">
-                    <c:set var="project" value="${sarariman.projects.map[project_row.id]}"/>
-                    <option value="${project_row.id}">${fn:escapeXml(project_row.name)} - ${fn:escapeXml(project.client.name)}</option>
-                </c:forEach>
-            </select><br/>
-            <label for="billable">Billable: </label>
-            <input type="checkbox" name="billable" id="billable" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
-            <label for="active">Active: </label>
-            <input type="checkbox" name="active" id="active" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+            <h1>Task Management</h1>
+
+            <h2>Create a Task</h2>
+            <form method="POST" action="task">
+                <label for="task_name">Name: </label>
+                <input type="text" id="task_name" name="task_name"/><br/>
+                <label for="task_project">Project: </label>
+                <select id="task_project" name="task_project">
+                    <option value=""></option>
+                    <sql:query dataSource="jdbc/sarariman" var="project_rows">
+                        SELECT * FROM projects
+                    </sql:query>
+                    <c:forEach var="project_row" items="${project_rows.rows}">
+                        <c:set var="project" value="${sarariman.projects.map[project_row.id]}"/>
+                        <option value="${project_row.id}">${fn:escapeXml(project_row.name)} - ${fn:escapeXml(project.client.name)}</option>
+                    </c:forEach>
+                </select><br/>
+                <label for="billable">Billable: </label>
+                <input type="checkbox" name="billable" id="billable" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                <label for="active">Active: </label>
+                <input type="checkbox" name="active" id="active" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                <br/>
+                <label for="task_description">Description: </label>
+                <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
+                <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+            </form>
             <br/>
-            <label for="task_description">Description: </label>
-            <input type="text" size="80" id="task_description" name="task_description" value="${fn:escapeXml(task.description)}"/><br/>
-            <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
-        </form>
-        <br/>
 
-        <h2>Tasks</h2>
-        <table id="tasks">
-            <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
-            <c:forEach var="task" items="${sarariman.tasks.all}">
-                <tr>
-                    <td><a href="task?task_id=${task.id}">${task.id}</a></td>
-                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
-                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.name)}</a></td>
-                    <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.client.name)}</a></td>
-                </tr>
-            </c:forEach>
-        </table>
+            <h2>Tasks</h2>
+            <table id="tasks" class="table table-striped table-bordered table-rounded">
+                <tr><th>ID</th><th>Name</th><th>Project</th><th>Customer</th></tr>
+                <c:forEach var="task" items="${sarariman.tasks.all}">
+                    <tr>
+                        <td><a href="task?task_id=${task.id}">${task.id}</a></td>
+                        <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.name)}</a></td>
+                        <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.name)}</a></td>
+                        <td><a href="task?task_id=${task.id}">${fn:escapeXml(task.project.client.name)}</a></td>
+                    </tr>
+                </c:forEach>
+            </table>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
