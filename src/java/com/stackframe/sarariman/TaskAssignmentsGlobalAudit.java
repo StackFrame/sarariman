@@ -101,6 +101,40 @@ public class TaskAssignmentsGlobalAudit implements Audit {
         }
     }
 
+    // FIXME: Parameterize interval.
+    private Collection<TaskAssignment> oldTaskAssignments() throws SQLException {
+        Connection connection = dataSource.getConnection();
+        try {
+            Statement s = connection.createStatement();
+            try {
+                ResultSet r = s.executeQuery(
+                        "SELECT task_assignments.employee, task_assignments.task, max(hours.date) FROM task_assignments " +
+                        "JOIN hours ON hours.task = task_assignments.task AND hours.employee = task_assignments.employee " +
+                        "WHERE hours.date < DATE_SUB(NOW(), INTERVAL 6 MONTH) " + "" +
+                        "GROUP BY task_assignments.employee, task_assignments.task");
+                try {
+                    Collection<TaskAssignment> c = new ArrayList<TaskAssignment>();
+                    while (r.next()) {
+                        int employeeNumber = r.getInt("employee");
+                        int taskNumber = r.getInt("task");
+                        Employee employee = directory.getByNumber().get(employeeNumber);
+                        Task task = tasks.get(taskNumber);
+                        c.add(taskAssignments.get(employee, task));
+                    }
+
+                    return c;
+
+                } finally {
+                    r.close();
+                }
+            } finally {
+                s.close();
+            }
+        } finally {
+            connection.close();
+        }
+    }
+
     public Collection<AuditResult> getResults() {
         try {
             ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
@@ -115,6 +149,15 @@ public class TaskAssignmentsGlobalAudit implements Audit {
             for (TaskAssignment a : duplicateTaskAssignments()) {
                 listBuilder.add(new AuditResult(AuditResultType.warning,
                                                 String.format("task assignment for task %s (%d) to %s that is on default list",
+                                                              a.getTask().getName(), a.getTask().getId(),
+                                                              a.getEmployee().getDisplayName()),
+                                                a.getEmployee().getURL()));
+            }
+
+            for (TaskAssignment a : oldTaskAssignments()) {
+                listBuilder.add(new AuditResult(AuditResultType.warning,
+                                                String.format("task assignment for task %s (%d) to %s has not been used in a long time", // FIXME: Parameterize interval.
+
                                                               a.getTask().getName(), a.getTask().getId(),
                                                               a.getEmployee().getDisplayName()),
                                                 a.getEmployee().getURL()));
