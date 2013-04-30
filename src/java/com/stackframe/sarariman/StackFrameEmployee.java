@@ -377,7 +377,14 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement ps = connection.prepareStatement("SELECT t.id FROM tasks AS t JOIN task_assignments AS a ON a.task = t.id LEFT OUTER JOIN projects AS p ON t.project = p.id LEFT OUTER JOIN customers AS c ON c.id = p.customer WHERE employee = ? AND t.active = TRUE AND (p.active = TRUE OR p.active IS NULL) AND (c.active = TRUE OR c.active IS NULL) ORDER BY t.billable, t.id");
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT t.id FROM tasks AS t " +
+                        "JOIN task_assignments AS a ON a.task = t.id " +
+                        "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
+                        "LEFT OUTER JOIN customers AS c ON c.id = p.customer " +
+                        "WHERE employee = ? AND t.active = TRUE AND " +
+                        "(p.active = TRUE OR p.active IS NULL) AND " +
+                        "(c.active = TRUE OR c.active IS NULL) ORDER BY t.billable, t.id");
                 try {
                     ps.setInt(1, number);
                     ResultSet resultSet = ps.executeQuery();
