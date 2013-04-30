@@ -28,6 +28,7 @@
 
             <ul>
                 <li><a href="help.xhtml">Help</a></li>
+                <li><a href="defaultTasks.jsp">Default Task Assignments</a></li>
                 <li><a href="tickets/">Tickets</a></li>
                 <li><a href="orgChart">Org Chart</a></li>
                 <li><a href="timesheets">Timesheets</a></li>

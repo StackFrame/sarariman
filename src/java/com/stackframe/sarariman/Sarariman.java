@@ -27,6 +27,8 @@ import com.stackframe.sarariman.projects.LaborProjections;
 import com.stackframe.sarariman.projects.LaborProjectionsImpl;
 import com.stackframe.sarariman.projects.Projects;
 import com.stackframe.sarariman.projects.ProjectsImpl;
+import com.stackframe.sarariman.taskassignments.DefaultTaskAssignments;
+import com.stackframe.sarariman.taskassignments.DefaultTaskAssignmentsImpl;
 import com.stackframe.sarariman.taskassignments.TaskAssignments;
 import com.stackframe.sarariman.taskassignments.TaskAssignmentsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
@@ -91,6 +93,7 @@ public class Sarariman implements ServletContextListener {
     private PaidTimeOff paidTimeOff;
     private LaborProjections laborProjections;
     private TaskAssignments taskAssignments;
+    private DefaultTaskAssignments defaultTaskAssignments;
 
     public String getVersion() {
         return Version.version;
@@ -226,6 +229,10 @@ public class Sarariman implements ServletContextListener {
         return laborProjections;
     }
 
+    public DefaultTaskAssignments getDefaultTaskAssignments() {
+        return defaultTaskAssignments;
+    }
+
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
@@ -351,6 +358,7 @@ public class Sarariman implements ServletContextListener {
             paidTimeOff = new PaidTimeOff(tasks);
             laborProjections = new LaborProjectionsImpl(getDataSource(), directory, tasks, mountPoint);
             taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
+            defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
