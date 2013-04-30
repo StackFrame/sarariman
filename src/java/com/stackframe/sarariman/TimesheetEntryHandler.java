@@ -113,6 +113,9 @@ public class TimesheetEntryHandler extends HttpServlet {
         }
 
         checkArgument(task.isActive(), "task must be active");
+
+        // FIXME: Check that the task is on the list of tasks assigned to the employee, including default tasks.
+
         Date weekStart = DateUtils.weekStart(date);
         Week week = DateUtils.week(weekStart);
         Timesheet timesheet = sarariman.getTimesheets().get(employee, week);
