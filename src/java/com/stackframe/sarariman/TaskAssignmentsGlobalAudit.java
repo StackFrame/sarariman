@@ -77,9 +77,10 @@ public class TaskAssignmentsGlobalAudit implements Audit {
             Collection<TaskAssignment> unused = unusedTaskAssignments();
             for (TaskAssignment a : unused) {
                 listBuilder.add(new AuditResult(AuditResultType.warning,
-                                                String.format("task assignment for task %d to %s has never been used",
-                                                              a.getTask().getId(), a.getEmployee().getDisplayName()),
-                                                a.getURL()));
+                                                String.format("task assignment for task %s (%d) to %s has never been used",
+                                                              a.getTask().getName(), a.getTask().getId(),
+                                                              a.getEmployee().getDisplayName()),
+                                                a.getEmployee().getURL()));
             }
 
             return listBuilder.build();
