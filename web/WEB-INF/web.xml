@@ -198,6 +198,10 @@
         <servlet-name>LogLocation</servlet-name>
         <servlet-class>com.stackframe.sarariman.LogLocation</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TaskAssignmentServlet</servlet-name>
+        <servlet-class>com.stackframe.sarariman.taskassignments.TaskAssignmentController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -253,10 +257,6 @@
     <servlet>
         <servlet-name>taskGrouping</servlet-name>
         <jsp-file>/taskGrouping.jsp</jsp-file>
-    </servlet>
-    <servlet>
-        <servlet-name>TaskAssignmentController</servlet-name>
-        <servlet-class>com.stackframe.sarariman.TaskAssignmentController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>expense</servlet-name>
@@ -683,10 +683,6 @@
         <url-pattern>/taskGrouping</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TaskAssignmentController</servlet-name>
-        <url-pattern>/TaskAssignmentController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>expense</servlet-name>
         <url-pattern>/expense</url-pattern>
     </servlet-mapping>
@@ -733,6 +729,10 @@
     <servlet-mapping>
         <servlet-name>LogLocation</servlet-name>
         <url-pattern>/loglocation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TaskAssignmentServlet</servlet-name>
+        <url-pattern>/taskassignment</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
