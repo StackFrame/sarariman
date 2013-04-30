@@ -27,6 +27,8 @@ import com.stackframe.sarariman.projects.LaborProjections;
 import com.stackframe.sarariman.projects.LaborProjectionsImpl;
 import com.stackframe.sarariman.projects.Projects;
 import com.stackframe.sarariman.projects.ProjectsImpl;
+import com.stackframe.sarariman.taskassignments.TaskAssignments;
+import com.stackframe.sarariman.taskassignments.TaskAssignmentsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.tickets.Tickets;
@@ -88,6 +90,7 @@ public class Sarariman implements ServletContextListener {
     private Workdays workdays;
     private PaidTimeOff paidTimeOff;
     private LaborProjections laborProjections;
+    private TaskAssignments taskAssignments;
 
     public String getVersion() {
         return Version.version;
@@ -196,6 +199,10 @@ public class Sarariman implements ServletContextListener {
 
     public OrganizationHierarchy getOrganizationHierarchy() {
         return organizationHierarchy;
+    }
+
+    public TaskAssignments getTaskAssignments() {
+        return taskAssignments;
     }
 
     public Collection<Employee> employees(Collection<Integer> ids) {
@@ -342,6 +349,7 @@ public class Sarariman implements ServletContextListener {
             workdays = new WorkdaysImpl(holidays);
             paidTimeOff = new PaidTimeOff(tasks);
             laborProjections = new LaborProjectionsImpl(getDataSource(), directory, tasks, mountPoint);
+            taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

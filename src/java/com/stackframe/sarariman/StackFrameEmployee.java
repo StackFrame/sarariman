@@ -14,10 +14,10 @@ import com.google.common.collect.Range;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.taskassignments.TaskAssignment;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
 import com.stackframe.sarariman.timesheets.Timesheet;
-import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import com.stackframe.sarariman.vacation.VacationEntry;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -510,6 +510,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
         };
         return Maps.asMap(allWeeks, f);
+    }
+
+    public Map<Task, TaskAssignment> getTaskAssignments() {
+        Function<Task, TaskAssignment> f = new Function<Task, TaskAssignment>() {
+            public TaskAssignment apply(Task f) {
+                return sarariman.getTaskAssignments().get(StackFrameEmployee.this, f);
+            }
+
+        };
+        return Maps.asMap(sarariman.getTasks().getAll(), f);
     }
 
     public Iterable<VacationEntry> getUpcomingVacation() {

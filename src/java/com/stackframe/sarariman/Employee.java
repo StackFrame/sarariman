@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import com.google.common.collect.Range;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.taskassignments.TaskAssignment;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
 import com.stackframe.sarariman.timesheets.Timesheet;
@@ -80,6 +81,8 @@ public interface Employee extends Linkable {
 
     Map<Week, Timesheet> getTimesheets();
 
+    Map<Task, TaskAssignment> getTaskAssignments();
+
     URL getPhotoURL();
 
     Iterable<VacationEntry> getUpcomingVacation();
@@ -97,7 +100,7 @@ public interface Employee extends Linkable {
     boolean isBenefitsAdministrator();
 
     void setBenefitsAdministrator(boolean benefitsAdministrator);
-    
+
     byte[] getPhoto();
 
     // FIXME: Add gender
