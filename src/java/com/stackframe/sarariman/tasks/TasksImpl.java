@@ -5,16 +5,18 @@
 package com.stackframe.sarariman.tasks;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.stackframe.base.Numbers;
 import com.stackframe.sarariman.projects.Projects;
+import com.stackframe.sarariman.tasks.Task;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -47,7 +49,7 @@ public class TasksImpl implements Tasks {
         return Maps.asMap(Numbers.positiveIntegers, f);
     }
 
-    public Iterable<Task> getAll() {
+    public Set<Task> getAll() {
         try {
             Connection connection = dataSource.getConnection();
             try {
@@ -55,12 +57,12 @@ public class TasksImpl implements Tasks {
                 try {
                     ResultSet r = s.executeQuery("SELECT id FROM tasks");
                     try {
-                        Collection<Task> c = new ArrayList<Task>();
+                        ImmutableSet.Builder<Task> builder = ImmutableSet.<Task>builder();
                         while (r.next()) {
-                            c.add(get(r.getInt("id")));
+                            builder.add(get(r.getInt("id")));
                         }
 
-                        return c;
+                        return builder.build();
                     } finally {
                         r.close();
                     }

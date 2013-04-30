@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.tasks;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -14,7 +15,7 @@ public interface Tasks {
 
     Task get(int id);
 
-    Iterable<Task> getAll();
+    Set<Task> getAll();
 
     Map<? extends Number, Task> getMap();
 
