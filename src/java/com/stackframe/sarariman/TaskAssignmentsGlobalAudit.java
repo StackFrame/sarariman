@@ -157,7 +157,6 @@ public class TaskAssignmentsGlobalAudit implements Audit {
             for (TaskAssignment a : oldTaskAssignments()) {
                 listBuilder.add(new AuditResult(AuditResultType.warning,
                                                 String.format("task assignment for task %s (%d) to %s has not been used in a long time", // FIXME: Parameterize interval.
-
                                                               a.getTask().getName(), a.getTask().getId(),
                                                               a.getEmployee().getDisplayName()),
                                                 a.getEmployee().getURL()));
