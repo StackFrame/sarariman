@@ -108,10 +108,11 @@ public class TaskAssignmentsGlobalAudit implements Audit {
             Statement s = connection.createStatement();
             try {
                 ResultSet r = s.executeQuery(
-                        "SELECT task_assignments.employee, task_assignments.task, max(hours.date) FROM task_assignments " +
+                        "SELECT subquery.employee AS employee, subquery.task AS task FROM "+
+                        "(SELECT task_assignments.employee AS employee , task_assignments.task AS task, "+
+                        "MAX(hours.date) AS last_date FROM task_assignments " +
                         "JOIN hours ON hours.task = task_assignments.task AND hours.employee = task_assignments.employee " +
-                        "WHERE hours.date < DATE_SUB(NOW(), INTERVAL 6 MONTH) " + "" +
-                        "GROUP BY task_assignments.employee, task_assignments.task");
+                        "GROUP BY task_assignments.employee, task_assignments.task) AS subquery WHERE last_date < DATE_SUB(NOW(), INTERVAL 6 MONTH)");
                 try {
                     Collection<TaskAssignment> c = new ArrayList<TaskAssignment>();
                     while (r.next()) {
@@ -143,7 +144,7 @@ public class TaskAssignmentsGlobalAudit implements Audit {
                                                 String.format("task assignment for task %s (%d) to %s has never been used",
                                                               a.getTask().getName(), a.getTask().getId(),
                                                               a.getEmployee().getDisplayName()),
-                                                a.getEmployee().getURL()));
+                                                a.getURL()));
             }
 
             for (TaskAssignment a : duplicateTaskAssignments()) {
@@ -151,7 +152,7 @@ public class TaskAssignmentsGlobalAudit implements Audit {
                                                 String.format("task assignment for task %s (%d) to %s that is on default list",
                                                               a.getTask().getName(), a.getTask().getId(),
                                                               a.getEmployee().getDisplayName()),
-                                                a.getEmployee().getURL()));
+                                                a.getURL()));
             }
 
             for (TaskAssignment a : oldTaskAssignments()) {
@@ -159,7 +160,7 @@ public class TaskAssignmentsGlobalAudit implements Audit {
                                                 String.format("task assignment for task %s (%d) to %s has not been used in a long time", // FIXME: Parameterize interval.
                                                               a.getTask().getName(), a.getTask().getId(),
                                                               a.getEmployee().getDisplayName()),
-                                                a.getEmployee().getURL()));
+                                                a.getURL()));
             }
 
             return listBuilder.build();
