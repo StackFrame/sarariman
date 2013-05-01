@@ -105,35 +105,37 @@
 
             <!-- FIXME: Need a section with labor category assignments. -->
 
-            <h2>Info</h2>
             <form action="employeeController" method="POST">
                 <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setAdministrator"/>
-                <label for="administrator">Administrator:</label>
-                <input type="checkbox" id="administrator" name="administrator"
-                       <c:if test="${employee.administrator}">checked="checked"</c:if>
-                       <c:if test="${not user.administrator}">disabled="true"</c:if>
+                <label for="administrator">Administrator
+                    <input type="checkbox" id="administrator" name="administrator"
+                           <c:if test="${employee.administrator}">checked="checked"</c:if>
+                           <c:if test="${not user.administrator}">disabled="true"</c:if>
                            onchange="this.form.submit();"/>
-                </form>
-                <form action="employeeController" method="POST">
-                    <input type="hidden" name="employee" value="${employee.number}"/>
+                </label>
+            </form>
+            <form action="employeeController" method="POST">
+                <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setBenefitsAdministrator"/>
-                <label for="administrator">Benefits Administrator:</label>
-                <input type="checkbox" id="administrator" name="administrator"
-                       <c:if test="${employee.benefitsAdministrator}">checked="checked"</c:if>
-                       <c:if test="${not user.administrator}">disabled="true"</c:if>
+                <label for="administrator">Benefits Administrator
+                    <input type="checkbox" id="administrator" name="administrator"
+                           <c:if test="${employee.benefitsAdministrator}">checked="checked"</c:if>
+                           <c:if test="${not user.administrator}">disabled="true"</c:if>
                            onchange="this.form.submit();"/>
-                </form>
-                <form action="employeeController" method="POST">
-                    <input type="hidden" name="employee" value="${employee.number}"/>
+                </label>
+            </form>
+            <form action="employeeController" method="POST">
+                <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setPayrollAdministrator"/>
-                <label for="administrator">Payroll Administrator:</label>
-                <input type="checkbox" id="administrator" name="administrator"
-                       <c:if test="${employee.payrollAdministrator}">checked="checked"</c:if>
-                       <c:if test="${not user.administrator}">disabled="true"</c:if>
+                <label for="administrator">Payroll Administrator
+                    <input type="checkbox" id="administrator" name="administrator"
+                           <c:if test="${employee.payrollAdministrator}">checked="checked"</c:if>
+                           <c:if test="${not user.administrator}">disabled="true"</c:if>
                            onchange="this.form.submit();"/>
-                </form>
-                <br/>
+                </label>
+            </form>
+            <br/>
 
             <c:if test="${user == employee or user.administrator}">
                 Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
@@ -148,23 +150,29 @@
                     Holiday: <fmt:formatNumber type="currency" value="${employee.directRate * 9 * 8}"/><br/>
                     Health insurance: <fmt:formatNumber type="currency" value="${employee.monthlyHealthInsurancePremium * 12}"/><br/>
                 </c:if>
-                <ul>
+            </c:if>
+
+            <ul>
+                <c:if test="${user == employee or user.payrollAdministrator}">
                     <li>
                         <c:url var="PTOLink" value="PTODetails">
                             <c:param name="employee" value="${param.id}"/>
                         </c:url>
                         <a href="${PTOLink}">Paid Time Off</a>
                     </li>
-                </ul>
-            </c:if>
-
-            <ul>
+                </c:if>
                 <li>
                     <c:url var="myTicketsURL" value="tickets/">
                         <c:param name="assignee" value="${param.id}"/>
                         <c:param name="notStatus" value="closed"/>
                     </c:url>
                     <a href="${fn:escapeXml(myTicketsURL)}">Unclosed Tickets</a>
+                </li>
+                <li>
+                    <c:url var="taskAssignmentsURL" value="taskAssignments.jsp">
+                        <c:param name="employee" value="${param.id}"/>
+                    </c:url>
+                    <a href="${taskAssignmentsURL}">Task Assignments</a>
                 </li>
             </ul>
 
@@ -261,11 +269,6 @@
                     </c:forEach>
                 </ul>
             </c:if>
-
-            <c:url var="taskAssignmentsURL" value="taskAssignments.jsp">
-                <c:param name="employee" value="${param.id}"/>
-            </c:url>
-            <h2><a href="${taskAssignmentsURL}">Task Assignments</a></h2>
 
             <%@include file="footer.jsp" %>
         </div>
