@@ -72,6 +72,8 @@ public interface Employee extends Linkable {
 
     Iterable<Task> getTasks();
 
+    Iterable<Task> getAssignedTasks();
+
     BigDecimal getPaidTimeOff();
 
     // FIXME: This needs to be parameterized and/or moved elsewhere

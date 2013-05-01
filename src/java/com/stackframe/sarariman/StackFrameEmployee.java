@@ -423,6 +423,36 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    public Iterable<Task> getAssignedTasks() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement("SELECT task FROM task_assignments WHERE employee = ?");
+                try {
+                    ps.setInt(1, number);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        Collection<Task> list = new ArrayList<Task>();
+                        while (resultSet.next()) {
+                            int id = resultSet.getInt("task");
+                            list.add(sarariman.getTasks().get(id));
+                        }
+
+                        return list;
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     @Override
     public String toString() {
         return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
