@@ -32,7 +32,7 @@ public class TaskAssignmentImpl extends AbstractLinkable implements TaskAssignme
     }
 
     public URI getURI() {
-        return URI.create(String.format("%staskassignment?employee=%d&task=%d", mountPoint, employee.getNumber(), task.getId()));
+        return URI.create(String.format("%staskAssignments.jsp?employee=%d#task%d", mountPoint, employee.getNumber(), task.getId()));
     }
 
     public Employee getEmployee() {
