@@ -113,27 +113,27 @@
                 <input type="checkbox" id="administrator" name="administrator"
                        <c:if test="${employee.administrator}">checked="checked"</c:if>
                        <c:if test="${not user.administrator}">disabled="true"</c:if>
-                       onchange="this.form.submit();"/>
-            </form>
-            <form action="employeeController" method="POST">
-                <input type="hidden" name="employee" value="${employee.number}"/>
+                           onchange="this.form.submit();"/>
+                </form>
+                <form action="employeeController" method="POST">
+                    <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setBenefitsAdministrator"/>
                 <label for="administrator">Benefits Administrator:</label>
                 <input type="checkbox" id="administrator" name="administrator"
                        <c:if test="${employee.benefitsAdministrator}">checked="checked"</c:if>
                        <c:if test="${not user.administrator}">disabled="true"</c:if>
-                       onchange="this.form.submit();"/>
-            </form>
-            <form action="employeeController" method="POST">
-                <input type="hidden" name="employee" value="${employee.number}"/>
+                           onchange="this.form.submit();"/>
+                </form>
+                <form action="employeeController" method="POST">
+                    <input type="hidden" name="employee" value="${employee.number}"/>
                 <input type="hidden" name="action" value="setPayrollAdministrator"/>
                 <label for="administrator">Payroll Administrator:</label>
                 <input type="checkbox" id="administrator" name="administrator"
                        <c:if test="${employee.payrollAdministrator}">checked="checked"</c:if>
                        <c:if test="${not user.administrator}">disabled="true"</c:if>
-                       onchange="this.form.submit();"/>
-            </form>
-            <br/>
+                           onchange="this.form.submit();"/>
+                </form>
+                <br/>
 
             <c:if test="${user == employee or user.administrator}">
                 Birthdate: <joda:format value="${employee.birthdate}" style="L-" /><br/>
@@ -262,62 +262,10 @@
                 </ul>
             </c:if>
 
-            <h2>Task Assignments</h2>
-            <ul>
-                <c:forEach var="task" items="${employee.tasks}">
-                    <c:set var="taskAssignment" value="${sarariman.taskAssignments.map[employee][task]}"/>
-                    <c:if test="${not empty task.project}">
-                        <c:set var="isProjectManager" value="${sarariman:isManager(user, task.project)}"/>
-                        <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, task.project)}"/>
-                    </c:if>
-                    <!-- FIXME: Add ACL for viewing task assignment. Must be on same project, task, or be a manager or admin. -->
-                    <li>
-                        <a href="${fn:escapeXml(taskAssignment.URL)}">${fn:escapeXml(task.name)} (${task.id})
-                            <c:if test="${not empty task.project}">
-                                - ${fn:escapeXml(task.project.name)} - ${fn:escapeXml(task.project.client.name)}
-                            </c:if>
-                        </a>
-                        <c:if test="${isProjectManager || isProjectCostManager || user.administrator}">
-                            <button class="btn delete_task_assignment" type="submit" name="task"
-                                    data="employee=${employee.number}&task=${task.id}" title="remove this assignment">
-                                <i class="icon-remove"></i>
-                            </button>
-                        </c:if>
-                    </li>
-                </c:forEach>
-            </ul>
-
-            <div class="input-append">
-                <select name="task" id="add_task_assignment">
-                    <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                        SELECT tasks.id, tasks.name, tasks.project
-                        FROM tasks
-                        LEFT JOIN projects ON projects.id = tasks.project
-                        LEFT JOIN customers ON customers.id = projects.customer
-                        WHERE tasks.id NOT IN
-                        (SELECT task_assignments.task FROM task_assignments WHERE task_assignments.employee = ?)
-                        AND tasks.active = TRUE
-                        AND (projects.id IS NULL OR projects.active = TRUE)
-                        AND (customers.id IS NULL OR customers.active = TRUE)
-                        <sql:param value="${param.id}"/>
-                    </sql:query>
-                    <c:forEach var="row" items="${resultSet.rows}">
-                        <!-- FIXME: Add customer name. -->
-                        <c:if test="${!empty row.project}">
-                            <c:set var="project" value="${sarariman.projects.map[row.project]}"/>
-                            <c:set var="isProjectManager" value="${sarariman:isManager(user, project)}"/>
-                            <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, project)}"/>
-                        </c:if>
-                        <c:if test="${empty row.project || isProjectManager || isProjectCostManager || user.administrator}">
-                            <option value="${row.id}">${row.id} - ${fn:escapeXml(row.name)}</option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-                <button title="assign this task" class="btn" id="add_task_assignment_button" type="submit"
-                        data="employee=${employee.number}">
-                    <i class="icon-plus"></i>
-                </button>
-            </div>
+            <c:url var="taskAssignmentsURL" value="taskAssignments.jsp">
+                <c:param name="employee" value="${param.id}"/>
+            </c:url>
+            <h2><a href="${taskAssignmentsURL}">Task Assignments</a></h2>
 
             <c:if test="${user.administrator}">
                 <h2>Tasks Worked</h2>
