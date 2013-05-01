@@ -67,14 +67,14 @@
             %>
 
             <ul>
-                <c:forEach var="task" items="${employee.tasks}">
+                <c:forEach var="task" items="${employee.assignedTasks}">
                     <c:set var="taskAssignment" value="${sarariman.taskAssignments.map[employee][task]}"/>
                     <c:if test="${not empty task.project}">
                         <c:set var="isProjectManager" value="${sarariman:isManager(user, task.project)}"/>
                         <c:set var="isProjectCostManager" value="${sarariman:isCostManager(user, task.project)}"/>
                     </c:if>
                     <!-- FIXME: Add ACL for viewing task assignment. Must be on same project, task, or be a manager or admin. -->
-                    <li>
+                    <li id="task${task.id}">
                         <a href="${fn:escapeXml(taskAssignment.URL)}">${fn:escapeXml(task.name)} (${task.id})
                             <c:if test="${not empty task.project}">
                                 - ${fn:escapeXml(task.project.name)} - ${fn:escapeXml(task.project.client.name)}
