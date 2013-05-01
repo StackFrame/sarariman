@@ -267,30 +267,6 @@
             </c:url>
             <h2><a href="${taskAssignmentsURL}">Task Assignments</a></h2>
 
-            <c:if test="${user.administrator}">
-                <h2>Tasks Worked</h2>
-                <ul>
-                    <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                        SELECT DISTINCT(h.task), t.name, t.project
-                        FROM hours AS h
-                        JOIN tasks AS t ON t.id = h.task
-                        WHERE h.employee=?
-                        <sql:param value="${param.id}"/>
-                    </sql:query>
-                    <c:forEach var="mapping_row" items="${resultSet.rows}">
-                        <c:if test="${!empty mapping_row.project}">
-                            <c:set var="project" value="${sarariman.projects.map[mapping_row.project]}"/>
-                        </c:if>
-                        <li><a href="${sarariman.tasks.map[mapping_row.task].URL}">${fn:escapeXml(mapping_row.name)} (${mapping_row.task})
-                                <c:if test="${!empty mapping_row.project}">
-                                    - ${fn:escapeXml(project.name)} - ${fn:escapeXml(project.client.name)}
-                                </c:if>
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
-
             <%@include file="footer.jsp" %>
         </div>
     </body>
