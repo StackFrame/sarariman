@@ -15,58 +15,62 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Contact</title>
         <style type="text/css">
-            label {
-                float: left;
-                width: 5em;
-                margin-right: 1em;
-                text-align: left;
-            }
+            /*
+                label {
+                    float: left;
+                    width: 5em;
+                    margin-right: 1em;
+                    text-align: left;
+                }
 
-            legend {
-                margin-left: 1em;
-                padding-top: 1em;
-                color: #000;
-                font-weight: bold;
-            }
+                legend {
+                    margin-left: 1em;
+                    padding-top: 1em;
+                    color: #000;
+                    font-weight: bold;
+                }
 
-            fieldset {
-                float: left;
-                clear: both;
-                width: 100%;
-                margin: 0 0 -1em 0;
-                padding: 0 0 1em 0;
-                border-style: none;
-            }
+                fieldset {
+                    float: left;
+                    clear: both;
+                    width: 100%;
+                    margin: 0 0 -1em 0;
+                    padding: 0 0 1em 0;
+                    border-style: none;
+                }
 
-            ol {
-                padding-top: 0.25em;
-                list-style: none; 
-            }
+                ol {
+                    padding-top: 0.25em;
+                    list-style: none;
+                }
 
-            li {
-                float: left;
-                clear: left;
-                width: 100%;
-                padding-bottom: 0.25em;
-            }
+                li {
+                    float: left;
+                    clear: left;
+                    width: 100%;
+                    padding-bottom: 0.25em;
+                }
 
-            input.submit {
-                float: none;
-                width: auto;
-            }
+                input.submit {
+                    float: none;
+                    width: auto;
+                }
+            */
         </style>
     </head>
     <body>
-        <div class="container">
-            <%@include file="WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
 
             <c:if test="${param.action != 'create'}">
                 <sql:query dataSource="jdbc/sarariman" var="result">
@@ -76,66 +80,77 @@
                 <c:set var="contact" value="${result.rows[0]}"/>
             </c:if>
 
-            <form method="POST" action="ContactController">
-                <ol>
-                    <li>
-                        <label for="name">Name </label>
+            <form method="POST" action="ContactController" class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
                         <input type="text" id="name" name="name" value="${contact.name}"/>
-                    </li>
+                    </div>
+                </div>
 
-                    <li>
-                        <label for="title">Title </label>
+                <div class="control-group">
+                    <label class="control-label" for="title">Title</label>
+                    <div class="controls">
                         <input type="text" id="title" name="title" value="${contact.title}"/>
-                    </li>
+                    </div>
+                </div>
 
-                    <li>
-                        <label for="email">Email </label>
+                <div class="control-group">
+                    <label class="control-label" for="email">Email</label>
+                    <div class="controls">
                         <input type="text" id="email" name="email" size="30" value="${contact.email}"/>
-                    </li>
-                </ol>
+                    </div>
+                </div>
 
                 <fieldset>
                     <legend>Phone Numbers</legend>
-                    <ol>
-                        <li>
-                            <label for="phone">Phone </label>
+
+                    <div class="control-group">
+                        <label class="control-label" for="phone">Phone</label>
+                        <div class="controls">
                             <input type="text" id="phone" name="phone" value="${contact.phone}"/>
-                        </li>
-
-                        <li>
-                            <label for="fax">Fax </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="fax">Fax</label>
+                        <div class="controls">
                             <input type="text" id="fax" name="fax" value="${contact.fax}"/>
-                        </li>
-
-                        <li>
-                            <label for="mobile">Mobile </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mobile">Mobile</label>
+                        <div class="controls">
                             <input type="text" id="mobile" name="mobile" value="${contact.mobile}"/>
-                        </li>
-                    </ol>
+                        </div>
+                    </div>
                 </fieldset>
 
                 <fieldset>
                     <legend>Address</legend>
-                    <ol>
-                        <li>
-                            <label for="mobile">Street </label>
+                    <div class="control-group">
+                        <label class="control-label" for="mobile">Street</label>
+                        <div class="controls">
                             <input type="text" id="street" name="street" value="${contact.street}"/>
-                        </li>
-
-                        <li>
-                            <label for="mobile">City </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mobile">City</label>
+                        <div class="controls">
                             <input type="text" id="city" name="city" value="${contact.city}"/>
-                        </li>
-
-                        <li>
-                            <label for="mobile">State </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mobile">State</label>
+                        <div class="controls">
                             <input type="text" id="state" name="state" size="2" value="${contact.state}"/>
-                        </li>
-
-                        <li>
-                            <label for="mobile">ZIP </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mobile">ZIP</label>
+                        <div class="controls">
                             <input type="text" id="zip" name="zip" size="10" value="${contact.zip}"/>
-                        </li></ol>
+                        </div>
+                    </div>
                 </fieldset>
 
                 <c:choose>
@@ -144,7 +159,7 @@
                     </c:when>
                     <c:otherwise>
                         <input type="hidden" name="id" value="${param.id}"/>
-                        <input class="submit" type="submit" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
+                        <input class="btn" type="submit" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if>/>
                     </c:otherwise>
                 </c:choose>
 
