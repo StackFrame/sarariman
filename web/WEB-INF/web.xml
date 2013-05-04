@@ -5,10 +5,6 @@
         <filter-class>com.stackframe.sarariman.AccessLogFilter</filter-class>
     </filter>
     <filter>
-        <filter-name>RemoteUser</filter-name>
-        <filter-class>com.stackframe.sarariman.RemoteUser</filter-class>
-    </filter>
-    <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>com.stackframe.sarariman.AuthenticationFilter</filter-class>
     </filter>
