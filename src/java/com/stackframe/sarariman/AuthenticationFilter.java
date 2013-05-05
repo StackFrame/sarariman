@@ -36,16 +36,37 @@ import sun.misc.BASE64Decoder;
 public class AuthenticationFilter extends HttpFilter {
 
     private Directory directory;
+
+    /**
+     * The realm name that will be used with Basic authentication.
+     */
     private String realm;
+
     /**
      * A Predicate which evaluates to true if the parameter represents a resource which does not require authentication.
      */
     private Predicate<CharSequence> publicPatternsMatches;
+
+    /**
+     * A Predicate which evaluates to true if the parameter represents a user agent which should use Basic authentication.
+     */
+    private Predicate<CharSequence> basicAuthMatches;
+
     private static final XPath xpath = XPathFactory.newInstance().newXPath();
 
     private static Iterable<String> getPublicResourcePatterns(Document document) {
         try {
             XPathExpression expr = xpath.compile("/authentication/publicResource/@pattern");
+            NodeList nodeList = (NodeList)expr.evaluate(document, XPathConstants.NODESET);
+            return DOMUtilities.values(nodeList);
+        } catch (XPathExpressionException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private static Iterable<String> getBasicAuthPatterns(Document document) {
+        try {
+            XPathExpression expr = xpath.compile("/authentication/forceBasicAuthUserAgent/@pattern");
             NodeList nodeList = (NodeList)expr.evaluate(document, XPathConstants.NODESET);
             return DOMUtilities.values(nodeList);
         } catch (XPathExpressionException e) {
@@ -62,6 +83,8 @@ public class AuthenticationFilter extends HttpFilter {
             realm = document.getDocumentElement().getAttribute("realm");
             Iterable<Pattern> publicPatterns = RegularExpressions.compile(getPublicResourcePatterns(document));
             publicPatternsMatches = RegularExpressions.matchesPredicate(publicPatterns);
+            Iterable<Pattern> basicAuthPatterns = RegularExpressions.compile(getBasicAuthPatterns(document));
+            basicAuthMatches = RegularExpressions.matchesPredicate(basicAuthPatterns);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -78,10 +101,7 @@ public class AuthenticationFilter extends HttpFilter {
                 if (publicPatternsMatches.apply(requestPath)) {
                     chain.doFilter(request, response);
                 } else {
-                    String userAgent = request.getHeader("User-Agent");
-
-                    // FIXME: This is an ugly hack to deal with a particular client that needs to do Basic auth.
-                    if (userAgent.startsWith("Status%20Board/")) {
+                    if (basicAuthMatches.apply(request.getHeader("User-Agent"))) {
                         httpResponse.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realm));
                         httpResponse.sendError(401);
                     } else {
