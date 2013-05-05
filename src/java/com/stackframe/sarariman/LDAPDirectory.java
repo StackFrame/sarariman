@@ -32,9 +32,13 @@ import org.joda.time.LocalDate;
 public class LDAPDirectory implements Directory {
 
     private final Sarariman sarariman;
+
     private final DirContext context;
+
     private Map<Object, Employee> byNumber;
+
     private Map<String, Employee> byUserName;
+
     private Set<Employee> employees;
 
     public LDAPDirectory(DirContext context, Sarariman sarariman) {
@@ -122,7 +126,8 @@ public class LDAPDirectory implements Directory {
             environment.put(Context.SECURITY_CREDENTIALS, password);
             DirContext dirContext = new InitialDirContext(environment);
             dirContext.close();
-            return true;
+            Employee employee = getByUserName().get(username);
+            return employee.isActive();
         } catch (Exception e) {
             return false;
         }
