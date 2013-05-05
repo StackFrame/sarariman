@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<authentication realm="sarariman">
+  <publicResource pattern="^/login$"/>
+  <publicResource pattern="^/auth_check$"/>
+  <publicResource pattern="^/css/bootstrap\.css$"/>
+  <publicResource pattern="^/favicon\.ico$"/>
+  <publicResource pattern="^/css/bootstrap-responsive\.css$"/>
+  <publicResource pattern="^/style/font-awesome\.css$"/>
+  <publicResource pattern="^/jquery/js/jquery-1\.7\.2\.min\.js$"/>
+  <publicResource pattern="^/js/bootstrap\.js$"/>
+  <publicResource pattern="^/font/fontawesome-webfont\.ttf$"/>
+  <publicResource pattern="^/font/fontawesome-webfont\.woff$"/>
+  <forceBasicAuthUserAgent pattern="^Status%20Board/*"/>
+</authentication>
