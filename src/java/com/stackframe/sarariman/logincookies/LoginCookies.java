@@ -131,6 +131,12 @@ public class LoginCookies {
         return get(UUID.fromString(cookie.getValue()));
     }
 
+    public Cookie makeDeleteCookie() {
+        Cookie cookie = new Cookie(cookieName, null);
+        cookie.setMaxAge(0);
+        return cookie;
+    }
+
     private LoginCookie get(UUID token) {
         try {
             Connection c = dataSource.getConnection();

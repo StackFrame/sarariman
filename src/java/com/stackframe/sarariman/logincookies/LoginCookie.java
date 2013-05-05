@@ -32,6 +32,25 @@ public class LoginCookie {
         return id;
     }
 
+    public void delete() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("DELETE FROM login_cookie WHERE id = ?");
+                try {
+                    s.setInt(1, id);
+                    s.executeUpdate();
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     public String getUsername() {
         try {
             Connection connection = dataSource.getConnection();

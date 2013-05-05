@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.logincookies.LoginCookie;
+import com.stackframe.sarariman.logincookies.LoginCookies;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +18,15 @@ import javax.servlet.http.HttpSession;
  * @author mcculley
  */
 public class Logout extends HttpServlet {
+
+    private LoginCookies loginCookies;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
+        loginCookies = sarariman.getLoginCookies();
+    }
 
     /**
      * Handles the HTTP
@@ -30,6 +41,12 @@ public class Logout extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.setAttribute("user", null);
+        LoginCookie loginCookie = loginCookies.findLoginCookie(request);
+        if (loginCookie == null) {
+            loginCookie.delete();
+        }
+
+        response.addCookie(loginCookies.makeDeleteCookie());
         response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/login"));
     }
 
