@@ -23,10 +23,12 @@ import sun.misc.BASE64Decoder;
 public class AuthenticationFilter extends HttpFilter {
 
     private Directory directory;
+    private String realm;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         directory = sarariman.getDirectory();
+        realm = filterConfig.getInitParameter("realm");
     }
 
     /**
@@ -55,7 +57,7 @@ public class AuthenticationFilter extends HttpFilter {
 
                     // FIXME: This is an ugly hack to deal with a particular client that needs to do Basic auth.
                     if (userAgent.startsWith("Status%20Board/")) {
-                        httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
+                        httpResponse.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realm));
                         httpResponse.sendError(401);
                     } else {
                         String destination = request.getRequestURI();

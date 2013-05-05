@@ -7,6 +7,10 @@
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>com.stackframe.sarariman.AuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>realm</param-name>
+            <param-value>sarariman</param-value>
+        </init-param>
     </filter>
     <filter>
         <filter-name>ErrorFilter</filter-name>
