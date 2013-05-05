@@ -11,20 +11,18 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 /**
  *
  * @author mcculley
  */
-public class ErrorFilter implements Filter {
+public class ErrorFilter extends HttpFilter {
 
     private DataSource dataSource;
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -34,7 +32,7 @@ public class ErrorFilter implements Filter {
         dataSource = sarariman.getDataSource();
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             chain.doFilter(request, response);
         } catch (final Exception e) {
@@ -45,15 +43,14 @@ public class ErrorFilter implements Filter {
                 request.getRequestDispatcher("/error.jsp").forward(request, response);
             }
 
-            // One would think that the httpServletRequest could just be marked final and used in the Runnable, but it gets reused after
+            // One would think that the HttpServletRequest could just be marked final and used in the Runnable, but it gets reused after
             // this call.
-            HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-            final String path = httpServletRequest.getServletPath();
-            final String queryString = httpServletRequest.getQueryString();
-            final String method = httpServletRequest.getMethod();
-            final String userAgent = httpServletRequest.getHeader("User-Agent");
-            final String remoteAddress = httpServletRequest.getRemoteAddr();
-            final String referrer = httpServletRequest.getHeader("Referer");
+            final String path = request.getServletPath();
+            final String queryString = request.getQueryString();
+            final String method = request.getMethod();
+            final String userAgent = request.getHeader("User-Agent");
+            final String remoteAddress = request.getRemoteAddr();
+            final String referrer = request.getHeader("Referer");
 
             final Employee employee = (Employee)request.getAttribute("user");
             Runnable insertTask = new Runnable() {

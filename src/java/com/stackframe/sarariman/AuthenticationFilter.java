@@ -8,12 +8,9 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Set;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,7 +20,7 @@ import sun.misc.BASE64Decoder;
  *
  * @author mcculley
  */
-public class AuthenticationFilter implements Filter {
+public class AuthenticationFilter extends HttpFilter {
 
     private Directory directory;
 
@@ -43,36 +40,34 @@ public class AuthenticationFilter implements Filter {
                                                                    "/font/fontawesome-webfont.ttf",
                                                                    "/font/fontawesome-webfont.woff");
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        assert request instanceof HttpServletRequest;
-        HttpServletRequest httpRequest = (HttpServletRequest)request;
-        HttpSession session = httpRequest.getSession();
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpSession session = request.getSession();
         Employee user = (Employee)session.getAttribute("user");
         if (user == null) {
-            String authorizationHeader = httpRequest.getHeader("Authorization");
+            String authorizationHeader = request.getHeader("Authorization");
             HttpServletResponse httpResponse = (HttpServletResponse)response;
             if (authorizationHeader == null) {
-                String requestPath = httpRequest.getServletPath();
+                String requestPath = request.getServletPath();
                 if (publicPaths.contains(requestPath)) {
                     chain.doFilter(request, response);
                 } else {
-                    String userAgent = httpRequest.getHeader("User-Agent");
+                    String userAgent = request.getHeader("User-Agent");
 
                     // FIXME: This is an ugly hack to deal with a particular client that needs to do Basic auth.
                     if (userAgent.startsWith("Status%20Board/")) {
                         httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"sarariman\"");
                         httpResponse.sendError(401);
                     } else {
-                        String destination = httpRequest.getRequestURI();
-                        String queryString = httpRequest.getQueryString();
+                        String destination = request.getRequestURI();
+                        String queryString = request.getQueryString();
                         if (queryString != null) {
                             destination = destination + '?' + queryString;
                         }
 
                         // FIXME: If the method requested was a POST, redirect to home page or something.
 
-                        String redirectURL = String.format("%s/login", httpRequest.getContextPath());
-                        String defaultDestination = httpRequest.getContextPath() + "/";
+                        String redirectURL = String.format("%s/login", request.getContextPath());
+                        String defaultDestination = request.getContextPath() + "/";
                         if (!destination.equals(defaultDestination)) {
                             redirectURL = redirectURL + String.format("?destination=%s", URLEncoder.encode(destination, "UTF-8"));
                         }

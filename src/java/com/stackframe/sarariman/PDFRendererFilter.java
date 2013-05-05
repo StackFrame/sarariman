@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 StackFrame, LLC
+ * Copyright (C) 2010-2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -7,12 +7,9 @@ package com.stackframe.sarariman;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
@@ -29,7 +26,7 @@ import org.xml.sax.InputSource;
  *
  * @author mcculley
  */
-public class PDFRendererFilter implements Filter {
+public class PDFRendererFilter extends HttpFilter {
 
     public void destroy() {
     }
@@ -37,9 +34,7 @@ public class PDFRendererFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest)req;
-        HttpServletResponse response = (HttpServletResponse)resp;
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String outputType = request.getParameter("outputType");
 
         if (outputType == null) {
@@ -67,7 +62,6 @@ public class PDFRendererFilter implements Filter {
 
                 OutputStream browserStream = response.getOutputStream();
                 renderer.createPDF(browserStream);
-                return;
             } catch (Exception e) {
                 throw new IOException("error processing " + request.getRequestURI(), e);
             }

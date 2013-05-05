@@ -10,12 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -24,7 +21,7 @@ import javax.sql.DataSource;
  *
  * @author mcculley
  */
-public class AccessLogFilter implements Filter {
+public class AccessLogFilter extends HttpFilter {
 
     private DataSource dataSource;
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -34,24 +31,23 @@ public class AccessLogFilter implements Filter {
         dataSource = sarariman.getDataSource();
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         // FIXME: This is a hack because the deployed version of Tomcat doesn't support getStatus(). Ditch it when we upgrade.
-        final StatusExposingServletResponse sesr = new StatusExposingServletResponse((HttpServletResponse)response);
+        final StatusExposingServletResponse sesr = new StatusExposingServletResponse(response);
 
         long start = System.currentTimeMillis();
         chain.doFilter(request, sesr);
         long stop = System.currentTimeMillis();
         final long took = stop - start;
 
-        // One would think that the httpServletRequest could just be marked final and used in the Runnable, but it gets reused after
+        // One would think that the HttpServletRequest could just be marked final and used in the Runnable, but it gets reused after
         // this call.
-        HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-        final String path = httpServletRequest.getServletPath();
-        final String queryString = httpServletRequest.getQueryString();
-        final String method = httpServletRequest.getMethod();
-        final String userAgent = httpServletRequest.getHeader("User-Agent");
-        final String remoteAddress = httpServletRequest.getRemoteAddr();
-        final String referrer = httpServletRequest.getHeader("Referer");
+        final String path = request.getServletPath();
+        final String queryString = request.getQueryString();
+        final String method = request.getMethod();
+        final String userAgent = request.getHeader("User-Agent");
+        final String remoteAddress = request.getRemoteAddr();
+        final String referrer = request.getHeader("Referer");
 
         final Employee employee = (Employee)request.getAttribute("user");
         Runnable insertTask = new Runnable() {
