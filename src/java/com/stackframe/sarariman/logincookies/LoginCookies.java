@@ -115,10 +115,8 @@ public class LoginCookies {
 
         cookie.setPath(path);
 
-        if (false) {
-            // Enable this when we step up to a container that supports the Servlet 3.0 specification.
-            cookie.setHttpOnly(true);
-        }
+        // Enable this when we step up to a container that supports the Servlet 3.0 specification.
+        // cookie.setHttpOnly(true);
 
         cookie.setSecure(true);
         return cookie;
