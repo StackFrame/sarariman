@@ -4,8 +4,11 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.logincookies.LoginCookies;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,10 +22,14 @@ public class AuthCheck extends HttpServlet {
 
     private Directory directory;
 
+    private LoginCookies loginCookies;
+
+    @Override
     public void init() throws ServletException {
         super.init();
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
         directory = sarariman.getDirectory();
+        loginCookies = sarariman.getLoginCookies();
     }
 
     /**
@@ -40,9 +47,13 @@ public class AuthCheck extends HttpServlet {
         String password = request.getParameter("password");
         username = username.toLowerCase();
 
+        String fullyQualifiedUsername;
         int domainIndex = username.indexOf('@');
         if (domainIndex != -1) {
+            fullyQualifiedUsername = username;
             username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
+        } else {
+            fullyQualifiedUsername = username + "@stackframe.com";
         }
 
         boolean valid = directory.checkCredentials(username, password);
@@ -55,6 +66,17 @@ public class AuthCheck extends HttpServlet {
             String destination = request.getParameter("destination");
             if (destination == null) {
                 destination = request.getContextPath();
+            }
+
+            boolean rememberMe = "on".equals(request.getParameter("remember"));
+            if (rememberMe) {
+                try {
+                    Cookie cookie = loginCookies.storeLoginToken(fullyQualifiedUsername, request.getHeader("User-Agent"),
+                                                                 request.getRemoteAddr());
+                    response.addCookie(cookie);
+                } catch (SQLException e) {
+                    throw new ServletException(e);
+                }
             }
 
             response.sendRedirect(destination);

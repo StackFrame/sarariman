@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.logincookies.LoginCookies;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -48,6 +49,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -64,36 +66,70 @@ import javax.sql.DataSource;
 public class Sarariman implements ServletContextListener {
 
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
+
     private final Collection<Employee> invoiceManagers = new EmployeeTable(this, "invoice_managers");
+
     private final Collection<Employee> timesheetManagers = new EmployeeTable(this, "timesheet_managers");
+
     private final Collection<LaborCategoryAssignment> projectBillRates = new LaborCategoryAssignmentTable(this);
+
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
+
     private final Collection<Extension> extensions = new ArrayList<Extension>();
+
     private final Holidays holidays = new HolidaysImpl(getDataSource());
+
     private final DirectorySynchronizer directorySynchronizer = new DirectorySynchronizerImpl();
+
     private OrganizationHierarchy organizationHierarchy;
+
     private LDAPDirectory directory;
+
     private EmailDispatcher emailDispatcher;
+
     private CronJobs cronJobs;
+
     private String logoURL;
+
     private String mountPoint;
+
     private TimesheetEntries timesheetEntries;
+
     private Projects projects;
+
     private Tasks tasks;
+
     private Clients clients;
+
     private Tickets tickets;
+
     private Events events;
+
     private Vacations vacations;
+
     private OutOfOfficeEntries outOfOffice;
+
     private Contacts contacts;
+
     private Timesheets timesheets;
+
     private Errors errors;
+
     private AccessLog accessLog;
+
     private Workdays workdays;
+
     private PaidTimeOff paidTimeOff;
+
     private LaborProjections laborProjections;
+
     private TaskAssignments taskAssignments;
+
     private DefaultTaskAssignments defaultTaskAssignments;
+
+    private LoginCookies loginCookies;
+
+    private final Timer timer = new Timer("Sarariman");
 
     public String getVersion() {
         return Version.version;
@@ -233,6 +269,10 @@ public class Sarariman implements ServletContextListener {
         return defaultTaskAssignments;
     }
 
+    public LoginCookies getLoginCookies() {
+        return loginCookies;
+    }
+
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
@@ -273,6 +313,10 @@ public class Sarariman implements ServletContextListener {
 
     DirectorySynchronizer getDirectorySynchronizer() {
         return directorySynchronizer;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 
     public TimesheetEntries getTimesheetEntries() {
@@ -359,11 +403,12 @@ public class Sarariman implements ServletContextListener {
             laborProjections = new LaborProjectionsImpl(getDataSource(), directory, tasks, mountPoint);
             taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
             defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);
+            loginCookies = new LoginCookies(getDataSource(), timer);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
 
-        cronJobs = new CronJobs(this, directory, emailDispatcher);
+        cronJobs = new CronJobs(timer, this, directory, emailDispatcher);
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", this);
@@ -385,7 +430,7 @@ public class Sarariman implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
-        cronJobs.stop();
+        timer.cancel();
     }
 
 }

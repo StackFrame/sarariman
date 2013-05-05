@@ -4,12 +4,15 @@
  */
 package com.stackframe.sarariman;
 
+import com.stackframe.sarariman.logincookies.LoginCookies;
+import com.stackframe.sarariman.logincookies.LoginCookie;
 import com.google.common.base.Predicate;
 import com.stackframe.regex.RegularExpressions;
 import com.stackframe.xml.DOMUtilities;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -36,6 +39,8 @@ import sun.misc.BASE64Decoder;
 public class AuthenticationFilter extends HttpFilter {
 
     private Directory directory;
+
+    private LoginCookies loginCookies;
 
     /**
      * The realm name that will be used with Basic authentication.
@@ -77,6 +82,7 @@ public class AuthenticationFilter extends HttpFilter {
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         directory = sarariman.getDirectory();
+        loginCookies = sarariman.getLoginCookies();
         try {
             URL configResource = filterConfig.getServletContext().getResource("/WEB-INF/authentication.xml");
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configResource.toExternalForm());
@@ -94,60 +100,80 @@ public class AuthenticationFilter extends HttpFilter {
         HttpSession session = request.getSession();
         Employee user = (Employee)session.getAttribute("user");
         if (user == null) {
-            String authorizationHeader = request.getHeader("Authorization");
-            HttpServletResponse httpResponse = (HttpServletResponse)response;
-            if (authorizationHeader == null) {
-                String requestPath = request.getServletPath();
-                if (publicPatternsMatches.apply(requestPath)) {
-                    chain.doFilter(request, response);
-                } else {
-                    if (basicAuthMatches.apply(request.getHeader("User-Agent"))) {
-                        httpResponse.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realm));
-                        httpResponse.sendError(401);
-                    } else {
-                        String destination = request.getRequestURI();
-                        String queryString = request.getQueryString();
-                        if (queryString != null) {
-                            destination = destination + '?' + queryString;
-                        }
-
-                        // FIXME: If the method requested was a POST, redirect to home page or something.
-
-                        String redirectURL = String.format("%s/login", request.getContextPath());
-                        String defaultDestination = request.getContextPath() + "/";
-                        if (!destination.equals(defaultDestination)) {
-                            redirectURL = redirectURL + String.format("?destination=%s", URLEncoder.encode(destination, "UTF-8"));
-                        }
-
-                        httpResponse.sendRedirect(redirectURL);
-                    }
-                }
-            } else {
-                BASE64Decoder decoder = new BASE64Decoder();
-                String[] split = authorizationHeader.split(" ");
-                String encodedBytes = split[1];
-                byte[] decodedBytes = decoder.decodeBuffer(encodedBytes);
-                String decodedString = new String(decodedBytes);
-                int firstColon = decodedString.indexOf(':');
-                String username = decodedString.substring(0, firstColon);
-                username = username.toLowerCase();
-                String password = decodedString.substring(firstColon + 1);
+            LoginCookie loginCookie = loginCookies.findLoginCookie(request);
+            if (loginCookie != null) {
+                String username = loginCookie.getUsername();
                 int domainIndex = username.indexOf('@');
-                if (domainIndex != -1) {
-                    username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
-                }
+                username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
+                user = directory.getByUserName().get(username);
+                session.setAttribute("user", user);
 
-                boolean valid = directory.checkCredentials(username, password);
-                if (valid) {
-                    user = directory.getByUserName().get(username);
-                    session.setAttribute("user", user);
+                // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
+                // the session?
+                request.setAttribute("user", user);
 
-                    // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
-                    // the session?
-                    request.setAttribute("user", user);
-                    chain.doFilter(request, response);
+                // FIXME: Do this block in a background thread.
+                loginCookie.setLastUsed(new Date());
+                loginCookie.setUserAgent(request.getHeader("User-Agent"));
+                loginCookie.setRemoteAddress(request.getRemoteAddr());
+
+                chain.doFilter(request, response);
+            } else {
+                String authorizationHeader = request.getHeader("Authorization");
+                HttpServletResponse httpResponse = (HttpServletResponse)response;
+                if (authorizationHeader == null) {
+                    String requestPath = request.getServletPath();
+                    if (publicPatternsMatches.apply(requestPath)) {
+                        chain.doFilter(request, response);
+                    } else {
+                        if (basicAuthMatches.apply(request.getHeader("User-Agent"))) {
+                            httpResponse.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realm));
+                            httpResponse.sendError(401);
+                        } else {
+                            String destination = request.getRequestURI();
+                            String queryString = request.getQueryString();
+                            if (queryString != null) {
+                                destination = destination + '?' + queryString;
+                            }
+
+                            // FIXME: If the method requested was a POST, redirect to home page or something.
+
+                            String redirectURL = String.format("%s/login", request.getContextPath());
+                            String defaultDestination = request.getContextPath() + "/";
+                            if (!destination.equals(defaultDestination)) {
+                                redirectURL = redirectURL + String.format("?destination=%s", URLEncoder.encode(destination, "UTF-8"));
+                            }
+
+                            httpResponse.sendRedirect(redirectURL);
+                        }
+                    }
                 } else {
-                    httpResponse.sendError(401, "invalid username or password");
+                    BASE64Decoder decoder = new BASE64Decoder();
+                    String[] split = authorizationHeader.split(" ");
+                    String encodedBytes = split[1];
+                    byte[] decodedBytes = decoder.decodeBuffer(encodedBytes);
+                    String decodedString = new String(decodedBytes);
+                    int firstColon = decodedString.indexOf(':');
+                    String username = decodedString.substring(0, firstColon);
+                    username = username.toLowerCase();
+                    String password = decodedString.substring(firstColon + 1);
+                    int domainIndex = username.indexOf('@');
+                    if (domainIndex != -1) {
+                        username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
+                    }
+
+                    boolean valid = directory.checkCredentials(username, password);
+                    if (valid) {
+                        user = directory.getByUserName().get(username);
+                        session.setAttribute("user", user);
+
+                        // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
+                        // the session?
+                        request.setAttribute("user", user);
+                        chain.doFilter(request, response);
+                    } else {
+                        httpResponse.sendError(401, "invalid username or password");
+                    }
                 }
             }
         } else {

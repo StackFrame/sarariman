@@ -17,12 +17,16 @@ import java.util.TimerTask;
  */
 class CronJobs {
 
-    private final Timer timer = new Timer("Sarariman");
+    private final Timer timer;
+
     private final Sarariman sarariman;
+
     private final Directory directory;
+
     private final EmailDispatcher emailDispatcher;
 
-    CronJobs(Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
+    CronJobs(Timer timer, Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
+        this.timer = timer;
         this.sarariman = sarariman;
         this.directory = directory;
         this.emailDispatcher = emailDispatcher;
@@ -30,8 +34,11 @@ class CronJobs {
 
     // Useful time intervals in terms of milliseconds;
     private static final long ONE_SECOND = 1000;
+
     private static final long ONE_MINUTE = 60 * ONE_SECOND;
+
     private static final long ONE_HOUR = 60 * ONE_MINUTE;
+
     private static final long ONE_DAY = 24 * ONE_HOUR;
 
     private void scheduleWeeknightTask() {
@@ -104,10 +111,6 @@ class CronJobs {
         scheduleWeeknightTask();
         scheduleDirectoryReload();
         schedulePaidTimeOffUpdate();
-    }
-
-    void stop() {
-        timer.cancel();
     }
 
 }
