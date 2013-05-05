@@ -42,7 +42,7 @@ public class Logout extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("user", null);
         LoginCookie loginCookie = loginCookies.findLoginCookie(request);
-        if (loginCookie == null) {
+        if (loginCookie != null) {
             loginCookie.delete();
         }
 
