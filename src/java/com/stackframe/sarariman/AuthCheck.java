@@ -71,8 +71,7 @@ public class AuthCheck extends HttpServlet {
             boolean rememberMe = "on".equals(request.getParameter("remember"));
             if (rememberMe) {
                 try {
-                    Cookie cookie = loginCookies.storeLoginToken(fullyQualifiedUsername, request.getHeader("User-Agent"),
-                                                                 request.getRemoteAddr());
+                    Cookie cookie = loginCookies.storeLoginToken(fullyQualifiedUsername, request);
                     response.addCookie(cookie);
                 } catch (SQLException e) {
                     throw new ServletException(e);

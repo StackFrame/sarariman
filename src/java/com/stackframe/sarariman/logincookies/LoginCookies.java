@@ -102,12 +102,24 @@ public class LoginCookies {
         }
     }
 
-    public Cookie storeLoginToken(String username, String userAgent, String remoteAddress) throws SQLException {
+    public Cookie storeLoginToken(String username, HttpServletRequest request) throws SQLException {
+        String userAgent = request.getHeader("User-Agent");
+        String remoteAddress = request.getRemoteAddr();
         LoginCookie loginCookie = create(username, userAgent, remoteAddress);
         Cookie cookie = new Cookie(cookieName, loginCookie.getToken().toString());
         cookie.setMaxAge(maxAge);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        String path = request.getContextPath();
+        if (path.isEmpty()) {
+            path = "/";
+        }
+
+        cookie.setPath(path);
+
+        if (false) {
+            // Enable this when we step up to a container that supports the Servlet 3.0 specification.
+            cookie.setHttpOnly(true);
+        }
+
         cookie.setSecure(true);
         return cookie;
     }
