@@ -4,19 +4,32 @@
  */
 package com.stackframe.sarariman;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Predicate;
+import com.stackframe.regex.RegularExpressions;
+import com.stackframe.xml.DOMUtilities;
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Set;
+import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import sun.misc.BASE64Decoder;
 
 /**
+ * A filter that intercepts requests and checks for authentication. This uses a confile file that is expected to be at
+ * /WEB-INF/authentication.xml.
  *
  * @author mcculley
  */
@@ -24,23 +37,35 @@ public class AuthenticationFilter extends HttpFilter {
 
     private Directory directory;
     private String realm;
+    /**
+     * A Predicate which evaluates to true if the parameter represents a resource which does not require authentication.
+     */
+    private Predicate<CharSequence> publicPatternsMatches;
+    private static final XPath xpath = XPathFactory.newInstance().newXPath();
+
+    private static Iterable<String> getPublicResourcePatterns(Document document) {
+        try {
+            XPathExpression expr = xpath.compile("/authentication/publicResource/@pattern");
+            NodeList nodeList = (NodeList)expr.evaluate(document, XPathConstants.NODESET);
+            return DOMUtilities.values(nodeList);
+        } catch (XPathExpressionException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         directory = sarariman.getDirectory();
-        realm = filterConfig.getInitParameter("realm");
+        try {
+            URL configResource = filterConfig.getServletContext().getResource("/WEB-INF/authentication.xml");
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configResource.toExternalForm());
+            realm = document.getDocumentElement().getAttribute("realm");
+            Iterable<Pattern> publicPatterns = RegularExpressions.compile(getPublicResourcePatterns(document));
+            publicPatternsMatches = RegularExpressions.matchesPredicate(publicPatterns);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
-
-    /**
-     * Paths to resources which do not require authentication.
-     *
-     * FIXME: This should come from a config file. FIXME: This should be a set of regex patterns.
-     */
-    private static final Set<String> publicPaths = ImmutableSet.of("/login", "/auth_check", "/css/bootstrap.css", "/favicon.ico",
-                                                                   "/css/bootstrap-responsive.css", "/style/font-awesome.css",
-                                                                   "/jquery/js/jquery-1.7.2.min.js", "/js/bootstrap.js",
-                                                                   "/font/fontawesome-webfont.ttf",
-                                                                   "/font/fontawesome-webfont.woff");
 
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpSession session = request.getSession();
@@ -50,7 +75,7 @@ public class AuthenticationFilter extends HttpFilter {
             HttpServletResponse httpResponse = (HttpServletResponse)response;
             if (authorizationHeader == null) {
                 String requestPath = request.getServletPath();
-                if (publicPaths.contains(requestPath)) {
+                if (publicPatternsMatches.apply(requestPath)) {
                     chain.doFilter(request, response);
                 } else {
                     String userAgent = request.getHeader("User-Agent");
