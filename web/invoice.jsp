@@ -38,10 +38,10 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
-        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
-        <link href="css/style.css" rel="stylesheet" media="screen"/>
+        <link href="css/style.css" rel="stylesheet"/>
 
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
@@ -54,31 +54,26 @@
 
             @media print {
                 a {
-                    color: #000;
                     text-decoration: none;
                 }
 
-                .navbar, #timesheets, #tracking, #controls, #footer, #emailLog {
-                    display: none;
+                a[href]:after {
+                    content: none;
                 }
 
                 table {
-                    font-size: 12px;
                     -fs-table-paginate: paginate;
                     page-break-inside: avoid;
-                    border: 1px solid black;
-                    width: 100%;
                 }
 
-                table td, table th {
-                    padding: 5px;
-                    border: 1px solid lightgrey;
+                @page {
+                    size: letter;
+                    @top-left { content: "Invoice ${param.invoice}";
                 }
-            }
 
-            @page { size: letter;
-                    @top-left { content: "Invoice ${param.invoice}"; }
-            @top-right { content: "Page " counter(page) " of " counter(pages); }
+                @top-right {
+                    content: "Page " counter(page) " of " counter(pages);
+                }
             }
         </style>
         <title>Invoice ${param.invoice}</title>
@@ -143,7 +138,7 @@
                 </c:if>
             </p>
 
-            <div id="tracking">
+            <div id="tracking" class="hidden-print">
                 <p>Due: ${due}</p>
                 <p>Payment received: ${received}</p>
                 <p>Description: ${fn:escapeXml(invoice_info.description)}</p>
@@ -155,7 +150,7 @@
                 documentLinks.add(String.format("invoice?outputType=pdf&invoice=%s", request.getParameter("invoice")));
             %>
 
-            <div id="timesheets">
+            <div id="timesheets" class="hidden-print">
                 <h2>Timesheets</h2>
                 <ul>
                     <c:forEach var="week" items="${du:weekStartsRange(invoice_info.pop_start, invoice_info.pop_end)}">
@@ -318,7 +313,7 @@
 
                 <c:if test="${result.rowCount > 0}">
                     <div>
-                        <table id="hours" class="table table-rounded table-striped table-bordered">
+                        <table id="hours" class="table">
                             <caption>Timesheet Entries</caption>
                             <thead>
                                 <tr>
@@ -402,7 +397,7 @@
 
                     <div id="totals">
                         <div id="task">
-                            <table class="table table-rounded table-striped table-bordered">
+                            <table class="table">
                                 <caption>Total by Task</caption>
                                 <thead>
                                     <tr><th colspan="2">Task</th><th rowspan="2">Cost</th></tr>
@@ -442,7 +437,7 @@
                         </div>
 
                         <div id="employeeTask">
-                            <table class="table table-rounded table-striped table-bordered">
+                            <table class="table">
                                 <caption>Total by Employee and Task</caption>
                                 <thead>
                                     <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Hours</th></tr>
@@ -484,7 +479,7 @@
                         </div>
 
                         <div id="employees">
-                            <table class="table table-rounded table-striped table-bordered">
+                            <table class="table">
                                 <caption>Total by Employee</caption>
                                 <thead>
                                     <tr><th>Employee</th><th>Hours</th></tr>
@@ -513,7 +508,7 @@
 
                 <c:if test="${expenseResultSet.rowCount > 0}">
                     <div>
-                        <table class="table table-rounded table-striped table-bordered">
+                        <table class="table">
                             <caption>Expenses (ODC)</caption>
                             <thead>
                                 <tr>
@@ -556,7 +551,7 @@
 
                 <c:if test="${servicesResultSet.rowCount > 0}">
                     <div>
-                        <table class="table table-rounded table-striped table-bordered">
+                        <table class="table">
                             <caption>Services</caption>
                             <thead>
                                 <tr>
@@ -581,7 +576,7 @@
                 </c:if>
             </c:if>
 
-            <div id="controls">
+            <div id="controls" class="hidden-print">
                 <c:if test="${fn:contains(sarariman.invoiceManagers, user)}">
 
                     <p>Email will go to:</p>
@@ -650,7 +645,7 @@
                 </c:if>
             </div>
 
-            <table id="emailLog" class="table table-rounded table-striped table-bordered">
+            <table id="emailLog" class="table table-rounded table-striped table-bordered hidden-print">
                 <caption>Invoice email log</caption>
                 <sql:query dataSource="jdbc/sarariman" var="logResult">
                     SELECT *
