@@ -26,3 +26,7 @@ tfoot td {
 #footer {
     text-align: center;
 }
+
+.date {
+    white-space: nowrap;
+}
