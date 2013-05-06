@@ -38,72 +38,14 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <style type="text/css">
-            @media screen, print {
-                body {
-                    margin: 0px auto;
-                    padding: 15px;
-                    background: white;
-                    color: black;
-                }
-
-                .error {
-                    color: red;
-                }
-
-                .date {
-                    white-space: nowrap;
-                }
-
-                .duration, .task, .currency, .line_item {
-                    text-align: right;
-                    font-family: monospace;
-                }
-
-                table {
-                    border-width: 1px;
-                    border-style: solid;
-                    border-collapse: collapse;
-                    margin-left: auto;
-                    margin-right: auto;
-                    margin-bottom: 0.5in;
-                }
-
-                table td, table th {
-                    border-width: 1px;
-                    border-style: solid;
-                    padding: 3px;
-                }
-
-                th {
-                    background: #004d91;
-                    color: white;
-                    border-color: black;
-                }
-
-                caption {
-                    font-weight: bold;
-                }
-
-                #footer {
-                    text-align: center;
-                }
-
-                #returnAddress {
-                    float: right;
-                    text-align: center;
-                }
-
-                tr:nth-child(odd) {background: #c3dde0;}
-                tr:nth-child(even) {background: #d4e3e5;}
-            }
-
             @media print {
                 a {
                     color: #000;
@@ -133,13 +75,14 @@
         <title>Invoice ${param.invoice}</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
 
             <jsp:useBean id="documentNames" class="java.util.ArrayList" scope="request"/>
             <jsp:useBean id="documentLinks" class="java.util.ArrayList" scope="request"/>
 
-            <div id="returnAddress">
+            <div id="returnAddress" class="pull-right">
                 <img alt="logo" src="${sarariman.logoURL}" height="86" width="182"/><br/><br/>
                 StackFrame, LLC<br/>
                 PO Box 2606<br/>
@@ -366,7 +309,7 @@
 
                 <c:if test="${result.rowCount > 0}">
                     <div>
-                        <table id="hours">
+                        <table id="hours" class="table table-rounded table-striped table-bordered">
                             <caption>Timesheet Entries</caption>
                             <thead>
                                 <tr>
@@ -450,7 +393,7 @@
 
                     <div id="totals">
                         <div id="task">
-                            <table>
+                            <table class="table table-rounded table-striped table-bordered">
                                 <caption>Total by Task</caption>
                                 <thead>
                                     <tr><th colspan="2">Task</th><th rowspan="2">Cost</th></tr>
@@ -490,7 +433,7 @@
                         </div>
 
                         <div id="employeeTask">
-                            <table>
+                            <table class="table table-rounded table-striped table-bordered">
                                 <caption>Total by Employee and Task</caption>
                                 <thead>
                                     <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Hours</th></tr>
@@ -532,7 +475,7 @@
                         </div>
 
                         <div id="employees">
-                            <table>
+                            <table class="table table-rounded table-striped table-bordered">
                                 <caption>Total by Employee</caption>
                                 <thead>
                                     <tr><th>Employee</th><th>Hours</th></tr>
@@ -561,7 +504,7 @@
 
                 <c:if test="${expenseResultSet.rowCount > 0}">
                     <div>
-                        <table>
+                        <table class="table table-rounded table-striped table-bordered">
                             <caption>Expenses (ODC)</caption>
                             <thead>
                                 <tr>
@@ -604,7 +547,7 @@
 
                 <c:if test="${servicesResultSet.rowCount > 0}">
                     <div>
-                        <table>
+                        <table class="table table-rounded table-striped table-bordered">
                             <caption>Services</caption>
                             <thead>
                                 <tr>
@@ -698,7 +641,7 @@
                 </c:if>
             </div>
 
-            <table id="emailLog">
+            <table id="emailLog" class="table table-rounded table-striped table-bordered">
                 <caption>Invoice email log</caption>
                 <sql:query dataSource="jdbc/sarariman" var="logResult">
                     SELECT *
