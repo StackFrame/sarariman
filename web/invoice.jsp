@@ -55,6 +55,7 @@
 
             @media print {
                 a {
+                    color: #000;
                     text-decoration: none;
                 }
 
@@ -62,7 +63,7 @@
                     content: none;
                 }
 
-                .hidden-print {
+                #navbar, #timesheets, #tracking, #controls, #footer, #emailLog {
                     display: none;
                 }
 
