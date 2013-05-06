@@ -90,13 +90,14 @@
                             </c:if>
                             <!-- FIXME: Only allow this if the time has not been invoiced. -->
                             <input class="btn btn-danger" type="submit" name="action" value="Reject"  <c:if test="${!timesheet.submitted}">disabled="disabled"</c:if>/>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
             </c:if>
 
             <!-- FIXME: Make this render without hyperlink in printable page? -->
-            <a href="${employee.URL}"><img id="photo" width="100" height="100" onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
+            <a href="${employee.URL}"><img class="img-rounded" id="photo" width="100" height="100"
+                                           onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
             <h2>Timesheet for <a href="${employee.URL}">${employee.fullName}</a> for the week of ${week.name}</h2>
 
             <c:if test="${!timesheet.approved}">
