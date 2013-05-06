@@ -58,7 +58,7 @@
                     text-decoration: none;
                 }
 
-                #topnav, #timesheets, #tracking, #controls, #footer, #emailLog {
+                .navbar, #timesheets, #tracking, #controls, #footer, #emailLog {
                     display: none;
                 }
 
@@ -66,10 +66,13 @@
                     font-size: 12px;
                     -fs-table-paginate: paginate;
                     page-break-inside: avoid;
+                    border: 1px solid black;
+                    width: 100%;
                 }
 
                 table td, table th {
                     padding: 5px;
+                    border: 1px solid lightgrey;
                 }
             }
 
