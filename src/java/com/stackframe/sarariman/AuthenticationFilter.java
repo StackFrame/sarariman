@@ -4,10 +4,10 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.logincookies.LoginCookies;
-import com.stackframe.sarariman.logincookies.LoginCookie;
 import com.google.common.base.Predicate;
 import com.stackframe.regex.RegularExpressions;
+import com.stackframe.sarariman.logincookies.LoginCookie;
+import com.stackframe.sarariman.logincookies.LoginCookies;
 import com.stackframe.xml.DOMUtilities;
 import java.io.IOException;
 import java.net.URL;
@@ -79,21 +79,25 @@ public class AuthenticationFilter extends HttpFilter {
         }
     }
 
+    private static Document getConfigFile(FilterConfig filterConfig) throws ServletException {
+        try {
+            URL configResource = filterConfig.getServletContext().getResource("/WEB-INF/authentication.xml");
+            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configResource.toExternalForm());
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         directory = sarariman.getDirectory();
         loginCookies = sarariman.getLoginCookies();
-        try {
-            URL configResource = filterConfig.getServletContext().getResource("/WEB-INF/authentication.xml");
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configResource.toExternalForm());
-            realm = document.getDocumentElement().getAttribute("realm");
-            Iterable<Pattern> publicPatterns = RegularExpressions.compile(getPublicResourcePatterns(document));
-            publicPatternsMatches = RegularExpressions.matchesPredicate(publicPatterns);
-            Iterable<Pattern> basicAuthPatterns = RegularExpressions.compile(getBasicAuthPatterns(document));
-            basicAuthMatches = RegularExpressions.matchesPredicate(basicAuthPatterns);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Document configurationDocument = getConfigFile(filterConfig);
+        realm = configurationDocument.getDocumentElement().getAttribute("realm");
+        Iterable<Pattern> publicPatterns = RegularExpressions.compile(getPublicResourcePatterns(configurationDocument));
+        publicPatternsMatches = RegularExpressions.matchesPredicate(publicPatterns);
+        Iterable<Pattern> basicAuthPatterns = RegularExpressions.compile(getBasicAuthPatterns(configurationDocument));
+        basicAuthMatches = RegularExpressions.matchesPredicate(basicAuthPatterns);
     }
 
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
