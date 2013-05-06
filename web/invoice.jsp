@@ -55,6 +55,59 @@
             }
 
             @media print {
+                body {
+                    margin: 0px auto;
+                    padding: 15px;
+                    background: white;
+                    color: black;
+                }
+
+                .date {
+                    white-space: nowrap;
+                }
+
+                .duration, .task, .currency, .line_item {
+                    text-align: right;
+                    font-family: monospace;
+                }
+
+                table {
+                    border-width: 1px;
+                    border-style: solid;
+                    border-collapse: collapse;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-bottom: 0.5in;
+                }
+
+                table td, table th {
+                    border-width: 1px;
+                    border-style: solid;
+                    padding: 3px;
+                }
+
+                th {
+                    background: #004d91;
+                    color: white;
+                    border-color: black;
+                }
+
+                caption {
+                    font-weight: bold;
+                }
+
+                #footer {
+                    text-align: center;
+                }
+
+                #returnAddress {
+                    float: right;
+                    text-align: center;
+                }
+
+                tr:nth-child(odd) {background: #c3dde0;}
+                tr:nth-child(even) {background: #d4e3e5;}
+
                 a {
                     color: #000;
                     text-decoration: none;
@@ -76,15 +129,17 @@
                 th {
                     text-align: center;
                 }
+            }
 
-                @page {
-                    size: letter;
-                    @top-left { content: "Invoice ${param.invoice}";
-                }
+            @page {
+                size: letter;
+                @top-left {
+                content: "Invoice ${param.invoice}";
+            }
 
-                @top-right {
-                    content: "Page " counter(page) " of " counter(pages);
-                }
+            @top-right {
+                content: "Page " counter(page) " of " counter(pages);
+            }
             }
         </style>
         <title>Invoice ${param.invoice}</title>
