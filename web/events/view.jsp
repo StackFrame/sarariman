@@ -72,30 +72,30 @@
                 <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
                 <input type="hidden" name="attending" value="true"/>
-                <input type="submit" name="Delete" value="I'm attending" <c:if test="${resultRSVP.rows[0].attending eq 'true'}">disabled="true"</c:if>/>
+                <input class="btn" type="submit" name="Delete" value="I'm attending" <c:if test="${resultRSVP.rows[0].attending eq 'true'}">disabled="true"</c:if>/>
                 </form>
                 <form style="display:inline" method="POST" action="handleRSVP.jsp">
                     <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
                 <input type="hidden" name="attending" value="false"/>
-                <input type="submit" name="Delete" value="I'm not attending" <c:if test="${resultRSVP.rows[0].attending eq 'false'}">disabled="true"</c:if>/>
+                <input class="btn" type="submit" name="Delete" value="I'm not attending" <c:if test="${resultRSVP.rows[0].attending eq 'false'}">disabled="true"</c:if>/>
                 </form>
                 <form style="display:inline" method="POST" action="handleRSVP.jsp">
                     <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
                 <input type="hidden" name="attending" value="maybe"/>
-                <input type="submit" name="Delete" value="I may be attending" <c:if test="${resultRSVP.rows[0].attending eq 'maybe'}">disabled="true"</c:if>/>
+                <input class="btn" type="submit" name="Delete" value="I may be attending" <c:if test="${resultRSVP.rows[0].attending eq 'maybe'}">disabled="true"</c:if>/>
                 </form>
             </p>
 
             <p>
             <form style="display:inline" method="GET" action="edit.jsp">
                 <input type="hidden" name="id" value="${event.id}"/>
-            <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+            <input class="btn" type="submit" name="Edit" value="edit" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
             </form>
             <form style="display:inline" method="POST" action="handleDelete.jsp">
                 <input type="hidden" name="id" value="${event.id}"/>
-            <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+            <input class="btn" type="submit" name="Delete" value="delete" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
             </form>
         </p>
 
@@ -155,7 +155,7 @@
                         <input type="hidden" name="event" value="${param.id}"/>
                         <input type="hidden" name="eventName" value="${fn:escapeXml(event.name)}"/>
                         <input type="hidden" name="employee" value="${employeeEntry.value.number}"/>
-                        <input type="submit" name="Invite" value="invite" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+                        <input class="btn" type="submit" name="Invite" value="invite" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
                         </form>
 
                     <sql:query dataSource="jdbc/sarariman" var="resultLog">
