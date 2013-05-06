@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -33,7 +34,8 @@ public class LoginCookies {
             try {
                 Connection c = dataSource.getConnection();
                 try {
-                    PreparedStatement s = c.prepareStatement("DELETE FROM login_cookie WHERE last_used < DATE_SUB(NOW(), INTERVAL ? SECOND)");
+                    PreparedStatement s = c.prepareStatement("DELETE FROM login_cookie " +
+                            "WHERE last_used < DATE_SUB(NOW(), INTERVAL ? SECOND)");
                     try {
                         s.setInt(1, maxAge);
                         s.execute();
@@ -53,20 +55,12 @@ public class LoginCookies {
 
     public LoginCookies(DataSource dataSource, Timer timer) {
         this.dataSource = dataSource;
-        timer.scheduleAtFixedRate(cleanupTask, ONE_MINUTE * 1000, ONE_HOUR * 1000);
+        timer.scheduleAtFixedRate(cleanupTask, TimeUnit.MINUTES.toMillis(1), TimeUnit.HOURS.toMillis(1));
     }
 
-    static final int ONE_MINUTE = 60;
+    private static final int maxAge = (int)TimeUnit.DAYS.toSeconds(7);
 
-    static final int ONE_HOUR = ONE_MINUTE * 60;
-
-    static final int ONE_DAY = ONE_HOUR * 24;
-
-    static final int ONE_WEEK = ONE_DAY * 7;
-
-    static final int maxAge = ONE_WEEK;
-
-    static final String cookieName = "login";
+    private static final String cookieName = "login";
 
     private LoginCookie create(String username, String userAgent, String remoteAddress) throws SQLException {
         UUID token = UUID.randomUUID();
