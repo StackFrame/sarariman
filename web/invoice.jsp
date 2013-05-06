@@ -49,6 +49,7 @@
             @media screen, print {
                 #returnAddress {
                     text-align: center;
+                    float: right;
                 }
             }
 
@@ -61,9 +62,17 @@
                     content: none;
                 }
 
+                .hidden-print {
+                    display: none;
+                }
+
                 table {
                     -fs-table-paginate: paginate;
                     page-break-inside: avoid;
+                }
+
+                th {
+                    text-align: center;
                 }
 
                 @page {
