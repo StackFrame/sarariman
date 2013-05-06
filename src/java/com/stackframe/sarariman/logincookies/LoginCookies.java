@@ -117,9 +117,12 @@ public class LoginCookies {
     }
 
     private Cookie getCookie(HttpServletRequest request) {
-        for (Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals(cookieName)) {
-                return cookie;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(cookieName)) {
+                    return cookie;
+                }
             }
         }
 
