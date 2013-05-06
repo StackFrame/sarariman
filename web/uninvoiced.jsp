@@ -21,16 +21,17 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Uninvoiced time for ${fn:escapeXml(project.client.name)} - ${fn:escapeXml(project.name)}</title>
 
         <!-- jQuery -->
-        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />
         <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
         <!-- /jQuery -->
 
@@ -44,8 +45,9 @@
         </script>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
 
             <!-- FIXME: Add customer and project hyperlinks. -->
             <c:url var="customerLink" value="customer"><c:param name="id" value="${project.client.id}"/></c:url>
@@ -108,7 +110,7 @@
 
                 <input type="hidden" name="project" value="${param.project}"/>
 
-                <input type="submit" value="Filter" name="filter"/><br/>
+                <input class="btn" type="submit" value="Filter" name="filter"/><br/>
             </form>
 
             <form method="POST">
@@ -120,9 +122,9 @@
                 <label for="pop_end">End: </label>
                 <input size="10" type="text" id="pop_end" name="pop_end" value="<fmt:formatDate value="${pop_end}" pattern="yyyy-MM-dd"/>"/><br/>
 
-                <input type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
+                <input class="btn" type="submit" value="Create" name="create" <c:if test="${!user.administrator}">disabled="true"</c:if>/><br/>
 
-                    <table>
+                    <table class="table table-rounded table-striped table-bordered">
                         <caption>Services</caption>
                         <thead>
                             <tr>
@@ -154,7 +156,7 @@
 
                 <jsp:useBean id="taskTotals" class="java.util.HashMap" scope="page"/>
 
-                <table>
+                <table class="table table-rounded table-striped table-bordered">
                     <caption>Labor</caption>
                     <thead>
                         <tr><th rowspan="2">Employee</th><th colspan="2">Task</th><th rowspan="2">Date</th><th rowspan="2">Duration</th><th rowspan="2">Cost</th><th rowspan="2">Invoice</th></tr>
@@ -185,7 +187,7 @@
                                     <td class="duration"><a href="${fn:escapeXml(timesheet)}">${row.duration}</a></td>
                                     <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
                                     <c:set var="cost" value="${costData.cost}"/>
-                                    <c:set var="totalRecorded" value="${totalRecorded + costData.cost}"/> 
+                                    <c:set var="totalRecorded" value="${totalRecorded + costData.cost}"/>
                                     <td class="currency"><fmt:formatNumber type="currency" value="${costData.cost}"/></td>
                                     <td>
                                         <input type="checkbox" name="addToInvoice${elementIndex}" value="true"
@@ -211,12 +213,22 @@
                         </c:if>
                     </c:forEach>
                     <!-- FIXME: Add total duration. -->
-                    <tr><td colspan="5">Total Approved</td><td class="currency"><fmt:formatNumber type="currency" value="${totalApproved}"/></td><td></td></tr>
-                    <tr><td colspan="5">Total Recorded</td><td class="currency"><fmt:formatNumber type="currency" value="${totalRecorded}"/></td><td></td></tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">Total Approved</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${totalApproved}"/></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">Total Recorded</td>
+                            <td class="currency"><fmt:formatNumber type="currency" value="${totalRecorded}"/></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
 
-                <table>
+                <table class="table table-rounded table-striped table-bordered">
                     <caption>Total by Task</caption>
                     <thead>
                         <tr>
