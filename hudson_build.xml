@@ -4,8 +4,9 @@
   <path id="compile.class.path">
     <pathelement path="/usr/share/java/servlet-api-2.5.jar" />
     <pathelement path="/usr/share/java/gnumail-1.1.2.jar" />
-    <pathelement path="lib/core-renderer.jar" />
-    <pathelement path="lib/iText-2.0.8.jar" />
+    <pathelement path="lib/flying-saucer-core-9.0.3-SNAPSHOT.jar" />
+    <pathelement path="lib/flying-saucer-pdf-9.0.3-SNAPSHOT.jar" />
+    <pathelement path="lib/iText-2.1.7.jar" />
     <pathelement path="lib/joda-time-1.6.2.jar" />
     <pathelement path="lib/joda-time-jsptags-1.0.2.jar" />
     <pathelement path="lib/guava-14.0-rc3.jar" />
