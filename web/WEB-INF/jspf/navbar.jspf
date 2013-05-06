@@ -1,5 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<div class="navbar navbar-fixed-top hidden-print">
+<div id="navbar" class="navbar navbar-fixed-top hidden-print">
     <div class="navbar-inner">
         <div class="container">
             <span class="brand hidden-phone">Sarariman</span>
