@@ -1,7 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<div id="topnav" class="btn-group pull-right">
+<div id="userMenu" class="btn-group pull-right">
     <a class="btn btn-primary" href="${user.URL}">${user.userName}</a>
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
     <ul class="dropdown-menu">
