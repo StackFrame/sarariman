@@ -91,11 +91,13 @@
             <p>
             <form style="display:inline" method="GET" action="edit.jsp">
                 <input type="hidden" name="id" value="${event.id}"/>
-            <input class="btn" type="submit" name="Edit" value="edit" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+            <button class="btn" type="submit" name="Edit" value="edit"
+                    <c:if test="${user.number ne event.creator}">disabled="true"</c:if>><i class="icon-edit"></i></button>
             </form>
             <form style="display:inline" method="POST" action="handleDelete.jsp">
                 <input type="hidden" name="id" value="${event.id}"/>
-            <input class="btn" type="submit" name="Delete" value="delete" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+            <button class="btn btn-danger" type="submit" name="Delete" value="delete"
+                    <c:if test="${user.number ne event.creator}">disabled="true"</c:if>><i class="icon-trash"></i></button>
             </form>
         </p>
 
