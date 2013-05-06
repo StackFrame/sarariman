@@ -15,17 +15,19 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Projects</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
 
             <h1>Projects</h1>
 
@@ -48,11 +50,11 @@
                 <label for="pop_end">End: </label>
                 <input type="text" id="pop_end" name="pop_end"/><br/>
 
-                <input type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+                <input class="btn" type="submit" name="create" value="Create" <c:if test="${!user.administrator}">disabled="true"</c:if> />
                 </form>
                 <br/>
 
-                <table id="projects">
+                <table class="table table-bordered table-striped table-rounded" id="projects">
                     <tr><th>ID</th><th>Name</th><th>Customer</th>
                     <c:if test="${user.administrator}"><th>Action</th></c:if>
                     </tr>
@@ -66,7 +68,9 @@
                                 <form method="POST" action="projectController">
                                     <input type="hidden" name="action" value="delete"/>
                                     <input type="hidden" name="id" value="${project.id}"/>
-                                    <input type="submit" name="delete" value="Delete"/>
+                                    <button class="btn btn-danger" type="submit" name="delete" value="Delete">
+                                        <i class="icon-trash"></i>
+                                    </button>
                                 </form>
                             </td>
                         </c:if>
