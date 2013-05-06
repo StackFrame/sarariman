@@ -643,6 +643,13 @@
             </c:if>
 
             <div id="controls" class="hidden-print">
+                <c:url var="pdf" value="${request.requestURI}">
+                    <c:param name="invoice" value="${param.invoice}"/>
+                    <c:param name="outputType" value="pdf"/>
+                    <c:param name="preferredFilename" value="Invoice ${param.invoice}.pdf"/>
+                </c:url>
+                <p><a href="${fn:escapeXml(pdf)}">PDF</a> view.</p>
+
                 <c:if test="${fn:contains(sarariman.invoiceManagers, user)}">
 
                     <p>Email will go to:</p>
@@ -656,9 +663,9 @@
                     </sql:query>
                     <ul>
                         <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
-                    </ul>
+                        </ul>
 
-                    <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
+                        <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
                         <c:forEach var="documentName" items="${documentNames}">
                             <input type="hidden" name="documentName" value="${documentName}"/>
                         </c:forEach>
