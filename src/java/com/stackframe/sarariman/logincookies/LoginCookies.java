@@ -53,7 +53,7 @@ public class LoginCookies {
 
     public LoginCookies(DataSource dataSource, Timer timer) {
         this.dataSource = dataSource;
-        timer.scheduleAtFixedRate(cleanupTask, ONE_MINUTE, ONE_HOUR);
+        timer.scheduleAtFixedRate(cleanupTask, ONE_MINUTE * 1000, ONE_HOUR * 1000);
     }
 
     static final int ONE_MINUTE = 60;
