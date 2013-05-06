@@ -20,52 +20,54 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="../style.css" rel="stylesheet" type="text/css"/>
         <link href="../css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="../css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="../style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="../css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="../jquery/js/jquery-1.7.2.min.js"></script>
         <script src="../js/bootstrap.js"></script>
         <title>${fn:escapeXml(event.name)}</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
-        <h1>${fn:escapeXml(event.name)}</h1>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
-        <p>
-            Begin: ${event.begin}
+        <div class="container-fluid">
+            <h1>${fn:escapeXml(event.name)}</h1>
 
-            End: ${event.end}<br/>
+            <p>
+                Begin: ${event.begin}
 
-            Location:
-            <c:choose>
-                <c:when test="${!empty event.location_url}">
-                    <a href="${fn:escapeXml(event.location_url)}">${fn:escapeXml(event.location)}</a>
-                </c:when>
-                <c:otherwise>
-                    ${fn:escapeXml(event.location)}
-                </c:otherwise>
-            </c:choose>
+                End: ${event.end}<br/>
 
-            <c:if test="${!empty event.location_map_url}">
-                <a href="${fn:escapeXml(event.location_map_url)}">map</a>
-            </c:if>
-            <br/>
+                Location:
+                <c:choose>
+                    <c:when test="${!empty event.location_url}">
+                        <a href="${fn:escapeXml(event.location_url)}">${fn:escapeXml(event.location)}</a>
+                    </c:when>
+                    <c:otherwise>
+                        ${fn:escapeXml(event.location)}
+                    </c:otherwise>
+                </c:choose>
 
-            Description: ${fn:escapeXml(event.description)}<br/>
+                <c:if test="${!empty event.location_map_url}">
+                    <a href="${fn:escapeXml(event.location_map_url)}">map</a>
+                </c:if>
+                <br/>
 
-            Owner: ${directory.byNumber[event.creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
-        </p>
+                Description: ${fn:escapeXml(event.description)}<br/>
 
-        <p>
-            <sql:query dataSource="jdbc/sarariman" var="resultRSVP">
-                SELECT attending
-                FROM company_events_rsvp
-                WHERE event = ? AND employee = ?
-                <sql:param value="${param.id}"/>
-                <sql:param value="${user.number}"/>
-            </sql:query>
+                Owner: ${directory.byNumber[event.creator].displayName}<br/> <!-- FIXME: Decouple owner from creator so multiple people can manage. -->
+            </p>
+
+            <p>
+                <sql:query dataSource="jdbc/sarariman" var="resultRSVP">
+                    SELECT attending
+                    FROM company_events_rsvp
+                    WHERE event = ? AND employee = ?
+                    <sql:param value="${param.id}"/>
+                    <sql:param value="${user.number}"/>
+                </sql:query>
             <form style="display:inline" method="POST" action="handleRSVP.jsp">
                 <input type="hidden" name="event" value="${event.id}"/>
                 <input type="hidden" name="employee" value="${user.number}"/>
@@ -87,93 +89,93 @@
             </p>
 
             <p>
-                <form style="display:inline" method="GET" action="edit.jsp">
-                    <input type="hidden" name="id" value="${event.id}"/>
-                <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
-                </form>
-                <form style="display:inline" method="POST" action="handleDelete.jsp">
-                    <input type="hidden" name="id" value="${event.id}"/>
-                <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
-                </form>
-            </p>
+            <form style="display:inline" method="GET" action="edit.jsp">
+                <input type="hidden" name="id" value="${event.id}"/>
+            <input type="submit" name="Edit" value="edit" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+            </form>
+            <form style="display:inline" method="POST" action="handleDelete.jsp">
+                <input type="hidden" name="id" value="${event.id}"/>
+            <input type="submit" name="Delete" value="delete" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+            </form>
+        </p>
 
-            <h2>Attending</h2>
-        <sql:query dataSource="jdbc/sarariman" var="resultAttending">
-            SELECT employee
-            FROM company_events_rsvp
-            WHERE event = ? AND attending = "true"
-            <sql:param value="${param.id}"/>
-        </sql:query>
-        <ol>
-            <c:forEach var="row" items="${resultAttending.rows}">
-                <li>${directory.byNumber[row.employee].displayName}</li>
-            </c:forEach>
-        </ol>
+        <h2>Attending</h2>
+    <sql:query dataSource="jdbc/sarariman" var="resultAttending">
+        SELECT employee
+        FROM company_events_rsvp
+        WHERE event = ? AND attending = "true"
+        <sql:param value="${param.id}"/>
+    </sql:query>
+    <ol>
+        <c:forEach var="row" items="${resultAttending.rows}">
+            <li>${directory.byNumber[row.employee].displayName}</li>
+        </c:forEach>
+    </ol>
 
-        <h2>May Be Attending</h2>
-        <sql:query dataSource="jdbc/sarariman" var="resultAttending">
-            SELECT employee
-            FROM company_events_rsvp
-            WHERE event = ? AND attending = "maybe"
-            <sql:param value="${param.id}"/>
-        </sql:query>
-        <ol>
-            <c:forEach var="row" items="${resultAttending.rows}">
-                <li>${directory.byNumber[row.employee].displayName}</li>
-            </c:forEach>
-        </ol>
+    <h2>May Be Attending</h2>
+    <sql:query dataSource="jdbc/sarariman" var="resultAttending">
+        SELECT employee
+        FROM company_events_rsvp
+        WHERE event = ? AND attending = "maybe"
+        <sql:param value="${param.id}"/>
+    </sql:query>
+    <ol>
+        <c:forEach var="row" items="${resultAttending.rows}">
+            <li>${directory.byNumber[row.employee].displayName}</li>
+        </c:forEach>
+    </ol>
 
-        <h2>Not Attending</h2>
-        <sql:query dataSource="jdbc/sarariman" var="resultAttending">
-            SELECT employee
-            FROM company_events_rsvp
-            WHERE event = ? AND attending = "false"
-            <sql:param value="${param.id}"/>
-        </sql:query>
-        <ol>
-            <c:forEach var="row" items="${resultAttending.rows}">
-                <li>${directory.byNumber[row.employee].displayName}</li>
-            </c:forEach>
-        </ol>
+    <h2>Not Attending</h2>
+    <sql:query dataSource="jdbc/sarariman" var="resultAttending">
+        SELECT employee
+        FROM company_events_rsvp
+        WHERE event = ? AND attending = "false"
+        <sql:param value="${param.id}"/>
+    </sql:query>
+    <ol>
+        <c:forEach var="row" items="${resultAttending.rows}">
+            <li>${directory.byNumber[row.employee].displayName}</li>
+        </c:forEach>
+    </ol>
 
-        <h2>No Response</h2>
-        <ol>
-            <c:forEach var="employeeEntry" items="${directory.byUserName}">
-                <sql:query dataSource="jdbc/sarariman" var="resultRSVP">
-                    SELECT employee
-                    FROM company_events_rsvp
-                    WHERE event = ? AND employee = ?
-                    <sql:param value="${param.id}"/>
-                    <sql:param value="${employeeEntry.value.number}"/>
-                </sql:query>
-                <c:if test="${resultRSVP.rowCount == 0 and employeeEntry.value.active}">
-                    <li>${employeeEntry.value.displayName}
+    <h2>No Response</h2>
+    <ol>
+        <c:forEach var="employeeEntry" items="${directory.byUserName}">
+            <sql:query dataSource="jdbc/sarariman" var="resultRSVP">
+                SELECT employee
+                FROM company_events_rsvp
+                WHERE event = ? AND employee = ?
+                <sql:param value="${param.id}"/>
+                <sql:param value="${employeeEntry.value.number}"/>
+            </sql:query>
+            <c:if test="${resultRSVP.rowCount == 0 and employeeEntry.value.active}">
+                <li>${employeeEntry.value.displayName}
 
-                        <form style="display:inline" method="POST" action="handleInvitation">
-                            <input type="hidden" name="event" value="${param.id}"/>
-                            <input type="hidden" name="eventName" value="${fn:escapeXml(event.name)}"/>
-                            <input type="hidden" name="employee" value="${employeeEntry.value.number}"/>
-                            <input type="submit" name="Invite" value="invite" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
+                    <form style="display:inline" method="POST" action="handleInvitation">
+                        <input type="hidden" name="event" value="${param.id}"/>
+                        <input type="hidden" name="eventName" value="${fn:escapeXml(event.name)}"/>
+                        <input type="hidden" name="employee" value="${employeeEntry.value.number}"/>
+                        <input type="submit" name="Invite" value="invite" <c:if test="${user.number ne event.creator}">disabled="true"</c:if>/>
                         </form>
 
-                        <sql:query dataSource="jdbc/sarariman" var="resultLog">
-                            SELECT invited
-                            FROM company_events_invitation_log
-                            WHERE event = ? AND employee = ?
-                            ORDER BY invited DESC
-                            <sql:param value="${param.id}"/>
-                            <sql:param value="${employeeEntry.value.number}"/>
-                        </sql:query>
+                    <sql:query dataSource="jdbc/sarariman" var="resultLog">
+                        SELECT invited
+                        FROM company_events_invitation_log
+                        WHERE event = ? AND employee = ?
+                        ORDER BY invited DESC
+                        <sql:param value="${param.id}"/>
+                        <sql:param value="${employeeEntry.value.number}"/>
+                    </sql:query>
 
-                        <c:if test="${resultLog.rowCount ne 0}">
-                            Invited ${resultLog.rows[0].invited}.
-                        </c:if>
-                    </li>
-                </c:if>
-            </c:forEach>
-        </ol>
+                    <c:if test="${resultLog.rowCount ne 0}">
+                        Invited ${resultLog.rows[0].invited}.
+                    </c:if>
+                </li>
+            </c:if>
+        </c:forEach>
+    </ol>
 
-        <%@include file="../footer.jsp" %>
-        </div>
-    </body>
+    <%@include file="../footer.jsp" %>
+</div>
+</body>
 </html>
