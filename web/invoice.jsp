@@ -46,6 +46,12 @@
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <style type="text/css">
+            @media screen, print {
+                #returnAddress {
+                    text-align: center;
+                }
+            }
+
             @media print {
                 a {
                     color: #000;
@@ -586,9 +592,9 @@
                     </sql:query>
                     <ul>
                         <c:forEach var="row" items="${emailResult.rows}"><li>${row.name} &lt;${row.email}&gt;</li></c:forEach>
-                        </ul>
+                    </ul>
 
-                        <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
+                    <form id="email" action="${pageContext.request.contextPath}/EmailBuilder" method="POST">
                         <c:forEach var="documentName" items="${documentNames}">
                             <input type="hidden" name="documentName" value="${documentName}"/>
                         </c:forEach>
@@ -625,7 +631,7 @@
 
                         <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
                         <input type="submit" value="Send" <c:if test="${errorsOccurred || empty emailResult.rows}">disabled="true"</c:if> />
-                        </form>
+                    </form>
                 </c:if>
 
                 <p>
