@@ -50,17 +50,29 @@ import org.joda.time.LocalDate;
 class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     private final String fullName;
+
     private final String userName;
+
     private final int number;
+
     private final boolean fulltime;
+
     private final boolean active;
+
     private final String email;
+
     private final LocalDate birthdate;
+
     private final String displayName;
+
     private final Range<java.sql.Date> periodOfService;
+
     private final byte[] photo;
+
     private final LDAPDirectory directory;
+
     private final DataSource dataSource;
+
     private final Sarariman sarariman;
 
     StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo, LDAPDirectory directory, DataSource dataSource, Sarariman sarariman) {
@@ -489,13 +501,19 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                PreparedStatement s = connection.prepareStatement("SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average " + "FROM hours " + "JOIN hours_changelog ON hours.employee = hours_changelog.employee AND hours.task = hours_changelog.task AND hours.date = hours_changelog.date " + "WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average " +
+                        "FROM hours " +
+                        "JOIN hours_changelog ON hours.employee = hours_changelog.employee AND " +
+                        "hours.task = hours_changelog.task AND hours.date = hours_changelog.date " +
+                        "WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
                 try {
                     s.setInt(1, number);
                     ResultSet r = s.executeQuery();
                     try {
                         boolean hasRow = r.first();
                         assert hasRow;
+                        System.err.println("average="+r.getBigDecimal("average"));
                         return r.getBigDecimal("average");
                     } finally {
                         r.close();
