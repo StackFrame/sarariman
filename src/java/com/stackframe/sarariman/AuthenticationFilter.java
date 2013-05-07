@@ -112,10 +112,6 @@ public class AuthenticationFilter extends HttpFilter {
                 user = directory.getByUserName().get(username);
                 session.setAttribute("user", user);
 
-                // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
-                // the session?
-                request.setAttribute("user", user);
-
                 // FIXME: Do this block in a background thread.
                 loginCookie.setLastUsed(new Date());
                 loginCookie.setUserAgent(request.getHeader("User-Agent"));
@@ -170,10 +166,6 @@ public class AuthenticationFilter extends HttpFilter {
                     if (valid) {
                         user = directory.getByUserName().get(username);
                         session.setAttribute("user", user);
-
-                        // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
-                        // the session?
-                        request.setAttribute("user", user);
                         chain.doFilter(request, response);
                     } else {
                         httpResponse.sendError(401, "invalid username or password");
@@ -181,9 +173,6 @@ public class AuthenticationFilter extends HttpFilter {
                 }
             }
         } else {
-            // FIXME: All of the client code expects that the request holds the user object. Maybe change client code to use
-            // the session?
-            request.setAttribute("user", user);
             chain.doFilter(request, response);
         }
     }
