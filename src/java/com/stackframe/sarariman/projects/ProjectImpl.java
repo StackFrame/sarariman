@@ -9,6 +9,7 @@ import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.DateUtils;
 import com.stackframe.sarariman.Directory;
+import com.stackframe.sarariman.EmailLogEntry;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.NamedResource;
 import com.stackframe.sarariman.NamedResourceImpl;
@@ -52,16 +53,27 @@ import javax.sql.DataSource;
 public class ProjectImpl extends AbstractLinkable implements Project {
 
     private final int id;
+
     private final DataSource dataSource;
+
     private final OrganizationHierarchy organizationHierarchy;
+
     private final Directory directory;
+
     private final Tasks tasks;
+
     private final Projects projects;
+
     private final String servletPath;
+
     private final Clients clients;
+
     private final Workdays workdays;
+
     private final OutOfOfficeEntries oofEntries;
+
     private final LaborProjections laborProjections;
+
     private final String mountPoint;
 
     ProjectImpl(int id, DataSource dataSource, OrganizationHierarchy organizationHierarchy, Directory directory, Tasks tasks,
@@ -1080,6 +1092,42 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         while (resultSet.next()) {
                             int laborProjectionId = resultSet.getInt("labor_projection.id");
                             list.add(laborProjections.get(laborProjectionId));
+                        }
+
+                        return list;
+                    } finally {
+                        resultSet.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public Collection<EmailLogEntry> getEmailLogEntries(Week week) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT sender, sent " +
+                        "FROM project_timesheet_email_log " +
+                        "WHERE project = ? AND week = ?");
+                ps.setInt(1, id);
+                ps.setString(2, week.getName());
+                try {
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        Collection<EmailLogEntry> list = new ArrayList<EmailLogEntry>();
+                        while (resultSet.next()) {
+                            int senderNumber = resultSet.getInt("sender");
+                            Employee sender = directory.getByNumber().get(senderNumber);
+                            Date sent = resultSet.getDate("sent");
+                            list.add(new EmailLogEntry(sender, sent));
                         }
 
                         return list;

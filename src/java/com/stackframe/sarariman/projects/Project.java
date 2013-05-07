@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.projects;
 
 import com.stackframe.sarariman.Audit;
+import com.stackframe.sarariman.EmailLogEntry;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.Linkable;
 import com.stackframe.sarariman.NamedResource;
@@ -106,6 +107,8 @@ public interface Project extends Linkable {
     ProjectedExpenses getProjectedExpenses();
 
     Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice();
+
+    Collection<EmailLogEntry> getEmailLogEntries(Week week);
 
     void delete();
 
