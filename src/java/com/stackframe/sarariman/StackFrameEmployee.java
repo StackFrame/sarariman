@@ -513,7 +513,6 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                     try {
                         boolean hasRow = r.first();
                         assert hasRow;
-                        System.err.println("average="+r.getBigDecimal("average"));
                         return r.getBigDecimal("average");
                     } finally {
                         r.close();
