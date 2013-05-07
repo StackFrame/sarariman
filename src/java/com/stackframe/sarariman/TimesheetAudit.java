@@ -19,6 +19,7 @@ import java.util.List;
 public class TimesheetAudit implements Audit {
 
     private final Sarariman sarariman;
+
     private final Directory directory;
 
     public TimesheetAudit(Sarariman sarariman, Directory directory) {
@@ -40,18 +41,18 @@ public class TimesheetAudit implements Audit {
     }
 
     public Collection<AuditResult> getResults() {
-        ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
+        ImmutableList.Builder<AuditResult> results = ImmutableList.<AuditResult>builder();
         Week lastWeek = DateUtils.week(DateUtils.now()).getPrevious();
         List<Timesheet> timesheets = timesheets(lastWeek);
         for (Timesheet timesheet : timesheets) {
             Employee employee = timesheet.getEmployee();
             if (timesheet.isSubmitted()) {
                 if (timesheet.isApproved()) {
-                    double recorded = timesheet.getPTOHours();
-                    if (recorded > 0) {
+                    double PTORecorded = timesheet.getPTOHours();
+                    if (PTORecorded > 0) {
                         double deducted = PaidTimeOff.getPaidTimeOff(sarariman.getDataSource(), employee, lastWeek,
                                                                      "weeklyPTODeduction");
-                        if (recorded != -deducted) {
+                        if (PTORecorded != -deducted) {
                             URL timesheetsURL = sarariman.getTimesheets().getURL();
                             try {
                                 timesheetsURL = new URL(timesheetsURL.toString() + "?week=" + lastWeek.getName());
@@ -59,27 +60,27 @@ public class TimesheetAudit implements Audit {
                                 throw new AssertionError(mue);
                             }
 
-                            listBuilder.add(new AuditResult(AuditResultType.todo,
-                                                            String.format("PTO needs to be deducted for %s for week of %s",
-                                                                          employee.getDisplayName(), lastWeek.getName()),
-                                                            timesheetsURL));
+                            results.add(new AuditResult(AuditResultType.todo,
+                                                        String.format("PTO needs to be deducted for %s for week of %s",
+                                                                      employee.getDisplayName(), lastWeek.getName()),
+                                                        timesheetsURL));
                         }
                     }
                 } else {
-                    listBuilder.add(new AuditResult(AuditResultType.todo,
-                                                    String.format("timesheet for %s needs review", employee.getDisplayName()),
-                                                    timesheet.getURL()));
+                    results.add(new AuditResult(AuditResultType.todo,
+                                                String.format("timesheet for %s needs review", employee.getDisplayName()),
+                                                timesheet.getURL()));
                 }
             } else {
                 if (employee.isActive()) {
-                    listBuilder.add(new AuditResult(AuditResultType.warning, String.format("timesheet for %s needs to be submitted",
-                                                                                           employee.getDisplayName()),
-                                                    timesheet.getURL()));
+                    results.add(new AuditResult(AuditResultType.warning, String.format("timesheet for %s needs to be submitted",
+                                                                                       employee.getDisplayName()),
+                                                timesheet.getURL()));
                 }
             }
         }
 
-        return listBuilder.build();
+        return results.build();
     }
 
 }
