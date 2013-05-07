@@ -471,31 +471,31 @@
                                 </thead>
                                 <tbody>
                                     <sql:query dataSource="jdbc/sarariman" var="tasks">
-                                        SELECT DISTINCT h.task
+                                        SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal, t.name, h.task, t.billable
                                         FROM invoices AS i
-                                        JOIN tasks AS t ON i.task = t.id
                                         JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
+                                        JOIN tasks AS t ON h.task = t.id
+                                        JOIN projects AS p on p.id = t.project
+                                        JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
+                                        JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
                                         WHERE i.id = ?
+                                        GROUP BY t.name
                                         <sql:param value="${param.invoice}"/>
                                     </sql:query>
                                     <c:forEach var="taskRows" items="${tasks.rows}">
                                         <tr>
                                             <td>${taskRows.task}</td>
-                                            <sql:query dataSource="jdbc/sarariman" var="totals">
-                                                SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal, t.name
-                                                FROM invoices AS i
-                                                JOIN hours AS h ON i.employee = h.employee AND i.task = h.task AND i.date = h.date
-                                                JOIN tasks AS t ON h.task = t.id
-                                                JOIN projects AS p on p.id = t.project
-                                                JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end)
-                                                JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)
-                                                WHERE i.id = ? AND h.task = ?
-                                                GROUP BY t.name
-                                                <sql:param value="${param.invoice}"/>
-                                                <sql:param value="${taskRows.task}"/>
-                                            </sql:query>
-                                            <td>${fn:escapeXml(totals.rows[0].name)}</td>
-                                            <td class="currency"><fmt:formatNumber type="currency" value="${totals.rows[0].costTotal}"/></td>
+                                            <td>${fn:escapeXml(taskRows.name)}</td>
+                                            <td class="currency">
+                                                <c:choose>
+                                                    <c:when test="${taskRows.billable}">
+                                                        <fmt:formatNumber type="currency" value="${taskRows.costTotal}"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <fmt:formatNumber type="currency" value="0"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
@@ -702,7 +702,7 @@
 
                         <label for="testaddress">Test Address: </label><input type="text" id="testaddress" name="testaddress"/><br/>
                         <input type="submit" value="Send" <c:if test="${errorsOccurred || empty emailResult.rows}">disabled="true"</c:if> />
-                    </form>
+                        </form>
                 </c:if>
 
                 <p>
