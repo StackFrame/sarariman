@@ -23,7 +23,6 @@ import java.util.Set;
 public class TimesheetAudit implements Audit {
 
     private final Sarariman sarariman;
-
     private final Directory directory;
 
     public TimesheetAudit(Sarariman sarariman, Directory directory) {
@@ -50,7 +49,10 @@ public class TimesheetAudit implements Audit {
             for (TimesheetEntry entry : timesheet.getEntries()) {
                 Task task = entry.getTask();
                 if (task.isBillable()) {
-                    projects.add(task.getProject());
+                    Project project = task.getProject();
+                    if (project != null) { // FIXME: Billable tasks should always have a project.
+                        projects.add(project);
+                    }
                 }
             }
         }
