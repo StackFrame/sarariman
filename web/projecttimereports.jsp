@@ -66,7 +66,7 @@
                         <c:set var="week" value="${du:week(startDay)}"/>
                         <c:set var="timesheet" value="${sarariman.timesheets.map[directory.byNumber[row.employee]][week]}"/>
                         <c:if test="${!timesheet.approved}">
-                            <span class="error">This timesheet is not yet approved.</span>
+                            <span class="text-error">This timesheet is not yet approved.</span>
                         </c:if>
                     </li>
                 </c:forEach>
