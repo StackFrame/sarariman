@@ -105,7 +105,7 @@
                             ${audit.displayName}
                             <ol>
                                 <c:forEach var="auditResult" items="${auditResults}">
-                                    <li class="error"><a href="${auditResult.URL}">${auditResult.message}</a></li>
+                                    <li class="text-error"><a href="${auditResult.URL}">${auditResult.message}</a></li>
                                 </c:forEach>
                             </ol>
                         </li>
@@ -131,7 +131,7 @@
                         <p>Days since last invoice: ${result.rows[0].days}</p>
                     </c:when>
                     <c:otherwise>
-                        <p class="error">Not yet invoiced.</p>
+                        <p class="text-error">Not yet invoiced.</p>
                     </c:otherwise>
                 </c:choose>
             </c:if>
@@ -412,8 +412,8 @@
                             <td></td>
                         </tr>
                     </table>
-                    <c:if test="${fundedTotal != project.funded}"><p class="error">Project funded amount does not match line item funding.</p></c:if>
-                    <c:if test="${project.expended != expendedDollarsTotal}"><p class="error">Project expended amount does not match line item expended.</p></c:if>
+                    <c:if test="${fundedTotal != project.funded}"><p class="text-error">Project funded amount does not match line item funding.</p></c:if>
+                    <c:if test="${project.expended != expendedDollarsTotal}"><p class="text-error">Project expended amount does not match line item expended.</p></c:if>
                 </c:if>
             </c:if>
 
@@ -563,7 +563,7 @@
                                 <td>${entry.periodOfPerformanceEnd}</td>
                                 <td class="currency"><fmt:formatNumber type="currency" value="${laborCategory.rate}"/></td>
                                 <c:if test="${entry.periodOfPerformanceStart lt laborCategory.periodOfPerformanceStart or entry.periodOfPerformanceEnd gt laborCategory.periodOfPerformanceEnd}">
-                                    <td class="error">Labor Category Period of Performance is not valid!</td>
+                                    <td class="text-error">Labor Category Period of Performance is not valid!</td>
                                 </c:if>
                             </tr>
                         </c:if>
@@ -604,7 +604,7 @@
                     <c:set var="costData" value="${sarariman:cost(sarariman, laborCategories, projectBillRates, row.project, row.employee, row.task, row.date, row.duration)}"/>
                     <c:if test="${empty costData.laborCategory}">
                         <c:set var="missingLaborCategory" value="true"/>
-                        <p class="error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName} on ${row.date}!</p>
+                        <p class="text-error">Labor category or billing rate missing for ${sarariman.directory.byNumber[row.employee].fullName} on ${row.date}!</p>
                     </c:if>
                 </c:forEach>
 
@@ -678,7 +678,7 @@
                 </c:if>
 
                 <c:if test="${missingLaborCategory}">
-                    <p class="error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
+                    <p class="text-error">There are labor categories missing from this project which are causing them to be excluded from expended amount!</p>
                 </c:if>
 
             </c:if>
