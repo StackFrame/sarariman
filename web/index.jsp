@@ -92,7 +92,7 @@
                                         ${audit.displayName}
                                         <ol>
                                             <c:forEach var="result" items="${auditResults}">
-                                                <li class="error"><a href="${fn:escapeXml(result.URL)}">${result.type}: ${fn:escapeXml(result.message)}</a></li>
+                                                <li class="text-error"><a href="${fn:escapeXml(result.URL)}">${result.type}: ${fn:escapeXml(result.message)}</a></li>
                                             </c:forEach>
                                         </ol>
                                     </li>
@@ -119,13 +119,13 @@
                                                 <li>
                                                     <c:choose>
                                                         <c:when test="${fn:length(auditResults) == 1}">
-                                                            <span class="error"><a href="${auditResults[0].URL}">${auditResults[0].message}</a></span>
+                                                            <span class="text-error"><a href="${auditResults[0].URL}">${auditResults[0].message}</a></span>
                                                         </c:when>
                                                         <c:otherwise>
                                                             ${audit.displayName}
                                                             <ol>
                                                                 <c:forEach var="result" items="${auditResults}">
-                                                                    <li class="error"><a href="${result.URL}">${result.message}</a></li>
+                                                                    <li class="text-error"><a href="${result.URL}">${result.message}</a></li>
                                                                 </c:forEach>
                                                             </ol>
                                                         </c:otherwise>
@@ -354,7 +354,7 @@
                 </c:if>
 
                 <c:if test="${totalHours > 40.0 && totalPTO > 0.0}">
-                    <p class="error">PTO taken when sheet is above 40 hours!</p>
+                    <p class="text-error">PTO taken when sheet is above 40 hours!</p>
                     <c:set var="canSubmit" value="false"/>
                 </c:if>
 
