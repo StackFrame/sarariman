@@ -12,18 +12,20 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Stats</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
-            <h1>Stats</h1>      
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
+            <h1>Stats</h1>
 
             <!--
             how long in operation
@@ -38,17 +40,21 @@
                 <c:if test="${employee.active}">
                     <c:set var="totalEmployees" value="${totalEmployees + 1}"/>
                     <c:if test="${employee.fulltime}">
-                        <c:set var="totalFullTime" value="${totalFullTime + 1}"/>                        
+                        <c:set var="totalFullTime" value="${totalFullTime + 1}"/>
                     </c:if>
                 </c:if>
             </c:forEach>
 
-            <table>
+            <table class="table table-rounded table-striped table-bordered">
                 <caption>Employees</caption>
-                <tr><th>Type</th><th>Total</th></tr>
-                <tr><td>Full-time</td><td class="quantity">${totalFullTime}</td></tr>
-                <tr><td>Part-time</td><td class="quantity">${totalEmployees - totalFullTime}</td></tr>
-                <tr><td>Total</td><td class="quantity"><a href="employees">${totalEmployees}</a></td></tr>
+                <thead>
+                    <tr><th>Type</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Full-time</td><td class="quantity">${totalFullTime}</td></tr>
+                    <tr><td>Part-time</td><td class="quantity">${totalEmployees - totalFullTime}</td></tr>
+                    <tr><td>Total</td><td class="quantity"><a href="employees">${totalEmployees}</a></td></tr>
+                </tbody>
             </table>
 
             <p>
