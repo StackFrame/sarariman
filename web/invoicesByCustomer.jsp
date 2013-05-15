@@ -24,13 +24,16 @@
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Invoices for ${fn:escapeXml(customer.name)}</title>
     </head>
     <body>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
         <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
 
             <c:url var="customerLink" value="customer">
                 <c:param name="id" value="${param.customer}"/>
@@ -42,35 +45,39 @@
                 <sql:param value="${customer_id}"/>
             </sql:query>
 
-            <table id="invoices">
-                <tr><th>Invoice</th><th>Sent</th><th>Project</th></tr>
-                <c:forEach var="invoice" items="${invoices.rows}">
-                    <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-                        SELECT project, sent
-                        FROM invoice_info AS i
-                        WHERE i.id = ?
-                        <sql:param value="${invoice.id}"/>
-                    </sql:query>
-                    <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
-                    <c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
-                    <tr>
-                        <c:url var="link" value="invoice">
-                            <c:param name="invoice" value="${invoice.id}"/>
-                        </c:url>
-                        <td><a href="${link}">${invoice.id}</a></td>
-                        <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
+            <table id="invoices" class="table table-striped table-rounded table-bordered">
+                <thead>
+                    <tr><th>Invoice</th><th>Sent</th><th>Project</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="invoice" items="${invoices.rows}">
+                        <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
+                            SELECT project, sent
+                            FROM invoice_info AS i
+                            WHERE i.id = ?
+                            <sql:param value="${invoice.id}"/>
+                        </sql:query>
+                        <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
+                        <c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
+                        <tr>
+                            <c:url var="link" value="invoice">
+                                <c:param name="invoice" value="${invoice.id}"/>
+                            </c:url>
+                            <td><a href="${link}">${invoice.id}</a></td>
+                            <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
 
-                        <c:choose>
-                            <c:when test="${empty sent}">
-                                <td class="error">no date</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td>${sent}</td>                            
-                            </c:otherwise>
-                        </c:choose>
-                        <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
-                    </tr>
-                </c:forEach>
+                            <c:choose>
+                                <c:when test="${empty sent}">
+                                    <td class="error">no date</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>${sent}</td>
+                                </c:otherwise>
+                            </c:choose>
+                            <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
             </table>
 
             <%@include file="footer.jsp" %>

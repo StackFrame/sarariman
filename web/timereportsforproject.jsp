@@ -18,26 +18,34 @@
     <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
 
     <head>
-        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
+        <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+
         <title>Time Reports for Project ${project_id} ('${fn:escapeXml(project.name)}')</title>
     </head>
 
     <body>
-        <%@include file="header.jsp" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
-        <h1>Time Reports for Project ${project_id} ('${fn:escapeXml(project.name)}')</h1>
+        <div class="container">
 
-        <ul>
-            <c:forEach var="week" items="${project.workedWeeks}">
-                <c:url var="link" value="projecttimereports">
-                    <c:param name="project" value="${param.project}"/>
-                    <c:param name="week" value="${week.name}"/>
-                </c:url>
-                <li><a href="${fn:escapeXml(link)}">${week.name}</a></li>
-            </c:forEach>
-        </ul>
+            <h1>Time Reports for Project ${project_id} ('${fn:escapeXml(project.name)}')</h1>
 
-        <%@include file="footer.jsp" %>
+            <ul>
+                <c:forEach var="week" items="${project.workedWeeks}">
+                    <c:url var="link" value="projecttimereports">
+                        <c:param name="project" value="${param.project}"/>
+                        <c:param name="week" value="${week.name}"/>
+                    </c:url>
+                    <li><a href="${fn:escapeXml(link)}">${week.name}</a></li>
+                </c:forEach>
+            </ul>
+
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>

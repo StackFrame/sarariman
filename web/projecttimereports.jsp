@@ -61,7 +61,7 @@
                     </c:url>
                     <li>
                         <a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName}</a> <img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${directory.byNumber[row.employee].photoURL}"/>
-                        <a href="${fn:escapeXml(pdf)}">[PDF]</a>
+                        <a href="${fn:escapeXml(pdf)}" title="PDF of this timesheet"><i class="icon-print"></i></a>
                         <fmt:parseDate var="startDay" value="${param.week}" pattern="yyyy-MM-dd" />
                         <c:set var="week" value="${du:week(startDay)}"/>
                         <c:set var="timesheet" value="${sarariman.timesheets.map[directory.byNumber[row.employee]][week]}"/>
