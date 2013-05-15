@@ -101,7 +101,7 @@
             <h2>Timesheet for <a href="${employee.URL}">${employee.fullName}</a> for the week of ${week.name}</h2>
 
             <c:if test="${!timesheet.approved}">
-                <p class="error">This timesheet is not yet approved.</p>
+                <p class="text-error">This timesheet is not yet approved.</p>
             </c:if>
 
             <c:set var="totalRegular" value="0.0"/>
@@ -297,7 +297,7 @@
             </div>
 
             <c:if test="${totalHoursWorked > 40.0 && totalPTO > 0.0}">
-                <p class="error">PTO taken when sheet is above 40 hours!</p>
+                <p class="text-error">PTO taken when sheet is above 40 hours!</p>
             </c:if>
 
             <div id="taskGroupings">
