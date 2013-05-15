@@ -32,7 +32,7 @@ public class ClientsImpl implements Clients {
     }
 
     public Client get(int id) {
-        return new ClientImpl(id, dataSource, mountPoint + "customers");
+        return new ClientImpl(id, dataSource, mountPoint + "customer");
     }
 
     public Iterable<Client> getAll() {
