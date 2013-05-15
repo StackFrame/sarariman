@@ -127,7 +127,14 @@ public class AuthenticationFilter extends HttpFilter {
         String password = decodedString.substring(firstColon + 1);
         int domainIndex = username.indexOf('@');
         if (domainIndex != -1) {
-            username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
+            // FIXME: Check for proper domain and dispatch.
+            String domain = username.substring(domainIndex + 1);
+            if (!"stackframe.com".equals(domain)) {
+                response.sendError(401, "invalid username or password");
+                return;
+            }
+
+            username = username.substring(0, domainIndex);
         }
 
         boolean valid = directory.checkCredentials(username, password);

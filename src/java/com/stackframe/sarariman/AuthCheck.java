@@ -43,6 +43,7 @@ public class AuthCheck extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         username = username.toLowerCase();
@@ -51,13 +52,20 @@ public class AuthCheck extends HttpServlet {
         int domainIndex = username.indexOf('@');
         if (domainIndex != -1) {
             fullyQualifiedUsername = username;
-            username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
+            // FIXME: Check for proper domain and dispatch.
+            String domain = username.substring(domainIndex + 1);
+            if (!"stackframe.com".equals(domain)) {
+                session.setAttribute("authFailed", true);
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            username = username.substring(0, domainIndex);
         } else {
             fullyQualifiedUsername = username + "@stackframe.com";
         }
 
         boolean valid = directory.checkCredentials(username, password);
-        HttpSession session = request.getSession();
         if (valid) {
             Employee user = directory.getByUserName().get(username);
             session.setAttribute("user", user);
