@@ -32,24 +32,28 @@
 
             <h1>Customer ${customer.id}</h1>
             <form method="POST" action="customerController">
-                <label for="name">Name: </label>
                 <input type="hidden" name="action" value="update"/>
                 <input type="hidden" name="id" value="${customer.id}"/>
-                <input type="text" id="name" name="name" size="40" value="${fn:escapeXml(customer.name)}"/><br/>
-                <input type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
+                <label for="name">Name
+                    <input type="text" id="name" name="name" size="40" value="${fn:escapeXml(customer.name)}"/></label><br/>
+                <input class="btn" type="submit" name="update" value="Update" <c:if test="${!user.administrator}">disabled="true"</c:if> />
             </form>
 
             <h2>Projects</h2>
-            <table id="projects">
-                <tr><th>ID</th><th>Name</th></tr>
-                <c:forEach var="project" items="${sarariman.projects.all}">
-                    <c:if test="${project.client.id == customer.id}">
-                        <tr>
-                            <td><a href="${project.URL}">${project.id}</a></td>
-                            <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
-                        </tr>
-                    </c:if>
-                </c:forEach>
+            <table id="projects" class="table table-bordered table-rounded table-striped">
+                <thead>
+                    <tr><th>ID</th><th>Name</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="project" items="${sarariman.projects.all}">
+                        <c:if test="${project.client.id == customer.id}">
+                            <tr>
+                                <td><a href="${project.URL}">${project.id}</a></td>
+                                <td><a href="${project.URL}">${fn:escapeXml(project.name)}</a></td>
+                            </tr>
+                        </c:if>
+                    </c:forEach>
+                </tbody>
             </table>
 
             <c:url var="invoicesLink" value="invoicesByCustomer.jsp">
