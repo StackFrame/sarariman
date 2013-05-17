@@ -12,31 +12,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
+        <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
+        <script src="js/bootstrap.js"></script>
         <title>PTO Balance</title>
     </head>
     <body>
-        <%@include file="header.jsp" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
-        <h1>PTO Balance</h1>
+        <div class="container-fluid">
 
-        <table id="timesheets">
-            <tr><th>Employee</th><th>Balance</th></tr>
-            <c:forEach var="employeeEntry" items="${directory.byUserName}">
-                <c:set var="employee" value="${employeeEntry.value}"/>
-                <sql:query dataSource="jdbc/sarariman" var="resultSet">
-                    SELECT sum(amount) AS balance FROM paid_time_off WHERE employee=?
-                    <sql:param value="${employee.number}"/>
-                </sql:query>
-                <c:set var="balance" value="${resultSet.rows[0].balance}"/>
-                <tr>
-                    <td>${employee.fullName}</td>
-                    <td class="duration"><fmt:formatNumber value="${balance}" minFractionDigits="2"/></td>
-                </tr>
-            </c:forEach>
-        </table>
+            <table id="timesheets" class="table table-bordered table-striped table-rounded">
+                <thead>
+                    <tr><th>Employee</th><th>Balance</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="employeeEntry" items="${directory.byUserName}">
+                        <c:set var="employee" value="${employeeEntry.value}"/>
+                        <sql:query dataSource="jdbc/sarariman" var="resultSet">
+                            SELECT sum(amount) AS balance FROM paid_time_off WHERE employee=?
+                            <sql:param value="${employee.number}"/>
+                        </sql:query>
+                        <c:set var="balance" value="${resultSet.rows[0].balance}"/>
+                        <tr>
+                            <td>${employee.fullName}</td>
+                            <td class="duration"><fmt:formatNumber value="${balance}" minFractionDigits="2"/></td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
 
-        <%@include file="footer.jsp" %>
+            <%@include file="footer.jsp" %>
+        </div>
     </body>
 </html>
