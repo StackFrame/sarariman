@@ -63,6 +63,7 @@
 
                 var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
                 var bounds = new google.maps.LatLngBounds(mapCenter, mapCenter);
+                var markers = new Array();
 
                 $.getJSON("latest.jsp", function(entries) {
                     var infowindow = new google.maps.InfoWindow();
@@ -78,22 +79,39 @@
                         var marker = new google.maps.Marker({
                             position: latLng,
                             title: entry.employeeDisplayName,
-                            icon: image
+                            icon: image,
+                            zIndex: 0
                         });
+                        markers.push(marker);
 
                         // FIXME: Convert to users's preferred timezone.
                         var formattedTimestamp = formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + " UTC";
 
-                        google.maps.event.addListener(marker, 'click', function() {
+                        var openInfoWindow = function() {
                             var content = "<p>" + entry.employeeDisplayName + "<br/>" + "Last seen: " +
                                 formattedTimestamp + "</p>";
 
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
-                        });
+                        };
+
+                        google.maps.event.addListener(marker, 'click', openInfoWindow);
                         marker.setMap(map);
 
-                        $('#locations > tbody:last').append('<tr><td>' + entry.employeeDisplayName +'</td><td>' + formattedTimestamp + '</td></tr>');
+                        var nameCell = $('<td>').append(entry.employeeDisplayName);
+                        var lastSeenCell = $('<td>').append(formattedTimestamp);
+                        var row = $('<tr>').append(nameCell);
+                        row.append(lastSeenCell);
+                        $('#locations > tbody:last').append(row);
+                        row.on('click', null, function() {
+                            markers.forEach(function(val, index, a) {
+                                val.setZIndex(0);
+                            });
+                            openInfoWindow();
+                            map.setZoom(17);
+                            map.panTo(marker.position);
+                            marker.setZIndex(1);
+                        });
                     });
                     map.fitBounds(bounds);
                 });
@@ -112,16 +130,18 @@
             <div id="map-canvas" class="span12">
             </div>
 
-            <table id="locations" class="table table-bordered table-striped table-rounded">
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        <th>Last Seen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div>
+                <table id="locations" class="table table-bordered table-striped table-rounded">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Last Seen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
 
             <%@include file="../footer.jsp" %>
         </div>
