@@ -395,7 +395,7 @@ public class Sarariman implements ServletContextListener {
             initContext.rebind("sarariman.directory", directory);
             organizationHierarchy = new OrganizationHierarchyImpl(getDataSource(), directory);
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
-            emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail);
+            emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail, backgroundExecutor);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
             clients = new ClientsImpl(getDataSource(), mountPoint);

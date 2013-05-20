@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.BodyPart;
@@ -35,7 +34,7 @@ import javax.mail.internet.MimeMultipart;
  */
 public class EmailDispatcher {
 
-    private final Executor executor = Executors.newFixedThreadPool(1);
+    private final Executor executor;
     private final Logger logger = Logger.getLogger(getClass().getName());
     private final InternetAddress defaultFrom;
     private final Session session;
@@ -43,8 +42,9 @@ public class EmailDispatcher {
     private final int port;
     private final boolean inhibit;
 
-    public EmailDispatcher(Properties properties, boolean inhibit) {
+    public EmailDispatcher(Properties properties, boolean inhibit, Executor executor) {
         this.inhibit = inhibit;
+        this.executor = executor;
         try {
             this.defaultFrom = new InternetAddress((String)properties.get("mail.from"), true);
         } catch (AddressException ae) {
