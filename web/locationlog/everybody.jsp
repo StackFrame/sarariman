@@ -140,6 +140,8 @@
 
         <div class="container">
 
+            <!-- FIXME: Add a way to get directions from where an employee is to somewhere else. -->
+
             <h1 class="text-center">Latest Employee Locations</h1>
 
             <div id="map-canvas" class="span12">
