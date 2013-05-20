@@ -54,14 +54,15 @@
 
             function initialize() {
                 var StackFrameWorldHeadquarters = new google.maps.LatLng(28.758822, -81.294179);
+                var mapCenter = StackFrameWorldHeadquarters;
                 var mapOptions = {
-                    center: StackFrameWorldHeadquarters,
+                    center: mapCenter,
                     zoom: 12,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
 
                 var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-                var bounds = new google.maps.LatLngBounds();
+                var bounds = new google.maps.LatLngBounds(mapCenter, mapCenter);
 
                 $.getJSON("latest.jsp", function(entries) {
                     var infowindow = new google.maps.InfoWindow();
@@ -88,8 +89,8 @@
                         });
                         marker.setMap(map);
                     });
+                    map.fitBounds(bounds);
                 });
-                map.fitBounds(bounds);
             }
             google.maps.event.addDomListener(window, 'load', initialize);
         </script>
