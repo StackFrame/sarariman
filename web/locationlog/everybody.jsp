@@ -64,6 +64,8 @@
                 var bounds = new google.maps.LatLngBounds();
 
                 $.getJSON("latest.jsp", function(entries) {
+                    var infowindow = new google.maps.InfoWindow();
+
                     $.each(entries, function(key, entry) {
                         var latLng = new google.maps.LatLng(entry.latitude, entry.longitude);
                         bounds.extend(latLng);
@@ -78,7 +80,6 @@
                             icon: image
                         });
 
-                        var infowindow = new google.maps.InfoWindow();
                         google.maps.event.addListener(marker, 'click', function() {
                             var content = "<p>" + entry.employeeDisplayName + "<br/>" + "Last seen: " +
                                 formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + "</p>";
