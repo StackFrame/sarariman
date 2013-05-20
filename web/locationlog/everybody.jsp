@@ -81,15 +81,19 @@
                             icon: image
                         });
 
+                        // FIXME: Convert to users's preferred timezone.
+                        var formattedTimestamp = formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + " UTC";
+
                         google.maps.event.addListener(marker, 'click', function() {
-                            // FIXME: Convert to users's preferred timezone.
                             var content = "<p>" + entry.employeeDisplayName + "<br/>" + "Last seen: " +
-                                formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + " UTC"+ "</p>";
+                                formattedTimestamp + "</p>";
 
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
                         });
                         marker.setMap(map);
+
+                        $('#locations > tbody:last').append('<tr><td>' + entry.employeeDisplayName +'</td><td>' + formattedTimestamp + '</td></tr>');
                     });
                     map.fitBounds(bounds);
                 });
@@ -107,6 +111,17 @@
 
             <div id="map-canvas" class="span12">
             </div>
+
+            <table id="locations" class="table table-bordered table-striped table-rounded">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Last Seen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
 
             <%@include file="../footer.jsp" %>
         </div>
