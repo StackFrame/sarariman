@@ -80,7 +80,8 @@
                         bounds.extend(latLng);
                         var image = {
                             url: entry.icon,
-                            scaledSize: new google.maps.Size(25, 25)
+                            anchor: new google.maps.Point(25, 25),
+                            scaledSize: new google.maps.Size(50, 50)
                         }
 
                         var marker = new google.maps.Marker({
