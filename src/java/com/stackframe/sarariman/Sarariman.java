@@ -440,7 +440,7 @@ public class Sarariman implements ServletContextListener {
             }
 
         };
-        backgroundExecutor.submit(sendStartupEmailNotification);
+        backgroundExecutor.execute(sendStartupEmailNotification);
     }
 
     private static String getHostname() {
