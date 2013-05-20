@@ -64,6 +64,13 @@
                 var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
                 var bounds = new google.maps.LatLngBounds(mapCenter, mapCenter);
                 var markers = new Array();
+                accuracyCircle = new google.maps.Circle({
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: "#FF0000",
+                    fillOpacity: 0.05
+                });
 
                 $.getJSON("latest.jsp", function(entries) {
                     var infowindow = new google.maps.InfoWindow();
@@ -95,7 +102,18 @@
                             infowindow.open(map, marker);
                         };
 
-                        google.maps.event.addListener(marker, 'click', openInfoWindow);
+                        var selectMarker = function() {
+                            accuracyCircle.setCenter(latLng);
+                            accuracyCircle.setRadius(entry.accuracy);
+                            accuracyCircle.setMap(map);
+                            markers.forEach(function(val, index, a) {
+                                val.setZIndex(0);
+                            });
+                            openInfoWindow();
+                            marker.setZIndex(1);
+                        };
+
+                        google.maps.event.addListener(marker, 'click', selectMarker);
                         marker.setMap(map);
 
                         var nameCell = $('<td>').append(entry.employeeDisplayName);
@@ -104,13 +122,9 @@
                         row.append(lastSeenCell);
                         $('#locations > tbody:last').append(row);
                         row.on('click', null, function() {
-                            markers.forEach(function(val, index, a) {
-                                val.setZIndex(0);
-                            });
-                            openInfoWindow();
+                            selectMarker();
                             map.setZoom(17);
                             map.panTo(marker.position);
-                            marker.setZIndex(1);
                         });
                     });
                     map.fitBounds(bounds);
