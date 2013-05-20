@@ -52,6 +52,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.naming.Context;
@@ -69,7 +70,12 @@ import javax.sql.DataSource;
  */
 public class Sarariman implements ServletContextListener {
 
+    // This ExecutorService is used for background jobs which do not require synchronous completion with regard to an HTTP request.
     private final ExecutorService backgroundExecutor = Executors.newFixedThreadPool(1);
+
+    // This ExecutorService is used for background jobs which write to the database and do not require synchronous completion with
+    // regard to an HTTP request.
+    private final ExecutorService backgroundDatabaseWriteExecutor = Executors.newFixedThreadPool(1);
 
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
 
@@ -371,6 +377,10 @@ public class Sarariman implements ServletContextListener {
         return paidTimeOff;
     }
 
+    public Executor getBackgroundDatabaseWriteExecutor() {
+        return backgroundDatabaseWriteExecutor;
+    }
+
     public Collection<UIResource> getNavbarLinks() {
         return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
                                             new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),
@@ -416,7 +426,7 @@ public class Sarariman implements ServletContextListener {
             taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
             defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);
             loginCookies = new LoginCookies(getDataSource(), timer);
-            locationLog = new LocationLogImpl(getDataSource(), directory);
+            locationLog = new LocationLogImpl(getDataSource(), directory, backgroundDatabaseWriteExecutor);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }

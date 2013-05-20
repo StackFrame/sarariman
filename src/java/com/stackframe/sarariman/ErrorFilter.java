@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -25,11 +24,13 @@ import javax.sql.DataSource;
 public class ErrorFilter extends HttpFilter {
 
     private DataSource dataSource;
-    private final ExecutorService executor = Executors.newFixedThreadPool(1);
+
+    private Executor executor;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         dataSource = sarariman.getDataSource();
+        executor = sarariman.getBackgroundDatabaseWriteExecutor();
     }
 
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -95,7 +96,6 @@ public class ErrorFilter extends HttpFilter {
     }
 
     public void destroy() {
-        executor.shutdown();
     }
 
 }

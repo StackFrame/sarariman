@@ -15,8 +15,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 import javax.sql.DataSource;
 
 /**
@@ -25,17 +24,16 @@ import javax.sql.DataSource;
  */
 public class LocationLogImpl implements LocationLog {
 
-    // FIXME: Use a single executor for background SQL tasks.
-    // FIXME: this needs to be shut down when context stops.
-    private final ExecutorService executor = Executors.newFixedThreadPool(1);
+    private final Executor executor;
 
     private final DataSource dataSource;
 
     private final Directory directory;
 
-    public LocationLogImpl(DataSource dataSource, Directory directory) {
+    public LocationLogImpl(DataSource dataSource, Directory directory, Executor databaseWriteExecutor) {
         this.dataSource = dataSource;
         this.directory = directory;
+        this.executor = databaseWriteExecutor;
     }
 
     public void log(final Employee employee, final Coordinates position, final String userAgent, final String remoteAddress) {
