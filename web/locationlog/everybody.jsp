@@ -140,12 +140,12 @@
 
         <div class="container">
 
-            <h1>Latest Employee Locations</h1>
+            <h1 class="text-center">Latest Employee Locations</h1>
 
             <div id="map-canvas" class="span12">
             </div>
 
-            <div>
+            <div class="span12">
                 <table id="locations" class="table table-bordered table-striped table-rounded">
                     <thead>
                         <tr>
