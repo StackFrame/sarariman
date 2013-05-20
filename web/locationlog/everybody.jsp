@@ -83,7 +83,7 @@
 
                         google.maps.event.addListener(marker, 'click', function() {
                             var content = "<p>" + entry.employeeDisplayName + "<br/>" + "Last seen: " +
-                                formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + "</p>";
+                                formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + " UTC"+ "</p>";
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
                         });
