@@ -17,19 +17,19 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Invoices</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
-            <h1>Invoices</h1>
+        <div class="container-fluid">
 
             <!-- FIXME: use invoice_info directly once we have fixed all of the entries. -->
 
@@ -37,37 +37,42 @@
                 SELECT DISTINCT(id) FROM invoice_info ORDER BY id DESC
             </sql:query>
 
-            <table id="invoices">
-                <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
-                <c:forEach var="invoice" items="${invoices.rows}">
-                    <tr>
-                        <c:url var="link" value="invoice">
-                            <c:param name="invoice" value="${invoice.id}"/>
-                        </c:url>
-                        <td><a href="${link}">${invoice.id}</a></td>
-                        <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
-                            SELECT project, customer, sent
-                            FROM invoice_info AS i
-                            WHERE i.id = ?
-                            <sql:param value="${invoice.id}"/>
-                        </sql:query>
-                        <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
-                        <c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
-                        <c:set var="customer" value="${project.client}"/>
-                        <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
+            <table id="invoices" class="table table-bordered table-striped table-rounded">
+                <caption>Invoices</caption>
+                <thead>
+                    <tr><th>Invoice</th><th>Sent</th><th>Project</th><th>Customer</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="invoice" items="${invoices.rows}">
+                        <tr>
+                            <c:url var="link" value="invoice">
+                                <c:param name="invoice" value="${invoice.id}"/>
+                            </c:url>
+                            <td><a href="${link}">${invoice.id}</a></td>
+                            <sql:query dataSource="jdbc/sarariman" var="invoice_info_result">
+                                SELECT project, customer, sent
+                                FROM invoice_info AS i
+                                WHERE i.id = ?
+                                <sql:param value="${invoice.id}"/>
+                            </sql:query>
+                            <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
+                            <c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
+                            <c:set var="customer" value="${project.client}"/>
+                            <fmt:formatDate var="sent" value="${invoice_info.sent}"/>
 
-                        <c:choose>
-                            <c:when test="${empty sent}">
-                                <td class="error">no date</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td>${sent}</td>
-                            </c:otherwise>
-                        </c:choose>
-                        <td>${fn:escapeXml(project.name)}</td>
-                        <td>${fn:escapeXml(customer.name)}</td>
-                    </tr>
-                </c:forEach>
+                            <c:choose>
+                                <c:when test="${empty sent}">
+                                    <td class="error">no date</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>${sent}</td>
+                                </c:otherwise>
+                            </c:choose>
+                            <td>${fn:escapeXml(project.name)}</td>
+                            <td>${fn:escapeXml(customer.name)}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
             </table>
 
             <%@include file="footer.jsp" %>

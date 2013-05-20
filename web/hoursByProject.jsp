@@ -24,17 +24,19 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
         <link href="css/bootstrap.css" rel="stylesheet" media="screen"/>
         <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen"/>
         <link href="style/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" media="screen"/>
+
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
         <title>Hours for ${fn:escapeXml(project.name)}</title>
     </head>
     <body>
-        <div class="container">
-            <%@include file="/WEB-INF/jspf/userMenu.jspf" %>
+        <%@include file="/WEB-INF/jspf/navbar.jspf" %>
+
+        <div class="container-fluid">
 
             <h1>Hours for ${fn:escapeXml(project.name)}</h1>
             <sql:query dataSource="jdbc/sarariman" var="result">
@@ -46,24 +48,36 @@
                 ORDER BY h.date DESC
                 <sql:param value="${project_id}"/>
             </sql:query>
-            <table id="hours">
-                <tr><th>Date</th><th>Task</th><th>Employee</th><th>Duration</th><th>Description</th></tr>
-                <c:set var="total" value="0.0"/>
-                <c:forEach var="row" items="${result.rows}">
+            <table id="hours" class="table table-bordered table-rounded table-striped">
+                <thead>
                     <tr>
-                        <td class="date">${row.date}</td>
-                        <td class="task">${row.task}</td>
-                        <td>${directory.byNumber[row.employee].fullName}</td>
-                        <td class="duration"><fmt:formatNumber value="${row.duration}" minFractionDigits="2"/></td>
-                        <td>${row.description}</td>
+                        <th>Date</th>
+                        <th>Task</th>
+                        <th>Employee</th>
+                        <th>Duration</th>
+                        <th>Description</th>
                     </tr>
-                    <c:set var="total" value="${total + row.duration}"/>
-                </c:forEach>
-                <tr>
-                    <td colspan="3">Total</td>
-                    <td class="duration"><fmt:formatNumber value="${total}" minFractionDigits="2"/></td>
-                    <td></td>
-                </tr>
+                </thead>
+                <tbody>
+                    <c:set var="total" value="0.0"/>
+                    <c:forEach var="row" items="${result.rows}">
+                        <tr>
+                            <td class="date">${row.date}</td>
+                            <td class="task">${row.task}</td>
+                            <td>${directory.byNumber[row.employee].fullName}</td>
+                            <td class="duration"><fmt:formatNumber value="${row.duration}" minFractionDigits="2"/></td>
+                            <td>${row.description}</td>
+                        </tr>
+                        <c:set var="total" value="${total + row.duration}"/>
+                    </c:forEach>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Total</td>
+                        <td class="duration"><fmt:formatNumber value="${total}" minFractionDigits="2"/></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
             </table>
             <%@include file="footer.jsp" %>
         </div>
