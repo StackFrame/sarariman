@@ -36,6 +36,7 @@
                 <li><a href="employees">Employees</a></li>
                 <li><a href="scheduledVacation">Scheduled Vacation</a></li>
                 <li><a href="stats">Stats</a></li>
+                <li><a href="locationlog/everybody.jsp">Location Log Map</a></li>
                 <c:if test="${user.administrator}">
                     <li><a href="approvers">Approvers</a></li>
                     <li><a href="globalAudits.jsp">Global Audits</a></li>
