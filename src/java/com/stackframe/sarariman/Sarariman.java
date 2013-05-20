@@ -4,7 +4,6 @@
  */
 package com.stackframe.sarariman;
 
-import com.stackframe.sarariman.logincookies.LoginCookies;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -22,6 +21,9 @@ import com.stackframe.sarariman.events.Events;
 import com.stackframe.sarariman.events.EventsImpl;
 import com.stackframe.sarariman.holidays.Holidays;
 import com.stackframe.sarariman.holidays.HolidaysImpl;
+import com.stackframe.sarariman.locationlog.LocationLog;
+import com.stackframe.sarariman.locationlog.LocationLogImpl;
+import com.stackframe.sarariman.logincookies.LoginCookies;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntries;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntriesImpl;
 import com.stackframe.sarariman.projects.LaborProjections;
@@ -128,6 +130,8 @@ public class Sarariman implements ServletContextListener {
     private DefaultTaskAssignments defaultTaskAssignments;
 
     private LoginCookies loginCookies;
+
+    private LocationLog locationLog;
 
     private final Timer timer = new Timer("Sarariman");
 
@@ -273,6 +277,10 @@ public class Sarariman implements ServletContextListener {
         return loginCookies;
     }
 
+    public LocationLog getLocationLog() {
+        return locationLog;
+    }
+
     public Collection<Audit> getGlobalAudits() {
         Collection<Audit> c = new ArrayList<Audit>();
         c.add(new OrgChartGlobalAudit(this));
@@ -404,6 +412,7 @@ public class Sarariman implements ServletContextListener {
             taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
             defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);
             loginCookies = new LoginCookies(getDataSource(), timer);
+            locationLog = new LocationLogImpl(getDataSource(), directory);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
