@@ -52,6 +52,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -66,6 +68,8 @@ import javax.sql.DataSource;
  * @author mcculley
  */
 public class Sarariman implements ServletContextListener {
+
+    private final ExecutorService backgroundExecutor = Executors.newFixedThreadPool(1);
 
     private final Collection<Employee> approvers = new EmployeeTable(this, "approvers");
 
@@ -424,22 +428,33 @@ public class Sarariman implements ServletContextListener {
         servletContext.setAttribute("directory", directory);
 
         cronJobs.start();
-        String hostname;
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException uhe) {
-            hostname = "unknown host";
-        }
+        final String hostname = getHostname();
 
-        for (Employee employee : getAdministrators()) {
-            String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname, mountPoint);
-            emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
+        Runnable sendStartupEmailNotification = new Runnable() {
+            public void run() {
+                for (Employee employee : getAdministrators()) {
+                    String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname,
+                                                   mountPoint);
+                    emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
+                }
+            }
+
+        };
+        backgroundExecutor.submit(sendStartupEmailNotification);
+    }
+
+    private static String getHostname() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException uhe) {
+            return "unknown host";
         }
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         timer.cancel();
+        backgroundExecutor.shutdown();
     }
 
 }
