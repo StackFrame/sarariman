@@ -82,8 +82,10 @@
                         });
 
                         google.maps.event.addListener(marker, 'click', function() {
+                            // FIXME: Convert to users's preferred timezone.
                             var content = "<p>" + entry.employeeDisplayName + "<br/>" + "Last seen: " +
                                 formatDate(new Date(entry.timestamp), '%M-%d %H:%m:%s') + " UTC"+ "</p>";
+
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
                         });
