@@ -75,7 +75,11 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     private final Sarariman sarariman;
 
-    StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email, LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo, LDAPDirectory directory, DataSource dataSource, Sarariman sarariman) {
+    private final String mobile;
+
+    StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email,
+                       LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo,
+                       LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile) {
         this.directory = directory;
         this.fullName = fullName;
         this.userName = userName;
@@ -89,6 +93,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         this.photo = photo;
         this.dataSource = dataSource;
         this.sarariman = sarariman;
+        this.mobile = mobile;
     }
 
     public String getFullName() {
@@ -303,6 +308,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     public int getAge() {
         return DateUtils.yearsBetween(birthdate.toDateMidnight(), new Date());
+    }
+
+    public String getMobile() {
+        return mobile;
     }
 
     public boolean active(java.sql.Date date) {

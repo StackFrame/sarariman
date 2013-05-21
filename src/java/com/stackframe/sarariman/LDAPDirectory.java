@@ -47,10 +47,19 @@ public class LDAPDirectory implements Directory {
         load();
     }
 
+    private static String getAttribute(Attributes attributes, String attributeName) throws NamingException {
+        Attribute attribute = attributes.get(attributeName);
+        if (attribute == null) {
+            return null;
+        } else {
+            return attribute.getAll().next().toString();
+        }
+    }
     /*
      FIXME: It would be nice to intercept lookups on the maps and try a reload when a lookup fails.  This would require doing
      something different with the defensive copies.
      */
+
     /**
      * Load the directory from LDAP.
      */
@@ -58,7 +67,8 @@ public class LDAPDirectory implements Directory {
         try {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
-                                                                    new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto"});
+                                                                    new String[]{"uid", "sn", "givenName", "employeeNumber",
+                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -67,13 +77,15 @@ public class LDAPDirectory implements Directory {
                 String mail = attributes.get("mail").getAll().next().toString();
                 boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
+                String mobile = getAttribute(attributes, "mobile");
                 int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
                 LocalDate birthdate = new LocalDate(attributes.get("birthdate").getAll().next().toString());
                 LocalDate hiredate = new LocalDate(attributes.get("hiredate").getAll().next().toString());
                 Range<java.sql.Date> periodOfService = Range.atLeast(convert(hiredate.toDateMidnight().toDate()));
                 Attribute jpegPhotoAttribute = attributes.get("jpegPhoto");
                 byte[] photo = jpegPhotoAttribute == null ? null : (byte[])jpegPhotoAttribute.getAll().next();
-                tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName, periodOfService, photo, this, sarariman.getDataSource(), sarariman));
+                tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName,
+                                               periodOfService, photo, this, sarariman.getDataSource(), sarariman, mobile));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {

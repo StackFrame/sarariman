@@ -54,6 +54,8 @@ public interface Employee extends Linkable {
 
     LocalDate getBirthdate();
 
+    String getMobile();
+
     int getAge();
 
     String getDisplayName();
