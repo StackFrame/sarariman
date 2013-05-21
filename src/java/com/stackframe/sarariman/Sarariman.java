@@ -37,7 +37,7 @@ import com.stackframe.sarariman.taskassignments.TaskAssignmentsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.telephony.SMSGateway;
-import com.stackframe.sarariman.telephony.SMSGatewayImpl;
+import com.stackframe.sarariman.telephony.TwilioSMSGatewayImpl;
 import com.stackframe.sarariman.tickets.Tickets;
 import com.stackframe.sarariman.tickets.TicketsImpl;
 import com.stackframe.sarariman.timesheets.Timesheets;
@@ -417,7 +417,7 @@ public class Sarariman implements ServletContextListener {
             String twilioAuthToken = (String)envContext.lookup("twilioAuthToken");
             String SMSFrom = (String)envContext.lookup("SMSFrom");
             boolean inhibitSMS = (Boolean)envContext.lookup("inhibitSMS");
-            SMS = new SMSGatewayImpl(twilioAccountSID, twilioAuthToken, SMSFrom, inhibitSMS);
+            SMS = new TwilioSMSGatewayImpl(twilioAccountSID, twilioAuthToken, SMSFrom, inhibitSMS);
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail, backgroundExecutor);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");

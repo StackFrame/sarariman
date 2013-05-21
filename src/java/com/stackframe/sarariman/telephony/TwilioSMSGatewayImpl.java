@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author mcculley
  */
-public class SMSGatewayImpl implements SMSGateway {
+public class TwilioSMSGatewayImpl implements SMSGateway {
 
     private final String AccountSID;
 
@@ -26,7 +26,7 @@ public class SMSGatewayImpl implements SMSGateway {
 
     private final boolean inhibit;
 
-    public SMSGatewayImpl(String AccountSID, String AuthToken, String from, boolean inhibit) {
+    public TwilioSMSGatewayImpl(String AccountSID, String AuthToken, String from, boolean inhibit) {
         this.AccountSID = AccountSID;
         this.AuthToken = AuthToken;
         this.from = from;
