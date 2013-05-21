@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.geolocation;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * A representation of the Coordinates interface defined by the W3 Geolocation API Specification
  * (http://www.w3.org/TR/geolocation-API/).
@@ -33,9 +35,14 @@ public class Coordinates {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
+        checkArgument(accuracy >= 0, "accuracy must be non-negative");
         this.accuracy = accuracy;
+        checkArgument(altitudeAccuracy == null || altitudeAccuracy >= 0, "altitudeAccuracy must be non-negative");
         this.altitudeAccuracy = altitudeAccuracy;
+        checkArgument(heading == null || (heading >= 0 && heading <= 360) || (Double.isNaN(heading) && speed == 0),
+                      "heading must be in range [0, 360] or NaN if speed is 0");
         this.heading = heading;
+        checkArgument(speed == null || speed >= 0, "speed must be non-negative");
         this.speed = speed;
     }
 
