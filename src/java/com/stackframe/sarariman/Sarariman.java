@@ -147,7 +147,7 @@ public class Sarariman implements ServletContextListener {
 
     private final Timer timer = new Timer("Sarariman");
 
-    private final SMSGateway SMS = new SMSGatewayImpl();
+    private SMSGateway SMS;
 
     public String getVersion() {
         return Version.version;
@@ -413,6 +413,11 @@ public class Sarariman implements ServletContextListener {
             initContext.rebind("sarariman.directory", directory);
             organizationHierarchy = new OrganizationHierarchyImpl(getDataSource(), directory);
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
+            String twilioAccountSID = (String)envContext.lookup("twilioAccountSID");
+            String twilioAuthToken = (String)envContext.lookup("twilioAuthToken");
+            String SMSFrom = (String)envContext.lookup("SMSFrom");
+            boolean inhibitSMS = (Boolean)envContext.lookup("inhibitSMS");
+            SMS = new SMSGatewayImpl(twilioAccountSID, twilioAuthToken, SMSFrom, inhibitSMS);
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail, backgroundExecutor);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
