@@ -19,8 +19,11 @@ import javax.mail.internet.InternetAddress;
 public class MorningTask extends TimerTask {
 
     private final Sarariman sarariman;
+
     private final Directory directory;
+
     private final EmailDispatcher emailDispatcher;
+
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     public MorningTask(Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
@@ -48,6 +51,15 @@ public class MorningTask extends TimerTask {
                 Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
                 String message = "Please submit your timesheet for the week of " + prevWeek + " at " + sarariman.getMountPoint() + ".";
                 emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "late timesheet", message);
+                String mobile = employee.getMobile();
+                if (mobile != null) {
+                    try {
+                        sarariman.getSMSGateway().send(mobile, message);
+                    } catch (Exception e) {
+                        // FIXME: log
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }

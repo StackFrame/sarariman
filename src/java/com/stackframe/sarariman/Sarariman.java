@@ -36,6 +36,8 @@ import com.stackframe.sarariman.taskassignments.TaskAssignments;
 import com.stackframe.sarariman.taskassignments.TaskAssignmentsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
+import com.stackframe.sarariman.telephony.SMSGateway;
+import com.stackframe.sarariman.telephony.SMSGatewayImpl;
 import com.stackframe.sarariman.tickets.Tickets;
 import com.stackframe.sarariman.tickets.TicketsImpl;
 import com.stackframe.sarariman.timesheets.Timesheets;
@@ -144,6 +146,8 @@ public class Sarariman implements ServletContextListener {
     private LocationLog locationLog;
 
     private final Timer timer = new Timer("Sarariman");
+
+    private final SMSGateway SMS = new SMSGatewayImpl();
 
     public String getVersion() {
         return Version.version;
@@ -381,6 +385,10 @@ public class Sarariman implements ServletContextListener {
         return backgroundDatabaseWriteExecutor;
     }
 
+    public SMSGateway getSMSGateway() {
+        return SMS;
+    }
+
     public Collection<UIResource> getNavbarLinks() {
         return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
                                             new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),
@@ -442,10 +450,16 @@ public class Sarariman implements ServletContextListener {
 
         Runnable sendStartupEmailNotification = new Runnable() {
             public void run() {
-                for (Employee employee : getAdministrators()) {
-                    String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname,
-                                                   mountPoint);
-                    emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
+                try {
+                    for (Employee employee : getAdministrators()) {
+                        String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname,
+                                                       mountPoint);
+                        emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
+                        SMS.send(employee.getMobile(), "Sarariman has been started.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // FIXME: log
                 }
             }
 

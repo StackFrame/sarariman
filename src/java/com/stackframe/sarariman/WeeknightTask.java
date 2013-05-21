@@ -19,8 +19,11 @@ import javax.mail.internet.InternetAddress;
 public class WeeknightTask extends TimerTask {
 
     private final Sarariman sarariman;
+
     private final Directory directory;
+
     private final EmailDispatcher emailDispatcher;
+
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     public WeeknightTask(Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
@@ -52,12 +55,30 @@ public class WeeknightTask extends TimerTask {
                     if (employee.isFulltime() || timesheet.getTotalHours() > 0) {
                         String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
+                        String mobile = employee.getMobile();
+                        if (mobile != null) {
+                            try {
+                                sarariman.getSMSGateway().send(mobile, "Please submit your timesheet.");
+                            } catch (Exception e) {
+                                // FIXME: log
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 } else if (!isHoliday) {
                     double hoursRecorded = timesheet.getHours(convert(todayDate));
                     if (hoursRecorded == 0.0 && employee.isFulltime()) {
                         String message = "Please record your time if you worked today at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
+                        String mobile = employee.getMobile();
+                        if (mobile != null) {
+                            try {
+                                sarariman.getSMSGateway().send(mobile, "Please record your time if you worked today.");
+                            } catch (Exception e) {
+                                // FIXME: log
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             }
