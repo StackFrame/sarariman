@@ -119,10 +119,14 @@
 
                         var nameCell = $('<td>').append(entry.employeeDisplayName);
                         var lastSeenCell = $('<td>').append(formattedTimestamp);
+                        var markerIcon = $("<i class='icon-map-marker'>");
+                        var markerAnchor = $("<a href='#'>").append(markerIcon);
+                        var markerCell = $('<td>').append(markerAnchor);
                         var row = $('<tr>').append(nameCell);
                         row.append(lastSeenCell);
+                        row.append(markerCell);
                         $('#locations > tbody:last').append(row);
-                        row.on('click', null, function() {
+                        markerAnchor.on('click', null, function() {
                             selectMarker();
                             map.setZoom(17);
                             map.panTo(marker.position);
@@ -153,6 +157,7 @@
                         <tr>
                             <th>Employee</th>
                             <th>Last Seen</th>
+                            <th>Zoom</th>
                         </tr>
                     </thead>
                     <tbody>
