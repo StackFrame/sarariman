@@ -41,7 +41,6 @@ public class SMSGatewayImpl implements SMSGateway {
         smsParams.put("To", to);
         smsParams.put("From", from);
         smsParams.put("Body", body);
-        System.err.println("Sending SMS to " + to + ". body='" + body + "'");
         if (inhibit) {
             System.err.println("Sending of SMS inhibited. Would have sent body='" + body + "' to " + to);
         } else {
