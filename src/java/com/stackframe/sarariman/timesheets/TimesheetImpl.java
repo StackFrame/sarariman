@@ -39,14 +39,25 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
 
     // FIXME: This hard coded task number should come from a config file or something.
     private static final int holidayTask = 4;
+
+    private static final int unpaidLeaveTask = 5152;
+
     private final int PTOTask;
+
     private final int employeeNumber;
+
     private final Week week;
+
     private final TimesheetEntries entries;
+
     private final Tasks tasks;
+
     private final DataSource dataSource;
+
     private final Directory directory;
+
     private final Sarariman sarariman;
+
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     public TimesheetImpl(Sarariman sarariman, int employeeNumber, Week week, TimesheetEntries entries, Tasks tasks, DataSource dataSource, Directory directory) {
@@ -307,6 +318,11 @@ public class TimesheetImpl extends AbstractLinkable implements Timesheet {
     @Override
     public double getHolidayHours() {
         return getHours(holidayTask);
+    }
+
+    @Override
+    public double getUnpaidLeaveHours() {
+        return getHours(unpaidLeaveTask);
     }
 
     @Override

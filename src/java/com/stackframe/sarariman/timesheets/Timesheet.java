@@ -37,6 +37,8 @@ public interface Timesheet extends Linkable {
 
     double getPTOHours();
 
+    double getUnpaidLeaveHours();
+
     double getRegularHours();
 
     Timestamp getSubmittedTimestamp();
