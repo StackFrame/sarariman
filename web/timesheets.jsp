@@ -99,8 +99,8 @@
                         <th>Employee</th>
                         <th>Regular</th>
                         <th>PTO</th>
-                        <th>Holiday</th>
-                        <th>Total</th>
+                        <th>Unpaid Leave</th>
+                        <th>Paid</th>
                         <th>Approved</th>
                         <th>Submitted</th>
                         <th>On Time</th>
@@ -116,6 +116,7 @@
                                   <c:set var="timesheet" value="${sarariman.timesheets.map[employee][week]}"/>
                                   <c:set var="PTO" value="${timesheet.PTOHours}"/>
                                   <c:set var="holiday" value="${timesheet.holidayHours}"/>
+                                  <c:set var="unpaidLeave" value="${timesheet.unpaidLeaveHours}"/>
                                   <c:set var="hours" value="${timesheet.totalHours}"/>
                                   <td>
                                       <c:url var="timesheetLink" value="timesheet">
@@ -124,11 +125,11 @@
                                       </c:url>
                                       <a href="${fn:escapeXml(timesheetLink)}">${employee.fullName}</a>
                                   </td>
-                                  <td class="duration"><fmt:formatNumber value="${hours - (PTO + holiday)}"
+                                  <td class="duration"><fmt:formatNumber value="${hours - (PTO + holiday + unpaidLeave)}"
                                                     minFractionDigits="2"/></td>
-                                  <td class="duration"><fmt:formatNumber value="${PTO}" minFractionDigits="2"/></td>
-                                  <td class="duration"><fmt:formatNumber value="${holiday}" minFractionDigits="2"/></td>
-                                  <td class="duration"><fmt:formatNumber value="${hours}" minFractionDigits="2"/></td>
+                                  <td class="duration"><fmt:formatNumber value="${PTO + holiday}" minFractionDigits="2"/></td>
+                                  <td class="duration"><fmt:formatNumber value="${unpaidLeave}" minFractionDigits="2"/></td>
+                                  <td class="duration"><fmt:formatNumber value="${hours - unpaidLeave}" minFractionDigits="2"/></td>
                                   <c:choose>
                                       <c:when test="${!timesheet.submitted}">
                                           <c:set var="approved" value="false"/>
