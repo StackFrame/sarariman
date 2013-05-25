@@ -18,23 +18,19 @@ import java.util.Map;
  */
 public class TwilioSMSGatewayImpl implements SMSGateway {
 
-    private final String AccountSID;
-
-    private final String AuthToken;
+    private final TwilioRestClient client;
 
     private final String from;
 
     private final boolean inhibit;
 
-    public TwilioSMSGatewayImpl(String AccountSID, String AuthToken, String from, boolean inhibit) {
-        this.AccountSID = AccountSID;
-        this.AuthToken = AuthToken;
+    public TwilioSMSGatewayImpl(TwilioRestClient client, String from, boolean inhibit) {
+        this.client = client;
         this.from = from;
         this.inhibit = inhibit;
     }
 
     public void send(String to, String body) throws Exception {
-        TwilioRestClient client = new TwilioRestClient(AccountSID, AuthToken);
         Account account = client.getAccount();
         SmsFactory smsFactory = account.getSmsFactory();
         Map<String, String> smsParams = new HashMap<String, String>();

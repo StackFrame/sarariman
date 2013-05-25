@@ -44,6 +44,7 @@ import com.stackframe.sarariman.timesheets.Timesheets;
 import com.stackframe.sarariman.timesheets.TimesheetsImpl;
 import com.stackframe.sarariman.vacation.Vacations;
 import com.stackframe.sarariman.vacation.VacationsImpl;
+import com.twilio.sdk.TwilioRestClient;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -417,7 +418,8 @@ public class Sarariman implements ServletContextListener {
             String twilioAuthToken = (String)envContext.lookup("twilioAuthToken");
             String SMSFrom = (String)envContext.lookup("SMSFrom");
             boolean inhibitSMS = (Boolean)envContext.lookup("inhibitSMS");
-            SMS = new TwilioSMSGatewayImpl(twilioAccountSID, twilioAuthToken, SMSFrom, inhibitSMS);
+            TwilioRestClient twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+            SMS = new TwilioSMSGatewayImpl(twilioClient, SMSFrom, inhibitSMS);
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail, backgroundExecutor);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
