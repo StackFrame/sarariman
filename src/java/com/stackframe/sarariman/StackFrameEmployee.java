@@ -77,9 +77,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     private final String mobile;
 
+    private final Iterable<URL> profileLinks;
+
     StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email,
                        LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo,
-                       LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile) {
+                       LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile,
+                       Iterable<URL> profileLinks) {
         this.directory = directory;
         this.fullName = fullName;
         this.userName = userName;
@@ -94,6 +97,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         this.dataSource = dataSource;
         this.sarariman = sarariman;
         this.mobile = mobile;
+        this.profileLinks = profileLinks;
     }
 
     public String getFullName() {
@@ -816,6 +820,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     public byte[] getPhoto() {
         return photo;
+    }
+
+    public Iterable<URL> getProfileLinks() {
+        return profileLinks;
     }
 
     @Override

@@ -4,10 +4,13 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import static com.stackframe.sql.SQLUtilities.convert;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,6 +58,38 @@ public class LDAPDirectory implements Directory {
             return attribute.getAll().next().toString();
         }
     }
+
+    private static Iterable<String> getAttributes(Attributes attributes, String attributeName) throws NamingException {
+        Attribute attribute = attributes.get(attributeName);
+        ImmutableList.Builder<String> b = ImmutableList.<String>builder();
+        if (attribute == null) {
+            return null;
+        } else {
+            NamingEnumeration ne = attribute.getAll();
+            while (ne.hasMoreElements()) {
+                b.add((String)ne.nextElement());
+            }
+
+            return b.build();
+        }
+    }
+
+    private static Iterable<URL> getURLs(Attributes attributes, String attributeName) throws NamingException {
+        Iterable<String> i = getAttributes(attributes, attributeName);
+        ImmutableList.Builder<URL> b = ImmutableList.<URL>builder();
+
+        if (i != null) {
+            for (String s : i) {
+                try {
+                    b.add(new URL(s));
+                } catch (MalformedURLException mue) {
+                    throw new RuntimeException(mue);
+                }
+            }
+        }
+
+        return b.build();
+    }
     /*
      FIXME: It would be nice to intercept lookups on the maps and try a reload when a lookup fails.  This would require doing
      something different with the defensive copies.
@@ -68,7 +103,7 @@ public class LDAPDirectory implements Directory {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
                                                                     new String[]{"uid", "sn", "givenName", "employeeNumber",
-                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile"});
+                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile", "url"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -84,8 +119,10 @@ public class LDAPDirectory implements Directory {
                 Range<java.sql.Date> periodOfService = Range.atLeast(convert(hiredate.toDateMidnight().toDate()));
                 Attribute jpegPhotoAttribute = attributes.get("jpegPhoto");
                 byte[] photo = jpegPhotoAttribute == null ? null : (byte[])jpegPhotoAttribute.getAll().next();
+                Iterable<URL> profileLinks = getURLs(attributes, "url");
                 tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName,
-                                               periodOfService, photo, this, sarariman.getDataSource(), sarariman, mobile));
+                                               periodOfService, photo, this, sarariman.getDataSource(), sarariman, mobile,
+                                               profileLinks));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {

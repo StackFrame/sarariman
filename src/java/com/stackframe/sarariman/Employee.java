@@ -107,6 +107,8 @@ public interface Employee extends Linkable {
 
     byte[] getPhoto();
 
+    Iterable<URL> getProfileLinks();
+
     // FIXME: Add gender
     // FIXME: Add race
     // FIXME: Add periods of employment
