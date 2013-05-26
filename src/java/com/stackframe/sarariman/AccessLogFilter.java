@@ -49,6 +49,7 @@ public class AccessLogFilter extends HttpFilter {
         final String userAgent = request.getHeader("User-Agent");
         final String remoteAddress = request.getRemoteAddr();
         final String referrer = request.getHeader("Referer");
+        final String host = request.getHeader("Host");
 
         final Employee employee = (Employee)request.getAttribute("user");
         Runnable insertTask = new Runnable() {
@@ -57,8 +58,8 @@ public class AccessLogFilter extends HttpFilter {
                     Connection c = dataSource.getConnection();
                     try {
                         PreparedStatement s = c.prepareStatement(
-                                "INSERT INTO access_log (path, query, method, employee, status, time, user_agent, remote_address, referrer) " +
-                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                "INSERT INTO access_log (path, query, method, employee, status, time, user_agent, remote_address, referrer, host) " +
+                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         try {
                             s.setString(1, path);
                             s.setString(2, queryString);
@@ -80,6 +81,7 @@ public class AccessLogFilter extends HttpFilter {
                             s.setString(7, userAgent);
                             s.setString(8, remoteAddress);
                             s.setString(9, referrer);
+                            s.setString(10, host);
                             int numRowsInserted = s.executeUpdate();
                             assert numRowsInserted == 1;
                         } finally {
