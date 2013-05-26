@@ -156,7 +156,26 @@
                 <h2>Public Profiles</h2>
                 <ul>
                     <c:forEach var="link" items="${employee.profileLinks}">
-                        <li><a href="${link}">${link}</a></li>
+                        <li>
+                            <c:choose>
+                                <c:when test="${fn:startsWith(link, 'http://twitter.com/')}">
+                                    <i class="icon-twitter"></i>
+                                </c:when>
+                                <c:when test="${fn:startsWith(link, 'http://www.facebook.com/')}">
+                                    <i class="icon-facebook"></i>
+                                </c:when>
+                                <c:when test="${fn:startsWith(link, 'http://www.linkedin.com/')}">
+                                    <i class="icon-linkedin"></i>
+                                </c:when>
+                                <c:when test="${fn:startsWith(link, 'https://github.com/')}">
+                                    <i class="icon-github"></i>
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="icon-globe"></i>
+                                </c:otherwise>
+                            </c:choose>
+                            <a href="${link}">${link}</a>
+                        </li>
                     </c:forEach>
                 </ul>
             </c:if>
