@@ -11,7 +11,7 @@ import java.util.Set;
  *
  * @author mcculley
  */
-public interface Directory {
+public interface Directory extends Authenticator {
 
     /**
      * Retrieves a Map of Employees with employee numbers as the keys in the form of Integer, Long, and String. Note that there are
@@ -39,14 +39,5 @@ public interface Directory {
      * Synchronize this directory against the backing store.
      */
     void reload();
-
-    /**
-     * Determine if the supplied username and password is valid.
-     *
-     * @param username the username
-     * @param password the password
-     * @return <code>true</code> if the password is valid for the user named username and username represents a valid user
-     */
-    boolean checkCredentials(String username, String password);
 
 }
