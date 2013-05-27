@@ -50,6 +50,7 @@ public class IncomingSMSHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.err.println("entering IncomingSMSHandler::doPost");
+        // FIXME: How do we verify this actually came from Twilio? IP address? Some token?
         final String from = request.getParameter("from");
         System.err.println("from=" + from);
         final String to = request.getParameter("to");
