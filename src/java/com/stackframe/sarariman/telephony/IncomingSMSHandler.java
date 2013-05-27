@@ -6,6 +6,7 @@ package com.stackframe.sarariman.telephony;
 
 import com.stackframe.sarariman.Sarariman;
 import java.io.IOException;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,14 +38,16 @@ public class IncomingSMSHandler extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("entering IncomingSMSHandler::doPost");
         // FIXME: How do we verify this actually came from Twilio? IP address? Some token?
+        Enumeration<String> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            System.err.println("parameterName=" + name);
+            System.err.println("value=" + request.getParameter(name));
+        }
         String from = request.getParameter("From");
-        System.err.println("from=" + from);
         String to = request.getParameter("To");
-        System.err.println("to=" + to);
         String body = request.getParameter("Body");
-        System.err.println("body=" + body);
         long now = System.currentTimeMillis();
         SMSEvent e = new SMSEvent(from, to, body, now);
         gateway.distribute(e);
