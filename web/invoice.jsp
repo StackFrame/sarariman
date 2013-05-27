@@ -244,7 +244,7 @@
                                          value="Timesheet ${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
                             </c:url>
                             <li><a href="${fn:escapeXml(html)}">${directory.byNumber[row.employee].fullName} ${formattedWeek}</a>
-                                <a href="${fn:escapeXml(pdf)}">[PDF]</a>
+                                <a href="${fn:escapeXml(pdf)}" title="PDF of timesheet"><i class="icon-print"></i></a>
                                 <c:set var="documentName" value="Timesheet ${directory.byNumber[row.employee].fullName} ${formattedWeek}.pdf"/>
                                 <c:set var="documentLink" value="${pdf}"/>
                                 <%
@@ -648,7 +648,7 @@
                     <c:param name="outputType" value="pdf"/>
                     <c:param name="preferredFilename" value="Invoice ${param.invoice}.pdf"/>
                 </c:url>
-                <p><a href="${fn:escapeXml(pdf)}">PDF</a> view.</p>
+                <p><a href="${fn:escapeXml(pdf)}" title="PDF of invoice"><i class="icon-print"></i></a></p>
 
                 <c:if test="${fn:contains(sarariman.invoiceManagers, user)}">
 
