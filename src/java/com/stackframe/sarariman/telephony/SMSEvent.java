@@ -18,11 +18,14 @@ public class SMSEvent {
 
     private final long timestamp;
 
-    public SMSEvent(String from, String to, String body, long timestamp) {
+    private final String status;
+
+    public SMSEvent(String from, String to, String body, long timestamp, String status) {
         this.from = from;
         this.to = to;
         this.body = body;
         this.timestamp = timestamp;
+        this.status = status;
     }
 
     public String getFrom() {
@@ -41,9 +44,13 @@ public class SMSEvent {
         return timestamp;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
-        return "SMSEvent{" + "from=" + from + ", to=" + to + ", body=" + body + ", timestamp=" + timestamp + '}';
+        return "SMSEvent{" + "from=" + from + ", to=" + to + ", body=" + body + ", timestamp=" + timestamp + ", status=" + status + '}';
     }
 
 }

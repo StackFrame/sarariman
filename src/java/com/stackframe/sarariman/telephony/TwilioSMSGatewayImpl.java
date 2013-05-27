@@ -59,7 +59,7 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
             try {
                 long now = System.currentTimeMillis();
                 Sms sms = smsFactory.create(smsParams);
-                log(new SMSEvent(from, to, body, now));
+                log(new SMSEvent(from, to, body, now, sms.getStatus()));
             } catch (TwilioRestException tre) {
                 throw new Exception(tre);
             }
@@ -81,13 +81,14 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
                     Connection c = dataSource.getConnection();
                     try {
                         PreparedStatement s = c.prepareStatement(
-                                "INSERT INTO sms_log (`from`, `to`, body, `timestamp`) " +
-                                "VALUES(?, ?, ?, ?)");
+                                "INSERT INTO sms_log (`from`, `to`, body, `timestamp`, status) " +
+                                "VALUES(?, ?, ?, ?, ?)");
                         try {
                             s.setString(1, e.getFrom());
                             s.setString(2, e.getTo());
                             s.setString(3, e.getBody());
                             s.setTimestamp(4, new Timestamp(e.getTimestamp()));
+                            s.setString(5, e.getStatus());
                             int numRowsInserted = s.executeUpdate();
                             assert numRowsInserted == 1;
                         } finally {

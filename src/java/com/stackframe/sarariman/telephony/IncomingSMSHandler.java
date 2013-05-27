@@ -48,8 +48,9 @@ public class IncomingSMSHandler extends HttpServlet {
         String from = request.getParameter("From");
         String to = request.getParameter("To");
         String body = request.getParameter("Body");
+        String status = request.getParameter("SmsStatus");
         long now = System.currentTimeMillis();
-        SMSEvent e = new SMSEvent(from, to, body, now);
+        SMSEvent e = new SMSEvent(from, to, body, now, status);
         gateway.distribute(e);
     }
 
