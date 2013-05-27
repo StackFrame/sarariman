@@ -419,7 +419,7 @@ public class Sarariman implements ServletContextListener {
             String SMSFrom = (String)envContext.lookup("SMSFrom");
             boolean inhibitSMS = (Boolean)envContext.lookup("inhibitSMS");
             TwilioRestClient twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
-            SMS = new TwilioSMSGatewayImpl(twilioClient, SMSFrom, inhibitSMS);
+            SMS = new TwilioSMSGatewayImpl(twilioClient, SMSFrom, inhibitSMS, backgroundDatabaseWriteExecutor, getDataSource());
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail, backgroundExecutor);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");
