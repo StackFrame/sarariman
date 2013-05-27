@@ -12,8 +12,6 @@ public interface SMSGateway {
 
     void send(String to, String body) throws Exception;
 
-    void distribute(SMSEvent e);
-
     void addSMSListener(SMSListener l);
 
     void removeSMSListener(SMSListener l);
