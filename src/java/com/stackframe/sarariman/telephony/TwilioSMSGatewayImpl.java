@@ -81,7 +81,7 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
                     Connection c = dataSource.getConnection();
                     try {
                         PreparedStatement s = c.prepareStatement(
-                                "INSERT INTO sms_log (from, to, body, timestamp) " +
+                                "INSERT INTO sms_log (`from`, `to`, body, `timestamp`) " +
                                 "VALUES(?, ?, ?, ?)");
                         try {
                             s.setString(1, e.getFrom());
