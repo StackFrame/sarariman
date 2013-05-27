@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class IncomingSMSHandler extends HttpServlet {
+public class IncomingTwilioSMSHandler extends HttpServlet {
 
     private SMSGateway gateway;
 

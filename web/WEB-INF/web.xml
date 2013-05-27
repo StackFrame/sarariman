@@ -208,7 +208,7 @@
     </servlet>
     <servlet>
         <servlet-name>IncomingSMSHandler</servlet-name>
-        <servlet-class>com.stackframe.sarariman.telephony.IncomingSMSHandler</servlet-class>
+        <servlet-class>com.stackframe.sarariman.telephony.IncomingTwilioSMSHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
