@@ -8,6 +8,8 @@ import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.stackframe.reflect.ReflectionUtils;
 import com.stackframe.sarariman.accesslog.AccessLog;
 import com.stackframe.sarariman.accesslog.AccessLogImpl;
@@ -416,10 +418,16 @@ public class Sarariman implements ServletContextListener {
             boolean inhibitEmail = (Boolean)envContext.lookup("inhibitEmail");
             String twilioAccountSID = (String)envContext.lookup("twilioAccountSID");
             String twilioAuthToken = (String)envContext.lookup("twilioAuthToken");
-            String SMSFrom = (String)envContext.lookup("SMSFrom");
-            boolean inhibitSMS = (Boolean)envContext.lookup("inhibitSMS");
             TwilioRestClient twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
-            SMS = new TwilioSMSGatewayImpl(twilioClient, SMSFrom, inhibitSMS, backgroundDatabaseWriteExecutor, getDataSource());
+            boolean inhibitSMS = (Boolean)envContext.lookup("inhibitSMS");
+            String SMSFrom = (String)envContext.lookup("SMSFrom");
+            try {
+                SMS = new TwilioSMSGatewayImpl(twilioClient, PhoneNumberUtil.getInstance().parse(SMSFrom, "US"), inhibitSMS,
+                                               backgroundDatabaseWriteExecutor, getDataSource());
+            } catch (NumberParseException pe) {
+                throw new RuntimeException(pe);
+            }
+
             emailDispatcher = new EmailDispatcher(lookupMailProperties(envContext), inhibitEmail, backgroundExecutor);
             logoURL = (String)envContext.lookup("logoURL");
             mountPoint = (String)envContext.lookup("mountPoint");

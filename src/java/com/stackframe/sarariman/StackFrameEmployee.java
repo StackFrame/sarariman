@@ -11,6 +11,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
@@ -314,8 +317,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return DateUtils.yearsBetween(birthdate.toDateMidnight(), new Date());
     }
 
-    public String getMobile() {
-        return mobile;
+    public PhoneNumber getMobile() {
+        if (mobile == null) {
+            return null;
+        } else {
+            try {
+                return PhoneNumberUtil.getInstance().parse(mobile, "US");
+            } catch (NumberParseException npe) {
+                throw new IllegalArgumentException(npe);
+            }
+        }
     }
 
     public boolean active(java.sql.Date date) {

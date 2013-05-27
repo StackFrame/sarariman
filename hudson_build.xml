@@ -12,6 +12,7 @@
     <pathelement path="lib/guava-14.0-rc3.jar" />
     <pathelement path="lib/StackFrameCommon.jar" />
     <pathelement path="lib/twilio-java-sdk-3.3.15-jar-with-dependencies.jar" />
+    <pathelement path="lib/libphonenumber-5.5.jar" />
   </path>
 
   <target name="default" description="Compile and build WAR." >

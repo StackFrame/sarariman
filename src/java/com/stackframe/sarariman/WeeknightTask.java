@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.Calendar;
@@ -55,7 +56,7 @@ public class WeeknightTask extends TimerTask {
                     if (employee.isFulltime() || timesheet.getTotalHours() > 0) {
                         String message = "Please submit your timesheet for the week of " + week + " at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
-                        String mobile = employee.getMobile();
+                        PhoneNumber mobile = employee.getMobile();
                         if (mobile != null) {
                             try {
                                 sarariman.getSMSGateway().send(mobile, "Please submit your timesheet.");
@@ -70,7 +71,7 @@ public class WeeknightTask extends TimerTask {
                     if (hoursRecorded == 0.0 && employee.isFulltime()) {
                         String message = "Please record your time if you worked today at " + sarariman.getMountPoint() + ".";
                         emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "timesheet", message);
-                        String mobile = employee.getMobile();
+                        PhoneNumber mobile = employee.getMobile();
                         if (mobile != null) {
                             try {
                                 sarariman.getSMSGateway().send(mobile, "Please record your time if you worked today.");

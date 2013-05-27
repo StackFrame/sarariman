@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.Calendar;
@@ -51,7 +52,7 @@ public class MorningTask extends TimerTask {
                 Iterable<InternetAddress> chainOfCommandAddresses = EmailDispatcher.addresses(sarariman.employees(chainOfCommand));
                 String message = "Please submit your timesheet for the week of " + prevWeek + " at " + sarariman.getMountPoint() + ".";
                 emailDispatcher.send(employee.getEmail(), chainOfCommandAddresses, "late timesheet", message);
-                String mobile = employee.getMobile();
+                PhoneNumber mobile = employee.getMobile();
                 if (mobile != null) {
                     try {
                         sarariman.getSMSGateway().send(mobile, message);

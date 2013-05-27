@@ -5,6 +5,7 @@
 package com.stackframe.sarariman;
 
 import com.google.common.collect.Range;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.taskassignments.TaskAssignment;
@@ -54,7 +55,7 @@ public interface Employee extends Linkable {
 
     LocalDate getBirthdate();
 
-    String getMobile();
+    PhoneNumber getMobile();
 
     int getAge();
 

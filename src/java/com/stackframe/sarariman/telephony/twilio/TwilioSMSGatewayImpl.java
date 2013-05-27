@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.telephony.twilio;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.sarariman.telephony.SMSEvent;
 import com.stackframe.sarariman.telephony.SMSGateway;
 import com.stackframe.sarariman.telephony.SMSListener;
@@ -31,7 +33,7 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
 
     private final TwilioRestClient client;
 
-    private final String from;
+    private final PhoneNumber from;
 
     private final boolean inhibit;
 
@@ -41,7 +43,7 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
 
     private final List<SMSListener> listeners = new CopyOnWriteArrayList<SMSListener>();
 
-    public TwilioSMSGatewayImpl(TwilioRestClient client, String from, boolean inhibit, Executor databaseExecutor, DataSource dataSource) {
+    public TwilioSMSGatewayImpl(TwilioRestClient client, PhoneNumber from, boolean inhibit, Executor databaseExecutor, DataSource dataSource) {
         this.client = client;
         this.from = from;
         this.inhibit = inhibit;
@@ -53,15 +55,15 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
         return client;
     }
 
-    public void send(String to, String body) throws Exception {
+    public void send(PhoneNumber to, String body) throws Exception {
         Account account = client.getAccount();
         SmsFactory smsFactory = account.getSmsFactory();
         Map<String, String> smsParams = new HashMap<String, String>();
-        smsParams.put("To", to);
-        smsParams.put("From", from);
+        smsParams.put("To", format(to));
+        smsParams.put("From", format(from));
         smsParams.put("Body", body);
         if (inhibit) {
-            System.err.println("Sending of SMS inhibited. Would have sent body='" + body + "' to " + to);
+            System.err.println("Sending of SMS inhibited. Would have sent body='" + body + "' to " + format(to));
         } else {
             try {
                 long now = System.currentTimeMillis();
@@ -81,6 +83,10 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
         listeners.remove(l);
     }
 
+    private static String format(PhoneNumber phoneNumber) {
+        return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+    }
+
     private void log(final SMSEvent e) {
         Runnable insertTask = new Runnable() {
             public void run() {
@@ -91,8 +97,8 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
                                 "INSERT INTO sms_log (`from`, `to`, body, `timestamp`, status) " +
                                 "VALUES(?, ?, ?, ?, ?)");
                         try {
-                            s.setString(1, e.getFrom());
-                            s.setString(2, e.getTo());
+                            s.setString(1, format(e.getFrom()));
+                            s.setString(2, format(e.getTo()));
                             s.setString(3, e.getBody());
                             s.setTimestamp(4, new Timestamp(e.getTimestamp()));
                             s.setString(5, e.getStatus());

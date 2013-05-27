@@ -4,6 +4,9 @@
  */
 package com.stackframe.sarariman.telephony.twilio;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.sarariman.Sarariman;
 import com.stackframe.sarariman.telephony.SMSEvent;
 import com.twilio.sdk.TwilioRestClient;
@@ -74,13 +77,18 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
             throw new ServletException("signature does not match");
         }
 
-        String from = request.getParameter("From");
-        String to = request.getParameter("To");
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         String body = request.getParameter("Body");
         String status = request.getParameter("SmsStatus");
         long now = System.currentTimeMillis();
-        SMSEvent e = new SMSEvent(from, to, body, now, status);
-        gateway.distribute(e);
+        try {
+            PhoneNumber from = phoneNumberUtil.parse(request.getParameter("From"), "US");
+            PhoneNumber to = phoneNumberUtil.parse(request.getParameter("To"), "US");
+            SMSEvent e = new SMSEvent(from, to, body, now, status);
+            gateway.distribute(e);
+        } catch (NumberParseException npe) {
+            throw new ServletException(npe);
+        }
     }
 
 }

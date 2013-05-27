@@ -4,15 +4,17 @@
  */
 package com.stackframe.sarariman.telephony;
 
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 /**
  *
  * @author mcculley
  */
 public class SMSEvent {
 
-    private final String from;
+    private final PhoneNumber from;
 
-    private final String to;
+    private final PhoneNumber to;
 
     private final String body;
 
@@ -20,7 +22,7 @@ public class SMSEvent {
 
     private final String status;
 
-    public SMSEvent(String from, String to, String body, long timestamp, String status) {
+    public SMSEvent(PhoneNumber from, PhoneNumber to, String body, long timestamp, String status) {
         this.from = from;
         this.to = to;
         this.body = body;
@@ -28,11 +30,11 @@ public class SMSEvent {
         this.status = status;
     }
 
-    public String getFrom() {
+    public PhoneNumber getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public PhoneNumber getTo() {
         return to;
     }
 

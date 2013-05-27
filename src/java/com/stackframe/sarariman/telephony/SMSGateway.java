@@ -4,13 +4,15 @@
  */
 package com.stackframe.sarariman.telephony;
 
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 /**
  *
  * @author mcculley
  */
 public interface SMSGateway {
 
-    void send(String to, String body) throws Exception;
+    void send(PhoneNumber to, String body) throws Exception;
 
     void addSMSListener(SMSListener l);
 
