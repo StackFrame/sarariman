@@ -6,12 +6,16 @@ package com.stackframe.sarariman.telephony.twilio;
 
 import com.stackframe.sarariman.Sarariman;
 import com.stackframe.sarariman.telephony.SMSEvent;
+import com.twilio.sdk.TwilioRestClient;
+import com.twilio.sdk.TwilioUtils;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUtils;
 
 /**
  *
@@ -28,6 +32,17 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
         gateway = (TwilioSMSGatewayImpl)sarariman.getSMSGateway();
     }
 
+    private static Map<String, String> parameters(HttpServletRequest request) {
+        Map<String, String> m = new HashMap<String, String>();
+        for (Map.Entry<String, String[]> e : request.getParameterMap().entrySet()) {
+            for (String v : e.getValue()) {
+                m.put(e.getKey(), v);
+            }
+        }
+
+        return m;
+    }
+
     /**
      * Handles the HTTP
      * <code>POST</code> method.
@@ -39,11 +54,18 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String url = HttpUtils.getRequestURL(request).toString();
         String accountSid = request.getParameter("AccountSid");
-        String expectedAccountSid = gateway.getRestClient().getAccountSid();
+        TwilioRestClient client = gateway.getRestClient();
+        String expectedAccountSid = client.getAccountSid();
         if (!expectedAccountSid.equals(accountSid)) {
-            // FIXME: Use x-twilio-signature to verify that the call came from Twilio. See http://www.twilio.com/docs/security
             throw new ServletException("account ID does not match");
+        }
+
+        TwilioUtils twilioUtils = new TwilioUtils(client.getAccount().getAuthToken(), expectedAccountSid);
+        boolean valid = twilioUtils.validateRequest(request.getHeader("x-twilio-signature"), url, parameters(request));
+        if (!valid) {
+            throw new ServletException("signature does not match");
         }
 
         String from = request.getParameter("From");
