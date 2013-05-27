@@ -39,20 +39,6 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Enumeration<String> names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String name = names.nextElement();
-            System.err.print("parameterName=" + name);
-            System.err.println(": value=" + request.getParameter(name));
-        }
-
-        names = request.getHeaderNames();
-        while (names.hasMoreElements()) {
-            String name = names.nextElement();
-            System.err.print("headerName=" + name);
-            System.err.println(": value=" + request.getHeader(name));
-        }
-
         String accountSid = request.getParameter("AccountSid");
         String expectedAccountSid = gateway.getRestClient().getAccountSid();
         if (!expectedAccountSid.equals(accountSid)) {
