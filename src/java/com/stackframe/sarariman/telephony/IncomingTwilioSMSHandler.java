@@ -18,13 +18,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class IncomingTwilioSMSHandler extends HttpServlet {
 
-    private SMSGateway gateway;
+    private TwilioSMSGatewayImpl gateway;
 
     @Override
     public void init() throws ServletException {
         super.init();
         Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
-        gateway = sarariman.getSMSGateway();
+        gateway = (TwilioSMSGatewayImpl)sarariman.getSMSGateway();
     }
 
     /**
@@ -38,13 +38,27 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // FIXME: How do we verify this actually came from Twilio? IP address? Some token?
         Enumeration<String> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             System.err.println("parameterName=" + name);
             System.err.println("value=" + request.getParameter(name));
         }
+
+        names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            System.err.print("headerName=" + name);
+            System.err.println(": value=" + request.getParameter(name));
+        }
+
+        String accountSid = request.getParameter("AccountSid");
+        String expectedAccountSid = gateway.getRestClient().getAccountSid();
+        if (!expectedAccountSid.equals(accountSid)) {
+            // FIXME: Is this enough to verify this actually came from Twilio? Should we check IP address?
+            throw new ServletException("account ID does not match");
+        }
+
         String from = request.getParameter("From");
         String to = request.getParameter("To");
         String body = request.getParameter("Body");

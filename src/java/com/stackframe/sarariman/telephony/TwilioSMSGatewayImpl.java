@@ -46,6 +46,10 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
         this.dataSource = dataSource;
     }
 
+    TwilioRestClient getRestClient() {
+        return client;
+    }
+
     public void send(String to, String body) throws Exception {
         Account account = client.getAccount();
         SmsFactory smsFactory = account.getSmsFactory();
