@@ -10,7 +10,9 @@ import com.twilio.sdk.resource.factory.SmsFactory;
 import com.twilio.sdk.resource.instance.Account;
 import com.twilio.sdk.resource.instance.Sms;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
@@ -23,6 +25,8 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
     private final String from;
 
     private final boolean inhibit;
+
+    private final List<SMSListener> listeners = new CopyOnWriteArrayList<SMSListener>();
 
     public TwilioSMSGatewayImpl(TwilioRestClient client, String from, boolean inhibit) {
         this.client = client;
@@ -45,6 +49,20 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
             } catch (TwilioRestException tre) {
                 throw new Exception(tre);
             }
+        }
+    }
+
+    public void addSMSListener(SMSListener l) {
+        listeners.add(l);
+    }
+
+    public void removeSMSListener(SMSListener l) {
+        listeners.remove(l);
+    }
+
+    public void distribute(SMSEvent e) {
+        for (SMSListener l : listeners) {
+            l.received(e);
         }
     }
 
