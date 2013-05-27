@@ -206,6 +206,10 @@
         <servlet-name>TaskAssignmentServlet</servlet-name>
         <servlet-class>com.stackframe.sarariman.taskassignments.TaskAssignmentController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>IncomingSMSHandler</servlet-name>
+        <servlet-class>com.stackframe.sarariman.telephony.IncomingSMSHandler</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -737,6 +741,10 @@
     <servlet-mapping>
         <servlet-name>TaskAssignmentServlet</servlet-name>
         <url-pattern>/taskassignment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IncomingSMSHandler</servlet-name>
+        <url-pattern>/handleSMS</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
