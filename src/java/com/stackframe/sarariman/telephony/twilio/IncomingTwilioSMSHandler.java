@@ -9,6 +9,7 @@ import com.stackframe.sarariman.telephony.SMSEvent;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioUtils;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -34,11 +35,14 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
 
     private static Map<String, String> parameters(HttpServletRequest request) {
         Map<String, String> m = new HashMap<String, String>();
-        // FIXME: When stepping up to more modern servlet spec, this should be generified.
-        for (Map.Entry e : request.getParameterMap().entrySet()) {
-            String[] values = (String[])e.getValue();
-            for (String v : values) {
-                m.put((String)e.getKey(), v);
+
+        // FIXME: When stepping up to more modern servlet spec, use getParameterMap().
+        Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String name = parameterNames.nextElement();
+            String[] values = request.getParameterValues(name);
+            for (String value : values) {
+                m.put(name, value);
             }
         }
 
