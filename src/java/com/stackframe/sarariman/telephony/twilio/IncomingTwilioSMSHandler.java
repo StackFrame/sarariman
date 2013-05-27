@@ -42,15 +42,15 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
         Enumeration<String> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
-            System.err.println("parameterName=" + name);
-            System.err.println("value=" + request.getParameter(name));
+            System.err.print("parameterName=" + name);
+            System.err.println(": value=" + request.getParameter(name));
         }
 
         names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             System.err.print("headerName=" + name);
-            System.err.println(": value=" + request.getParameter(name));
+            System.err.println(": value=" + request.getHeader(name));
         }
 
         String accountSid = request.getParameter("AccountSid");
