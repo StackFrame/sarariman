@@ -2,8 +2,11 @@
  * Copyright (C) 2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
-package com.stackframe.sarariman.telephony;
+package com.stackframe.sarariman.telephony.twilio;
 
+import com.stackframe.sarariman.telephony.SMSEvent;
+import com.stackframe.sarariman.telephony.SMSGateway;
+import com.stackframe.sarariman.telephony.SMSListener;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.SmsFactory;

@@ -2,9 +2,10 @@
  * Copyright (C) 2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
-package com.stackframe.sarariman.telephony;
+package com.stackframe.sarariman.telephony.twilio;
 
 import com.stackframe.sarariman.Sarariman;
+import com.stackframe.sarariman.telephony.SMSEvent;
 import java.io.IOException;
 import java.util.Enumeration;
 import javax.servlet.ServletException;
