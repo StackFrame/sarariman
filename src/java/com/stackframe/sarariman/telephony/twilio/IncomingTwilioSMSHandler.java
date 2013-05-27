@@ -34,9 +34,11 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
 
     private static Map<String, String> parameters(HttpServletRequest request) {
         Map<String, String> m = new HashMap<String, String>();
-        for (Map.Entry<String, String[]> e : request.getParameterMap().entrySet()) {
-            for (String v : e.getValue()) {
-                m.put(e.getKey(), v);
+        // FIXME: When stepping up to more modern servlet spec, this should be generified.
+        for (Map.Entry e : request.getParameterMap().entrySet()) {
+            String[] values = (String[])e.getValue();
+            for (String v : values) {
+                m.put((String)e.getKey(), v);
             }
         }
 
