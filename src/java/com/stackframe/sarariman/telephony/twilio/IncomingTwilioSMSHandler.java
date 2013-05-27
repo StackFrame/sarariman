@@ -56,7 +56,7 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
         String accountSid = request.getParameter("AccountSid");
         String expectedAccountSid = gateway.getRestClient().getAccountSid();
         if (!expectedAccountSid.equals(accountSid)) {
-            // FIXME: Is this enough to verify this actually came from Twilio? Should we check IP address?
+            // FIXME: Use x-twilio-signature to verify that the call came from Twilio. See http://www.twilio.com/docs/security
             throw new ServletException("account ID does not match");
         }
 
