@@ -37,7 +37,7 @@ import com.stackframe.sarariman.taskassignments.TaskAssignmentsImpl;
 import com.stackframe.sarariman.tasks.Tasks;
 import com.stackframe.sarariman.tasks.TasksImpl;
 import com.stackframe.sarariman.telephony.SMSGateway;
-import com.stackframe.sarariman.telephony.TwilioSMSGatewayImpl;
+import com.stackframe.sarariman.telephony.twilio.TwilioSMSGatewayImpl;
 import com.stackframe.sarariman.tickets.Tickets;
 import com.stackframe.sarariman.tickets.TicketsImpl;
 import com.stackframe.sarariman.timesheets.Timesheets;
