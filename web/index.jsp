@@ -221,7 +221,9 @@
                             <input type="hidden" name="week" value="${weekString}"/><br/>
                             <input type="hidden" id="geolocation" name="geolocation" value=""/>
                             <div class="controls">
-                                <input class="btn" type="submit" name="recordTime" value="Record" id="submit" disabled="true"/>
+                                <button class="btn" type="submit" name="recordTime" id="submit" disabled="true" title="record time">
+                                        <i class="icon-time"></i> Record
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -363,8 +365,8 @@
                         <div class="controls">
                             <label class="checkbox" for="submitted">
                                 <input type="checkbox" name="submitted" id="submitted" disabled="true" <c:if test="${submitted}">checked="checked"</c:if>/>
-                                Submitted
-                            </label>
+                                    Submitted
+                                </label>
                             <c:set var="approved" value="${timesheet.approved}"/>
                             <label class="checkbox" for="approved">
                                 <input type="checkbox" name="approved" id="approved" disabled="true" <c:if test="${approved}">checked="checked"</c:if>/>
@@ -381,6 +383,8 @@
                 </form>
 
             </div>
+
+            <--FIXME: Add breakdowns by task and project for the Dirk use case. -->
 
             <sql:query dataSource="jdbc/sarariman" var="groupingResult">
                 SELECT DISTINCT(e.grouping) FROM hours AS h
