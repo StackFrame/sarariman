@@ -14,6 +14,7 @@
     <pathelement path="lib/twilio-java-sdk-3.3.15-jar-with-dependencies.jar" />
     <pathelement path="lib/libphonenumber-5.5.jar" />
     <pathelement path="lib/vysper-core-0.7.jar" />
+    <pathelement path="lib/nbxml-0.7.jar" />
     <pathelement path="lib/log4j-1.2.14.jar" />
   </path>
 
