@@ -17,6 +17,7 @@
     <pathelement path="lib/nbxml-0.7.jar" />
     <pathelement path="lib/log4j-1.2.14.jar" />
     <pathelement path="lib/xep0045-muc-0.7.jar" />
+    <pathelement path="lib/xep0060-pubsub-0.7.jar" />
   </path>
 
   <target name="default" description="Compile and build WAR." >
