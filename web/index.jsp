@@ -384,7 +384,7 @@
 
             </div>
 
-            <--FIXME: Add breakdowns by task and project for the Dirk use case. -->
+            <!-- FIXME: Add breakdowns by task and project for the Dirk use case. -->
 
             <sql:query dataSource="jdbc/sarariman" var="groupingResult">
                 SELECT DISTINCT(e.grouping) FROM hours AS h
