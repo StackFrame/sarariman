@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman;
 
+import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.sarariman.telephony.SMSEvent;
 import com.stackframe.sarariman.telephony.SMSGateway;
@@ -18,7 +19,7 @@ import java.util.concurrent.Executor;
  *
  * @author mcculley
  */
-public class SMSXMPPGateway {
+public class SMSXMPPGateway extends AbstractIdleService {
 
     private final SMSGateway sms;
 
@@ -46,7 +47,7 @@ public class SMSXMPPGateway {
             String firstWord = words[0].toLowerCase();
             if (ShowType.isValid(firstWord)) {
                 ShowType showType = ShowType.valueOf(firstWord);
-                String status = e.getBody().substring(firstWord.length());
+                String status = e.getBody().substring(firstWord.length() + 1);
                 System.err.println("showType=" + showType + " status='" + status + "'");
                 Employee from = findEmployee(e.getFrom());
                 if (from == null) {
@@ -88,12 +89,17 @@ public class SMSXMPPGateway {
         this.backgroundExecutor = backgroundExecutor;
     }
 
-    public void start() {
+    public void startUp() throws Exception {
         sms.addSMSListener(listener);
     }
 
-    public void stop() {
+    public void shutDown() throws Exception {
         sms.removeSMSListener(listener);
+    }
+
+    @Override
+    protected Executor executor() {
+        return super.executor();
     }
 
 }
