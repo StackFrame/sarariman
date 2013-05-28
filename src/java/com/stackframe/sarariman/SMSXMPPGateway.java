@@ -30,7 +30,8 @@ public class SMSXMPPGateway {
 
     private Employee findEmployee(PhoneNumber number) {
         for (Employee e : directory.getEmployees()) {
-            if (e.getMobile().equals(number)) {
+            PhoneNumber mobile = e.getMobile();
+            if (mobile != null && mobile.equals(number)) {
                 return e;
             }
         }
@@ -67,7 +68,7 @@ public class SMSXMPPGateway {
                             try {
                                 xmpp.setPresence(JID, presence);
                             } catch (Throwable t) {
-                                System.err.println("Trouble setting presence: "+t);
+                                System.err.println("Trouble setting presence: " + t);
                                 t.printStackTrace();
                                 // FIXME: log
                             }
