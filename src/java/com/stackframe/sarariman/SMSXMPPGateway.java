@@ -27,7 +27,7 @@ public class SMSXMPPGateway extends AbstractIdleService {
 
     private final Directory directory;
 
-    private final Executor backgroundExecutor;
+    private final Executor executor;
 
     private Employee findEmployee(PhoneNumber number) {
         for (Employee e : directory.getEmployees()) {
@@ -64,7 +64,7 @@ public class SMSXMPPGateway extends AbstractIdleService {
                     final Presence presence = new Presence(presenceType, showType, status);
                     final String JID = from.getUserName() + "@stackframe.com";
                     System.err.println("setting presence for " + JID + " to " + presence);
-                    backgroundExecutor.execute(new Runnable() {
+                    executor.execute(new Runnable() {
                         public void run() {
                             try {
                                 xmpp.setPresence(JID, presence);
@@ -82,24 +82,26 @@ public class SMSXMPPGateway extends AbstractIdleService {
 
     };
 
-    public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory, Executor backgroundExecutor) {
+    public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory, Executor executor) {
         this.sms = sms;
         this.xmpp = xmpp;
         this.directory = directory;
-        this.backgroundExecutor = backgroundExecutor;
+        this.executor = executor;
     }
 
-    public void startUp() throws Exception {
+    @Override
+    protected void startUp() throws Exception {
         sms.addSMSListener(listener);
     }
 
-    public void shutDown() throws Exception {
+    @Override
+    protected void shutDown() throws Exception {
         sms.removeSMSListener(listener);
     }
 
     @Override
     protected Executor executor() {
-        return super.executor();
+        return executor();
     }
 
 }
