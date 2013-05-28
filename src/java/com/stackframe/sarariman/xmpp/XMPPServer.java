@@ -16,4 +16,6 @@ public interface XMPPServer {
 
     Presence getPresence(String username);
 
+    void setPresence(String username, Presence presence);
+
 }

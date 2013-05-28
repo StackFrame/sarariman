@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2013 StackFrame, LLC
  * This code is licensed under GPLv2.
- */package com.stackframe.sarariman.xmpp;
+ */
+package com.stackframe.sarariman.xmpp;
 
 /**
  *
@@ -13,13 +14,20 @@ public class Presence {
 
     private final String status;
 
-    public Presence(PresenceType type, String status) {
+    private final ShowType show;
+
+    public Presence(PresenceType type, ShowType show, String status) {
         this.type = type;
+        this.show = show;
         this.status = status;
     }
 
     public PresenceType getType() {
         return type;
+    }
+
+    public ShowType getShow() {
+        return show;
     }
 
     public String getStatus() {

@@ -22,7 +22,12 @@ import org.apache.vysper.storage.OpenStorageProviderRegistry;
 import org.apache.vysper.storage.StorageProviderRegistry;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.addressing.EntityImpl;
+import org.apache.vysper.xmpp.authorization.AccountCreationException;
+import org.apache.vysper.xmpp.authorization.AccountManagement;
 import org.apache.vysper.xmpp.authorization.UserAuthorization;
+import org.apache.vysper.xmpp.delivery.StanzaRelay;
+import org.apache.vysper.xmpp.delivery.failure.DeliveryException;
+import org.apache.vysper.xmpp.delivery.failure.DeliveryFailureStrategy;
 import org.apache.vysper.xmpp.modules.roster.AskSubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.Roster;
 import org.apache.vysper.xmpp.modules.roster.RosterException;
@@ -32,6 +37,8 @@ import org.apache.vysper.xmpp.modules.roster.SubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.persistence.RosterManager;
 import org.apache.vysper.xmpp.stanza.PresenceStanza;
 import org.apache.vysper.xmpp.stanza.PresenceStanzaType;
+import org.apache.vysper.xmpp.stanza.Stanza;
+import org.apache.vysper.xmpp.stanza.StanzaBuilder;
 import org.apache.vysper.xmpp.state.presence.LatestPresenceCache;
 
 /**
@@ -58,12 +65,28 @@ public class XMPPServerImpl implements XMPPServer {
         return new EntityImpl(employee.getUserName(), "stackframe.com", null);
     }
 
+    private static Entity entity(Employee employee, String resource) {
+        return new EntityImpl(employee.getUserName(), "stackframe.com", resource);
+    }
+
     public void start() throws Exception {
         ConsoleAppender consoleAppender = new ConsoleAppender(new PatternLayout());
         Logger.getRootLogger().addAppender(consoleAppender);
         final Authenticator authenticator = new AuthenticatorImpl(directory);
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
+                add(new AccountManagement() {
+                    public void addUser(Entity entity, String string) throws AccountCreationException {
+                    }
+
+                    public void changePassword(Entity entity, String string) throws AccountCreationException {
+                    }
+
+                    public boolean verifyAccountExists(Entity entity) {
+                        return true; // FIXME
+                    }
+
+                });
                 add(new UserAuthorization() {
                     public boolean verifyCredentials(Entity entity, String passwordCleartext, Object credentials) {
                         System.err.println("in verifyCredentials with Entity. entity=" + entity);
@@ -150,21 +173,82 @@ public class XMPPServerImpl implements XMPPServer {
         }
     }
 
-    public Presence getPresence(String username) {
-        String bareUserName = username.substring(0, username.indexOf('@'));
+    private PresenceStanza stanza(Employee employee, Presence p, Entity to) {
+        Entity from = entity(employee);
+        String lang = null;
+        String show = p.getShow().toString();
+        String status = p.getStatus();
+        PresenceStanzaType type = p.getType() == PresenceType.unavailable ? PresenceStanzaType.UNAVAILABLE : null;
+        StanzaBuilder b = StanzaBuilder.createPresenceStanza(from, to, lang, type, show, status);
+        return new PresenceStanza(b.build());
+    }
+
+    private Employee employeeFromJID(String jid) {
+        String bareUserName = jid.substring(0, jid.indexOf('@'));
         Employee employee = directory.getByUserName().get(bareUserName);
+        return employee;
+    }
+
+    public Presence getPresence(String username) {
+        Employee employee = employeeFromJID(username);
         LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
         PresenceStanza presence = presenceCache.getForBareJID(entity(employee));
         if (presence == null) {
-            return new Presence(PresenceType.unavailable, null);
+            return new Presence(PresenceType.unavailable, ShowType.away, null);
         } else {
             try {
-                Presence p = new Presence(type(presence), presence.getStatus(null));
+                String showString = presence.getShow();
+                ShowType show = showString == null ? ShowType.away : ShowType.valueOf(showString);
+                Presence p = new Presence(type(presence), show, presence.getStatus(null));
                 return p;
             } catch (Exception e) {
                 System.err.println("exception getting presence status. e=" + e);
                 e.printStackTrace();
-                return new Presence(PresenceType.unavailable, null);
+                return new Presence(PresenceType.unavailable, ShowType.away, null);
+            }
+        }
+    }
+
+    private Collection<Employee> destinations(Employee from) {
+        Collection<Employee> result = new ArrayList<Employee>();
+        for (Employee employee : directory.getEmployees()) {
+            if (!employee.isActive()) {
+                continue;
+            }
+
+            if (employee == from) {
+                continue;
+            }
+
+            result.add(employee);
+        }
+
+        return result;
+    }
+
+    public void setPresence(String username, Presence presence) {
+        LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
+        Employee employee = employeeFromJID(username);
+        presenceCache.put(entity(employee, "sarariman"), stanza(employee, presence, null));
+        Collection<Employee> employees = destinations(employee);
+        for (Employee destination : employees) {
+            Entity to = entity(destination);
+            Stanza stanza = stanza(employee, presence, to);
+            StanzaRelay relay = xmpp.getServerRuntimeContext().getStanzaRelay();
+            try {
+                relay.relay(to, stanza, new DeliveryFailureStrategy() {
+                    public void process(Stanza stanza, List<DeliveryException> list) throws DeliveryException {
+                        for (DeliveryException de : list) {
+                            // FIXME: Log this?
+                            System.err.println("de=" + de);
+                            de.printStackTrace();
+                        }
+                    }
+
+                });
+            } catch (DeliveryException de) {
+                System.err.println("deliveryException=" + de);
+                de.printStackTrace();
             }
         }
     }
