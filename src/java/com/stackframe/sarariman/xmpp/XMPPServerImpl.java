@@ -237,20 +237,23 @@ public class XMPPServerImpl implements XMPPServer {
             Entity to = entity(destination);
             Stanza stanza = stanza(employee, presence, to);
             StanzaRelay relay = xmpp.getServerRuntimeContext().getStanzaRelay();
-            try {
-                relay.relay(to, stanza, new DeliveryFailureStrategy() {
-                    public void process(Stanza stanza, List<DeliveryException> list) throws DeliveryException {
-                        for (DeliveryException de : list) {
-                            // FIXME: Log this?
-                            System.err.println("de=" + de);
-                            de.printStackTrace();
+            for (String resource : xmpp.getServerRuntimeContext().getResourceRegistry().getAvailableResources(to)) {
+                Entity e = new EntityImpl(to.getNode(), to.getDomain(), resource);
+                try {
+                    relay.relay(e, stanza, new DeliveryFailureStrategy() {
+                        public void process(Stanza stanza, List<DeliveryException> list) throws DeliveryException {
+                            for (DeliveryException de : list) {
+                                // FIXME: Log this?
+                                System.err.println("de=" + de);
+                                de.printStackTrace();
+                            }
                         }
-                    }
 
-                });
-            } catch (DeliveryException de) {
-                System.err.println("deliveryException=" + de);
-                de.printStackTrace();
+                    });
+                } catch (DeliveryException de) {
+                    System.err.println("deliveryException=" + de);
+                    de.printStackTrace();
+                }
             }
         }
     }
