@@ -101,7 +101,7 @@ public class SMSXMPPGateway extends AbstractIdleService {
 
     @Override
     protected Executor executor() {
-        return executor();
+        return executor;
     }
 
     @Override
