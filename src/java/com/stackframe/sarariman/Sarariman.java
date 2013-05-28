@@ -8,6 +8,7 @@ import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Service;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.stackframe.reflect.ReflectionUtils;
@@ -56,10 +57,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -156,6 +159,8 @@ public class Sarariman implements ServletContextListener {
     private SMSGateway SMS;
 
     private XMPPServer xmpp;
+
+    private final Collection<Service> services = new CopyOnWriteArrayList<Service>();
 
     public String getVersion() {
         return Version.version;
@@ -408,6 +413,10 @@ public class Sarariman implements ServletContextListener {
                                                                "icon-calendar"));
     }
 
+    public Collection<Service> getServices() {
+        return Collections.unmodifiableCollection(services);
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
         extensions.add(new SAICExtension());
         try {
@@ -464,8 +473,10 @@ public class Sarariman implements ServletContextListener {
             try {
                 System.err.println("starting XMPP server");
                 xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword, backgroundExecutor);
+                services.add(xmpp);
                 xmpp.start();
                 SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor);
+                services.add(gateway);
                 gateway.start();
             } catch (Exception e) {
                 System.err.println("trouble starting XMPP server");
@@ -515,11 +526,8 @@ public class Sarariman implements ServletContextListener {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         timer.cancel();
         backgroundExecutor.shutdown();
-        try {
-            xmpp.stop();
-        } catch (Exception e) {
-            System.err.println("trouble stopping XMPP server");
-            e.printStackTrace();
+        for (Service service : services) {
+            service.stop();
         }
     }
 
