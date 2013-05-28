@@ -46,7 +46,10 @@ import com.stackframe.sarariman.timesheets.Timesheets;
 import com.stackframe.sarariman.timesheets.TimesheetsImpl;
 import com.stackframe.sarariman.vacation.Vacations;
 import com.stackframe.sarariman.vacation.VacationsImpl;
+import com.stackframe.sarariman.xmpp.XMPPServer;
+import com.stackframe.sarariman.xmpp.XMPPServerImpl;
 import com.twilio.sdk.TwilioRestClient;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -151,6 +154,8 @@ public class Sarariman implements ServletContextListener {
     private final Timer timer = new Timer("Sarariman");
 
     private SMSGateway SMS;
+
+    private XMPPServer xmpp;
 
     public String getVersion() {
         return Version.version;
@@ -450,6 +455,15 @@ public class Sarariman implements ServletContextListener {
             defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);
             loginCookies = new LoginCookies(getDataSource(), timer);
             locationLog = new LocationLogImpl(getDataSource(), directory, backgroundDatabaseWriteExecutor);
+            String keyStorePath = (String)envContext.lookup("keyStorePath");
+            String keyStorePassword = (String)envContext.lookup("keyStorePassword");
+            try {
+                System.err.println("starting XMPP server");
+                xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword);
+            } catch (Exception e) {
+                System.err.println("trouble starting XMPP server");
+                e.printStackTrace();
+            }
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
@@ -494,6 +508,12 @@ public class Sarariman implements ServletContextListener {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         timer.cancel();
         backgroundExecutor.shutdown();
+        try {
+            xmpp.stop();
+        } catch (Exception e) {
+            System.err.println("trouble stopping XMPP server");
+            e.printStackTrace();
+        }
     }
 
 }
