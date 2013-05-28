@@ -43,7 +43,7 @@ public class SMSXMPPGateway {
         public void received(SMSEvent e) {
             System.err.println("Received an SMSEvent: " + e);
             String[] words = e.getBody().split(" ");
-            String firstWord = words[0];
+            String firstWord = words[0].toLowerCase();
             if (ShowType.isValid(firstWord)) {
                 ShowType showType = ShowType.valueOf(firstWord);
                 String status = e.getBody().substring(firstWord.length());
