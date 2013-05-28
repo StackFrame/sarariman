@@ -12,6 +12,7 @@ import com.stackframe.sarariman.xmpp.Presence;
 import com.stackframe.sarariman.xmpp.PresenceType;
 import com.stackframe.sarariman.xmpp.ShowType;
 import com.stackframe.sarariman.xmpp.XMPPServer;
+import java.util.concurrent.Executor;
 
 /**
  *
@@ -24,6 +25,8 @@ public class SMSXMPPGateway {
     private final XMPPServer xmpp;
 
     private final Directory directory;
+
+    private final Executor backgroundExecutor;
 
     private Employee findEmployee(PhoneNumber number) {
         for (Employee e : directory.getEmployees()) {
@@ -56,21 +59,32 @@ public class SMSXMPPGateway {
                         presenceType = PresenceType.unavailable;
                     }
 
-                    Presence presence = new Presence(presenceType, showType, status);
-                    String JID = from.getUserName() + "@stackframe.com";
+                    final Presence presence = new Presence(presenceType, showType, status);
+                    final String JID = from.getUserName() + "@stackframe.com";
                     System.err.println("setting presence for " + JID + " to " + presence);
-                    // FIXME: Push presence send to background thread?
-                    xmpp.setPresence(JID, presence);
+                    backgroundExecutor.execute(new Runnable() {
+                        public void run() {
+                            try {
+                                xmpp.setPresence(JID, presence);
+                            } catch (Throwable t) {
+                                System.err.println("Trouble setting presence: "+t);
+                                t.printStackTrace();
+                                // FIXME: log
+                            }
+                        }
+
+                    });
                 }
             }
         }
 
     };
 
-    public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory) {
+    public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory, Executor backgroundExecutor) {
         this.sms = sms;
         this.xmpp = xmpp;
         this.directory = directory;
+        this.backgroundExecutor = backgroundExecutor;
     }
 
     public void start() {
