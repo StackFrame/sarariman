@@ -37,11 +37,13 @@ import org.apache.vysper.xmpp.modules.roster.RosterGroup;
 import org.apache.vysper.xmpp.modules.roster.RosterItem;
 import org.apache.vysper.xmpp.modules.roster.SubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.persistence.RosterManager;
+import org.apache.vysper.xmpp.server.SessionContext;
 import org.apache.vysper.xmpp.stanza.PresenceStanza;
 import org.apache.vysper.xmpp.stanza.PresenceStanzaType;
 import org.apache.vysper.xmpp.stanza.Stanza;
 import org.apache.vysper.xmpp.stanza.StanzaBuilder;
 import org.apache.vysper.xmpp.state.presence.LatestPresenceCache;
+import org.apache.vysper.xmpp.state.resourcebinding.ResourceRegistry;
 
 /**
  *
@@ -254,22 +256,26 @@ public class XMPPServerImpl extends AbstractIdleService implements XMPPServer {
             Entity to = entity(destination);
             Stanza stanza = stanza(employee, presence, to);
             StanzaRelay relay = xmpp.getServerRuntimeContext().getStanzaRelay();
-            for (String resource : xmpp.getServerRuntimeContext().getResourceRegistry().getAvailableResources(to)) {
-                Entity e = new EntityImpl(to.getNode(), to.getDomain(), resource);
-                try {
-                    relay.relay(e, stanza, new DeliveryFailureStrategy() {
-                        public void process(Stanza stanza, List<DeliveryException> list) throws DeliveryException {
-                            for (DeliveryException de : list) {
-                                // FIXME: Log this?
-                                System.err.println("de=" + de);
-                                de.printStackTrace();
+            ResourceRegistry resourceRegistry = xmpp.getServerRuntimeContext().getResourceRegistry();
+            List<SessionContext> sessions = resourceRegistry.getSessions(to);
+            for (SessionContext session : sessions) {
+                for (String resource : resourceRegistry.getResourcesForSession(session)) {
+                    Entity e = new EntityImpl(to.getNode(), to.getDomain(), resource);
+                    try {
+                        relay.relay(e, stanza, new DeliveryFailureStrategy() {
+                            public void process(Stanza stanza, List<DeliveryException> list) throws DeliveryException {
+                                for (DeliveryException de : list) {
+                                    // FIXME: Log this?
+                                    System.err.println("de=" + de);
+                                    de.printStackTrace();
+                                }
                             }
-                        }
 
-                    });
-                } catch (DeliveryException de) {
-                    System.err.println("deliveryException=" + de);
-                    de.printStackTrace();
+                        });
+                    } catch (DeliveryException de) {
+                        System.err.println("deliveryException=" + de);
+                        de.printStackTrace();
+                    }
                 }
             }
         }
