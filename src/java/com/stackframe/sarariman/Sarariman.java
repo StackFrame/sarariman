@@ -465,6 +465,8 @@ public class Sarariman implements ServletContextListener {
                 System.err.println("starting XMPP server");
                 xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword);
                 xmpp.start();
+                SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory);
+                gateway.start();
             } catch (Exception e) {
                 System.err.println("trouble starting XMPP server");
                 e.printStackTrace();
