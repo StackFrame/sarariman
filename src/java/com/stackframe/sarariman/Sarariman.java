@@ -397,6 +397,10 @@ public class Sarariman implements ServletContextListener {
         return SMS;
     }
 
+    public XMPPServer getXMPPServer() {
+        return xmpp;
+    }
+
     public Collection<UIResource> getNavbarLinks() {
         return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
                                             new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),

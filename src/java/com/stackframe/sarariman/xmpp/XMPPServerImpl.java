@@ -30,6 +30,9 @@ import org.apache.vysper.xmpp.modules.roster.RosterGroup;
 import org.apache.vysper.xmpp.modules.roster.RosterItem;
 import org.apache.vysper.xmpp.modules.roster.SubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.persistence.RosterManager;
+import org.apache.vysper.xmpp.stanza.PresenceStanza;
+import org.apache.vysper.xmpp.stanza.PresenceStanzaType;
+import org.apache.vysper.xmpp.state.presence.LatestPresenceCache;
 
 /**
  *
@@ -51,6 +54,10 @@ public class XMPPServerImpl implements XMPPServer {
         this.keyStorePassword = keyStorePassword;
     }
 
+    private static Entity entity(Employee employee) {
+        return new EntityImpl(employee.getUserName(), "stackframe.com", null);
+    }
+
     public void start() throws Exception {
         ConsoleAppender consoleAppender = new ConsoleAppender(new PatternLayout());
         Logger.getRootLogger().addAppender(consoleAppender);
@@ -59,12 +66,12 @@ public class XMPPServerImpl implements XMPPServer {
             {
                 add(new UserAuthorization() {
                     public boolean verifyCredentials(Entity entity, String passwordCleartext, Object credentials) {
-                        System.err.println("in verifyCredentials with Entity. entity=" + entity + " passwordCleartext=" + passwordCleartext + " credentials=" + credentials);
+                        System.err.println("in verifyCredentials with Entity. entity=" + entity);
                         return authenticator.checkCredentials(entity.getNode(), passwordCleartext);
                     }
 
                     public boolean verifyCredentials(String username, String passwordCleartext, Object credentials) {
-                        System.err.println("in verifyCredentials with username. username=" + username + " passwordCleartext=" + passwordCleartext + " credentials=" + credentials);
+                        System.err.println("in verifyCredentials with username. username=" + username);
                         return authenticator.checkCredentials(username, passwordCleartext);
                     }
 
@@ -78,10 +85,8 @@ public class XMPPServerImpl implements XMPPServer {
                     }
 
                     public Roster retrieve(final Entity entity) throws RosterException {
-                        System.err.println("in Roster::retrieve. entity=" + entity);
                         return new Roster() {
                             public Iterator<RosterItem> iterator() {
-                                System.err.println("in Roster::iterator.");
                                 Collection<RosterItem> items = new ArrayList<RosterItem>();
                                 for (Employee employee : directory.getEmployees()) {
                                     if (!employee.isActive()) {
@@ -92,23 +97,18 @@ public class XMPPServerImpl implements XMPPServer {
                                         continue;
                                     }
 
-                                    System.err.println("Adding " + employee.getUserName() + " to roster");
-                                    RosterItem ri = new RosterItem(new EntityImpl(employee.getUserName(), "stackframe.com",
-                                                                                  null), employee.getDisplayName(), SubscriptionType.BOTH,
+                                    RosterItem ri = new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
                                                                    AskSubscriptionType.ASK_SUBSCRIBED, groups);
                                     items.add(ri);
                                 }
 
                                 items = Collections.unmodifiableCollection(items);
-                                System.err.println("returning iterator for items=" + items);
                                 return items.iterator();
                             }
 
                             public RosterItem getEntry(Entity entryEntity) {
-                                System.err.println("in Roster::getEntry. entity=" + entryEntity);
                                 Employee employee = directory.getByUserName().get(entryEntity.getNode());
-                                return new RosterItem(new EntityImpl(entryEntity.getNode(), entryEntity.getDomain(),
-                                                                     null), employee.getDisplayName(), SubscriptionType.BOTH,
+                                return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
                                                       AskSubscriptionType.ASK_SUBSCRIBED, groups);
                             }
 
@@ -116,16 +116,14 @@ public class XMPPServerImpl implements XMPPServer {
                     }
 
                     public void addContact(Entity entity, RosterItem ri) throws RosterException {
-                        System.err.println("in Roster::addContact. entity=" + entity + " ri=" + ri);
                     }
 
                     public RosterItem getContact(Entity entity, Entity e1) throws RosterException {
                         Employee employee = directory.getByUserName().get(e1.getNode());
-                        return new RosterItem(new EntityImpl(e1.getNode(), e1.getDomain(), e1.getResource()), employee.getDisplayName(), SubscriptionType.BOTH, AskSubscriptionType.ASK_SUBSCRIBED, groups);
+                        return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH, AskSubscriptionType.ASK_SUBSCRIBED, groups);
                     }
 
                     public void removeContact(Entity entity, Entity entity1) throws RosterException {
-                        System.err.println("in Roster::removeContact. entity=" + entity + " entity1=" + entity1);
                     }
 
                 });
@@ -142,6 +140,33 @@ public class XMPPServerImpl implements XMPPServer {
 
     public void stop() throws Exception {
         xmpp.stop();
+    }
+
+    private static PresenceType type(PresenceStanza stanza) {
+        if (PresenceStanzaType.isAvailable(stanza.getPresenceType())) {
+            return PresenceType.available;
+        } else {
+            return PresenceType.unavailable;
+        }
+    }
+
+    public Presence getPresence(String username) {
+        String bareUserName = username.substring(0, username.indexOf('@'));
+        Employee employee = directory.getByUserName().get(bareUserName);
+        LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
+        PresenceStanza presence = presenceCache.getForBareJID(entity(employee));
+        if (presence == null) {
+            return new Presence(PresenceType.unavailable, null);
+        } else {
+            try {
+                Presence p = new Presence(type(presence), presence.getStatus(null));
+                return p;
+            } catch (Exception e) {
+                System.err.println("exception getting presence status. e=" + e);
+                e.printStackTrace();
+                return new Presence(PresenceType.unavailable, null);
+            }
+        }
     }
 
 }

@@ -114,4 +114,6 @@ public interface Employee extends Linkable {
     // FIXME: Add race
     // FIXME: Add periods of employment
     // FIXME: Add total hours of service
+    Object getPresence();
+
 }

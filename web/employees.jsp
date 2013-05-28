@@ -42,6 +42,7 @@
                         <li>
                             <a href="${employee.URL}">${employee.fullName}</a>
                             <a href="${employee.URL}"><img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
+                            ${employee.presence}
                         </li>
                     </c:if>
                 </c:forEach>

@@ -837,6 +837,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return profileLinks;
     }
 
+    public Object getPresence() {
+        return sarariman.getXMPPServer().getPresence(userName + "@stackframe.com");
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

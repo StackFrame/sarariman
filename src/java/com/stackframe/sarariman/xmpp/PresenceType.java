@@ -8,12 +8,8 @@ package com.stackframe.sarariman.xmpp;
  *
  * @author mcculley
  */
-public interface XMPPServer {
+public enum PresenceType {
 
-    void start() throws Exception;
-
-    void stop() throws Exception;
-
-    Presence getPresence(String username);
+    available, unavailable
 
 }
