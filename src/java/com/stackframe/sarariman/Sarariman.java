@@ -463,7 +463,7 @@ public class Sarariman implements ServletContextListener {
             String keyStorePassword = (String)envContext.lookup("keyStorePassword");
             try {
                 System.err.println("starting XMPP server");
-                xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword);
+                xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword, backgroundExecutor);
                 xmpp.start();
                 SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor);
                 gateway.start();

@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.xmpp;
 
+import com.google.common.util.concurrent.AbstractIdleService;
 import com.stackframe.sarariman.Authenticator;
 import com.stackframe.sarariman.AuthenticatorImpl;
 import com.stackframe.sarariman.Directory;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -45,7 +47,7 @@ import org.apache.vysper.xmpp.state.presence.LatestPresenceCache;
  *
  * @author mcculley
  */
-public class XMPPServerImpl implements XMPPServer {
+public class XMPPServerImpl extends AbstractIdleService implements XMPPServer {
 
     private final org.apache.vysper.xmpp.server.XMPPServer xmpp = new org.apache.vysper.xmpp.server.XMPPServer("stackframe.com");
 
@@ -55,10 +57,13 @@ public class XMPPServerImpl implements XMPPServer {
 
     private final String keyStorePassword;
 
-    public XMPPServerImpl(Directory directory, File keyStore, String keyStorePassword) {
+    private final Executor executor;
+
+    public XMPPServerImpl(Directory directory, File keyStore, String keyStorePassword, Executor executor) {
         this.directory = directory;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;
+        this.executor = executor;
     }
 
     private static Entity entity(Employee employee) {
@@ -69,7 +74,8 @@ public class XMPPServerImpl implements XMPPServer {
         return new EntityImpl(employee.getUserName(), "stackframe.com", resource);
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void startUp() throws Exception {
         ConsoleAppender consoleAppender = new ConsoleAppender(new PatternLayout());
         Logger.getRootLogger().addAppender(consoleAppender);
         final Authenticator authenticator = new AuthenticatorImpl(directory);
@@ -163,8 +169,19 @@ public class XMPPServerImpl implements XMPPServer {
         xmpp.start();
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void shutDown() throws Exception {
         xmpp.stop();
+    }
+
+    @Override
+    protected String serviceName() {
+        return "XMPP Server";
+    }
+
+    @Override
+    protected Executor executor() {
+        return executor;
     }
 
     private static PresenceType type(PresenceStanza stanza) {

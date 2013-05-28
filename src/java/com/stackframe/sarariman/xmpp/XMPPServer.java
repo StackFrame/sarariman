@@ -4,15 +4,13 @@
  */
 package com.stackframe.sarariman.xmpp;
 
+import com.google.common.util.concurrent.Service;
+
 /**
  *
  * @author mcculley
  */
-public interface XMPPServer {
-
-    void start() throws Exception;
-
-    void stop() throws Exception;
+public interface XMPPServer extends Service {
 
     Presence getPresence(String username);
 
