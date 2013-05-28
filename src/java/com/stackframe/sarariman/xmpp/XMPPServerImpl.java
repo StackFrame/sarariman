@@ -107,6 +107,11 @@ public class XMPPServerImpl implements XMPPServer {
                         groups.add(staff);
                     }
 
+                    private RosterItem rosterItem(Employee employee) {
+                        return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
+                                              AskSubscriptionType.ASK_SUBSCRIBED, groups);
+                    }
+
                     public Roster retrieve(final Entity entity) throws RosterException {
                         return new Roster() {
                             public Iterator<RosterItem> iterator() {
@@ -131,8 +136,7 @@ public class XMPPServerImpl implements XMPPServer {
 
                             public RosterItem getEntry(Entity entryEntity) {
                                 Employee employee = directory.getByUserName().get(entryEntity.getNode());
-                                return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
-                                                      AskSubscriptionType.ASK_SUBSCRIBED, groups);
+                                return rosterItem(employee);
                             }
 
                         };
@@ -143,7 +147,7 @@ public class XMPPServerImpl implements XMPPServer {
 
                     public RosterItem getContact(Entity entity, Entity e1) throws RosterException {
                         Employee employee = directory.getByUserName().get(e1.getNode());
-                        return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH, AskSubscriptionType.ASK_SUBSCRIBED, groups);
+                        return rosterItem(employee);
                     }
 
                     public void removeContact(Entity entity, Entity entity1) throws RosterException {
