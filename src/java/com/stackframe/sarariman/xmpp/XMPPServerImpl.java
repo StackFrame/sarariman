@@ -125,9 +125,7 @@ public class XMPPServerImpl implements XMPPServer {
                                         continue;
                                     }
 
-                                    RosterItem ri = new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
-                                                                   AskSubscriptionType.ASK_SUBSCRIBED, groups);
-                                    items.add(ri);
+                                    items.add(rosterItem(employee));
                                 }
 
                                 items = Collections.unmodifiableCollection(items);
