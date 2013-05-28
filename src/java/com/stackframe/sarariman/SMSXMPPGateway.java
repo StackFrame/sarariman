@@ -104,4 +104,9 @@ public class SMSXMPPGateway extends AbstractIdleService {
         return executor();
     }
 
+    @Override
+    protected String serviceName() {
+        return "SMS XMPP Gateway";
+    }
+
 }
