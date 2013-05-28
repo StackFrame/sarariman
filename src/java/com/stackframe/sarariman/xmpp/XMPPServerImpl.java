@@ -30,6 +30,13 @@ import org.apache.vysper.xmpp.authorization.UserAuthorization;
 import org.apache.vysper.xmpp.delivery.StanzaRelay;
 import org.apache.vysper.xmpp.delivery.failure.DeliveryException;
 import org.apache.vysper.xmpp.delivery.failure.DeliveryFailureStrategy;
+import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
+import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataModule;
+import org.apache.vysper.xmpp.modules.extension.xep0054_vcardtemp.VcardTempModule;
+import org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.PublishSubscribeModule;
+import org.apache.vysper.xmpp.modules.extension.xep0092_software_version.SoftwareVersionModule;
+import org.apache.vysper.xmpp.modules.extension.xep0119_xmppping.XmppPingModule;
+import org.apache.vysper.xmpp.modules.extension.xep0202_entity_time.EntityTimeModule;
 import org.apache.vysper.xmpp.modules.roster.AskSubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.Roster;
 import org.apache.vysper.xmpp.modules.roster.RosterException;
@@ -165,10 +172,20 @@ public class XMPPServerImpl extends AbstractIdleService implements XMPPServer {
             }
 
         };
+
         xmpp.addEndpoint(new TCPEndpoint());
         xmpp.setStorageProviderRegistry(providerRegistry);
         xmpp.setTLSCertificateInfo(keyStore, keyStorePassword);
+
         xmpp.start();
+
+        xmpp.addModule(new MUCModule());
+        xmpp.addModule(new XmppPingModule());
+        xmpp.addModule(new SoftwareVersionModule());
+        xmpp.addModule(new EntityTimeModule());
+        xmpp.addModule(new VcardTempModule());
+        xmpp.addModule(new PrivateDataModule());
+        xmpp.addModule(new PublishSubscribeModule());
     }
 
     @Override
