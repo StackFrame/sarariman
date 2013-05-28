@@ -52,7 +52,7 @@ public class SMSEvent {
 
     @Override
     public String toString() {
-        return "SMSEvent{" + "from=" + from + ", to=" + to + ", body=" + body + ", timestamp=" + timestamp + ", status=" + status + '}';
+        return "SMSEvent{" + "from=" + from + ", to=" + to + ", body='" + body + "', timestamp=" + timestamp + ", status=" + status + '}';
     }
 
 }
