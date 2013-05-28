@@ -471,7 +471,6 @@ public class Sarariman implements ServletContextListener {
             String keyStorePath = (String)envContext.lookup("keyStorePath");
             String keyStorePassword = (String)envContext.lookup("keyStorePassword");
             try {
-                System.err.println("starting XMPP server");
                 xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword, backgroundExecutor);
                 services.add(xmpp);
                 xmpp.start();
@@ -525,10 +524,12 @@ public class Sarariman implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         timer.cancel();
-        backgroundExecutor.shutdown();
         for (Service service : services) {
             service.stop();
         }
+
+        backgroundExecutor.shutdown();
+        backgroundDatabaseWriteExecutor.shutdown();
     }
 
 }
