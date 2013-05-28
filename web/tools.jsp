@@ -72,6 +72,7 @@
                 </c:if>
                 <li><a href="accessLog.jsp">Access Log</a></li>
                 <li><a href="errors/">Error Log</a></li>
+                <li><a href="devops.jsp">DevOps</a></li>
             </ul>
         </div>
 
