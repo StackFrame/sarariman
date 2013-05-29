@@ -8,7 +8,9 @@ import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
+import com.google.common.util.concurrent.Service.State;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.stackframe.reflect.ReflectionUtils;
@@ -59,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
@@ -525,12 +528,30 @@ public class Sarariman implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         timer.cancel();
-        for (Service service : services) {
-            service.stop();
-        }
-
+        stopServices();
         backgroundExecutor.shutdown();
         backgroundDatabaseWriteExecutor.shutdown();
+    }
+
+    private void stopServices() {
+        // Initiate the shutdown of all services at once and then wait on them to finish.
+        List<ListenableFuture<State>> futureStates = new ArrayList<ListenableFuture<State>>();
+        for (Service service : services) {
+            futureStates.add(service.stop());
+        }
+
+        for (ListenableFuture<State> future : futureStates) {
+            try {
+                State state = future.get();
+                if (state != State.TERMINATED) {
+                    // FIXME log and keep going
+                    System.err.println("unexpected state=" + state);
+                }
+            } catch (Exception e) {
+                // FIXME log and keep going
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
