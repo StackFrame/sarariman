@@ -61,16 +61,20 @@
                 <sql:param value="${param.employee}"></sql:param>
             </sql:query>
 
-            <table id="pto">
-                <tr><th>Amount</th><th>Comment</th><th>Date</th><th>Added</th></tr>
-                <c:forEach var="row" items="${resultSet.rows}">
-                    <tr>
-                        <td class="duration">${row.amount}</td>
-                        <td>${row.comment}</td>
-                        <td class="date">${row.effective}</td>
-                        <td>${row.created}</td>
-                    </tr>
-                </c:forEach>
+            <table id="pto" class="table table-bordered table-striped table-rounded">
+                <thead>
+                    <tr><th>Amount</th><th>Comment</th><th>Date</th><th>Added</th></tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="row" items="${resultSet.rows}">
+                        <tr>
+                            <td class="duration">${row.amount}</td>
+                            <td>${row.comment}</td>
+                            <td class="date">${row.effective}</td>
+                            <td>${row.created}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
             </table>
 
             <%@include file="footer.jsp" %>
