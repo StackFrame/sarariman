@@ -62,7 +62,7 @@ import org.apache.vysper.xmpp.state.resourcebinding.ResourceRegistry;
  */
 public class VysperXMPPServer extends AbstractIdleService implements XMPPServer {
 
-    private final org.apache.vysper.xmpp.server.XMPPServer xmpp = new org.apache.vysper.xmpp.server.XMPPServer("stackframe.com");
+    private final org.apache.vysper.xmpp.server.XMPPServer xmpp;
 
     private final Directory directory;
 
@@ -72,19 +72,23 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     private final Executor executor;
 
-    public VysperXMPPServer(Directory directory, File keyStore, String keyStorePassword, Executor executor) {
+    private final String domain;
+
+    public VysperXMPPServer(String domain, Directory directory, File keyStore, String keyStorePassword, Executor executor) {
+        xmpp = new org.apache.vysper.xmpp.server.XMPPServer(domain);
+        this.domain = domain;
         this.directory = directory;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;
         this.executor = executor;
     }
 
-    private static Entity entity(Employee employee) {
-        return new EntityImpl(employee.getUserName(), "stackframe.com", null);
+    private Entity entity(Employee employee) {
+        return new EntityImpl(employee.getUserName(), domain, null);
     }
 
-    private static Entity entity(Employee employee, String resource) {
-        return new EntityImpl(employee.getUserName(), "stackframe.com", resource);
+    private Entity entity(Employee employee, String resource) {
+        return new EntityImpl(employee.getUserName(), domain, resource);
     }
 
     @Override

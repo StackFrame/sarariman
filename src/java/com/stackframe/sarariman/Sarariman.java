@@ -471,7 +471,8 @@ public class Sarariman implements ServletContextListener {
             String keyStorePath = (String)envContext.lookup("keyStorePath");
             String keyStorePassword = (String)envContext.lookup("keyStorePassword");
             try {
-                xmpp = new VysperXMPPServer(directory, new File(keyStorePath), keyStorePassword, backgroundExecutor);
+                xmpp = new VysperXMPPServer("stackframe.com", directory, new File(keyStorePath), keyStorePassword,
+                                            backgroundExecutor);
                 services.add(xmpp);
                 xmpp.start();
                 SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor);
