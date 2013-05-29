@@ -278,7 +278,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
     }
 
-    private Collection<Employee> destinations(Employee from) {
+    private Collection<Employee> peers(Employee from) {
         Collection<Employee> result = new ArrayList<Employee>();
         for (Employee employee : directory.getEmployees()) {
             if (!employee.isActive()) {
@@ -299,7 +299,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
         Employee employee = employeeFromJID(username);
         presenceCache.put(entity(employee, "sarariman"), stanza(employee, presence, null));
-        Collection<Employee> employees = destinations(employee);
+        Collection<Employee> employees = peers(employee);
         for (Employee destination : employees) {
             Entity to = entity(destination);
             Stanza stanza = stanza(employee, presence, to);
