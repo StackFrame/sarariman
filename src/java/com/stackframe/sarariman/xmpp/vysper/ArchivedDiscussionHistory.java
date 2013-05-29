@@ -10,6 +10,8 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant;
 import org.apache.vysper.xmpp.stanza.Stanza;
 
 /**
+ * This is just a subclass that overrides appending new elements to the history so that we can archive them. At some point we might
+ * find a better way to archive room discussions and get rid of this.
  *
  * @author mcculley
  */

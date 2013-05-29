@@ -14,6 +14,9 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.storage.RoomStorageProvider;
 
 /**
+ * This is just an implementation of RoomStorageProvider that is the same as InMemoryRoomStorageProvider but lets us return an
+ * ArchivedRoom so that we can archive room discussions. At some point we might find a better way to archive room discussions and
+ * get rid of this.
  *
  * @author mcculley
  */
@@ -45,7 +48,6 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
 
     public void deleteRoom(Entity jid) {
         rooms.remove(jid);
-
     }
 
 }
