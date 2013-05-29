@@ -278,14 +278,14 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
     }
 
-    private Collection<Employee> peers(Employee from) {
+    private Collection<Employee> peers(Employee e) {
         Collection<Employee> result = new ArrayList<Employee>();
         for (Employee employee : directory.getEmployees()) {
             if (!employee.isActive()) {
                 continue;
             }
 
-            if (employee == from) {
+            if (employee == e) {
                 continue;
             }
 
