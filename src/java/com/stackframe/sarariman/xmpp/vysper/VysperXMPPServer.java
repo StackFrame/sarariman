@@ -51,6 +51,7 @@ import org.apache.vysper.xmpp.modules.roster.RosterGroup;
 import org.apache.vysper.xmpp.modules.roster.RosterItem;
 import org.apache.vysper.xmpp.modules.roster.SubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.persistence.RosterManager;
+import org.apache.vysper.xmpp.server.ServerRuntimeContext;
 import org.apache.vysper.xmpp.server.SessionContext;
 import org.apache.vysper.xmpp.stanza.PresenceStanza;
 import org.apache.vysper.xmpp.stanza.PresenceStanzaType;
@@ -299,12 +300,12 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
         Employee employee = employeeFromJID(username);
         presenceCache.put(entity(employee, "sarariman"), stanza(employee, presence, null));
-        Collection<Employee> employees = peers(employee);
-        for (Employee destination : employees) {
-            Entity to = entity(destination);
+        for (Employee peer : peers(employee)) {
+            Entity to = entity(peer);
             Stanza stanza = stanza(employee, presence, to);
-            StanzaRelay relay = xmpp.getServerRuntimeContext().getStanzaRelay();
-            ResourceRegistry resourceRegistry = xmpp.getServerRuntimeContext().getResourceRegistry();
+            ServerRuntimeContext src = xmpp.getServerRuntimeContext();
+            StanzaRelay relay = src.getStanzaRelay();
+            ResourceRegistry resourceRegistry = src.getResourceRegistry();
             List<SessionContext> sessions = resourceRegistry.getSessions(to);
             for (SessionContext session : sessions) {
                 for (String resource : resourceRegistry.getResourcesForSession(session)) {
