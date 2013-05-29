@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.xmpp.vysper;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.stackframe.sarariman.Authenticator;
 import com.stackframe.sarariman.AuthenticatorImpl;
@@ -11,6 +12,7 @@ import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.xmpp.Presence;
 import com.stackframe.sarariman.xmpp.PresenceType;
+import com.stackframe.sarariman.xmpp.Room;
 import com.stackframe.sarariman.xmpp.ShowType;
 import com.stackframe.sarariman.xmpp.XMPPServer;
 import java.io.File;
@@ -35,6 +37,7 @@ import org.apache.vysper.xmpp.delivery.StanzaRelay;
 import org.apache.vysper.xmpp.delivery.failure.DeliveryException;
 import org.apache.vysper.xmpp.delivery.failure.DeliveryFailureStrategy;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
+import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataModule;
 import org.apache.vysper.xmpp.modules.extension.xep0054_vcardtemp.VcardTempModule;
 import org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.PublishSubscribeModule;
@@ -73,6 +76,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     private final Executor executor;
 
     private final String domain;
+
+    private final Conference conference = new Conference("Conference");
 
     public VysperXMPPServer(String domain, Directory directory, File keyStore, String keyStorePassword, Executor executor) {
         xmpp = new org.apache.vysper.xmpp.server.XMPPServer(domain);
@@ -187,7 +192,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
         xmpp.start();
 
-        xmpp.addModule(new MUCModule("conference"));
+        xmpp.addModule(new MUCModule("conference", conference));
         xmpp.addModule(new XmppPingModule());
         xmpp.addModule(new SoftwareVersionModule());
         xmpp.addModule(new EntityTimeModule());
@@ -209,6 +214,23 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     @Override
     protected Executor executor() {
         return executor;
+    }
+
+    public Collection<Room> getRooms() {
+        Collection<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room> rooms = conference.getAllRooms();
+        ImmutableList.Builder<Room> b = ImmutableList.<Room>builder();
+        for (org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room room : rooms) {
+            final org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room concreteCopy = room;
+            Room r = new Room() {
+                public String getName() {
+                    return concreteCopy.getName();
+                }
+
+            };
+            b.add(r);
+        }
+
+        return b.build();
     }
 
     private static PresenceType type(PresenceStanza stanza) {

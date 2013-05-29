@@ -5,6 +5,7 @@
 package com.stackframe.sarariman.xmpp;
 
 import com.google.common.util.concurrent.Service;
+import java.util.Collection;
 
 /**
  *
@@ -15,5 +16,7 @@ public interface XMPPServer extends Service {
     Presence getPresence(String username);
 
     void setPresence(String username, Presence presence);
+
+    Collection<Room> getRooms();
 
 }
