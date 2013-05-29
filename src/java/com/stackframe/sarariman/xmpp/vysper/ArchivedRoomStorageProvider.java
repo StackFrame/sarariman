@@ -4,6 +4,7 @@
  */
 package com.stackframe.sarariman.xmpp.vysper;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -25,28 +26,33 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
     private Map<Entity, Room> rooms = new ConcurrentHashMap<Entity, Room>();
 
     public void initialize() {
-        // do nothing
+        System.err.println("ArchivedRoomStorageProvider::initialize entered");
     }
 
     public Room createRoom(Entity jid, String name, RoomType... roomTypes) {
+        System.err.println("ArchivedRoomStorageProvider::createRoom entered. jid=" + jid + " name=" + name + " roomTypes=" + Arrays.asList(roomTypes));
         Room room = new ArchivedRoom(jid, name, roomTypes);
         rooms.put(jid, room);
         return room;
     }
 
     public Collection<Room> getAllRooms() {
+        System.err.println("ArchivedRoomStorageProvider::getAllRooms entered");
         return Collections.unmodifiableCollection(rooms.values());
     }
 
     public Room findRoom(Entity jid) {
+        System.err.println("ArchivedRoomStorageProvider::findRoom entered. jid=" + jid);
         return rooms.get(jid);
     }
 
     public boolean roomExists(Entity jid) {
+        System.err.println("ArchivedRoomStorageProvider::roomExists entered. jid=" + jid);
         return rooms.containsKey(jid);
     }
 
     public void deleteRoom(Entity jid) {
+        System.err.println("ArchivedRoomStorageProvider::deleteRoom entered. jid=" + jid);
         rooms.remove(jid);
     }
 
