@@ -2,13 +2,17 @@
  * Copyright (C) 2013 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
-package com.stackframe.sarariman.xmpp;
+package com.stackframe.sarariman.xmpp.vysper;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.stackframe.sarariman.Authenticator;
 import com.stackframe.sarariman.AuthenticatorImpl;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.xmpp.Presence;
+import com.stackframe.sarariman.xmpp.PresenceType;
+import com.stackframe.sarariman.xmpp.ShowType;
+import com.stackframe.sarariman.xmpp.XMPPServer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,7 +60,7 @@ import org.apache.vysper.xmpp.state.resourcebinding.ResourceRegistry;
  *
  * @author mcculley
  */
-public class XMPPServerImpl extends AbstractIdleService implements XMPPServer {
+public class VysperXMPPServer extends AbstractIdleService implements XMPPServer {
 
     private final org.apache.vysper.xmpp.server.XMPPServer xmpp = new org.apache.vysper.xmpp.server.XMPPServer("stackframe.com");
 
@@ -68,7 +72,7 @@ public class XMPPServerImpl extends AbstractIdleService implements XMPPServer {
 
     private final Executor executor;
 
-    public XMPPServerImpl(Directory directory, File keyStore, String keyStorePassword, Executor executor) {
+    public VysperXMPPServer(Directory directory, File keyStore, String keyStorePassword, Executor executor) {
         this.directory = directory;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;

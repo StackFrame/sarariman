@@ -48,7 +48,7 @@ import com.stackframe.sarariman.timesheets.TimesheetsImpl;
 import com.stackframe.sarariman.vacation.Vacations;
 import com.stackframe.sarariman.vacation.VacationsImpl;
 import com.stackframe.sarariman.xmpp.XMPPServer;
-import com.stackframe.sarariman.xmpp.XMPPServerImpl;
+import com.stackframe.sarariman.xmpp.vysper.VysperXMPPServer;
 import com.twilio.sdk.TwilioRestClient;
 import java.io.File;
 import java.net.InetAddress;
@@ -471,7 +471,7 @@ public class Sarariman implements ServletContextListener {
             String keyStorePath = (String)envContext.lookup("keyStorePath");
             String keyStorePassword = (String)envContext.lookup("keyStorePassword");
             try {
-                xmpp = new XMPPServerImpl(directory, new File(keyStorePath), keyStorePassword, backgroundExecutor);
+                xmpp = new VysperXMPPServer(directory, new File(keyStorePath), keyStorePassword, backgroundExecutor);
                 services.add(xmpp);
                 xmpp.start();
                 SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor);
