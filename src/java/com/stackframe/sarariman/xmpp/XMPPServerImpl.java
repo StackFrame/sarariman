@@ -179,7 +179,7 @@ public class XMPPServerImpl extends AbstractIdleService implements XMPPServer {
 
         xmpp.start();
 
-        xmpp.addModule(new MUCModule());
+        xmpp.addModule(new MUCModule("conference"));
         xmpp.addModule(new XmppPingModule());
         xmpp.addModule(new SoftwareVersionModule());
         xmpp.addModule(new EntityTimeModule());
