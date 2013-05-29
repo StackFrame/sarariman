@@ -103,6 +103,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         final Authenticator authenticator = new AuthenticatorImpl(directory);
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
+                add(new ArchivedRoomStorageProvider());
                 add(new AccountManagement() {
                     public void addUser(Entity entity, String string) throws AccountCreationException {
                     }
