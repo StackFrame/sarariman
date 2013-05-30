@@ -41,16 +41,20 @@ public class PhotoFetcher extends HttpServlet {
         String uid = request.getParameter("uid");
         Employee employee = directory.getByUserName().get(uid);
         byte[] photo = employee.getPhoto();
-        String ETag = entityTag(photo);
-        if (ETag.equals(request.getHeader("If-None-Match"))) {
-            response.sendError(304);
+        if (photo == null) {
+            response.sendError(404);
         } else {
-            response.addHeader("ETag", ETag);
-            OutputStream out = response.getOutputStream();
-            try {
-                out.write(photo);
-            } finally {
-                out.close();
+            String ETag = entityTag(photo);
+            if (ETag.equals(request.getHeader("If-None-Match"))) {
+                response.sendError(304);
+            } else {
+                response.addHeader("ETag", ETag);
+                OutputStream out = response.getOutputStream();
+                try {
+                    out.write(photo);
+                } finally {
+                    out.close();
+                }
             }
         }
     }
