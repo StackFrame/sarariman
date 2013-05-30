@@ -4,7 +4,13 @@
  */
 package com.stackframe.sarariman.xmpp.vysper;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.concurrent.Executor;
+import javax.sql.DataSource;
 import org.apache.vysper.xml.fragment.XMLSemanticError;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.DiscussionHistory;
@@ -20,23 +26,65 @@ import org.apache.vysper.xmpp.stanza.Stanza;
  */
 public class ArchivedDiscussionHistory extends DiscussionHistory {
 
+    private final DataSource dataSource;
+
+    private final Executor databaseWriteExecutor;
+
+    public ArchivedDiscussionHistory(DataSource dataSource, Executor databaseWriteExecutor) {
+        this.dataSource = dataSource;
+        this.databaseWriteExecutor = databaseWriteExecutor;
+    }
+
+    private void writeToDatabase(String from, String room, String message, long timestamp) {
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement(
+                        "INSERT INTO conference_log (`from`, room, message, `timestamp`) " +
+                        "VALUES(?, ?, ?, ?)");
+                try {
+                    s.setString(1, from);
+                    s.setString(2, room);
+                    s.setString(3, message);
+                    s.setTimestamp(4, new Timestamp(timestamp));
+                    int numRowsInserted = s.executeUpdate();
+                    assert numRowsInserted == 1;
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            // FIXME: Log this exception. Does it kill the Executor?
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void archive(final String from, final String room, final String message) {
+        System.err.println("from=" + from + " room=" + room + " message='" + message + "'");
+        databaseWriteExecutor.execute(new Runnable() {
+            public void run() {
+                writeToDatabase(from,room,message,System.currentTimeMillis());
+            }
+
+        });
+    }
+
     @Override
     public void append(Stanza stanza, Occupant sender, Calendar timestamp) {
-        // FIXME archive to database
-        System.err.println("stanza that would be archived sent to room . stanza=" + stanza);
         Entity from = stanza.getFrom();
         Entity to = stanza.getTo();
         if (MessageStanza.isOfType(stanza)) {
             MessageStanza message = new MessageStanza(stanza);
             try {
                 String body = message.getBody(null);
-                System.err.println("sender=" + sender);
-                System.err.println("from=" + from + " to=" + to + " body='" + body + "'");
+                archive(from.getBareJID().toString(), to.toString(), body);
             } catch (XMLSemanticError e) {
                 e.printStackTrace();
             }
         } else {
-            System.err.println("unexpected message type");
+            System.err.println("unexpected message type. message=" + stanza);
         }
 
         super.append(stanza, sender, timestamp);

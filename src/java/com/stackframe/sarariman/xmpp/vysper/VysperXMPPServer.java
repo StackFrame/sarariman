@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
+import javax.sql.DataSource;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -80,13 +81,19 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     private final Conference conference = new Conference("Conference");
 
-    public VysperXMPPServer(String domain, Directory directory, File keyStore, String keyStorePassword, Executor executor) {
+    private final DataSource dataSource;
+
+    private final Executor databaseWriteExecutor;
+
+    public VysperXMPPServer(String domain, Directory directory, File keyStore, String keyStorePassword, Executor executor, DataSource dataSource, Executor databaseWriteExecutor) {
         xmpp = new org.apache.vysper.xmpp.server.XMPPServer(domain);
         this.domain = domain;
         this.directory = directory;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;
         this.executor = executor;
+        this.dataSource = dataSource;
+        this.databaseWriteExecutor = databaseWriteExecutor;
     }
 
     private Entity entity(Employee employee) {
@@ -104,7 +111,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         final Authenticator authenticator = new AuthenticatorImpl(directory);
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
-                add(new ArchivedRoomStorageProvider());
+                add(new ArchivedRoomStorageProvider(dataSource, databaseWriteExecutor));
                 add(new AccountManagement() {
                     public void addUser(Entity entity, String string) throws AccountCreationException {
                     }

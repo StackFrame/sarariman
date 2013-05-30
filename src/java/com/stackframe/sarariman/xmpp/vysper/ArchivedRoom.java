@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.xmpp.vysper;
 
+import java.util.concurrent.Executor;
+import javax.sql.DataSource;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.DiscussionHistory;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room;
@@ -17,10 +19,11 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
  */
 public class ArchivedRoom extends Room {
 
-    private final DiscussionHistory archivedDiscussionHistory = new ArchivedDiscussionHistory();
+    private final DiscussionHistory archivedDiscussionHistory;
 
-    public ArchivedRoom(Entity jid, String name, RoomType... types) {
+    public ArchivedRoom(DataSource dataSource, Executor databaseWriteExecutor, Entity jid, String name, RoomType... types) {
         super(jid, name, types);
+        archivedDiscussionHistory = new ArchivedDiscussionHistory(dataSource, databaseWriteExecutor);
     }
 
     @Override

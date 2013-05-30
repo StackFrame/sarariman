@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import javax.sql.DataSource;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
@@ -25,13 +27,22 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
 
     private Map<Entity, Room> rooms = new ConcurrentHashMap<Entity, Room>();
 
+    private final DataSource dataSource;
+
+    private final Executor databaseWriteExecutor;
+
+    public ArchivedRoomStorageProvider(DataSource dataSource, Executor databaseWriteExecutor) {
+        this.dataSource = dataSource;
+        this.databaseWriteExecutor = databaseWriteExecutor;
+    }
+
     public void initialize() {
         System.err.println("ArchivedRoomStorageProvider::initialize entered");
     }
 
     public Room createRoom(Entity jid, String name, RoomType... roomTypes) {
         System.err.println("ArchivedRoomStorageProvider::createRoom entered. jid=" + jid + " name=" + name + " roomTypes=" + Arrays.asList(roomTypes));
-        Room room = new ArchivedRoom(jid, name, roomTypes);
+        Room room = new ArchivedRoom(dataSource, databaseWriteExecutor, jid, name, roomTypes);
         rooms.put(jid, room);
         return room;
     }
