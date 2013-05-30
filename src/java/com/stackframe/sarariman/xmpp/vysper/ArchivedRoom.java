@@ -25,7 +25,7 @@ public class ArchivedRoom extends Room {
 
     @Override
     public DiscussionHistory getHistory() {
-        return super.getHistory();
+        return archivedDiscussionHistory;
     }
 
 }
