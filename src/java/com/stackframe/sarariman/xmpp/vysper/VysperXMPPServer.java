@@ -119,7 +119,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
 
         public boolean verifyAccountExists(Entity entity) {
-            return true; // FIXME
+            return employee(entity) != null;
         }
 
     };
