@@ -119,7 +119,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
 
         public boolean verifyAccountExists(Entity entity) {
-            return employee(entity) != null;
+            Employee employee = employee(entity);
+            return employee != null && employee.isActive();
         }
 
     };
