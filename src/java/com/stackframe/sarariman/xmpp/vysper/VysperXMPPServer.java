@@ -5,11 +5,14 @@
 package com.stackframe.sarariman.xmpp.vysper;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.stackframe.sarariman.Authenticator;
 import com.stackframe.sarariman.AuthenticatorImpl;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
+import com.stackframe.sarariman.projects.Project;
 import com.stackframe.sarariman.xmpp.Presence;
 import com.stackframe.sarariman.xmpp.PresenceType;
 import com.stackframe.sarariman.xmpp.Room;
@@ -21,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import javax.sql.DataSource;
 import org.apache.log4j.ConsoleAppender;
@@ -137,55 +141,67 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
                 });
                 add(new RosterManager() {
-                    private final List<RosterGroup> groups = new ArrayList<RosterGroup>();
+                    private Set<String> groups(Employee employee) {
+                        ImmutableSet.Builder<String> groupNames = ImmutableSet.<String>builder();
+                        for (Project project : employee.getRelatedProjects()) {
+                            groupNames.add(project.getName());
+                        }
 
-                    {
-                        RosterGroup staff = new RosterGroup("staff");
-                        groups.add(staff);
+                        return groupNames.build();
                     }
 
-                    private RosterItem rosterItem(Employee employee) {
+                    private List<RosterGroup> commonGroups(Employee e1, Employee e2) {
+                        List<RosterGroup> groups = new ArrayList<RosterGroup>();
+
+                        groups.add(new RosterGroup("staff"));
+
+                        Sets.SetView<String> common = Sets.intersection(groups(e1), groups(e2));
+                        for (String groupName : common) {
+                            groups.add(new RosterGroup(groupName));
+                        }
+
+                        return groups;
+                    }
+
+                    private RosterItem rosterItem(Employee employee, List<RosterGroup> g) {
                         return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
-                                              AskSubscriptionType.ASK_SUBSCRIBED, groups);
+                                              AskSubscriptionType.ASK_SUBSCRIBED, g);
                     }
 
                     public Roster retrieve(final Entity entity) throws RosterException {
                         return new Roster() {
                             public Iterator<RosterItem> iterator() {
                                 Collection<RosterItem> items = new ArrayList<RosterItem>();
-                                for (Employee employee : directory.getEmployees()) {
-                                    if (!employee.isActive()) {
-                                        continue;
-                                    }
-
-                                    if (employee.getUserName().equals(entity.getNode())) {
-                                        continue;
-                                    }
-
-                                    items.add(rosterItem(employee));
+                                Employee employee = employee(entity);
+                                Collection<Employee> peers = peers(employee);
+                                for (Employee peer : peers) {
+                                    items.add(rosterItem(peer, commonGroups(employee, peer)));
                                 }
 
-                                items = Collections.unmodifiableCollection(items);
-                                return items.iterator();
+                                return Collections.unmodifiableCollection(items).iterator();
                             }
 
-                            public RosterItem getEntry(Entity entryEntity) {
-                                Employee employee = directory.getByUserName().get(entryEntity.getNode());
-                                return rosterItem(employee);
+                            public RosterItem getEntry(Entity peerEntity) {
+                                Employee employee = employee(entity);
+                                Employee peer = employee(peerEntity);
+                                return rosterItem(peer, commonGroups(employee, peer));
                             }
 
                         };
                     }
 
                     public void addContact(Entity entity, RosterItem ri) throws RosterException {
+                        // We don't (yet) support allowing an employee to manipulate the roster.
                     }
 
-                    public RosterItem getContact(Entity entity, Entity e1) throws RosterException {
-                        Employee employee = directory.getByUserName().get(e1.getNode());
-                        return rosterItem(employee);
+                    public RosterItem getContact(Entity entity, Entity peerEntity) throws RosterException {
+                        Employee employee = employee(entity);
+                        Employee peer = employee(peerEntity);
+                        return rosterItem(peer, commonGroups(employee, peer));
                     }
 
                     public void removeContact(Entity entity, Entity entity1) throws RosterException {
+                        // We don't (yet) support allowing an employee to manipulate the roster.
                     }
 
                 });
@@ -258,6 +274,10 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         PresenceStanzaType type = p.getType() == PresenceType.unavailable ? PresenceStanzaType.UNAVAILABLE : null;
         StanzaBuilder b = StanzaBuilder.createPresenceStanza(from, to, lang, type, show, status);
         return new PresenceStanza(b.build());
+    }
+
+    private Employee employee(Entity entity) {
+        return employeeFromJID(entity.getBareJID().toString());
     }
 
     private Employee employeeFromJID(String jid) {
