@@ -89,7 +89,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     private final Executor databaseWriteExecutor;
 
-    public VysperXMPPServer(String domain, Directory directory, File keyStore, String keyStorePassword, Executor executor, DataSource dataSource, Executor databaseWriteExecutor) {
+    public VysperXMPPServer(String domain, Directory directory, File keyStore, String keyStorePassword, Executor executor,
+                            DataSource dataSource, Executor databaseWriteExecutor) {
         xmpp = new org.apache.vysper.xmpp.server.XMPPServer(domain);
         this.domain = domain;
         this.directory = directory;
@@ -108,112 +109,119 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         return new EntityImpl(employee.getUserName(), domain, resource);
     }
 
+    private final AccountManagement accountManagement = new AccountManagement() {
+        public void addUser(Entity entity, String string) throws AccountCreationException {
+            // We do not support adding a user via XMPP/IM/Jabber.
+        }
+
+        public void changePassword(Entity entity, String string) throws AccountCreationException {
+            // We do not (yet) support changing a password via XMPP/IM/Jabber.
+        }
+
+        public boolean verifyAccountExists(Entity entity) {
+            return true; // FIXME
+        }
+
+    };
+
+    private final UserAuthorization userAuthAdaptor = new UserAuthorization() {
+        public boolean verifyCredentials(Entity entity, String passwordCleartext, Object credentials) {
+            return verifyCredentials(entity.getNode(), passwordCleartext, credentials);
+        }
+
+        public boolean verifyCredentials(String username, String passwordCleartext, Object credentials) {
+            System.err.println("in verifyCredentials with username. username=" + username);
+            final Authenticator authenticator = new AuthenticatorImpl(directory);
+            return authenticator.checkCredentials(username, passwordCleartext);
+        }
+
+    };
+
+    private final RosterManager rosterManager = new RosterManager() {
+        private Set<String> groups(Employee employee) {
+            ImmutableSet.Builder<String> groupNames = ImmutableSet.<String>builder();
+            for (Project project : employee.getRelatedProjects()) {
+                groupNames.add(project.getName());
+            }
+
+            return groupNames.build();
+        }
+
+        private final Set<String> defaultGroups = ImmutableSet.of("staff");
+
+        // FIXME: This is a weird special case. Consider adding some special bit to Project abstraction.
+        private final Set<String> groupsToIgnore = ImmutableSet.of("overhead");
+
+        private List<String> commonGroupNames(Employee e1, Employee e2) {
+            List<String> groupNames = new ArrayList<String>();
+            groupNames.addAll(defaultGroups);
+            groupNames.addAll(Sets.intersection(groups(e1), groups(e2)));
+            groupNames.removeAll(groupsToIgnore);
+            return groupNames;
+        }
+
+        private List<RosterGroup> commonGroups(Employee e1, Employee e2) {
+            List<RosterGroup> groups = new ArrayList<RosterGroup>();
+            for (String groupName : commonGroupNames(e1, e2)) {
+                groups.add(new RosterGroup(groupName));
+            }
+
+            return groups;
+        }
+
+        private RosterItem rosterItem(Employee employee, List<RosterGroup> groups) {
+            return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
+                                  AskSubscriptionType.ASK_SUBSCRIBED, groups);
+        }
+
+        public Roster retrieve(final Entity entity) throws RosterException {
+            return new Roster() {
+                public Iterator<RosterItem> iterator() {
+                    Collection<RosterItem> items = new ArrayList<RosterItem>();
+                    Employee employee = employee(entity);
+                    Collection<Employee> peers = peers(employee);
+                    for (Employee peer : peers) {
+                        items.add(rosterItem(peer, commonGroups(employee, peer)));
+                    }
+
+                    return Collections.unmodifiableCollection(items).iterator();
+                }
+
+                public RosterItem getEntry(Entity peerEntity) {
+                    Employee employee = employee(entity);
+                    Employee peer = employee(peerEntity);
+                    return rosterItem(peer, commonGroups(employee, peer));
+                }
+
+            };
+        }
+
+        public void addContact(Entity entity, RosterItem ri) throws RosterException {
+            // We don't (yet) support allowing an employee to manipulate the roster.
+        }
+
+        public RosterItem getContact(Entity entity, Entity peerEntity) throws RosterException {
+            Employee employee = employee(entity);
+            Employee peer = employee(peerEntity);
+            return rosterItem(peer, commonGroups(employee, peer));
+        }
+
+        public void removeContact(Entity entity, Entity entity1) throws RosterException {
+            // We don't (yet) support allowing an employee to manipulate the roster.
+        }
+
+    };
+
     @Override
     protected void startUp() throws Exception {
         ConsoleAppender consoleAppender = new ConsoleAppender(new PatternLayout());
         Logger.getRootLogger().addAppender(consoleAppender);
-        final Authenticator authenticator = new AuthenticatorImpl(directory);
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
                 add(new ArchivedRoomStorageProvider(dataSource, databaseWriteExecutor));
-                add(new AccountManagement() {
-                    public void addUser(Entity entity, String string) throws AccountCreationException {
-                    }
-
-                    public void changePassword(Entity entity, String string) throws AccountCreationException {
-                    }
-
-                    public boolean verifyAccountExists(Entity entity) {
-                        return true; // FIXME
-                    }
-
-                });
-                add(new UserAuthorization() {
-                    public boolean verifyCredentials(Entity entity, String passwordCleartext, Object credentials) {
-                        System.err.println("in verifyCredentials with Entity. entity=" + entity);
-                        return authenticator.checkCredentials(entity.getNode(), passwordCleartext);
-                    }
-
-                    public boolean verifyCredentials(String username, String passwordCleartext, Object credentials) {
-                        System.err.println("in verifyCredentials with username. username=" + username);
-                        return authenticator.checkCredentials(username, passwordCleartext);
-                    }
-
-                });
-                add(new RosterManager() {
-                    private Set<String> groups(Employee employee) {
-                        ImmutableSet.Builder<String> groupNames = ImmutableSet.<String>builder();
-                        for (Project project : employee.getRelatedProjects()) {
-                            groupNames.add(project.getName());
-                        }
-
-                        return groupNames.build();
-                    }
-
-                    private final Set<String> defaultGroups = ImmutableSet.of("staff");
-
-                    // This is a weird special case. Consider adding some special bit to Project abstraction.
-                    private final Set<String> groupsToIgnore = ImmutableSet.of("overhead");
-
-                    private List<String> commonGroupNames(Employee e1, Employee e2) {
-                        List<String> groupNames = new ArrayList<String>();
-                        groupNames.addAll(defaultGroups);
-                        groupNames.addAll(Sets.intersection(groups(e1), groups(e2)));
-                        groupNames.removeAll(groupsToIgnore);
-                        return groupNames;
-                    }
-
-                    private List<RosterGroup> commonGroups(Employee e1, Employee e2) {
-                        List<RosterGroup> groups = new ArrayList<RosterGroup>();
-                        for (String groupName : commonGroupNames(e1, e2)) {
-                            groups.add(new RosterGroup(groupName));
-                        }
-
-                        return groups;
-                    }
-
-                    private RosterItem rosterItem(Employee employee, List<RosterGroup> g) {
-                        return new RosterItem(entity(employee), employee.getDisplayName(), SubscriptionType.BOTH,
-                                              AskSubscriptionType.ASK_SUBSCRIBED, g);
-                    }
-
-                    public Roster retrieve(final Entity entity) throws RosterException {
-                        return new Roster() {
-                            public Iterator<RosterItem> iterator() {
-                                Collection<RosterItem> items = new ArrayList<RosterItem>();
-                                Employee employee = employee(entity);
-                                Collection<Employee> peers = peers(employee);
-                                for (Employee peer : peers) {
-                                    items.add(rosterItem(peer, commonGroups(employee, peer)));
-                                }
-
-                                return Collections.unmodifiableCollection(items).iterator();
-                            }
-
-                            public RosterItem getEntry(Entity peerEntity) {
-                                Employee employee = employee(entity);
-                                Employee peer = employee(peerEntity);
-                                return rosterItem(peer, commonGroups(employee, peer));
-                            }
-
-                        };
-                    }
-
-                    public void addContact(Entity entity, RosterItem ri) throws RosterException {
-                        // We don't (yet) support allowing an employee to manipulate the roster.
-                    }
-
-                    public RosterItem getContact(Entity entity, Entity peerEntity) throws RosterException {
-                        Employee employee = employee(entity);
-                        Employee peer = employee(peerEntity);
-                        return rosterItem(peer, commonGroups(employee, peer));
-                    }
-
-                    public void removeContact(Entity entity, Entity entity1) throws RosterException {
-                        // We don't (yet) support allowing an employee to manipulate the roster.
-                    }
-
-                });
+                add(accountManagement);
+                add(userAuthAdaptor);
+                add(rosterManager);
                 add("org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.storageprovider.LeafNodeInMemoryStorageProvider");
                 add("org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.storageprovider.CollectionNodeInMemoryStorageProvider");
             }
@@ -291,8 +299,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     private Employee employeeFromJID(String jid) {
         String bareUserName = jid.substring(0, jid.indexOf('@'));
-        Employee employee = directory.getByUserName().get(bareUserName);
-        return employee;
+        return directory.getByUserName().get(bareUserName);
     }
 
     public Presence getPresence(String username) {
