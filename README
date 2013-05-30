@@ -1,1 +1,6 @@
-Sarariman is an awesome time tracking tool.
+Sarariman is the "operating system" for StackFrame. It implements a lot of the
+workflow of daily operations. It supports tracking time, creating and sending
+invoices to clients, managing trouble tickets, etc.
+
+It started out as a system for tracking billable time, but since has grown out
+of control and integrates with external systems such as Twilio.
