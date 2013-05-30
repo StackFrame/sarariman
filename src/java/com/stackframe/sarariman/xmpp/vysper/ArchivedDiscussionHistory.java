@@ -25,15 +25,20 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
         // FIXME archive to database
         System.err.println("stanza that would be archived sent to room . stanza=" + stanza);
         Entity from = stanza.getFrom();
+        Entity to = stanza.getTo();
         if (MessageStanza.isOfType(stanza)) {
             MessageStanza message = new MessageStanza(stanza);
             try {
                 String body = message.getBody(null);
-                System.err.println("from=" + from + " body='" + body + "'");
+                System.err.println("sender=" + sender);
+                System.err.println("from=" + from + " to=" + to + " body='" + body + "'");
             } catch (XMLSemanticError e) {
                 e.printStackTrace();
             }
+        } else {
+            System.err.println("unexpected message type");
         }
+
         super.append(stanza, sender, timestamp);
     }
 
