@@ -283,7 +283,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
     }
 
-    private PresenceStanza stanza(Employee employee, Presence p, Entity to) {
+    private PresenceStanza presenceStanza(Employee employee, Presence p, Entity to) {
         Entity from = entity(employee);
         String lang = null;
         String show = p.getShow().toString();
@@ -342,10 +342,10 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     public void setPresence(String username, Presence presence) {
         LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
         Employee employee = employeeFromJID(username);
-        presenceCache.put(entity(employee, "sarariman"), stanza(employee, presence, null));
+        presenceCache.put(entity(employee, "sarariman"), presenceStanza(employee, presence, null));
         for (Employee peer : peers(employee)) {
             Entity to = entity(peer);
-            Stanza stanza = stanza(employee, presence, to);
+            Stanza stanza = presenceStanza(employee, presence, to);
             ServerRuntimeContext src = xmpp.getServerRuntimeContext();
             StanzaRelay relay = src.getStanzaRelay();
             ResourceRegistry resourceRegistry = src.getResourceRegistry();
