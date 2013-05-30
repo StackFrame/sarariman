@@ -150,13 +150,22 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                         return groupNames.build();
                     }
 
+                    private final Set<String> defaultGroups = ImmutableSet.of("staff");
+
+                    // This is a weird special case. Consider adding some special bit to Project abstraction.
+                    private final Set<String> groupsToIgnore = ImmutableSet.of("overhead");
+
+                    private List<String> commonGroupNames(Employee e1, Employee e2) {
+                        List<String> groupNames = new ArrayList<String>();
+                        groupNames.addAll(defaultGroups);
+                        groupNames.addAll(Sets.intersection(groups(e1), groups(e2)));
+                        groupNames.removeAll(groupsToIgnore);
+                        return groupNames;
+                    }
+
                     private List<RosterGroup> commonGroups(Employee e1, Employee e2) {
                         List<RosterGroup> groups = new ArrayList<RosterGroup>();
-
-                        groups.add(new RosterGroup("staff"));
-
-                        Sets.SetView<String> common = Sets.intersection(groups(e1), groups(e2));
-                        for (String groupName : common) {
+                        for (String groupName : commonGroupNames(e1, e2)) {
                             groups.add(new RosterGroup(groupName));
                         }
 
