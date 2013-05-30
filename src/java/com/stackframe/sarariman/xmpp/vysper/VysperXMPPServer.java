@@ -111,11 +111,11 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     private final AccountManagement accountManagement = new AccountManagement() {
         public void addUser(Entity entity, String string) throws AccountCreationException {
-            // We do not support adding a user via XMPP/IM/Jabber.
+            throw new AccountCreationException("We do not support adding a user via XMPP/IM/Jabber.");
         }
 
         public void changePassword(Entity entity, String string) throws AccountCreationException {
-            // We do not (yet) support changing a password via XMPP/IM/Jabber.
+            throw new AccountCreationException("We do not (yet) support changing a password via XMPP/IM/Jabber.");
         }
 
         public boolean verifyAccountExists(Entity entity) {
@@ -197,7 +197,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
 
         public void addContact(Entity entity, RosterItem ri) throws RosterException {
-            // We don't (yet) support allowing an employee to manipulate the roster.
+            throw new RosterException("We don't (yet) support allowing an employee to manipulate the roster.");
         }
 
         public RosterItem getContact(Entity entity, Entity peerEntity) throws RosterException {
@@ -207,7 +207,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
 
         public void removeContact(Entity entity, Entity entity1) throws RosterException {
-            // We don't (yet) support allowing an employee to manipulate the roster.
+            throw new RosterException("We don't (yet) support allowing an employee to manipulate the roster.");
         }
 
     };
