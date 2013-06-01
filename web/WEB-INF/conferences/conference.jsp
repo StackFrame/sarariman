@@ -34,7 +34,8 @@
             <h2>Occupants</h2>
             <ul>
                 <c:forEach var="occupant" items="${conference.chatRoom.occupants}">
-                    <li>${occupant.entity}</li>
+                    <!-- FIXME: What happens if an entity is joined multiple times to the MUC with different resources? -->
+                    <li>${occupant.entity.bareJID}</li>
                 </c:forEach>
             </ul>
 

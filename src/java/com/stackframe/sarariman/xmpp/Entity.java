@@ -30,6 +30,10 @@ public class Entity {
         return resource;
     }
 
+    public Entity getBareJID() {
+        return new Entity(node, domain, null);
+    }
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
