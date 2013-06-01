@@ -40,13 +40,29 @@ public class SMSXMPPGateway extends AbstractIdleService {
         return null;
     }
 
+    private static String stripPunctuation(String s) {
+        StringBuilder buf = new StringBuilder();
+        int numCharacters = s.length();
+        for (int i = 0; i < numCharacters; i++) {
+            char c = s.charAt(i);
+            if (Character.isDigit(c) || Character.isLetter(c)) {
+                buf.append(c);
+            }
+        }
+
+        return buf.toString();
+    }
+
     private final SMSListener listener = new SMSListener() {
         public void received(SMSEvent e) {
             System.err.println("Received an SMSEvent: " + e);
             String[] words = e.getBody().split(" ");
-            String firstWord = words[0].toLowerCase();
-            if (ShowType.isValid(firstWord)) {
-                ShowType showType = ShowType.valueOf(firstWord);
+            String firstWord = words[0];
+
+            String state = stripPunctuation(firstWord.toLowerCase());
+
+            if (ShowType.isValid(state)) {
+                ShowType showType = ShowType.valueOf(state);
                 String status = e.getBody().substring(firstWord.length() + 1);
                 System.err.println("showType=" + showType + " status='" + status + "'");
                 Employee from = findEmployee(e.getFrom());
