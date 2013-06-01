@@ -210,6 +210,10 @@
         <servlet-name>IncomingSMSHandler</servlet-name>
         <servlet-class>com.stackframe.sarariman.telephony.twilio.IncomingTwilioSMSHandler</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ConferenceController</servlet-name>
+        <servlet-class>com.stackframe.sarariman.conference.ConferenceController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -745,6 +749,10 @@
     <servlet-mapping>
         <servlet-name>IncomingSMSHandler</servlet-name>
         <url-pattern>/handleSMS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConferenceController</servlet-name>
+        <url-pattern>/conferences/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
