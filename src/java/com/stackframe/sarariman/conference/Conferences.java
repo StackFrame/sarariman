@@ -14,4 +14,6 @@ public interface Conferences {
 
     Collection<Conference> getAll();
 
+    Conference get(String name);
+
 }

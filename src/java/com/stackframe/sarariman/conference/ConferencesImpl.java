@@ -23,13 +23,23 @@ public class ConferencesImpl implements Conferences {
 
     public Collection<Conference> getAll() {
         Collection<Conference> conferences = new ArrayList<Conference>();
-        Collection<Room> chatRooms = xmpp.getRooms();
-        for (Room chatRoom : chatRooms) {
+        for (Room chatRoom : xmpp.getRooms()) {
             Conference conference = new ConferenceImpl(chatRoom.getName(), chatRoom);
             conferences.add(conference);
         }
 
         return conferences;
+    }
+
+    public Conference get(String name) {
+        for (Room chatRoom : xmpp.getRooms()) {
+            if (name.equals(chatRoom.getName())) {
+                Conference conference = new ConferenceImpl(chatRoom.getName(), chatRoom);
+                return conference;
+            }
+        }
+
+        return null;
     }
 
 }
