@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.xmpp;
 
+import java.util.Collection;
+
 /**
  *
  * @author mcculley
@@ -11,5 +13,7 @@ package com.stackframe.sarariman.xmpp;
 public interface Room {
 
     String getName();
+
+    Collection<Occupant> getOccupants();
 
 }

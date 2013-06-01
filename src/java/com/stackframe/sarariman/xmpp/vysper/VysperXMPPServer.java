@@ -13,6 +13,7 @@ import com.stackframe.sarariman.AuthenticatorImpl;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.xmpp.Occupant;
 import com.stackframe.sarariman.xmpp.Presence;
 import com.stackframe.sarariman.xmpp.PresenceType;
 import com.stackframe.sarariman.xmpp.Room;
@@ -264,10 +265,28 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         Collection<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room> rooms = conference.getAllRooms();
         ImmutableList.Builder<Room> b = ImmutableList.<Room>builder();
         for (org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room room : rooms) {
-            final org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room concreteCopy = room;
+            final org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room roomImpl = room;
             Room r = new Room() {
                 public String getName() {
-                    return concreteCopy.getName();
+                    return roomImpl.getName();
+                }
+
+                private com.stackframe.sarariman.xmpp.Entity convert(Entity e) {
+                    return new com.stackframe.sarariman.xmpp.Entity(e.getNode(), e.getDomain(), e.getResource());
+                }
+
+                private Occupant convert(org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant concreteOccupant) {
+                    return new Occupant(convert(concreteOccupant.getJid()));
+                }
+
+                public Collection<Occupant> getOccupants() {
+                    Set<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant> occupants = roomImpl.getOccupants();
+                    ImmutableList.Builder<Occupant> b = ImmutableList.<Occupant>builder();
+                    for (org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant occupant : occupants) {
+                        b.add(convert(occupant));
+                    }
+
+                    return b.build();
                 }
 
             };
