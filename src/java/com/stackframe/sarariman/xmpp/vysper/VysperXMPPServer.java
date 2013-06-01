@@ -56,11 +56,12 @@ import org.apache.vysper.xmpp.modules.roster.RosterGroup;
 import org.apache.vysper.xmpp.modules.roster.RosterItem;
 import org.apache.vysper.xmpp.modules.roster.SubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.persistence.RosterManager;
+import org.apache.vysper.xmpp.protocol.ProtocolException;
+import org.apache.vysper.xmpp.protocol.StanzaHandler;
 import org.apache.vysper.xmpp.server.ServerRuntimeContext;
 import org.apache.vysper.xmpp.server.SessionContext;
 import org.apache.vysper.xmpp.stanza.PresenceStanza;
 import org.apache.vysper.xmpp.stanza.PresenceStanzaType;
-import org.apache.vysper.xmpp.stanza.Stanza;
 import org.apache.vysper.xmpp.stanza.StanzaBuilder;
 import org.apache.vysper.xmpp.state.presence.LatestPresenceCache;
 import org.apache.vysper.xmpp.state.resourcebinding.ResourceRegistry;
@@ -285,7 +286,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     }
 
     private PresenceStanza presenceStanza(Employee employee, Presence p, Entity to) {
-        Entity from = entity(employee);
+        Entity from = entity(employee, "sarariman");
         String lang = null;
         String show = p.getShow().toString();
         String status = p.getStatus();
@@ -341,37 +342,31 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     }
 
     public void setPresence(String username, Presence presence) {
+        Employee from = employeeFromJID(username);
         LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
-        Employee employee = employeeFromJID(username);
-        presenceCache.put(entity(employee, "sarariman"), presenceStanza(employee, presence, null));
-        for (Employee peer : peers(employee)) {
+        presenceCache.put(entity(from, "sarariman"), presenceStanza(from, presence, null));
+        for (Employee peer : peers(from)) {
             Entity to = entity(peer);
-            Stanza stanza = presenceStanza(employee, presence, to);
+
             ServerRuntimeContext src = xmpp.getServerRuntimeContext();
-            StanzaRelay relay = src.getStanzaRelay();
             ResourceRegistry resourceRegistry = src.getResourceRegistry();
             List<SessionContext> sessions = resourceRegistry.getSessions(to);
             for (SessionContext session : sessions) {
                 for (String resource : resourceRegistry.getResourcesForSession(session)) {
-                    Entity e = new EntityImpl(to.getNode(), to.getDomain(), resource);
+                    Entity destinationResource = new EntityImpl(to.getNode(), to.getDomain(), resource);
+                    PresenceStanza stanza = presenceStanza(from, presence, destinationResource);
+                    StanzaHandler handler = src.getHandler(stanza);
                     try {
-                        relay.relay(e, stanza, new DeliveryFailureStrategy() {
-                            public void process(Stanza stanza, List<DeliveryException> list) throws DeliveryException {
-                                for (DeliveryException de : list) {
-                                    // FIXME: Log this?
-                                    System.err.println("de=" + de);
-                                    de.printStackTrace();
-                                }
-                            }
-
-                        });
-                    } catch (DeliveryException de) {
-                        System.err.println("deliveryException=" + de);
-                        de.printStackTrace();
+                        handler.execute(stanza, src, true, session, null);
+                    } catch (ProtocolException pe) {
+                        // FIXME: Log this.
+                        System.err.println("protocolException=" + pe);
+                        pe.printStackTrace();
                     }
                 }
             }
         }
+
     }
 
 }
