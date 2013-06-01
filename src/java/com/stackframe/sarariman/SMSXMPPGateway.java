@@ -51,6 +51,7 @@ public class SMSXMPPGateway extends AbstractIdleService {
                 System.err.println("showType=" + showType + " status='" + status + "'");
                 Employee from = findEmployee(e.getFrom());
                 if (from == null) {
+                    // FIXME: Log this.
                     System.err.println("Could not find employee for number=" + e.getFrom());
                 } else {
                     System.err.println("message was from " + from.getUserName());
