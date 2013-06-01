@@ -78,7 +78,7 @@ public class SMSXMPPGateway extends AbstractIdleService {
             try {
                 PreparedStatement s = c.prepareStatement(
                         "INSERT INTO presence_log (entity, type, show, message, `timestamp`) " +
-                        "VALUES(?, ?, ?, ?)");
+                        "VALUES(?, ?, ?, ?, ?)");
                 try {
                     s.setString(1, entity.toString());
                     s.setString(2, presence.getType().name());
