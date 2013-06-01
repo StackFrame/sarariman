@@ -18,6 +18,8 @@ import com.stackframe.sarariman.accesslog.AccessLog;
 import com.stackframe.sarariman.accesslog.AccessLogImpl;
 import com.stackframe.sarariman.clients.Clients;
 import com.stackframe.sarariman.clients.ClientsImpl;
+import com.stackframe.sarariman.conference.Conferences;
+import com.stackframe.sarariman.conference.ConferencesImpl;
 import com.stackframe.sarariman.contacts.Contacts;
 import com.stackframe.sarariman.contacts.ContactsImpl;
 import com.stackframe.sarariman.errors.Errors;
@@ -164,6 +166,8 @@ public class Sarariman implements ServletContextListener {
     private XMPPServer xmpp;
 
     private final Collection<Service> services = new CopyOnWriteArrayList<Service>();
+
+    private Conferences conferences;
 
     public String getVersion() {
         return Version.version;
@@ -416,6 +420,10 @@ public class Sarariman implements ServletContextListener {
                                                                "icon-calendar"));
     }
 
+    public Conferences getConferences() {
+        return conferences;
+    }
+
     public Collection<Service> getServices() {
         return Collections.unmodifiableCollection(services);
     }
@@ -476,6 +484,7 @@ public class Sarariman implements ServletContextListener {
             try {
                 xmpp = new VysperXMPPServer("stackframe.com", directory, new File(keyStorePath), keyStorePassword,
                                             backgroundExecutor, getDataSource(), backgroundDatabaseWriteExecutor);
+                conferences = new ConferencesImpl(xmpp);
                 services.add(xmpp);
                 xmpp.start();
                 SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor, getDataSource(),

@@ -8,8 +8,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<c:set var="tickets" value="${sarariman.tickets}"/>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -29,8 +27,8 @@
             <h1>Conferences</h1>
 
             <ul>
-                <c:forEach var="room" items="${sarariman.XMPPServer.rooms}">
-                    <li>${room.name}</li>
+                <c:forEach var="conference" items="${sarariman.conferences.all}">
+                    <li>${conference.name}</li>
                 </c:forEach>
             </ul>
 
