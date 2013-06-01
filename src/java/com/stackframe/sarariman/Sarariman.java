@@ -478,7 +478,8 @@ public class Sarariman implements ServletContextListener {
                                             backgroundExecutor, getDataSource(), backgroundDatabaseWriteExecutor);
                 services.add(xmpp);
                 xmpp.start();
-                SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor);
+                SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor, getDataSource(),
+                                                            backgroundDatabaseWriteExecutor);
                 services.add(gateway);
                 gateway.start();
             } catch (Exception e) {

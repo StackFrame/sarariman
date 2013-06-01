@@ -13,7 +13,12 @@ import com.stackframe.sarariman.xmpp.Presence;
 import com.stackframe.sarariman.xmpp.PresenceType;
 import com.stackframe.sarariman.xmpp.ShowType;
 import com.stackframe.sarariman.xmpp.XMPPServer;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.concurrent.Executor;
+import javax.sql.DataSource;
 
 /**
  *
@@ -28,6 +33,20 @@ public class SMSXMPPGateway extends AbstractIdleService {
     private final Directory directory;
 
     private final Executor executor;
+
+    private final DataSource dataSource;
+
+    private final Executor backgroundDatabaseWriteExecutor;
+
+    public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory, Executor executor, DataSource dataSource,
+                          Executor backgroundDatabaseWriteExecutor) {
+        this.sms = sms;
+        this.xmpp = xmpp;
+        this.directory = directory;
+        this.executor = executor;
+        this.dataSource = dataSource;
+        this.backgroundDatabaseWriteExecutor = backgroundDatabaseWriteExecutor;
+    }
 
     private Employee findEmployee(PhoneNumber number) {
         for (Employee e : directory.getEmployees()) {
@@ -51,6 +70,33 @@ public class SMSXMPPGateway extends AbstractIdleService {
         }
 
         return buf.toString();
+    }
+
+    private void writeToLog(String entity, Presence presence, long timestamp) {
+        try {
+            Connection c = dataSource.getConnection();
+            try {
+                PreparedStatement s = c.prepareStatement(
+                        "INSERT INTO presence_log (entity, type, show, message, `timestamp`) " +
+                        "VALUES(?, ?, ?, ?)");
+                try {
+                    s.setString(1, entity.toString());
+                    s.setString(2, presence.getType().name());
+                    s.setString(3, presence.getShow().name());
+                    s.setString(4, presence.getStatus());
+                    s.setTimestamp(5, new Timestamp(timestamp));
+                    int numRowsInserted = s.executeUpdate();
+                    assert numRowsInserted == 1;
+                } finally {
+                    s.close();
+                }
+            } finally {
+                c.close();
+            }
+        } catch (SQLException e) {
+            // FIXME: Log this exception. Does it kill the Executor?
+            throw new RuntimeException(e);
+        }
     }
 
     private final SMSListener listener = new SMSListener() {
@@ -80,6 +126,7 @@ public class SMSXMPPGateway extends AbstractIdleService {
 
                     final Presence presence = new Presence(presenceType, showType, status);
                     final String JID = from.getUserName() + "@stackframe.com";
+                    final long now = System.currentTimeMillis();
                     System.err.println("setting presence for " + JID + " to " + presence);
                     executor.execute(new Runnable() {
                         public void run() {
@@ -93,18 +140,17 @@ public class SMSXMPPGateway extends AbstractIdleService {
                         }
 
                     });
+                    backgroundDatabaseWriteExecutor.execute(new Runnable() {
+                        public void run() {
+                            writeToLog(JID, presence, now);
+                        }
+
+                    });
                 }
             }
         }
 
     };
-
-    public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory, Executor executor) {
-        this.sms = sms;
-        this.xmpp = xmpp;
-        this.directory = directory;
-        this.executor = executor;
-    }
 
     @Override
     protected void startUp() throws Exception {
