@@ -16,4 +16,6 @@ public interface Room {
 
     Collection<Occupant> getOccupants();
 
+    Collection<Message> getDiscussionHistory();
+
 }

@@ -13,6 +13,7 @@ import com.stackframe.sarariman.AuthenticatorImpl;
 import com.stackframe.sarariman.Directory;
 import com.stackframe.sarariman.Employee;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.xmpp.Message;
 import com.stackframe.sarariman.xmpp.Occupant;
 import com.stackframe.sarariman.xmpp.Presence;
 import com.stackframe.sarariman.xmpp.PresenceType;
@@ -287,6 +288,12 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                     }
 
                     return b.build();
+                }
+
+                public Collection<Message> getDiscussionHistory() {
+                    Collection<Message> history = new ArrayList<Message>();
+                    // FIXME: Implement me!
+                    return history;
                 }
 
             };
