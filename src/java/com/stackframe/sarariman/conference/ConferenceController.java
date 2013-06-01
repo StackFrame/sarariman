@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 StackFrame, LLC
+ * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.conference;
 

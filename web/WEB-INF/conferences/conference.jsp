@@ -1,5 +1,5 @@
 <%--
-  Copyright (C) 2012-2013 StackFrame, LLC
+  Copyright (C) 2013 StackFrame, LLC
   This code is licensed under GPLv2.
 --%>
 
@@ -25,6 +25,11 @@
 
         <div class="container-fluid">
             <h1>${conference.name}</h1>
+
+            <p>
+            To join this conference in your XMPP/Jabber client, go to
+            <a href="xmpp:${conference.name}@conference.stackframe.com?join">${conference.name}@conference.stackframe.com</a>.
+            </p>
 
             <h2>Occupants</h2>
             <ul>
