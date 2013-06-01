@@ -360,10 +360,16 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         return result;
     }
 
+    private void updatePresenceCache(Employee employee, Presence presence) {
+        LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
+        presenceCache.put(entity(employee, "sarariman"), presenceStanza(employee, presence, null));
+    }
+
     public void setPresence(String username, Presence presence) {
         Employee from = employeeFromJID(username);
-        LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
-        presenceCache.put(entity(from, "sarariman"), presenceStanza(from, presence, null));
+
+        updatePresenceCache(from, presence);
+
         for (Employee peer : peers(from)) {
             Entity to = entity(peer);
 
