@@ -38,9 +38,6 @@ import org.apache.vysper.xmpp.addressing.EntityImpl;
 import org.apache.vysper.xmpp.authorization.AccountCreationException;
 import org.apache.vysper.xmpp.authorization.AccountManagement;
 import org.apache.vysper.xmpp.authorization.UserAuthorization;
-import org.apache.vysper.xmpp.delivery.StanzaRelay;
-import org.apache.vysper.xmpp.delivery.failure.DeliveryException;
-import org.apache.vysper.xmpp.delivery.failure.DeliveryFailureStrategy;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataModule;
@@ -72,6 +69,8 @@ import org.apache.vysper.xmpp.state.resourcebinding.ResourceRegistry;
  */
 public class VysperXMPPServer extends AbstractIdleService implements XMPPServer {
 
+    // FIXME: There are lots of implicit assumptions in here that an Entity is an Employee. We will eventually support federation
+    // and the ability to chat with external entities (e.g., clients).
     private final org.apache.vysper.xmpp.server.XMPPServer xmpp;
 
     private final Directory directory;
@@ -149,7 +148,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
             return groupNames.build();
         }
 
-        private final Set<String> defaultGroups = ImmutableSet.of("staff");
+        // FIXME: We should get a parameter with the name of the organization.
+        private final Set<String> defaultGroups = ImmutableSet.of("StackFrame");
 
         // FIXME: This is a weird special case. Consider adding some special bit to Project abstraction.
         private final Set<String> groupsToIgnore = ImmutableSet.of("overhead");
