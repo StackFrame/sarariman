@@ -27,6 +27,8 @@
         <div class="container-fluid">
             <h1>DevOps</h1>
 
+            <p>Server: ${pageContext.servletContext.serverInfo}</p>
+
             <h2>Services</h2>
             <ul>
                 <c:forEach var="service" items="${sarariman.services}">
