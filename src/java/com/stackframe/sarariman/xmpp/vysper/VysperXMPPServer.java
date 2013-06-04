@@ -29,9 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import javax.sql.DataSource;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.apache.vysper.mina.TCPEndpoint;
 import org.apache.vysper.storage.OpenStorageProviderRegistry;
 import org.apache.vysper.storage.StorageProviderRegistry;
@@ -218,8 +215,6 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     @Override
     protected void startUp() throws Exception {
-        ConsoleAppender consoleAppender = new ConsoleAppender(new PatternLayout());
-        Logger.getRootLogger().addAppender(consoleAppender);
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
                 add(new ArchivedRoomStorageProvider(dataSource, databaseWriteExecutor));
