@@ -12,18 +12,31 @@
                             <c:choose>
                                 <c:when test="${not empty link.iconName}">
                                     <i class="${link.iconName}" title="${link.name}"></i>
+                                    <span class="hidden-phone">${link.name}</span>
                                 </c:when>
-                                <c:otherwise>${link.name}</c:otherwise>
+                                <c:otherwise>
+                                    ${link.name}
+                                </c:otherwise>
                             </c:choose>
                         </a>
                     </li>
                 </c:forEach>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Tools">
+                        <i class="icon-sitemap"></i>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="${pageContext.request.contextPath}/help"><i class="icon-info-sign"></i> Help</a></li>
+                        <li><a href="${pageContext.request.contextPath}/holidays/upcoming.jsp"><i class="icon-calendar"></i> Holidays</a></li>
+                        <li><a href="${pageContext.request.contextPath}/tools"><i class="icon-wrench"></i> Tools</a></li>
+                    </ul></li>
                 <li>
-                <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
-                <c:choose>
-                    <c:when test="${good}"><a title="Your recent timesheet entries have been on time!">&#x263A;</a></c:when>
-                    <c:otherwise><a title="Your recent timesheet entries have been late.">&#x2639;</a></c:otherwise>
-                </c:choose>
+                    <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
+                    <c:choose>
+                        <c:when test="${good}"><a title="Your recent timesheet entries have been on time!">&#x263A;</a></c:when>
+                        <c:otherwise><a title="Your recent timesheet entries have been late.">&#x2639;</a></c:otherwise>
+                    </c:choose>
                 </li>
             </ul>
 
