@@ -79,12 +79,20 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.sql.DataSource;
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.spi.ThrowableInformation;
 
 /**
  *
  * @author mcculley
  */
 public class Sarariman implements ServletContextListener {
+
+    private final Logger logger = Logger.getLogger(getClass());
 
     // This ExecutorService is used for background jobs which do not require synchronous completion with regard to an HTTP request.
     private final ExecutorService backgroundExecutor = Executors.newFixedThreadPool(1);
@@ -415,9 +423,7 @@ public class Sarariman implements ServletContextListener {
 
     public Collection<UIResource> getNavbarLinks() {
         return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
-                                            new UIResourceImpl(getMountPoint() + "tools", "Tools", "icon-wrench"),
-                                            new UIResourceImpl(getMountPoint() + "holidays/upcoming.jsp", "Holidays",
-                                                               "icon-calendar"));
+                                            new UIResourceImpl(getMountPoint() + "tickets/", "Tickets", "icon-tasks"));
     }
 
     public Conferences getConferences() {
@@ -428,18 +434,59 @@ public class Sarariman implements ServletContextListener {
         return Collections.unmodifiableCollection(services);
     }
 
+    private void setupLogger(DeploymentMode deploymentMode) {
+        if (deploymentMode == DeploymentMode.production) {
+            Logger.getRootLogger().removeAllAppenders();
+            final Log log = new LogImpl(getDataSource(), backgroundDatabaseWriteExecutor);
+            Appender appender = new AppenderSkeleton() {
+                @Override
+                protected void append(LoggingEvent le) {
+                    long timestamp = System.currentTimeMillis();
+                    String priority = le.getLevel().toString();
+                    String source = le.getLoggerName();
+                    String message = le.getMessage().toString();
+                    String exceptionText;
+                    ThrowableInformation ti = le.getThrowableInformation();
+                    if (ti == null) {
+                        exceptionText = null;
+                    } else {
+                        // FIXME: Put the stack trace in here.
+                        exceptionText = ti.getThrowable().toString();
+                    }
+
+                    log.log(timestamp, priority, source, message, exceptionText);
+                }
+
+                @Override
+                public boolean requiresLayout() {
+                    return false;
+                }
+
+                @Override
+                public void close() {
+                }
+
+            };
+            Logger.getRootLogger().addAppender(appender);
+        }
+    }
+
     public void contextInitialized(ServletContextEvent sce) {
+        Logger.getRootLogger().addAppender(new ConsoleAppender());
+        final String applicationName = sce.getServletContext().getServletContextName();
+        logger.info("context initialized for " + applicationName + " serverInfo=" + sce.getServletContext().getServerInfo());
         extensions.add(new SAICExtension());
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context)initContext.lookup("java:comp/env");
+            DeploymentMode deploymentMode = DeploymentMode.valueOf((String)envContext.lookup("deploymentMode"));
+            setupLogger(deploymentMode);
             Properties directoryProperties = lookupDirectoryProperties(envContext);
             directory = new LDAPDirectory(new InitialDirContext(directoryProperties), this);
             try {
                 directorySynchronizer.synchronize(directory, getDataSource());
             } catch (Exception e) {
-                // FIXME: log
-                System.err.println("Trouble synchronizing directory with database: " + e);
+                logger.error("trouble synchronizing directory with database", e);
             }
 
             initContext.rebind("sarariman.directory", directory);
@@ -492,8 +539,7 @@ public class Sarariman implements ServletContextListener {
                 services.add(gateway);
                 gateway.start();
             } catch (Exception e) {
-                System.err.println("trouble starting XMPP server");
-                e.printStackTrace();
+                logger.error("trouble starting XMPP server", e);
             }
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
@@ -512,14 +558,13 @@ public class Sarariman implements ServletContextListener {
             public void run() {
                 try {
                     for (Employee employee : getAdministrators()) {
-                        String message = String.format("Sarariman version %s has been started on %s at %s.", getVersion(), hostname,
-                                                       mountPoint);
+                        String message = String.format("%s version %s has been started on %s at %s.", applicationName, getVersion(),
+                                                       hostname, mountPoint);
                         emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
                         SMS.send(employee.getMobile(), "Sarariman has been started.");
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    // FIXME: log
+                    logger.error("trouble sending startup notification", e);
                 }
             }
 
@@ -554,12 +599,10 @@ public class Sarariman implements ServletContextListener {
             try {
                 State state = future.get();
                 if (state != State.TERMINATED) {
-                    // FIXME log and keep going
-                    System.err.println("unexpected state=" + state);
+                    logger.error("unexpected state=" + state);
                 }
             } catch (Exception e) {
-                // FIXME log and keep going
-                throw new RuntimeException(e);
+                logger.error("error when attempting to shutdown a service", e);
             }
         }
     }
