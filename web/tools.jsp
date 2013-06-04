@@ -27,13 +27,13 @@
         <div class="container">
 
             <ul>
-                <li><a href="help.xhtml">Help</a></li>
+                <li><a href="help"><i class="icon-info-sign"></i> Help</a></li>
                 <li><a href="defaultTasks.jsp">Default Task Assignments</a></li>
-                <li><a href="tickets/">Tickets</a></li>
+                <li><a href="tickets/"><i class="icon-tasks"></i> Tickets</a></li>
                 <li><a href="orgChart">Org Chart</a></li>
                 <li><a href="timesheets">Timesheets</a></li>
                 <li><a href="timereportsbyproject">Time reports by project</a></li>
-                <li><a href="employees">Employees</a></li>
+                <li><a href="employees"><i class="icon-group"></i> Employees</a></li>
                 <li><a href="scheduledVacation">Scheduled Vacation</a></li>
                 <li><a href="stats">Stats</a></li>
                 <li><a href="locationlog/everybody.jsp">Location Log Map</a></li>
