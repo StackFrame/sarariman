@@ -28,6 +28,7 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
+                        <li><a href="${pageContext.request.contextPath}/staff/"><i class="icon-group"></i> Staff Directory</a></li>
                         <li><a href="${pageContext.request.contextPath}/tickets/"><i class="icon-tasks"></i> Tickets</a></li>
                         <li><a href="${pageContext.request.contextPath}/holidays/upcoming.jsp"><i class="icon-calendar"></i> Holidays</a></li>
                         <li><a href="${pageContext.request.contextPath}/tools"><i class="icon-wrench"></i> Tools</a></li>
