@@ -6,6 +6,7 @@ package com.stackframe.sarariman;
 
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -458,8 +459,8 @@ public class Sarariman implements ServletContextListener {
                     if (ti == null) {
                         exceptionText = null;
                     } else {
-                        // FIXME: Put the stack trace in here.
-                        exceptionText = ti.getThrowable().toString();
+                        Throwable t = ti.getThrowable();
+                        exceptionText = t.getMessage() + "\n" + Throwables.getStackTraceAsString(t);
                     }
 
                     log.log(timestamp, priority, source, message, exceptionText);
