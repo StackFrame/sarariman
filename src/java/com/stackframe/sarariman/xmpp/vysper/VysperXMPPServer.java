@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import javax.sql.DataSource;
+import org.apache.log4j.Logger;
 import org.apache.vysper.mina.TCPEndpoint;
 import org.apache.vysper.storage.OpenStorageProviderRegistry;
 import org.apache.vysper.storage.StorageProviderRegistry;
@@ -67,6 +68,8 @@ import org.apache.vysper.xmpp.state.resourcebinding.ResourceRegistry;
  * @author mcculley
  */
 public class VysperXMPPServer extends AbstractIdleService implements XMPPServer {
+
+    private final Logger logger = Logger.getLogger(getClass());
 
     // FIXME: There are lots of implicit assumptions in here that an Entity is an Employee. We will eventually support federation
     // and the ability to chat with external entities (e.g., clients).
@@ -338,8 +341,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                 Presence p = new Presence(type(presence), show, presence.getStatus(null));
                 return p;
             } catch (Exception e) {
-                System.err.println("exception getting presence status. e=" + e);
-                e.printStackTrace();
+                logger.error("exception getting presence status", e);
                 return new Presence(PresenceType.unavailable, ShowType.away, null);
             }
         }
@@ -386,9 +388,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                     try {
                         handler.execute(stanza, src, true, session, null);
                     } catch (ProtocolException pe) {
-                        // FIXME: Log this.
-                        System.err.println("protocolException=" + pe);
-                        pe.printStackTrace();
+                        logger.error("exception relaying presence status", pe);
                     }
                 }
             }

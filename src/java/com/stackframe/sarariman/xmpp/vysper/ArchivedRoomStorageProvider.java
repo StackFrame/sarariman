@@ -37,23 +37,19 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
     }
 
     public void initialize() {
-        System.err.println("ArchivedRoomStorageProvider::initialize entered");
     }
 
     public Room createRoom(Entity jid, String name, RoomType... roomTypes) {
-        System.err.println("ArchivedRoomStorageProvider::createRoom entered. jid=" + jid + " name=" + name + " roomTypes=" + Arrays.asList(roomTypes));
         Room room = new ArchivedRoom(dataSource, databaseWriteExecutor, jid, name, roomTypes);
         rooms.put(jid, room);
         return room;
     }
 
     public Collection<Room> getAllRooms() {
-        System.err.println("ArchivedRoomStorageProvider::getAllRooms entered");
         return Collections.unmodifiableCollection(rooms.values());
     }
 
     public Room findRoom(Entity jid) {
-        System.err.println("ArchivedRoomStorageProvider::findRoom entered. jid=" + jid);
         return rooms.get(jid);
     }
 

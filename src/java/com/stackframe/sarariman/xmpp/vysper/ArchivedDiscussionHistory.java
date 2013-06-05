@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.concurrent.Executor;
 import javax.sql.DataSource;
+import org.apache.log4j.Logger;
 import org.apache.vysper.xml.fragment.XMLSemanticError;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.DiscussionHistory;
@@ -29,6 +30,8 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
     private final DataSource dataSource;
 
     private final Executor databaseWriteExecutor;
+
+    private final Logger logger = Logger.getLogger(getClass());
 
     public ArchivedDiscussionHistory(DataSource dataSource, Executor databaseWriteExecutor) {
         this.dataSource = dataSource;
@@ -56,8 +59,7 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
                 c.close();
             }
         } catch (SQLException e) {
-            // FIXME: Log this exception. Does it kill the Executor?
-            throw new RuntimeException(e);
+            logger.error("exception when inserting message into conference_log", e);
         }
     }
 
@@ -65,7 +67,7 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
         System.err.println("from=" + from + " room=" + room + " message='" + message + "'");
         databaseWriteExecutor.execute(new Runnable() {
             public void run() {
-                writeToDatabase(from,room,message,System.currentTimeMillis());
+                writeToDatabase(from, room, message, System.currentTimeMillis());
             }
 
         });
@@ -81,7 +83,7 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
                 String body = message.getBody(null);
                 archive(from.getBareJID().toString(), to.toString(), body);
             } catch (XMLSemanticError e) {
-                e.printStackTrace();
+                logger.error("error retrieving body from message", e);
             }
         } else {
             System.err.println("unexpected message type. message=" + stanza);
