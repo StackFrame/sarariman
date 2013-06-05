@@ -27,9 +27,7 @@
         <div class="container">
 
             <ul>
-                <li><a href="help"><i class="icon-info-sign"></i> Help</a></li>
                 <li><a href="defaultTasks.jsp">Default Task Assignments</a></li>
-                <li><a href="tickets/"><i class="icon-tasks"></i> Tickets</a></li>
                 <li><a href="orgChart">Org Chart</a></li>
                 <li><a href="timesheets">Timesheets</a></li>
                 <li><a href="timereportsbyproject">Time reports by project</a></li>
