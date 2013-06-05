@@ -5,6 +5,7 @@
             <span class="brand hidden-phone">Sarariman</span>
 
             <ul class="nav">
+                <!-- FIXME: Consider allowing more top-level links and hiding them on phone. Would we need to remove them from the drop down menu? -->
                 <c:forEach var="link" items="${sarariman.navbarLinks}">
                     <c:set var="class" value="${pageContext.request.requestURI eq link.URL.path ? 'active' : ''}"/>
                     <li class="${class}">
@@ -27,9 +28,10 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="${pageContext.request.contextPath}/help"><i class="icon-info-sign"></i> Help</a></li>
+                        <li><a href="${pageContext.request.contextPath}/tickets/"><i class="icon-tasks"></i> Tickets</a></li>
                         <li><a href="${pageContext.request.contextPath}/holidays/upcoming.jsp"><i class="icon-calendar"></i> Holidays</a></li>
                         <li><a href="${pageContext.request.contextPath}/tools"><i class="icon-wrench"></i> Tools</a></li>
+                        <li><a href="${pageContext.request.contextPath}/help"><i class="icon-info-sign"></i> Help</a></li>
                     </ul></li>
                 <li>
                     <c:set var="good" value="${user.recentEntryLatency < 0.25}"/>
