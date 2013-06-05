@@ -422,8 +422,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Collection<UIResource> getNavbarLinks() {
-        return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"),
-                                            new UIResourceImpl(getMountPoint() + "tickets/", "Tickets", "icon-tasks"));
+        return ImmutableList.<UIResource>of(new UIResourceImpl(getMountPoint(), "Home", "icon-home"));
     }
 
     public Conferences getConferences() {
@@ -435,6 +434,8 @@ public class Sarariman implements ServletContextListener {
     }
 
     private void setupLogger(DeploymentMode deploymentMode) {
+        // FIXME: Do I need to setup the java.util.logging bridge?
+        // FIXME: Need to filter or set level to WARN or ERROR and above.
         if (deploymentMode == DeploymentMode.production) {
             Logger.getRootLogger().removeAllAppenders();
             final Log log = new LogImpl(getDataSource(), backgroundDatabaseWriteExecutor);
