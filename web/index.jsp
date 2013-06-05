@@ -477,11 +477,6 @@
             </ul>
         </p>
 
-        <h2>Holidays</h2>
-        <p><a href="holidays/upcoming.jsp">Holiday Schedule</a><br/>
-            <c:set var="nextHoliday" value="${sarariman.holidays.next}"/>
-            Next holiday: <fmt:formatDate value="${nextHoliday.date}" type="date" pattern="MMM d" />, ${nextHoliday.description}</p>
-
         <h2 id="scheduledVacation">Scheduled Vacation</h2>
         <p>
             <a class="btn" href="vacation/create.jsp" title="add a vacation entry"><i class="icon-plus"></i></a>
