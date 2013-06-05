@@ -82,6 +82,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
@@ -176,6 +177,9 @@ public class Sarariman implements ServletContextListener {
     private final Collection<Service> services = new CopyOnWriteArrayList<Service>();
 
     private Conferences conferences;
+
+    // FIXME: Need a web UI under DevOps to adjust this.
+    private Level logLevel = Level.INFO;
 
     public String getVersion() {
         return Version.version;
@@ -435,13 +439,16 @@ public class Sarariman implements ServletContextListener {
 
     private void setupLogger(DeploymentMode deploymentMode) {
         // FIXME: Do I need to setup the java.util.logging bridge?
-        // FIXME: Need to filter or set level to WARN or ERROR and above.
         if (deploymentMode == DeploymentMode.production) {
             Logger.getRootLogger().removeAllAppenders();
             final Log log = new LogImpl(getDataSource(), backgroundDatabaseWriteExecutor);
             Appender appender = new AppenderSkeleton() {
                 @Override
                 protected void append(LoggingEvent le) {
+                    if (!le.getLevel().isGreaterOrEqual(logLevel)) {
+                        return;
+                    }
+
                     long timestamp = System.currentTimeMillis();
                     String priority = le.getLevel().toString();
                     String source = le.getLoggerName();
