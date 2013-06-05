@@ -8,8 +8,6 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 
-<c:set var="tickets" value="${sarariman.tickets}"/>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -20,17 +18,34 @@
         <link href="../css/style.css" rel="stylesheet" type="text/css"/>
         <script type="text/javascript" src="../jquery/js/jquery-1.7.2.min.js"></script>
         <script src="../js/bootstrap.js"></script>
-        <title>Conferences</title>
+        <title>Staff Directory</title>
     </head>
     <body>
         <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
         <div class="container-fluid">
-            <h1>Conferences</h1>
+            <h1>Staff Directory</h1>
 
             <ul>
-                <c:forEach var="room" items="${sarariman.XMPPServer.rooms}">
-                    <li>${room.name}</li>
+                <c:forEach var="employeeEntry" items="${directory.byUserName}">
+                    <c:set var="employee" value="${employeeEntry.value}"/>
+                    <c:if test="${employee.active}">
+                        <li>
+                            <a href="${employee.URL}">
+                                <c:choose>
+                                    <c:when test="${not empty employee.photo}">
+                                        <img class="img-rounded" width="25" height="25"
+                                             onerror="this.style.display='none'" src="${employee.photoURL}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="icon-large icon-user"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </a>
+                            <a href="${employee.URL}">${employee.fullName}</a>
+                            ${employee.presence}
+                        </li>
+                    </c:if>
                 </c:forEach>
             </ul>
 
