@@ -266,6 +266,10 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                 add("org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.storageprovider.CollectionNodeInMemoryStorageProvider");
                 add(vtpm);
                 add(pdpm);
+
+                // FIXME: Consider providing our own implementation of OfflineStorageProvider that keeps stanzas in the database so
+                // that we persist across restarts.
+                add("org.apache.vysper.xmpp.modules.extension.xep0160_offline_storage.MemoryOfflineStorageProvider");
             }
 
         };
