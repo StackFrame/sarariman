@@ -12,4 +12,5 @@
   <publicResource pattern="^/font/fontawesome-webfont\.woff$"/>
   <publicResource pattern="^/handleSMS$"/>
   <forceBasicAuthUserAgent pattern="^Status%20Board/.*"/>
+  <forceBasicAuthUserAgent pattern="^Mac OS X/.*AddressBook/.*"/>
 </authentication>
