@@ -41,7 +41,9 @@ import org.apache.vysper.xmpp.authorization.UserAuthorization;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataModule;
+import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataPersistenceManager;
 import org.apache.vysper.xmpp.modules.extension.xep0054_vcardtemp.VcardTempModule;
+import org.apache.vysper.xmpp.modules.extension.xep0054_vcardtemp.VcardTempPersistenceManager;
 import org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.PublishSubscribeModule;
 import org.apache.vysper.xmpp.modules.extension.xep0092_software_version.SoftwareVersionModule;
 import org.apache.vysper.xmpp.modules.extension.xep0119_xmppping.XmppPingModule;
@@ -216,6 +218,42 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     };
 
+    // Trying to figure out how this should work.
+    private final VcardTempPersistenceManager vtpm = new VcardTempPersistenceManager() {
+        public boolean isAvailable() {
+            return true;
+        }
+
+        public String getVcard(Entity entity) {
+            System.err.println("in VcardTempPersistenceManager::getVcard entity=" + entity);
+            return null;
+        }
+
+        public boolean setVcard(Entity entity, String xml) {
+            System.err.println("in VcardTempPersistenceManager::setVcard entity=" + entity + " xml=" + xml);
+            return false;
+        }
+
+    };
+
+    // Trying to figure out how this should work.
+    private final PrivateDataPersistenceManager pdpm = new PrivateDataPersistenceManager() {
+        public boolean isAvailable() {
+            return true;
+        }
+
+        public String getPrivateData(Entity entity, String key) {
+            System.err.println("in PrivateDataPersistenceManager::getPrivateData entity=" + entity + " key=" + key);
+            return null;
+        }
+
+        public boolean setPrivateData(Entity entity, String key, String xml) {
+            System.err.println("in PrivateDataPersistenceManager::setPrivateData entity=" + entity + " key=" + key + " xml=" + xml);
+            return false;
+        }
+
+    };
+
     @Override
     protected void startUp() throws Exception {
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
@@ -226,6 +264,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                 add(rosterManager);
                 add("org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.storageprovider.LeafNodeInMemoryStorageProvider");
                 add("org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.storageprovider.CollectionNodeInMemoryStorageProvider");
+                add(vtpm);
+                add(pdpm);
             }
 
         };
