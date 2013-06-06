@@ -44,8 +44,10 @@
                                 <c:param name="id" value="${employee.number}"/>
                             </c:url>
                             <a href="${employeeURL}">${employee.fullName}</a>
-                            <a href="${employeeURL}"><img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
-                            ${employee.presence}
+                            <a href="${employeeURL}">
+                                <img class="img-rounded" width="25" height="25" onerror="this.style.display='none'"
+                                     src="${employee.photoURL}"/>
+                            </a>
                         </li>
                     </c:if>
                 </c:forEach>
