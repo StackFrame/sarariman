@@ -11,5 +11,5 @@
   <publicResource pattern="^/font/fontawesome-webfont\.ttf$"/>
   <publicResource pattern="^/font/fontawesome-webfont\.woff$"/>
   <publicResource pattern="^/handleSMS$"/>
-  <forceBasicAuthUserAgent pattern="^Status%20Board/"/>
+  <forceBasicAuthUserAgent pattern="^Status%20Board/.*"/>
 </authentication>
