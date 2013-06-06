@@ -41,6 +41,9 @@ public class PrettyURL implements Comparable<PrettyURL> {
             String u = url.toExternalForm();
             String username = u.substring(u.lastIndexOf('/') + 1);
             return "@" + username;
+        } else if (host.equals("github.com")) {
+            String u = url.toExternalForm();
+            return u.substring(u.lastIndexOf('/') + 1);
         } else {
             return url.toExternalForm();
         }
