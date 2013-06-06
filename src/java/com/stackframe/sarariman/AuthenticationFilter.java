@@ -98,9 +98,11 @@ public class AuthenticationFilter extends HttpFilter {
         publicPatternsMatches = RegularExpressions.matchesPredicate(publicPatterns);
         Iterable<Pattern> basicAuthPatterns = RegularExpressions.compile(getBasicAuthPatterns(configurationDocument));
         basicAuthMatches = RegularExpressions.matchesPredicate(basicAuthPatterns);
+        System.err.println("basicAuthMatches=" + basicAuthMatches);
     }
 
     private void handleHasLoginCookie(HttpServletRequest request, HttpServletResponse response, FilterChain chain, LoginCookie loginCookie) throws IOException, ServletException {
+        System.err.println("handleHasLoginCookie entered");
         String username = loginCookie.getUsername();
         int domainIndex = username.indexOf('@');
         username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
@@ -116,6 +118,7 @@ public class AuthenticationFilter extends HttpFilter {
     }
 
     private void handleHasAuthorizationHeader(HttpServletRequest request, HttpServletResponse response, FilterChain chain, String authorizationHeader) throws IOException, ServletException {
+        System.err.println("handleHasAuthorizationHeader entered");
         BASE64Decoder decoder = new BASE64Decoder();
         String[] split = authorizationHeader.split(" ");
         String encodedBytes = split[1];
@@ -148,11 +151,13 @@ public class AuthenticationFilter extends HttpFilter {
     }
 
     private void sendBasicAuthChallenge(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        System.err.println("sendBasicAuthChallenge entered");
         response.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realm));
         response.sendError(401);
     }
 
     private void redirectToLoginPage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        System.err.println("redirectToLoginPage entered");
         String destination = request.getRequestURI();
         String queryString = request.getQueryString();
         if (queryString != null) {
@@ -171,6 +176,7 @@ public class AuthenticationFilter extends HttpFilter {
     }
 
     private void handleUnauthenticated(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        System.err.println("handleUnauthenticated entered");
         LoginCookie loginCookie = loginCookies.findLoginCookie(request);
         if (loginCookie != null) {
             handleHasLoginCookie(request, response, chain, loginCookie);
@@ -194,6 +200,7 @@ public class AuthenticationFilter extends HttpFilter {
     }
 
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        System.err.println("doFilter entered");
         HttpSession session = request.getSession();
         Employee user = (Employee)session.getAttribute("user");
         if (user == null) {
