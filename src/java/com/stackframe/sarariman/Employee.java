@@ -116,4 +116,6 @@ public interface Employee extends Linkable {
     // FIXME: Add total hours of service
     Object getPresence();
 
+    String getVcard();
+
 }
