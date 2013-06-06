@@ -98,7 +98,7 @@ public class AuthenticationFilter extends HttpFilter {
         publicPatternsMatches = RegularExpressions.matchesPredicate(publicPatterns);
         Iterable<Pattern> basicAuthPatterns = RegularExpressions.compile(getBasicAuthPatterns(configurationDocument));
         basicAuthMatches = RegularExpressions.matchesPredicate(basicAuthPatterns);
-        System.err.println("basicAuthMatches=" + basicAuthMatches);
+        System.err.println("basicAuthPatterns=" + basicAuthPatterns);
     }
 
     private void handleHasLoginCookie(HttpServletRequest request, HttpServletResponse response, FilterChain chain, LoginCookie loginCookie) throws IOException, ServletException {
