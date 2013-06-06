@@ -18,13 +18,13 @@
 
         <script type="text/javascript" src="jquery/js/jquery-1.7.2.min.js"></script>
         <script src="js/bootstrap.js"></script>
-        <title>Employees</title>
+        <title>Employee Administration</title>
     </head>
     <body>
         <%@include file="/WEB-INF/jspf/navbar.jspf" %>
         <div class="container-fluid">
 
-            <h1>Employees</h1>
+            <h1>Employee Administration</h1>
 
             <c:choose>
                 <c:when test="${param.showInactive}">
@@ -40,8 +40,11 @@
                     <c:set var="employee" value="${employeeEntry.value}"/>
                     <c:if test="${employee.active || param.showInactive}">
                         <li>
-                            <a href="${employee.URL}">${employee.fullName}</a>
-                            <a href="${employee.URL}"><img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
+                            <c:url var="employeeURL" value="employee">
+                                <c:param name="id" value="${employee.number}"/>
+                            </c:url>
+                            <a href="${employeeURL}">${employee.fullName}</a>
+                            <a href="${employeeURL}"><img class="img-rounded" width="25" height="25" onerror="this.style.display='none'" src="${employee.photoURL}"/></a>
                             ${employee.presence}
                         </li>
                     </c:if>

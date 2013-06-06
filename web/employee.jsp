@@ -152,36 +152,6 @@
                 </c:if>
             </c:if>
 
-            <c:if test="${not empty employee.profileLinks}">
-                <h2>Public Profiles</h2>
-                <ul>
-                    <c:forEach var="link" items="${employee.profileLinks}">
-                        <li>
-                            <a href="${link}">
-                                <c:choose>
-                                    <c:when test="${fn:contains(link, '://twitter.com/')}">
-                                        <i class="icon-twitter"></i>
-                                    </c:when>
-                                    <c:when test="${fn:contains(link, '://www.facebook.com/')}">
-                                        <i class="icon-facebook"></i>
-                                    </c:when>
-                                    <c:when test="${fn:contains(link, '://www.linkedin.com/')}">
-                                        <i class="icon-linkedin"></i>
-                                    </c:when>
-                                    <c:when test="${fn:contains(link, '://github.com/')}">
-                                        <i class="icon-github"></i>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <i class="icon-globe"></i>
-                                    </c:otherwise>
-                                </c:choose>
-                                ${link}
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
-
             <ul>
                 <c:if test="${user == employee or user.payrollAdministrator}">
                     <li>
