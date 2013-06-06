@@ -187,6 +187,10 @@ public class AuthenticationFilter extends HttpFilter {
                 if (publicPatternsMatches.apply(requestPath)) {
                     chain.doFilter(request, response);
                 } else {
+                    String userAgent = request.getHeader("User-Agent");
+                    System.err.println("userAgent='" + userAgent+"'");
+                    boolean applies = basicAuthMatches.apply(request.getHeader("User-Agent"));
+                    System.err.println("applies=" + applies);
                     if (basicAuthMatches.apply(request.getHeader("User-Agent"))) {
                         sendBasicAuthChallenge(request, response, chain);
                     } else {
