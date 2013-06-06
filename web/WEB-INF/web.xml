@@ -216,6 +216,14 @@
         <servlet-name>ConferenceController</servlet-name>
         <servlet-class>com.stackframe.sarariman.conference.ConferenceController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EmployeeProfileServlet</servlet-name>
+        <servlet-class>com.stackframe.sarariman.EmployeeProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CardDAVDiscovery</servlet-name>
+        <servlet-class>com.stackframe.sarariman.CardDAVDiscovery</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -763,6 +771,14 @@
     <servlet-mapping>
         <servlet-name>ConferenceController</servlet-name>
         <url-pattern>/conferences/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeProfileServlet</servlet-name>
+        <url-pattern>/staff/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CardDAVDiscovery</servlet-name>
+        <url-pattern>/.well-known/carddav</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
