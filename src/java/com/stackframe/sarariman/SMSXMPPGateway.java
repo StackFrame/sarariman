@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.concurrent.Executor;
 import javax.sql.DataSource;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -37,6 +38,8 @@ public class SMSXMPPGateway extends AbstractIdleService {
     private final DataSource dataSource;
 
     private final Executor backgroundDatabaseWriteExecutor;
+
+    private final Logger logger = Logger.getLogger(getClass());
 
     public SMSXMPPGateway(SMSGateway sms, XMPPServer xmpp, Directory directory, Executor executor, DataSource dataSource,
                           Executor backgroundDatabaseWriteExecutor) {
@@ -94,14 +97,13 @@ public class SMSXMPPGateway extends AbstractIdleService {
                 c.close();
             }
         } catch (SQLException e) {
-            // FIXME: Log this exception. Does it kill the Executor?
-            throw new RuntimeException(e);
+            logger.error("trouble writing to presence_log", e);
         }
     }
 
     private final SMSListener listener = new SMSListener() {
         public void received(SMSEvent e) {
-            System.err.println("Received an SMSEvent: " + e);
+            logger.info("Received an SMSEvent: " + e);
             String[] words = e.getBody().split(" ");
             String firstWord = words[0];
 
@@ -113,10 +115,9 @@ public class SMSXMPPGateway extends AbstractIdleService {
                 System.err.println("showType=" + showType + " status='" + status + "'");
                 Employee from = findEmployee(e.getFrom());
                 if (from == null) {
-                    // FIXME: Log this.
-                    System.err.println("Could not find employee for number=" + e.getFrom());
+                    logger.warn("Could not find employee for number=" + e.getFrom());
                 } else {
-                    System.err.println("message was from " + from.getUserName());
+                    logger.info("message was from " + from.getUserName());
 
                     // I'm not completely sure this is the right thing to do, but if we don't set it to available, nobody will see
                     // the message, I think.
@@ -125,15 +126,13 @@ public class SMSXMPPGateway extends AbstractIdleService {
                     final Presence presence = new Presence(presenceType, showType, status);
                     final String JID = from.getUserName() + "@stackframe.com";
                     final long now = System.currentTimeMillis();
-                    System.err.println("setting presence for " + JID + " to " + presence);
+                    logger.info("setting presence for " + JID + " to " + presence);
                     executor.execute(new Runnable() {
                         public void run() {
                             try {
                                 xmpp.setPresence(JID, presence);
                             } catch (Throwable t) {
-                                System.err.println("Trouble setting presence: " + t);
-                                t.printStackTrace();
-                                // FIXME: log
+                                logger.error("trouble setting presence", t);
                             }
                         }
 
