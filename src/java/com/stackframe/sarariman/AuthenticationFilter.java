@@ -100,7 +100,8 @@ public class AuthenticationFilter extends HttpFilter {
         basicAuthMatches = RegularExpressions.matchesPredicate(basicAuthPatterns);
     }
 
-    private void handleHasLoginCookie(HttpServletRequest request, HttpServletResponse response, FilterChain chain, LoginCookie loginCookie) throws IOException, ServletException {
+    private void handleHasLoginCookie(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                                      LoginCookie loginCookie) throws IOException, ServletException {
         String username = loginCookie.getUsername();
         int domainIndex = username.indexOf('@');
         username = username.substring(0, domainIndex); // FIXME: Check for proper domain and dispatch.
@@ -115,7 +116,8 @@ public class AuthenticationFilter extends HttpFilter {
         chain.doFilter(request, response);
     }
 
-    private void handleHasAuthorizationHeader(HttpServletRequest request, HttpServletResponse response, FilterChain chain, String authorizationHeader) throws IOException, ServletException {
+    private void handleHasAuthorizationHeader(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                                              String authorizationHeader) throws IOException, ServletException {
         BASE64Decoder decoder = new BASE64Decoder();
         String[] split = authorizationHeader.split(" ");
         String encodedBytes = split[1];
@@ -147,12 +149,13 @@ public class AuthenticationFilter extends HttpFilter {
         }
     }
 
-    private void sendBasicAuthChallenge(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void sendBasicAuthChallenge(HttpServletResponse response) throws IOException, ServletException {
         response.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realm));
         response.sendError(401);
     }
 
-    private void redirectToLoginPage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void redirectToLoginPage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         String destination = request.getRequestURI();
         String queryString = request.getQueryString();
         if (queryString != null) {
@@ -170,7 +173,8 @@ public class AuthenticationFilter extends HttpFilter {
         response.sendRedirect(redirectURL);
     }
 
-    private void handleUnauthenticated(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void handleUnauthenticated(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         LoginCookie loginCookie = loginCookies.findLoginCookie(request);
         if (loginCookie != null) {
             handleHasLoginCookie(request, response, chain, loginCookie);
@@ -184,7 +188,7 @@ public class AuthenticationFilter extends HttpFilter {
                     // FIXME: I'm pretty sure I should change this around to force basic auth only for particular URLs, not
                     // particular user agents.
                     if (basicAuthMatches.apply(request.getHeader("User-Agent"))) {
-                        sendBasicAuthChallenge(request, response, chain);
+                        sendBasicAuthChallenge(response);
                     } else {
                         redirectToLoginPage(request, response, chain);
                     }
@@ -195,7 +199,8 @@ public class AuthenticationFilter extends HttpFilter {
         }
     }
 
-    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         HttpSession session = request.getSession();
         Employee user = (Employee)session.getAttribute("user");
         if (user == null) {
