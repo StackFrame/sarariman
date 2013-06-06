@@ -81,11 +81,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     private final String mobile;
 
     private final Iterable<URL> profileLinks;
+    private final Iterable<String> titles;
 
     StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email,
                        LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo,
                        LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile,
-                       Iterable<URL> profileLinks) {
+                       Iterable<URL> profileLinks,Iterable<String> titles) {
         this.directory = directory;
         this.fullName = fullName;
         this.userName = userName;
@@ -100,7 +101,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         this.dataSource = dataSource;
         this.sarariman = sarariman;
         this.mobile = mobile;
-        this.profileLinks = profileLinks;
+        this.profileLinks = profileLinks;this.titles=titles;
     }
 
     public String getFullName() {
@@ -582,7 +583,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public URI getURI() {
-        return URI.create(String.format("%semployee?id=%d", sarariman.getMountPoint(), number));
+        return URI.create(String.format("%sstaff/%s", sarariman.getMountPoint(), userName));
     }
 
     public URL getPhotoURL() {
@@ -835,6 +836,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     public Iterable<URL> getProfileLinks() {
         return profileLinks;
+    }
+
+    public Iterable<String> getTitles() {
+        return titles;
     }
 
     public Object getPresence() {

@@ -103,7 +103,7 @@ public class LDAPDirectory implements Directory {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
                                                                     new String[]{"uid", "sn", "givenName", "employeeNumber",
-                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile", "url"});
+                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile", "url", "title"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
@@ -120,9 +120,10 @@ public class LDAPDirectory implements Directory {
                 Attribute jpegPhotoAttribute = attributes.get("jpegPhoto");
                 byte[] photo = jpegPhotoAttribute == null ? null : (byte[])jpegPhotoAttribute.getAll().next();
                 Iterable<URL> profileLinks = getURLs(attributes, "url");
+                Iterable<String> titles = getAttributes(attributes, "title");
                 tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName,
                                                periodOfService, photo, this, sarariman.getDataSource(), sarariman, mobile,
-                                               profileLinks));
+                                               profileLinks, titles));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {

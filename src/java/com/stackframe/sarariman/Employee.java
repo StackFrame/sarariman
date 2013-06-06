@@ -110,6 +110,8 @@ public interface Employee extends Linkable {
 
     Iterable<URL> getProfileLinks();
 
+    Iterable<String> getTitles();
+
     // FIXME: Add gender
     // FIXME: Add race
     // FIXME: Add periods of employment
