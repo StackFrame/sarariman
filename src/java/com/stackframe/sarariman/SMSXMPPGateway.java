@@ -117,12 +117,10 @@ public class SMSXMPPGateway extends AbstractIdleService {
                     System.err.println("Could not find employee for number=" + e.getFrom());
                 } else {
                     System.err.println("message was from " + from.getUserName());
-                    PresenceType presenceType;
-                    if (showType == ShowType.chat) {
-                        presenceType = PresenceType.available;
-                    } else {
-                        presenceType = PresenceType.unavailable;
-                    }
+
+                    // I'm not completely sure this is the right thing to do, but if we don't set it to available, nobody will see
+                    // the message, I think.
+                    PresenceType presenceType = PresenceType.available;
 
                     final Presence presence = new Presence(presenceType, showType, status);
                     final String JID = from.getUserName() + "@stackframe.com";
