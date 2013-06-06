@@ -8,8 +8,8 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,9 +57,10 @@ public class EmployeeProfileServlet extends HttpServlet {
             request.setAttribute("mobileNumberURI", PhoneNumberUtil.getInstance().format(employee.getMobile(), PhoneNumberFormat.RFC3966));
 
             Iterable<URL> profileLinks = employee.getProfileLinks();
-            Collection<PrettyURL> prettyURLs = new ArrayList<PrettyURL>();
+            Collection<PrettyURL> prettyURLs = new TreeSet<PrettyURL>();
             for (URL u : profileLinks) {
-                PrettyURL p = new PrettyURL(u);prettyURLs.add(p);
+                PrettyURL p = new PrettyURL(u);
+                prettyURLs.add(p);
             }
 
             request.setAttribute("profiles", prettyURLs);
