@@ -43,7 +43,7 @@
                     <i class="icon-envelope"></i> ${employee.email}
                 </a><br/>
                 <a href="xmpp:${employee.email}" title="chat with ${employee.displayName}">
-                    <i class="icon-xmpp"></i> ${employee.email}
+                    <i class="icon-comment"></i> ${employee.email}
                 </a><br/>
 
 
