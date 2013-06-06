@@ -10,7 +10,13 @@
                 <c:param name="assignee" value="${user.number}"/>
                 <c:param name="notStatus" value="closed"/>
             </c:url>
-            <a href="${fn:escapeXml(myTicketsURL)}"><i class="icon-tasks"></i> Tickets</a>
+            <a href="${fn:escapeXml(myTicketsURL)}"><i class="icon-tasks"></i> Unclosed Tickets</a>
+        </li>
+        <li>
+            <c:url var="myTaskAssignmentsURL" value="${sarariman.mountPoint}taskAssignments.jsp">
+                <c:param name="employee" value="${user.number}"/>
+            </c:url>
+            <a href="${fn:escapeXml(myTaskAssignmentsURL)}"><i class="icon-tasks"></i> Task Assignments</a>
         </li>
         <c:if test="${user.fulltime}">
             <li>
