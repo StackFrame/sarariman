@@ -7,6 +7,7 @@ package com.stackframe.sarariman;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -31,7 +32,14 @@ public class EmployeeProfileServlet extends HttpServlet {
 
     private static String employee(HttpServletRequest request) {
         String s = request.getPathInfo();
-        return s.substring(s.lastIndexOf('/') + 1);
+        String employeeName = s.substring(s.indexOf('/') + 1);
+        int remainingPath = employeeName.indexOf('/');
+        if (remainingPath != -1) {
+            employeeName = employeeName.substring(0, remainingPath);
+        }
+
+
+        return employeeName;
     }
 
     /**
@@ -50,22 +58,34 @@ public class EmployeeProfileServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/staff/index.jsp").include(request, response);
         } else {
             Employee employee = sarariman.getDirectory().getByUserName().get(employeeName);
-            request.setAttribute("employee", employee);
+            if (request.getPathInfo().endsWith("/vCard")) {
+                response.setContentType("text/vcard");
+                String preferredFilename = employeeName + ".vcf";
+                response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", preferredFilename));
+                PrintWriter out = response.getWriter();
+                try {
+                    out.print(employee.getVcard());
+                } finally {
+                    out.close();
+                }
+            } else {
+                request.setAttribute("employee", employee);
 
-            // FIXME: This should take the locale of the user into account.
-            request.setAttribute("formattedMobileNumber", PhoneNumberUtil.getInstance().format(employee.getMobile(), PhoneNumberFormat.NATIONAL));
-            request.setAttribute("mobileNumberURI", PhoneNumberUtil.getInstance().format(employee.getMobile(), PhoneNumberFormat.RFC3966));
+                // FIXME: This should take the locale of the user into account.
+                request.setAttribute("formattedMobileNumber", PhoneNumberUtil.getInstance().format(employee.getMobile(), PhoneNumberFormat.NATIONAL));
+                request.setAttribute("mobileNumberURI", PhoneNumberUtil.getInstance().format(employee.getMobile(), PhoneNumberFormat.RFC3966));
 
-            Iterable<URL> profileLinks = employee.getProfileLinks();
-            Collection<PrettyURL> prettyURLs = new TreeSet<PrettyURL>();
-            for (URL u : profileLinks) {
-                PrettyURL p = new PrettyURL(u);
-                prettyURLs.add(p);
+                Iterable<URL> profileLinks = employee.getProfileLinks();
+                Collection<PrettyURL> prettyURLs = new TreeSet<PrettyURL>();
+                for (URL u : profileLinks) {
+                    PrettyURL p = new PrettyURL(u);
+                    prettyURLs.add(p);
+                }
+
+                request.setAttribute("profiles", prettyURLs);
+
+                request.getRequestDispatcher("/WEB-INF/staff/profile.jsp").include(request, response);
             }
-
-            request.setAttribute("profiles", prettyURLs);
-
-            request.getRequestDispatcher("/WEB-INF/staff/profile.jsp").include(request, response);
         }
     }
 
