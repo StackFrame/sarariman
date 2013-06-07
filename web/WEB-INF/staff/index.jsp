@@ -19,6 +19,11 @@
         <script type="text/javascript" src="../jquery/js/jquery-1.7.2.min.js"></script>
         <script src="../js/bootstrap.js"></script>
         <title>Staff Directory</title>
+        <style type="text/css">
+            #staff {
+                list-style-type: none;
+            }
+        </style>
     </head>
     <body>
         <%@include file="/WEB-INF/jspf/navbar.jspf" %>
@@ -26,7 +31,7 @@
         <div class="container-fluid">
             <h1>Staff Directory</h1>
 
-            <ul>
+            <ul id="staff">
                 <c:forEach var="employeeEntry" items="${directory.byUserName}">
                     <c:set var="employee" value="${employeeEntry.value}"/>
                     <c:if test="${employee.active}">
