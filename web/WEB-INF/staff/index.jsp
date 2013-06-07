@@ -54,6 +54,8 @@
                 </c:forEach>
             </ul>
 
+            <a href="?type=text/vcard" title="download in vCard format"><i class="icon-download"></i> vCard</a>
+
             <%@include file="/footer.jsp" %>
         </div>
     </body>

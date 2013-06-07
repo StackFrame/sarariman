@@ -42,6 +42,8 @@ public class EmployeeProfileServlet extends HttpServlet {
         return employeeName;
     }
 
+    private static final String vCardMIMEType = "text/vcard";
+
     /**
      * Handles the HTTP
      * <code>GET</code> method.
@@ -54,12 +56,27 @@ public class EmployeeProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String employeeName = employee(request);
+        String desiredMIMEType = request.getParameter("type");
         if (employeeName.isEmpty()) {
-            request.getRequestDispatcher("/WEB-INF/staff/index.jsp").include(request, response);
+            if (vCardMIMEType.equals(desiredMIMEType)) {
+                response.setContentType(vCardMIMEType);
+                String preferredFilename = "staff.vcf";
+                response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", preferredFilename));
+                PrintWriter out = response.getWriter();
+                try {
+                    for (Employee employee : sarariman.getDirectory().getByUserName().values()) {
+                        if (employee.isActive()) {
+                            out.print(employee.getVcard());
+                        }
+                    }
+                } finally {
+                    out.close();
+                }
+            } else {
+                request.getRequestDispatcher("/WEB-INF/staff/index.jsp").include(request, response);
+            }
         } else {
             Employee employee = sarariman.getDirectory().getByUserName().get(employeeName);
-            String vCardMIMEType = "text/vcard";
-            String desiredMIMEType = request.getParameter("type");
             if (vCardMIMEType.equals(desiredMIMEType)) {
                 response.setContentType(vCardMIMEType);
                 String preferredFilename = employeeName + ".vcf";
