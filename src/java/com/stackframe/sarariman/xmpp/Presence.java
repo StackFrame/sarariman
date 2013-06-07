@@ -4,6 +4,8 @@
  */
 package com.stackframe.sarariman.xmpp;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  *
  * @author mcculley
@@ -17,6 +19,8 @@ public class Presence {
     private final ShowType show;
 
     public Presence(PresenceType type, ShowType show, String status) {
+        checkNotNull(type);
+        checkNotNull(show);
         this.type = type;
         this.show = show;
         this.status = status;
@@ -38,6 +42,8 @@ public class Presence {
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append(type);
+        buf.append(' ');
+        buf.append(show);
         if (status != null) {
             buf.append(": " + status);
         }
