@@ -292,6 +292,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     @Override
     protected void shutDown() throws Exception {
         xmpp.stop();
+        // FIXME: I'm pretty sure Vysper is not shutting down correctly. Maybe we need to see if any threads created from this
+        // context are left over at this point.
     }
 
     @Override
