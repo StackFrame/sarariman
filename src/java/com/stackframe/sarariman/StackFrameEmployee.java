@@ -54,6 +54,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     private final String fullName;
 
+    private final String givenName;
+
+    private final String surname;
+
     private final String userName;
 
     private final int number;
@@ -84,12 +88,14 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     private final Iterable<String> titles;
 
-    StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email,
-                       LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo,
-                       LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile,
+    StackFrameEmployee(String fullName, String givenName, String surname, String userName, int number, boolean fulltime,
+                       boolean active, String email, LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService,
+                       byte[] photo, LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile,
                        Iterable<URL> profileLinks, Iterable<String> titles) {
         this.directory = directory;
         this.fullName = fullName;
+        this.givenName = givenName;
+        this.surname = surname;
         this.userName = userName;
         this.number = number;
         this.fulltime = fulltime;
@@ -875,6 +881,14 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         buf.append("END:VCARD\n");
 
         return buf.toString();
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public String getSurname() {
+        return surname;
     }
 
     @Override

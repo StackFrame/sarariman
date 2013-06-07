@@ -103,10 +103,13 @@ public class LDAPDirectory implements Directory {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
                                                                     new String[]{"uid", "sn", "givenName", "employeeNumber",
-                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile", "url", "title"});
+                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile", "url",
+                        "title"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
-                String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
+                String givenName = attributes.get("givenName").getAll().next().toString();
+                String surname = attributes.get("sn").getAll().next().toString();
+                String name = surname + ", " + givenName;
                 String uid = attributes.get("uid").getAll().next().toString();
                 String displayName = attributes.get("displayName").getAll().next().toString();
                 String mail = attributes.get("mail").getAll().next().toString();
@@ -121,9 +124,9 @@ public class LDAPDirectory implements Directory {
                 byte[] photo = jpegPhotoAttribute == null ? null : (byte[])jpegPhotoAttribute.getAll().next();
                 Iterable<URL> profileLinks = getURLs(attributes, "url");
                 Iterable<String> titles = getAttributes(attributes, "title");
-                tmp.add(new StackFrameEmployee(name, uid, employeeNumber, fulltime, active, mail, birthdate, displayName,
-                                               periodOfService, photo, this, sarariman.getDataSource(), sarariman, mobile,
-                                               profileLinks, titles));
+                tmp.add(new StackFrameEmployee(name, givenName, surname, uid, employeeNumber, fulltime, active, mail, birthdate,
+                                               displayName, periodOfService, photo, this, sarariman.getDataSource(), sarariman,
+                                               mobile, profileLinks, titles));
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {

@@ -33,6 +33,10 @@ public interface Employee extends Linkable {
 
     String getFullName();
 
+    String getGivenName();
+
+    String getSurname();
+
     int getNumber();
 
     boolean isFulltime();
