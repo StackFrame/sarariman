@@ -862,8 +862,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         buf.append("EMAIL;type=INTERNET;type=WORK:" + getEmail() + "\n");
         // FIXME: buf.append("TEL;type=WORK:" + fields.get("telephoneNumber") + "\n");
         // FIXME: buf.append("TEL;type=WORK;type=FAX:" + fields.get("facsimileTelephoneNumber") + "\n");
-        String formattedMobile = PhoneNumberUtil.getInstance().format(getMobile(), PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
-        buf.append("TEL;type=CELL:" + formattedMobile + "\n");
+        PhoneNumber mobile = getMobile();
+        if (mobile != null) {
+            String formattedMobile = PhoneNumberUtil.getInstance().format(mobile, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+            buf.append("TEL;type=CELL:" + formattedMobile + "\n");
+        }
+
         // FIXME: buf.append("URL:http://www.stackframe.com/people/" + fields.get("uid") + '/'+"\n");
 
         buf.append("ADR;WORK;PARCEL;POSTAL;DOM:114 W. 1st St.\\, Suite 246;Sanford;FL;32771-1273\n");
