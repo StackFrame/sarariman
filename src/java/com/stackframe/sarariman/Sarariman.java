@@ -595,6 +595,8 @@ public class Sarariman implements ServletContextListener {
         stopServices();
         backgroundExecutor.shutdown();
         backgroundDatabaseWriteExecutor.shutdown();
+        // FIXME: I'm pretty sure Vysper is not shutting down correctly. Maybe we need to see if any threads created from this
+        // context are left over at this point.
     }
 
     private void stopServices() {
