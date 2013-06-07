@@ -81,12 +81,13 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     private final String mobile;
 
     private final Iterable<URL> profileLinks;
+
     private final Iterable<String> titles;
 
     StackFrameEmployee(String fullName, String userName, int number, boolean fulltime, boolean active, String email,
                        LocalDate birthdate, String displayName, Range<java.sql.Date> periodOfService, byte[] photo,
                        LDAPDirectory directory, DataSource dataSource, Sarariman sarariman, String mobile,
-                       Iterable<URL> profileLinks,Iterable<String> titles) {
+                       Iterable<URL> profileLinks, Iterable<String> titles) {
         this.directory = directory;
         this.fullName = fullName;
         this.userName = userName;
@@ -101,7 +102,8 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         this.dataSource = dataSource;
         this.sarariman = sarariman;
         this.mobile = mobile;
-        this.profileLinks = profileLinks;this.titles=titles;
+        this.profileLinks = profileLinks;
+        this.titles = titles;
     }
 
     public String getFullName() {
@@ -860,7 +862,8 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         buf.append("EMAIL;type=INTERNET;type=WORK:" + getEmail() + "\n");
         // FIXME: buf.append("TEL;type=WORK:" + fields.get("telephoneNumber") + "\n");
         // FIXME: buf.append("TEL;type=WORK;type=FAX:" + fields.get("facsimileTelephoneNumber") + "\n");
-        buf.append("TEL;type=CELL:" + getMobile() + "\n");
+        String formattedMobile = PhoneNumberUtil.getInstance().format(getMobile(), PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+        buf.append("TEL;type=CELL:" + formattedMobile + "\n");
         // FIXME: buf.append("URL:http://www.stackframe.com/people/" + fields.get("uid") + '/'+"\n");
 
         buf.append("ADR;WORK;PARCEL;POSTAL;DOM:114 W. 1st St.\\, Suite 246;Sanford;FL;32771-1273\n");
