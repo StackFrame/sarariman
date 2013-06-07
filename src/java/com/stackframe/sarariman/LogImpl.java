@@ -49,7 +49,8 @@ public class LogImpl implements Log {
             }
         } catch (SQLException e) {
             // This is the one place we can't log an exception.
-            System.err.println("Caught an exception trying to log: " + e.getMessage());
+            String formatted = String.format("%d %s %s %s %s", timestamp, priority, source, message, e.getMessage());
+            System.err.println("Caught an exception trying to log: " + formatted);
             e.printStackTrace(System.err);
         }
     }
