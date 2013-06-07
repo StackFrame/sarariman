@@ -57,7 +57,7 @@
                 </c:forEach>
 
                 <i class="icon-calendar"></i> Birthday: <joda:format value="${employee.birthdate}" pattern="MMMM d" /><br/>
-                <a href="${employee.userName}/vCard">vCard</a>
+                <a href="${employee.userName}/vCard" title="download as a vCard"><i class="icon-download"></i> vCard</a>
             </p>
 
             <%@include file="/footer.jsp" %>
