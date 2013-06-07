@@ -58,8 +58,10 @@ public class EmployeeProfileServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/staff/index.jsp").include(request, response);
         } else {
             Employee employee = sarariman.getDirectory().getByUserName().get(employeeName);
-            if (request.getPathInfo().endsWith("/vCard")) {
-                response.setContentType("text/vcard");
+            String vCardMIMEType = "text/vcard";
+            String desiredMIMEType = request.getParameter("type");
+            if (vCardMIMEType.equals(desiredMIMEType)) {
+                response.setContentType(vCardMIMEType);
                 String preferredFilename = employeeName + ".vcf";
                 response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", preferredFilename));
                 PrintWriter out = response.getWriter();
