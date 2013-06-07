@@ -42,9 +42,12 @@
                 <a href="mailto:${employee.email}" title="email ${employee.displayName}">
                     <i class="icon-envelope"></i> ${employee.email}
                 </a><br/>
+
                 <a href="xmpp:${employee.email}" title="chat with ${employee.displayName}">
                     <i class="icon-comment"></i> ${employee.email}
                 </a><br/>
+                <!-- FIXME: Add presence. -->
+                <!-- FIXME: Maybe add last location check in. -->
 
 
                 <!-- FIXME: This should take the locale of the user into account. -->
