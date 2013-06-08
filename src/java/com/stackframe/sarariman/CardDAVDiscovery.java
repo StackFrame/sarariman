@@ -10,6 +10,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +64,17 @@ public class CardDAVDiscovery extends HttpServlet {
             prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
 
+            Element principalURL = d.createElementNS("DAV:", "principal-URL");
+            prop.appendChild(principalURL);
+
+            href = d.createElementNS("DAV:", "href");
+            principalURL.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
             Element addressBookHomeSet = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-home-set");
             prop.appendChild(addressBookHomeSet);
 
@@ -99,6 +113,21 @@ public class CardDAVDiscovery extends HttpServlet {
         return sw.toString();
     }
 
+    private Iterable<String> headers(HttpServletRequest request) {
+        Collection<String> headers = new ArrayList<String>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            Enumeration<String> values = request.getHeaders(name);
+            while (values.hasMoreElements()) {
+                String value = values.nextElement();
+                headers.add(name + ": " + value);
+            }
+        }
+
+        return headers;
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String method = request.getMethod();
@@ -108,13 +137,15 @@ public class CardDAVDiscovery extends HttpServlet {
 
         String requestDocument = CharStreams.toString(new InputStreamReader(request.getInputStream(), "UTF-8"));
         System.err.println("in CardDAVDiscovery::service requestDocument='" + requestDocument + "'");
+        System.err.println("headers='" + headers(request) + "'");
         Employee user = (Employee)request.getAttribute("user");
         Document d = makeDocument(request.getContextPath(), user.getUserName());
         System.err.println("going to send response:");
         System.err.println(serialize(d));
-        PrintWriter writer = response.getWriter();
-        serialize(d, writer);
-        writer.close();
+        response.sendRedirect(String.format("%s/staff/%s/addressbooks", request.getContextPath(), user.getUserName()));
+        //PrintWriter writer = response.getWriter();
+        //serialize(d, writer);
+        //writer.close();
     }
 
     /**
