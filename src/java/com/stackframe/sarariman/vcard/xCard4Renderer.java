@@ -112,6 +112,8 @@ public class xCard4Renderer implements xCardRenderer {
 
         vcard.appendChild(tel(d, s));
 
+        // FIXME: Add uid support once I figure that out on the vCard side.
+
         return vcard;
     }
 
