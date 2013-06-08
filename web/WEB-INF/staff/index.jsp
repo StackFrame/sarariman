@@ -55,6 +55,7 @@
             </ul>
 
             <a href="?type=text/vcard" title="download in vCard format"><i class="icon-download"></i> vCard</a>
+            <a href="?type=application/vcard%2Bxml" title="download in xCard format"><i class="icon-download"></i> xCard</a>
 
             <%@include file="/footer.jsp" %>
         </div>

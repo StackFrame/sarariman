@@ -13,6 +13,7 @@ import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
 import com.stackframe.sarariman.timesheets.Timesheet;
 import com.stackframe.sarariman.vacation.VacationEntry;
+import com.stackframe.sarariman.vcard.vCardSource;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Date;
@@ -122,6 +123,6 @@ public interface Employee extends Linkable {
     // FIXME: Add total hours of service
     Object getPresence();
 
-    String getVcard();
+    vCardSource vCardSource();
 
 }

@@ -23,6 +23,7 @@ import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
 import com.stackframe.sarariman.timesheets.Timesheet;
 import com.stackframe.sarariman.vacation.VacationEntry;
+import com.stackframe.sarariman.vcard.vCardSource;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -854,41 +855,41 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return sarariman.getXMPPServer().getPresence(userName + "@stackframe.com");
     }
 
-    public String getVcard() {
-        StringBuilder buf = new StringBuilder();
-
-        buf.append("BEGIN:VCARD\n");
-        buf.append("VERSION:3.0\n");
-
-        // FIXME: out.println("N:" + fields.get("sn") + ';' + fields.get("givenName") + ";;;");
-
-        buf.append("FN:" + getFullName() + "\n");
-        buf.append("ORG:StackFrame\\, LLC\n");
-        // FIXME: buf.append("TITLE:" + fields.get("title"));
-        buf.append("EMAIL;type=INTERNET;type=WORK:" + getEmail() + "\n");
-        // FIXME: buf.append("TEL;type=WORK:" + fields.get("telephoneNumber") + "\n");
-        // FIXME: buf.append("TEL;type=WORK;type=FAX:" + fields.get("facsimileTelephoneNumber") + "\n");
-        PhoneNumber mobile = getMobile();
-        if (mobile != null) {
-            String formattedMobile = PhoneNumberUtil.getInstance().format(mobile, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
-            buf.append("TEL;type=CELL:" + formattedMobile + "\n");
-        }
-
-        // FIXME: buf.append("URL:http://www.stackframe.com/people/" + fields.get("uid") + '/'+"\n");
-
-        buf.append("ADR;WORK;PARCEL;POSTAL;DOM:114 W. 1st St.\\, Suite 246;Sanford;FL;32771-1273\n");
-
-        buf.append("END:VCARD\n");
-
-        return buf.toString();
-    }
-
     public String getGivenName() {
         return givenName;
     }
 
     public String getSurname() {
         return surname;
+    }
+
+    public vCardSource vCardSource() {
+        return new vCardSource() {
+            public String getFamilyName() {
+                return surname;
+            }
+
+            public String getGivenName() {
+                return givenName;
+            }
+
+            public String getFullName() {
+                return StackFrameEmployee.this.getFullName();
+            }
+
+            public String getEmailAddress() {
+                return email;
+            }
+
+            public String getOrganization() {
+                return "StackFrame, LLC";
+            }
+
+            public PhoneNumber getMobile() {
+                return StackFrameEmployee.this.getMobile();
+            }
+
+        };
     }
 
     @Override

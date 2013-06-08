@@ -43,6 +43,9 @@
                     <i class="icon-envelope"></i> ${employee.email}
                 </a><br/>
 
+                surname: ${employee.surname}<br/>
+                givenName: ${employee.givenName}<br/>
+
                 <a href="xmpp:${employee.email}" title="chat with ${employee.displayName}">
                     <i class="icon-comment"></i> ${employee.email}
                 </a><br/>
@@ -61,6 +64,7 @@
 
                 <i class="icon-calendar"></i> Birthday: <joda:format value="${employee.birthdate}" pattern="MMMM d" /><br/>
                 <a href="${employee.userName}?type=text/vcard" title="download as a vCard"><i class="icon-download"></i> vCard</a>
+                <a href="${employee.userName}?type=application/vcard%2Bxml" title="download as an xCard"><i class="icon-download"></i> xCard</a>
             </p>
 
             <%@include file="/footer.jsp" %>
