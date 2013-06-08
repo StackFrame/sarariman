@@ -44,6 +44,9 @@ public class vCard3Renderer implements vCardRenderer {
 
         buf.append(String.format("EMAIL;type=INTERNET;type=WORK:%s\n", s.getEmailAddress()));
 
+        // FIXME: I'm not sure if this is sufficient. Should we have a UUID for employees? Or use the employee number?
+        buf.append(String.format("UID:%s\n", s.getEmailAddress()));
+
         PhoneNumber mobile = s.getMobile();
         if (mobile != null) {
             String formattedMobile = PhoneNumberUtil.getInstance().format(mobile, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
