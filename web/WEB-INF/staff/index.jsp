@@ -20,7 +20,7 @@
         <script src="../js/bootstrap.js"></script>
         <title>Staff Directory</title>
         <style type="text/css">
-            #staff {
+            ul#staff {
                 list-style-type: none;
             }
         </style>
