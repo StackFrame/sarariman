@@ -817,6 +817,7 @@
             30
         </session-timeout>
     </session-config>
+<!--
     <env-entry>
         <env-entry-name>java.naming.factory.initial</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
