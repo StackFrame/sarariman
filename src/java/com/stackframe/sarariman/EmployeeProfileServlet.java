@@ -207,7 +207,7 @@ public class EmployeeProfileServlet extends HttpServlet {
     }
 
     // FIXME: This is broken and brittle. It returns an XML WebDAV document that describes the CardDAV address books available. Currently this is only the staff address book.
-    private Document makeAddressBooksDocument(String contextPath) {
+    private Document makeAddressBooksDocument(String contextPath, String username) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -241,6 +241,49 @@ public class EmployeeProfileServlet extends HttpServlet {
             resourceType.appendChild(addressBook);
 
             Element status = d.createElementNS("DAV:", "status");
+            propstat.appendChild(status);
+            status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
+
+            response = d.createElementNS("DAV:", "response");
+            multistatus.appendChild(response);
+
+            propstat = d.createElementNS("DAV:", "propstat");
+            response.appendChild(propstat);
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
+            prop.appendChild(currentUserPrincipal);
+
+            href = d.createElementNS("DAV:", "href");
+            currentUserPrincipal.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element principalURL = d.createElementNS("DAV:", "principal-URL");
+            prop.appendChild(principalURL);
+
+            href = d.createElementNS("DAV:", "href");
+            principalURL.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element addressBookHomeSet = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-home-set");
+            prop.appendChild(addressBookHomeSet);
+
+            href = d.createElementNS("DAV:", "href");
+            addressBookHomeSet.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s/addressbooks/", contextPath, username)));
+
+            status = d.createElementNS("DAV:", "status");
             propstat.appendChild(status);
             status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
 
@@ -301,7 +344,8 @@ public class EmployeeProfileServlet extends HttpServlet {
         System.err.println("In addressbooks handler");
         String requestDocument = CharStreams.toString(new InputStreamReader(request.getInputStream(), "UTF-8"));
         System.err.println("requestDocument='" + requestDocument + "'");
-        Document d = makeAddressBooksDocument(request.getContextPath());
+        Employee user = (Employee)request.getAttribute("user");
+        Document d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
         System.err.println("going to send response:");
         System.err.println(serialize(d));
         PrintWriter writer = response.getWriter();
