@@ -444,8 +444,11 @@ public class EmployeeProfileServlet extends HttpServlet {
         Document d;
         int depth = Integer.parseInt(request.getHeader("depth"));
         if (depth == 0) {
-//            d = makeDiscoveryDocument(request.getContextPath(), user.getUserName());
-            d = makePrincipalDocument(request.getContextPath(), user.getUserName());
+            if (request.getRequestURI().endsWith("addressbooks")) {
+                d = makePrincipalDocument(request.getContextPath(), user.getUserName());
+            } else {
+                d = makeDiscoveryDocument(request.getContextPath(), user.getUserName());
+            }
         } else {
             d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
         }
