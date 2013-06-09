@@ -240,16 +240,6 @@ public class EmployeeProfileServlet extends HttpServlet {
             Element addressBook = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook");
             resourceType.appendChild(addressBook);
 
-            Element status = d.createElementNS("DAV:", "status");
-            propstat.appendChild(status);
-            status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
-
-            response = d.createElementNS("DAV:", "response");
-            multistatus.appendChild(response);
-
-            propstat = d.createElementNS("DAV:", "propstat");
-            response.appendChild(propstat);
-
             prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
 
@@ -289,7 +279,7 @@ public class EmployeeProfileServlet extends HttpServlet {
 
             href.appendChild(d.createTextNode(String.format("%s/staff/%s/addressbooks/", contextPath, username)));
 
-            status = d.createElementNS("DAV:", "status");
+            Element status = d.createElementNS("DAV:", "status");
             propstat.appendChild(status);
             status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
 
