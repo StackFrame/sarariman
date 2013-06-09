@@ -206,7 +206,6 @@ public class EmployeeProfileServlet extends HttpServlet {
         return sw.toString();
     }
 
-
     // FIXME: This is broken and brittle. It returns an XML WebDAV document that describes the CardDAV address books available. Currently this is only the staff address book.
     private Document makeAddressBooksDocument(String contextPath, String username) {
         try {
@@ -224,7 +223,7 @@ public class EmployeeProfileServlet extends HttpServlet {
             Element href = d.createElementNS("DAV:", "href");
             response.appendChild(href);
 
-            href.appendChild(d.createTextNode(String.format("%s/staff/", contextPath)));
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s/addressbooks", contextPath, username)));
 
             Element propstat = d.createElementNS("DAV:", "propstat");
             response.appendChild(propstat);
@@ -306,7 +305,7 @@ public class EmployeeProfileServlet extends HttpServlet {
             Element href = d.createElementNS("DAV:", "href");
             response.appendChild(href);
 
-            href.appendChild(d.createTextNode(String.format("%s/staff/", contextPath)));
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s/addressbooks", contextPath, username)));
 
             Element propstat = d.createElementNS("DAV:", "propstat");
             response.appendChild(propstat);
@@ -327,9 +326,6 @@ public class EmployeeProfileServlet extends HttpServlet {
 
             Element collection = d.createElementNS("DAV:", "collection");
             resourceType.appendChild(collection);
-
-            prop = d.createElementNS("DAV:", "prop");
-            propstat.appendChild(prop);
 
             Element status = d.createElementNS("DAV:", "status");
             propstat.appendChild(status);
