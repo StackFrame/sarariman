@@ -411,10 +411,6 @@ public class EmployeeProfileServlet extends HttpServlet {
                 Element prop = d.createElementNS("DAV:", "prop");
                 propstat.appendChild(prop);
 
-                Element displayname = d.createElementNS("DAV:", "displayname");
-                prop.appendChild(displayname);
-                displayname.appendChild(d.createTextNode("staff"));
-
                 Element resourceType = d.createElementNS("DAV:", "resourcetype");
                 prop.appendChild(resourceType);
 
