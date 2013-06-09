@@ -430,8 +430,10 @@ public class EmployeeProfileServlet extends HttpServlet {
         if (request.getMethod().equals("PROPFIND")) {
             String pathInfo = request.getPathInfo();
 
-            System.err.println("Got a PROPFIND on the profile servlet path=" + request.getPathInfo());
+            System.err.println("Got a PROPFIND on the profile servlet pathInfo=" + request.getPathInfo() + " requestURI=" + request.getRequestURI());
             System.err.println("headers='" + headers(request) + "'");
+            int depth=Integer.parseInt(request.getHeader("depth"));
+            System.err.println("depth="+depth);
             if (pathInfo.equals("/")) {
                 handlePROPFINDRoot(request, response);
             } else {
