@@ -348,6 +348,7 @@ public class EmployeeProfileServlet extends HttpServlet {
     // FIXME: This is broken and brittle and experimental.
     private void handlePROPFINDAddressBooks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.err.println("In addressbooks handler");
+        response.setHeader("DAV", "1, addressbook");
         String requestDocument = CharStreams.toString(new InputStreamReader(request.getInputStream(), "UTF-8"));
         System.err.println("requestDocument='" + requestDocument + "'");
         Employee user = (Employee)request.getAttribute("user");
