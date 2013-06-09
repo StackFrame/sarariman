@@ -365,6 +365,10 @@ public class EmployeeProfileServlet extends HttpServlet {
             prop.appendChild(displayname);
             displayname.appendChild(d.createTextNode("staff"));
 
+            Element addressbookDescription = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-description");
+            prop.appendChild(addressbookDescription);
+            addressbookDescription.appendChild(d.createTextNode("staff"));
+
             Element resourceType = d.createElementNS("DAV:", "resourcetype");
             prop.appendChild(resourceType);
 
