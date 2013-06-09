@@ -59,7 +59,6 @@ public class EmployeeProfileServlet extends HttpServlet {
             employeeName = employeeName.substring(0, remainingPath);
         }
 
-
         return employeeName;
     }
 
@@ -117,7 +116,6 @@ public class EmployeeProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String employeeName = employee(request);
-        System.err.println("employeeName=" + employeeName);
         String desiredMIMEType = request.getParameter("type");
         if (employeeName.isEmpty()) {
             if (vCardMIMEType.equals(desiredMIMEType)) {
@@ -208,7 +206,7 @@ public class EmployeeProfileServlet extends HttpServlet {
     }
 
     // FIXME: This is broken and brittle. It returns an XML WebDAV document that describes the CardDAV address books available. Currently this is only the staff address book.
-    private Document makeAddressBooksDocument(String contextPath, String username) {
+    private Document makeDiscoveryDocument(String contextPath, String username) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -290,7 +288,7 @@ public class EmployeeProfileServlet extends HttpServlet {
         }
     }
 
-    private Document makePrincipalDocument(String contextPath, String username) {
+    private Document makeAddressBooksDocument(String contextPath, String username) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -313,6 +311,10 @@ public class EmployeeProfileServlet extends HttpServlet {
 
             Element prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
+
+            Element displayname = d.createElementNS("DAV:", "displayname");
+            prop.appendChild(displayname);
+            displayname.appendChild(d.createTextNode("staff"));
 
             Element resourceType = d.createElementNS("DAV:", "resourcetype");
             prop.appendChild(resourceType);
@@ -360,6 +362,10 @@ public class EmployeeProfileServlet extends HttpServlet {
                 Element prop = d.createElementNS("DAV:", "prop");
                 propstat.appendChild(prop);
 
+                Element displayname = d.createElementNS("DAV:", "displayname");
+                prop.appendChild(displayname);
+                displayname.appendChild(d.createTextNode("staff"));
+
                 Element resourceType = d.createElementNS("DAV:", "resourcetype");
                 prop.appendChild(resourceType);
 
@@ -389,9 +395,9 @@ public class EmployeeProfileServlet extends HttpServlet {
         Document d;
         int depth = Integer.parseInt(request.getHeader("depth"));
         if (depth == 0) {
-            d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
+            d = makeDiscoveryDocument(request.getContextPath(), user.getUserName());
         } else {
-            d = makePrincipalDocument(request.getContextPath(), user.getUserName());
+            d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
         }
 
         System.err.println("going to send response:");
@@ -420,9 +426,6 @@ public class EmployeeProfileServlet extends HttpServlet {
 
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("in OPTIONS for " + request.getRequestURI());
-        String employeeName = employee(request);
-        System.err.println("employeeName=" + employeeName);
         response.setHeader("DAV", "1, addressbook");
     }
 
