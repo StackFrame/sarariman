@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.TimeZone;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,55 +34,9 @@ import org.w3c.dom.Element;
  *
  * @author mcculley
  */
-public class RootServlet extends WebDAVServlet {
+public class AddressBooksServlet extends WebDAVServlet {
 
-    private Document makePROPFINDResponseDepth0() {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document d = db.newDocument();
-            d.setXmlStandalone(true);
-
-            Element multistatus = d.createElementNS("DAV:", "multistatus");
-            d.appendChild(multistatus);
-
-            Element response = d.createElementNS("DAV:", "response");
-            multistatus.appendChild(response);
-
-            Element propstat = d.createElementNS("DAV:", "propstat");
-            response.appendChild(propstat);
-
-            Element prop = d.createElementNS("DAV:", "prop");
-            propstat.appendChild(prop);
-
-            Element getContentLength = d.createElementNS("DAV:", "getcontentlength");
-            prop.appendChild(getContentLength);
-
-            Element resourceType = d.createElementNS("DAV:", "resourcetype");
-            prop.appendChild(resourceType);
-
-            Element collection = d.createElementNS("DAV:", "collection");
-            resourceType.appendChild(collection);
-
-            Element creationDate = d.createElementNS("DAV:", "creationdate");
-            prop.appendChild(creationDate);
-            creationDate.appendChild(d.createTextNode(formattedDate()));
-
-            Element getLastModified = d.createElementNS("DAV:", "getlastmodified");
-            prop.appendChild(getLastModified);
-            getLastModified.appendChild(d.createTextNode(formattedDate()));
-
-            Element status = d.createElementNS("DAV:", "status");
-            propstat.appendChild(status);
-            status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
-
-            return d;
-        } catch (ParserConfigurationException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    private Document makePROPFINDResponseDepth1(String contextPath) {
+    private Document makePROPFINDResponseDepth0(String contextPath) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -134,6 +87,79 @@ public class RootServlet extends WebDAVServlet {
         }
     }
 
+    private Document makePROPFINDResponseDepth1(String requestURI, String contextPath) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document d = db.newDocument();
+            d.setXmlStandalone(true);
+
+            Element multistatus = d.createElementNS("DAV:", "multistatus");
+            d.appendChild(multistatus);
+
+            Element response = d.createElementNS("DAV:", "response");
+            multistatus.appendChild(response);
+
+            Element href = d.createElementNS("DAV:", "href");
+            response.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/addressbooks/staff", contextPath)));
+
+            Element propstat = d.createElementNS("DAV:", "propstat");
+            response.appendChild(propstat);
+
+            Element prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element displayname = d.createElementNS("DAV:", "displayname");
+            prop.appendChild(displayname);
+            displayname.appendChild(d.createTextNode("staff"));
+
+            Element addressbookDescription = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-description");
+            prop.appendChild(addressbookDescription);
+            addressbookDescription.appendChild(d.createTextNode("staff"));
+
+            Element resourceType = d.createElementNS("DAV:", "resourcetype");
+            prop.appendChild(resourceType);
+
+            Element collection = d.createElementNS("DAV:", "collection");
+            resourceType.appendChild(collection);
+
+            Element addressBook = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook");
+            resourceType.appendChild(addressBook);
+
+            Element creationDate = d.createElementNS("DAV:", "creationdate");
+            prop.appendChild(creationDate);
+            creationDate.appendChild(d.createTextNode(formattedDate()));
+
+            Element getLastModified = d.createElementNS("DAV:", "getlastmodified");
+            prop.appendChild(getLastModified);
+            getLastModified.appendChild(d.createTextNode(formattedDate()));
+
+            Element getContentLength = d.createElementNS("DAV:", "getcontentlength");
+            prop.appendChild(getContentLength);
+
+            Element status = d.createElementNS("DAV:", "status");
+            propstat.appendChild(status);
+            status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
+
+            return d;
+        } catch (ParserConfigurationException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private static String formattedDate() {
+        return formattedDate(new Date());
+    }
+
+    private static String formattedDate(Date date) {
+        // TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        //df.setTimeZone(tz);
+        return df.format(date);
+    }
+
     private static void serialize(Document document, Writer writer) {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setAttribute("indent-number", new Integer(4));
@@ -171,17 +197,17 @@ public class RootServlet extends WebDAVServlet {
 
     @Override
     protected void doPropfind(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.err.println("in RootServlet::doPropfind pathInfo=" + request.getPathInfo() + " requestURI=" + request.getRequestURI());
+        System.err.println("in AddressBookServlet::doPropfind pathInfo=" + request.getPathInfo() + " requestURI=" + request.getRequestURI());
         String requestDocument = CharStreams.toString(new InputStreamReader(request.getInputStream(), "UTF-8"));
-        System.err.println("in RootServlet::doPropfind headers='" + headers(request) + "'");
+        System.err.println("in AddressBookServlet::doPropfind headers='" + headers(request) + "'");
         String depth = request.getHeader("depth");
-        System.err.println("in RootServlet::doPropfind depth='" + depth + "'");
-        System.err.println("in RootServlet::doPropfind requestDocument='" + requestDocument + "'");
+        System.err.println("in AddressBookServlet::doPropfind depth='" + depth + "'");
+        System.err.println("in AddressBookServlet::doPropfind requestDocument='" + requestDocument + "'");
         Document d;
         if (depth.equals("0")) {
-            d = makePROPFINDResponseDepth0();
+            d = makePROPFINDResponseDepth0(request.getContextPath());
         } else {
-            d = makePROPFINDResponseDepth1(request.getContextPath());
+            d = makePROPFINDResponseDepth1(request.getRequestURI(), request.getContextPath());
         }
 
         System.err.println("going to send response:");
@@ -190,46 +216,6 @@ public class RootServlet extends WebDAVServlet {
         serialize(d, writer);
         writer.close();
         response.setStatus(207);
-    }
-
-    private static String formattedDate() {
-        return formattedDate(new Date());
-    }
-
-    private static String formattedDate(Date date) {
-        // TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        //df.setTimeZone(tz);
-        return df.format(date);
-    }
-
-    @Override
-    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader("DAV", "1, addressbook");
-    }
-
-    /**
-     * Handles the HTTP
-     * <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "servlet for the root page";
     }
 
 }
