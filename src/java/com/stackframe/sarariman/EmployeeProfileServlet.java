@@ -117,6 +117,7 @@ public class EmployeeProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String employeeName = employee(request);
+        System.err.println("employeeName=" + employeeName);
         String desiredMIMEType = request.getParameter("type");
         if (employeeName.isEmpty()) {
             if (vCardMIMEType.equals(desiredMIMEType)) {
@@ -414,6 +415,14 @@ public class EmployeeProfileServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         serialize(d, writer);
         writer.close();
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.err.println("in OPTIONS for " + request.getRequestURI());
+        String employeeName = employee(request);
+        System.err.println("employeeName=" + employeeName);
+        response.setHeader("DAV", "1, addressbook");
     }
 
     @Override
