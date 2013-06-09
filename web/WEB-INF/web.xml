@@ -228,6 +228,18 @@
         <servlet-name>RootServlet</servlet-name>
         <servlet-class>com.stackframe.sarariman.RootServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddressBooksServlet</servlet-name>
+        <servlet-class>com.stackframe.sarariman.AddressBooksServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffAddressBookServlet</servlet-name>
+        <servlet-class>com.stackframe.sarariman.StaffAddressBookServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffAddressBookEntryServlet</servlet-name>
+        <servlet-class>com.stackframe.sarariman.StaffAddressBookEntryServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -787,6 +799,18 @@
     <servlet-mapping>
         <servlet-name>RootServlet</servlet-name>
         <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddressBooksServlet</servlet-name>
+        <url-pattern>/addressbooks/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffAddressBookServlet</servlet-name>
+        <url-pattern>/addressbooks/staff/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffAddressBookEntryServlet</servlet-name>
+        <url-pattern>/addressbooks/staff/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
