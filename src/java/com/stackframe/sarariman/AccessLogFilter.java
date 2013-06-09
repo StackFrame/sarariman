@@ -43,7 +43,7 @@ public class AccessLogFilter extends HttpFilter {
 
         // One would think that the HttpServletRequest could just be marked final and used in the Runnable, but it gets reused after
         // this call.
-        final String path = request.getServletPath();
+        final String path = request.getRequestURI();
         final String queryString = request.getQueryString();
         final String method = request.getMethod();
         final String userAgent = request.getHeader("User-Agent");
