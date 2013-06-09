@@ -187,7 +187,9 @@ public class AuthenticationFilter extends HttpFilter {
                 } else {
                     // FIXME: I'm pretty sure I should change this around to force basic auth only for particular URLs, not
                     // particular user agents.
-                    if (basicAuthMatches.apply(request.getHeader("User-Agent"))) {
+                    String method = request.getMethod();
+                    boolean isWebDAV = method.equals("PROPFIND") || method.equals("OPTIONS");
+                    if (isWebDAV || basicAuthMatches.apply(request.getHeader("User-Agent"))) {
                         sendBasicAuthChallenge(response);
                     } else {
                         redirectToLoginPage(request, response, chain);
