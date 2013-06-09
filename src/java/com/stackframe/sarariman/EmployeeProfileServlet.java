@@ -230,9 +230,6 @@ public class EmployeeProfileServlet extends HttpServlet {
             Element prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
 
-            prop = d.createElementNS("DAV:", "prop");
-            propstat.appendChild(prop);
-
             Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
             prop.appendChild(currentUserPrincipal);
 
@@ -246,9 +243,6 @@ public class EmployeeProfileServlet extends HttpServlet {
 
             Element collection = d.createElementNS("DAV:", "collection");
             resourceType.appendChild(collection);
-
-            prop = d.createElementNS("DAV:", "prop");
-            propstat.appendChild(prop);
 
             Element status = d.createElementNS("DAV:", "status");
             propstat.appendChild(status);
