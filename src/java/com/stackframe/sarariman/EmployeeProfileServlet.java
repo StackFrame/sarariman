@@ -206,6 +206,7 @@ public class EmployeeProfileServlet extends HttpServlet {
         return sw.toString();
     }
 
+
     // FIXME: This is broken and brittle. It returns an XML WebDAV document that describes the CardDAV address books available. Currently this is only the staff address book.
     private Document makeAddressBooksDocument(String contextPath, String username) {
         try {
@@ -289,6 +290,57 @@ public class EmployeeProfileServlet extends HttpServlet {
         }
     }
 
+    private Document makePrincipalDocument(String contextPath, String username) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document d = db.newDocument();
+            d.setXmlStandalone(true);
+
+            Element multistatus = d.createElementNS("DAV:", "multistatus");
+            d.appendChild(multistatus);
+
+            Element response = d.createElementNS("DAV:", "response");
+            multistatus.appendChild(response);
+
+            Element href = d.createElementNS("DAV:", "href");
+            response.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/", contextPath)));
+
+            Element propstat = d.createElementNS("DAV:", "propstat");
+            response.appendChild(propstat);
+
+            Element prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
+            prop.appendChild(currentUserPrincipal);
+
+            href = d.createElementNS("DAV:", "href");
+            currentUserPrincipal.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+
+            Element resourceType = d.createElementNS("DAV:", "resourcetype");
+            prop.appendChild(resourceType);
+
+            Element collection = d.createElementNS("DAV:", "collection");
+            resourceType.appendChild(collection);
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element status = d.createElementNS("DAV:", "status");
+            propstat.appendChild(status);
+            status.appendChild(d.createTextNode("HTTP/1.1 200 OK"));
+
+            return d;
+        } catch (ParserConfigurationException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     // FIXME: This is broken and brittle. It returns an XML WebDAV document that describes the CardDAV resources available under /staff/
     private Document makeStaffDocument(String contextPath) {
         try {
@@ -342,7 +394,8 @@ public class EmployeeProfileServlet extends HttpServlet {
         String requestDocument = CharStreams.toString(new InputStreamReader(request.getInputStream(), "UTF-8"));
         System.err.println("requestDocument='" + requestDocument + "'");
         Employee user = (Employee)request.getAttribute("user");
-        Document d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
+//        Document d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
+        Document d = makePrincipalDocument(request.getContextPath(), user.getUserName());
         System.err.println("going to send response:");
         System.err.println(serialize(d));
         PrintWriter writer = response.getWriter();
