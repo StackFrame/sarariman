@@ -224,6 +224,10 @@
         <servlet-name>CardDAVDiscovery</servlet-name>
         <servlet-class>com.stackframe.sarariman.CardDAVDiscovery</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>RootServlet</servlet-name>
+        <servlet-class>com.stackframe.sarariman.RootServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LaborProjectionEditor</servlet-name>
         <url-pattern>/laborprojections/edit</url-pattern>
@@ -780,15 +784,15 @@
         <servlet-name>CardDAVDiscovery</servlet-name>
         <url-pattern>/.well-known/carddav</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RootServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
-<!--
     <env-entry>
         <env-entry-name>java.naming.factory.initial</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
