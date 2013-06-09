@@ -391,8 +391,8 @@ public class EmployeeProfileServlet extends HttpServlet {
         String requestDocument = CharStreams.toString(new InputStreamReader(request.getInputStream(), "UTF-8"));
         System.err.println("requestDocument='" + requestDocument + "'");
         Employee user = (Employee)request.getAttribute("user");
-//        Document d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
-        Document d = makePrincipalDocument(request.getContextPath(), user.getUserName());
+        Document d = makeAddressBooksDocument(request.getContextPath(), user.getUserName());
+//        Document d = makePrincipalDocument(request.getContextPath(), user.getUserName());
         System.err.println("going to send response:");
         System.err.println(serialize(d));
         PrintWriter writer = response.getWriter();
