@@ -261,6 +261,12 @@ public class EmployeeProfileServlet extends HttpServlet {
 
             href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
 
+            resourceType = d.createElementNS("DAV:", "resourcetype");
+            prop.appendChild(resourceType);
+
+            collection = d.createElementNS("DAV:", "collection");
+            resourceType.appendChild(collection);
+
             prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
 
@@ -351,6 +357,7 @@ public class EmployeeProfileServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         serialize(d, writer);
         writer.close();
+        response.setStatus(207);
     }
 
     // FIXME: This is broken and brittle and experimental.
