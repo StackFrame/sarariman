@@ -72,7 +72,6 @@ public class StaffAddressBookEntryServlet extends HttpServlet {
             String employeeName = request.getPathInfo().substring(1);
             response.setContentType(vCardMIMEType);
             employeeName = employeeName.substring(0, employeeName.length() - vCardExtension.length());
-            System.err.println("in doGet for StaffAddressBookEntryServlet. employeeName='" + employeeName + "'");
             Employee employee = sarariman.getDirectory().getByUserName().get(employeeName);
             PrintWriter out = response.getWriter();
             try {
@@ -84,7 +83,6 @@ public class StaffAddressBookEntryServlet extends HttpServlet {
             String employeeName = request.getPathInfo().substring(1);
             response.setContentType(xCardMIMEType);
             employeeName = employeeName.substring(0, employeeName.length() - xCardExtension.length());
-            System.err.println("in doGet for StaffAddressBookEntryServlet. employeeName='" + employeeName + "'");
             Employee employee = sarariman.getDirectory().getByUserName().get(employeeName);
             PrintWriter out = response.getWriter();
             try {
