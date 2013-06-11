@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 StackFrame, LLC
+ * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
@@ -27,16 +27,9 @@ public class WebDAVRootFilter implements Filter {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String contextPath = request.getContextPath();
-        System.err.println("in WebDAVRootFilter::doFilter contextPath='" + contextPath + "'");
-        String path = request.getPathInfo();
-        System.err.println("in WebDAVRootFilter::doFilter path='" + path + "'");
-        String pathTranslated = request.getPathTranslated();
-        System.err.println("in WebDAVRootFilter::doFilter pathTranslated='" + pathTranslated + "'");
         String requestURI = request.getRequestURI();
-        System.err.println("in WebDAVRootFilter::doFilter requestURI='" + requestURI + "'");
         int lengthOfContextPath = contextPath.length();
         String requestedPath = requestURI.substring(lengthOfContextPath);
-        System.err.println("in WebDAVRootFilter::doFilter requestedPath=" + requestedPath);
         if (requestedPath.equals("/")) {
             RootServlet rootServlet = new RootServlet();
             rootServlet.service(request, response);
