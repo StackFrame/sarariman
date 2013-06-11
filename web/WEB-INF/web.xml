@@ -2,9 +2,6 @@
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>Sarariman</display-name>
     <description>This is the Sarariman web application, which supports interactive use and spawns some background threads for housekeeping and integration with external services.</description>
-    <welcome-file-list>
-        <welcome-file>home.jsp</welcome-file>
-    </welcome-file-list>
     <filter>
         <filter-name>AccessLog</filter-name>
         <filter-class>com.stackframe.sarariman.AccessLogFilter</filter-class>
@@ -25,6 +22,10 @@
         <filter-name>UserFilter</filter-name>
         <filter-class>com.stackframe.sarariman.UserFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>WebDAVRootFilter</filter-name>
+        <filter-class>com.stackframe.sarariman.WebDAVRootFilter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>ErrorFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -42,6 +43,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>UserFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>WebDAVRootFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
