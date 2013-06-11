@@ -3,6 +3,7 @@
   This code is licensed under GPLv2.
 --%>
 
+<%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -28,6 +29,35 @@
             <h1>DevOps</h1>
 
             <p>Server: ${pageContext.servletContext.serverInfo}</p>
+
+            <%
+                Map<String, String> systemProperties = new java.util.TreeMap<String, String>();
+                String[] propertyNames = new String[]{"java.version", "java.vendor", "java.vendor.url", "java.class.version",
+                    "os.name", "os.arch", "os.version"};
+                for (String name : propertyNames) {
+                    systemProperties.put(name, System.getProperty(name));
+                }
+
+                request.setAttribute("systemProperties", systemProperties);
+            %>
+
+            <table class="table table-rounded table-striped table-bordered">
+                <caption>System Properties</caption>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="entry" items="${systemProperties}">
+                        <tr>
+                            <td>${entry.key}</td>
+                            <td>${entry.value}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
 
             <h2>Services</h2>
             <ul>
