@@ -6,7 +6,6 @@ package com.stackframe.sarariman;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,15 +13,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mcculley
  */
-public class CardDAVDiscovery extends HttpServlet {
+public class CardDAVDiscovery extends WebDAVServlet {
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String method = request.getMethod();
-        if (!method.equals("PROPFIND")) {
-            throw new ServletException("unexpected method '" + method + "'");
-        }
-
+    protected void doPropfind(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Employee user = (Employee)request.getAttribute("user");
         // FIXME: This should now just go to /addressbooks
         response.sendRedirect(String.format("%s/staff/%s/addressbooks", request.getContextPath(), user.getUserName()));
