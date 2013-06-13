@@ -19,7 +19,7 @@ public class CardDAVDiscovery extends WebDAVServlet {
     protected void doPropfind(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Employee user = (Employee)request.getAttribute("user");
         // FIXME: This should now just go to /addressbooks
-        response.sendRedirect(String.format("%s/staff/%s/addressbooks", request.getContextPath(), user.getUserName()));
+        response.sendRedirect(String.format("%s/addressbooks", request.getContextPath(), user.getUserName()));
     }
 
     /**
