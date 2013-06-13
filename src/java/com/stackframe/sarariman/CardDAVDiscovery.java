@@ -17,7 +17,7 @@ public class CardDAVDiscovery extends WebDAVServlet {
 
     @Override
     protected void doPropfind(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect(String.format("%s/addressbooks", request.getContextPath()));
+        response.sendRedirect(String.format("%s/addressbooks/", request.getContextPath()));
     }
 
     /**

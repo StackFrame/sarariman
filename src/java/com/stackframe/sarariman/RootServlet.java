@@ -98,7 +98,7 @@ public class RootServlet extends WebDAVServlet {
             Element href = d.createElementNS("DAV:", "href");
             response.appendChild(href);
 
-            href.appendChild(d.createTextNode(String.format("%s/addressbooks", contextPath)));
+            href.appendChild(d.createTextNode(String.format("%s/addressbooks/", contextPath)));
 
             Element propstat = d.createElementNS("DAV:", "propstat");
             response.appendChild(propstat);
