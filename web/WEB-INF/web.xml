@@ -806,11 +806,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddressBooksServlet</servlet-name>
-        <url-pattern>/addressbooks/</url-pattern>
+        <url-pattern>/addressbooks</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StaffAddressBookServlet</servlet-name>
-        <url-pattern>/addressbooks/staff/</url-pattern>
+        <url-pattern>/addressbooks/staff</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StaffAddressBookEntryServlet</servlet-name>
