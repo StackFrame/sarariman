@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
  */
 public class RootServlet extends WebDAVServlet {
 
-    private Document makePROPFINDResponseDepth0() {
+    private Document makePROPFINDResponseDepth0(String contextPath) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -54,6 +54,14 @@ public class RootServlet extends WebDAVServlet {
 
             Element prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
+
+            Element addressBookHomeSet = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-home-set");
+            prop.appendChild(addressBookHomeSet);
+
+            Element href = d.createElementNS("DAV:", "href");
+            addressBookHomeSet.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/addressbooks/", contextPath)));
 
             Element getContentLength = d.createElementNS("DAV:", "getcontentlength");
             prop.appendChild(getContentLength);
@@ -178,7 +186,7 @@ public class RootServlet extends WebDAVServlet {
         System.err.println("in RootServlet::doPropfind requestDocument='" + requestDocument + "'");
         Document d;
         if (depth.equals("0")) {
-            d = makePROPFINDResponseDepth0();
+            d = makePROPFINDResponseDepth0(request.getContextPath());
         } else {
             d = makePROPFINDResponseDepth1(request.getContextPath());
         }
