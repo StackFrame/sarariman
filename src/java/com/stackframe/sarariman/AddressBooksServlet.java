@@ -77,8 +77,8 @@ public class AddressBooksServlet extends WebDAVServlet {
             prop.appendChild(getLastModified);
             getLastModified.appendChild(d.createTextNode(formattedDate()));
 
-            prop = d.createElementNS("DAV:", "prop");
-            propstat.appendChild(prop);
+//            prop = d.createElementNS("DAV:", "prop");
+//            propstat.appendChild(prop);
 
 //            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
 //            prop.appendChild(currentUserPrincipal);
@@ -99,8 +99,8 @@ public class AddressBooksServlet extends WebDAVServlet {
 
 //            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
 
-            prop = d.createElementNS("DAV:", "prop");
-            propstat.appendChild(prop);
+//            prop = d.createElementNS("DAV:", "prop");
+//            propstat.appendChild(prop);
 
             Element addressBookHomeSet = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-home-set");
             prop.appendChild(addressBookHomeSet);
