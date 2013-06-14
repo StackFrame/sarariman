@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
  */
 public class AddressBooksServlet extends WebDAVServlet {
 
-    private Document makePROPFINDResponseDepth0(String contextPath) {
+    private Document makePROPFINDResponseDepth0(String contextPath, String username) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -76,6 +76,28 @@ public class AddressBooksServlet extends WebDAVServlet {
             Element getLastModified = d.createElementNS("DAV:", "getlastmodified");
             prop.appendChild(getLastModified);
             getLastModified.appendChild(d.createTextNode(formattedDate()));
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
+            prop.appendChild(currentUserPrincipal);
+
+            href = d.createElementNS("DAV:", "href");
+            currentUserPrincipal.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+
+            prop = d.createElementNS("DAV:", "prop");
+            propstat.appendChild(prop);
+
+            Element principalURL = d.createElementNS("DAV:", "principal-URL");
+            prop.appendChild(principalURL);
+
+            href = d.createElementNS("DAV:", "href");
+            principalURL.appendChild(href);
+
+            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
 
             Element status = d.createElementNS("DAV:", "status");
             propstat.appendChild(status);
@@ -203,9 +225,10 @@ public class AddressBooksServlet extends WebDAVServlet {
         String depth = request.getHeader("depth");
         System.err.println("in AddressBookServlet::doPropfind depth='" + depth + "'");
         System.err.println("in AddressBookServlet::doPropfind requestDocument='" + requestDocument + "'");
+        Employee employee = (Employee)request.getAttribute("user");
         Document d;
         if (depth.equals("0")) {
-            d = makePROPFINDResponseDepth0(request.getContextPath());
+            d = makePROPFINDResponseDepth0(request.getContextPath(), employee.getUserName());
         } else {
             d = makePROPFINDResponseDepth1(request.getRequestURI(), request.getContextPath());
         }
