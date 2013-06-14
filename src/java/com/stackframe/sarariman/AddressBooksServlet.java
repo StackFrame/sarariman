@@ -80,24 +80,35 @@ public class AddressBooksServlet extends WebDAVServlet {
             prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
 
-            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
-            prop.appendChild(currentUserPrincipal);
+//            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
+//            prop.appendChild(currentUserPrincipal);
 
-            href = d.createElementNS("DAV:", "href");
-            currentUserPrincipal.appendChild(href);
+//            href = d.createElementNS("DAV:", "href");
+//            currentUserPrincipal.appendChild(href);
 
-            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+//            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+
+//            prop = d.createElementNS("DAV:", "prop");
+//            propstat.appendChild(prop);
+
+//            Element principalURL = d.createElementNS("DAV:", "principal-URL");
+//            prop.appendChild(principalURL);
+
+//            href = d.createElementNS("DAV:", "href");
+//            principalURL.appendChild(href);
+
+//            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
 
             prop = d.createElementNS("DAV:", "prop");
             propstat.appendChild(prop);
 
-            Element principalURL = d.createElementNS("DAV:", "principal-URL");
-            prop.appendChild(principalURL);
+            Element addressBookHomeSet = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-home-set");
+            prop.appendChild(addressBookHomeSet);
 
             href = d.createElementNS("DAV:", "href");
-            principalURL.appendChild(href);
+            addressBookHomeSet.appendChild(href);
 
-            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
+            href.appendChild(d.createTextNode(String.format("%s/addressbooks/", contextPath)));
 
             Element status = d.createElementNS("DAV:", "status");
             propstat.appendChild(status);
