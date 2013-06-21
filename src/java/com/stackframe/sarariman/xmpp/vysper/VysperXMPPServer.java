@@ -38,6 +38,7 @@ import org.apache.vysper.xmpp.addressing.EntityImpl;
 import org.apache.vysper.xmpp.authentication.AccountCreationException;
 import org.apache.vysper.xmpp.authentication.AccountManagement;
 import org.apache.vysper.xmpp.authentication.UserAuthentication;
+import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCFeatures;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataModule;
@@ -87,7 +88,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     private final String domain;
 
-    private final Conference conference = new Conference("Conference");
+    private final Conference conference = new Conference("Conference", new MUCFeatures());
 
     private final DataSource dataSource;
 
@@ -307,7 +308,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     }
 
     public Collection<Room> getRooms() {
-        Collection<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room> rooms = conference.getAllRooms();
+        Collection<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room> rooms = conference.getRoomStorageProvider().getAllRooms();
         ImmutableList.Builder<Room> b = ImmutableList.<Room>builder();
         for (org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room room : rooms) {
             final org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room roomImpl = room;
