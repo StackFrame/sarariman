@@ -74,19 +74,14 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
     }
 
     @Override
-    public void append(Stanza stanza, Occupant sender, Calendar timestamp) {
+    public void append(MessageStanza stanza, Occupant sender, Calendar timestamp) {
         Entity from = stanza.getFrom();
         Entity to = stanza.getTo();
-        if (MessageStanza.isOfType(stanza)) {
-            MessageStanza message = new MessageStanza(stanza);
-            try {
-                String body = message.getBody(null);
-                archive(from.getBareJID().toString(), to.toString(), body);
-            } catch (XMLSemanticError e) {
-                logger.error("error retrieving body from message", e);
-            }
-        } else {
-            System.err.println("unexpected message type. message=" + stanza);
+        try {
+            String body = stanza.getBody(null);
+            archive(from.getBareJID().toString(), to.toString(), body);
+        } catch (XMLSemanticError e) {
+            logger.error("error retrieving body from message", e);
         }
 
         super.append(stanza, sender, timestamp);
