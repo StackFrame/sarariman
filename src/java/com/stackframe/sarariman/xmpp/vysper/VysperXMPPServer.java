@@ -46,7 +46,7 @@ import org.apache.vysper.xmpp.modules.extension.xep0054_vcardtemp.VcardTempModul
 import org.apache.vysper.xmpp.modules.extension.xep0054_vcardtemp.VcardTempPersistenceManager;
 import org.apache.vysper.xmpp.modules.extension.xep0060_pubsub.PublishSubscribeModule;
 import org.apache.vysper.xmpp.modules.extension.xep0092_software_version.SoftwareVersionModule;
-import org.apache.vysper.xmpp.modules.extension.xep0119_xmppping.XmppPingModule;
+import org.apache.vysper.xmpp.modules.extension.xep0199_xmppping.XmppPingModule;
 import org.apache.vysper.xmpp.modules.extension.xep0202_entity_time.EntityTimeModule;
 import org.apache.vysper.xmpp.modules.roster.AskSubscriptionType;
 import org.apache.vysper.xmpp.modules.roster.Roster;
