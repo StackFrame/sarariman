@@ -35,9 +35,9 @@ import org.apache.vysper.storage.OpenStorageProviderRegistry;
 import org.apache.vysper.storage.StorageProviderRegistry;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.addressing.EntityImpl;
-import org.apache.vysper.xmpp.authorization.AccountCreationException;
-import org.apache.vysper.xmpp.authorization.AccountManagement;
-import org.apache.vysper.xmpp.authorization.UserAuthorization;
+import org.apache.vysper.xmpp.authentication.AccountCreationException;
+import org.apache.vysper.xmpp.authentication.AccountManagement;
+import org.apache.vysper.xmpp.authentication.UserAuthentication;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0049_privatedata.PrivateDataModule;
@@ -129,12 +129,12 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     };
 
-    private final UserAuthorization userAuthAdaptor = new UserAuthorization() {
+    private final UserAuthentication userAuthAdaptor = new UserAuthentication() {
         public boolean verifyCredentials(Entity entity, String passwordCleartext, Object credentials) {
             return verifyCredentials(entity.getNode(), passwordCleartext, credentials);
         }
 
-        public boolean verifyCredentials(String username, String passwordCleartext, Object credentials) {
+        private boolean verifyCredentials(String username, String passwordCleartext, Object credentials) {
             System.err.println("in verifyCredentials with username. username=" + username);
             final Authenticator authenticator = new AuthenticatorImpl(directory);
             return authenticator.checkCredentials(username, passwordCleartext);
