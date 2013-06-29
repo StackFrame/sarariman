@@ -29,6 +29,10 @@ import com.stackframe.sarariman.events.Events;
 import com.stackframe.sarariman.events.EventsImpl;
 import com.stackframe.sarariman.holidays.Holidays;
 import com.stackframe.sarariman.holidays.HolidaysImpl;
+import com.stackframe.sarariman.invoices.Credits;
+import com.stackframe.sarariman.invoices.CreditsImpl;
+import com.stackframe.sarariman.invoices.Invoices;
+import com.stackframe.sarariman.invoices.InvoicesImpl;
 import com.stackframe.sarariman.locationlog.LocationLog;
 import com.stackframe.sarariman.locationlog.LocationLogImpl;
 import com.stackframe.sarariman.logincookies.LoginCookies;
@@ -179,6 +183,10 @@ public class Sarariman implements ServletContextListener {
 
     private Conferences conferences;
 
+    private Invoices invoices;
+
+    private Credits credits;
+
     // FIXME: Need a web UI under DevOps to adjust this.
     private Level logLevel = Level.INFO;
 
@@ -326,6 +334,14 @@ public class Sarariman implements ServletContextListener {
 
     public LocationLog getLocationLog() {
         return locationLog;
+    }
+
+    public Invoices getInvoices() {
+        return invoices;
+    }
+
+    public Credits getCredits() {
+        return credits;
     }
 
     public Collection<Audit> getGlobalAudits() {
@@ -530,6 +546,8 @@ public class Sarariman implements ServletContextListener {
             accessLog = new AccessLogImpl(getDataSource(), directory);
             workdays = new WorkdaysImpl(holidays);
             paidTimeOff = new PaidTimeOff(tasks);
+            credits = new CreditsImpl(getDataSource());
+            invoices = new InvoicesImpl(getDataSource(), credits);
             laborProjections = new LaborProjectionsImpl(getDataSource(), directory, tasks, mountPoint);
             taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
             defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);

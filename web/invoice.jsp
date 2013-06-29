@@ -19,6 +19,9 @@
     <sql:param value="${param.invoice}"/>
 </sql:query>
 <c:set var="invoice_info" value="${invoice_info_result.rows[0]}"/>
+<fmt:parseNumber var="invoiceNumber" value="${param.invoice}"/>
+<c:set var="invoiceObject" value="${sarariman.invoices.map[invoiceNumber]}"/> <!-- FIXME: replace invoice_info with this when fully implemented. -->
+<c:set var="credits" value="${invoiceObject.credits}"/>
 <c:set var="project" value="${sarariman.projects.map[invoice_info.project]}"/>
 
 <sql:query dataSource="jdbc/sarariman" var="resultSet">
@@ -331,7 +334,7 @@
                     <c:set var="servicesTotal" value="${servicesTotal + row.period_rate}" scope="request"/>
                 </c:forEach>
 
-                <c:set var="invoiceTotal" value="${expensesTotal + odc_fee + laborTotal + servicesTotal}" scope="request"/>
+                <c:set var="invoiceTotal" value="${expensesTotal + odc_fee + laborTotal + servicesTotal - invoiceObject.creditsTotal}" scope="request"/>
 
                 <c:if test="${!empty project.invoiceText}">
                     <div>${project.invoiceText}</div>
@@ -572,6 +575,36 @@
                     </div>
                 </c:if>
 
+                <c:if test="${not empty credits}">
+                    <div>
+                        <table class="table">
+                            <caption>Credits</caption>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${credits}" var="credit">
+                                    <tr>
+                                        <td><fmt:formatDate value="${credit.date}" pattern="yyyy-MM-dd"/></td>
+                                        <td>${fn:escapeXml(credit.description)}</td>
+                                        <td><fmt:formatNumber type="currency" value="${credit.amount}"/></td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2">Total</td>
+                                    <td><fmt:formatNumber type="currency" value="${invoiceObject.creditsTotal}"/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </c:if>
+
                 <c:if test="${expenseResultSet.rowCount > 0}">
                     <div>
                         <table class="table">
@@ -600,6 +633,7 @@
                                         <td class="currency"><fmt:formatNumber type="currency" value="${row.cost}"/></td>
                                     </tr>
                                 </c:forEach>
+                                <!-- This should be in a tfoot. -->
                                 <tr>
                                     <td colspan="5"><strong>Total</strong></td>
                                     <td class="currency"><strong><fmt:formatNumber type="currency" value="${expensesTotal}"/></strong></td>
