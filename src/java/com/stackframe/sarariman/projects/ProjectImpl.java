@@ -1009,7 +1009,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement s = connection.prepareStatement(
-                        "SELECT ta.full_time_only AS full_time_only " +
+                        "SELECT DISTINCT(ta.full_time_only) AS full_time_only " +
                         "FROM projects AS p " +
                         "JOIN tasks AS t ON t.project = p.id " +
                         "JOIN default_task_assignment AS ta ON ta.task = t.id " +
