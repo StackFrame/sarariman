@@ -5,6 +5,8 @@
 package com.stackframe.sarariman.projects;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.stackframe.sarariman.AbstractLinkable;
 import com.stackframe.sarariman.Audit;
 import com.stackframe.sarariman.DateUtils;
@@ -40,7 +42,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -1003,7 +1004,49 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
-    public Set<Employee> getCurrentlyAssigned() {
+    private Set<Employee> getDefaultCurrentlyAssigned() {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT ta.full_time_only AS full_time_only " +
+                        "FROM projects AS p " +
+                        "JOIN tasks AS t ON t.project = p.id " +
+                        "JOIN default_task_assignment AS ta ON ta.task = t.id " +
+                        "WHERE p.id = ? AND " +
+                        "p.active = TRUE");
+                try {
+                    s.setInt(1, id);
+                    ResultSet rs = s.executeQuery();
+                    try {
+                        ImmutableSet.Builder<Employee> b = ImmutableSet.builder();
+                        while (rs.next()) {
+                            boolean fullTimeOnly = rs.getBoolean("full_time_only");
+                            for (Employee e : directory.getEmployees()) {
+                                if (e.isActive()) {
+                                    if (!fullTimeOnly || e.isFulltime()) {
+                                        b.add(e);
+                                    }
+                                }
+                            }
+                        }
+
+                        return b.build();
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    private Set<Employee> getExplicitlyCurrentlyAssigned() {
         try {
             Connection connection = dataSource.getConnection();
             try {
@@ -1018,12 +1061,13 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                     s.setInt(1, id);
                     ResultSet rs = s.executeQuery();
                     try {
-                        Set<Employee> c = new HashSet<Employee>();
+                        ImmutableSet.Builder<Employee> b = ImmutableSet.builder();
                         while (rs.next()) {
                             int employee = rs.getInt("employee");
-                            c.add(directory.getByNumber().get(employee));
+                            b.add(directory.getByNumber().get(employee));
                         }
-                        return c;
+
+                        return b.build();
                     } finally {
                         rs.close();
                     }
@@ -1036,6 +1080,10 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
+    }
+
+    public Set<Employee> getCurrentlyAssigned() {
+        return Sets.union(getExplicitlyCurrentlyAssigned(), getDefaultCurrentlyAssigned());
     }
 
     public Collection<NamedResource> getResources() {
