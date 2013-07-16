@@ -1013,7 +1013,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         "JOIN tasks AS t ON t.project = p.id " +
                         "JOIN task_assignments AS ta ON ta.task = t.id " +
                         "WHERE p.id = ? AND " +
-                        "p.active = TRUE ");
+                        "p.active = TRUE");
                 try {
                     s.setInt(1, id);
                     ResultSet rs = s.executeQuery();
