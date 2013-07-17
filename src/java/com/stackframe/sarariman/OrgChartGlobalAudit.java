@@ -37,12 +37,15 @@ public class OrgChartGlobalAudit implements Audit {
 
     public Collection<AuditResult> getResults() {
         ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
-        Collection<Employee> activeFulltimeEmployees = Collections2.filter(sarariman.getDirectory().getByUserName().values(), Utilities.activeFulltime);
+        Collection<Employee> activeFulltimeEmployees = Collections2.filter(sarariman.getDirectory().getByUserName().values(),
+                                                                           Utilities.activeFulltime);
         OrganizationHierarchy organizationHierarchy = sarariman.getOrganizationHierarchy();
         Collection<Integer> employeesInOrgChart = employeesInOrgChart(organizationHierarchy.getOrgChart());
         for (Employee employee : activeFulltimeEmployees) {
             if (!employeesInOrgChart.contains(employee.getNumber())) {
-                listBuilder.add(new AuditResult(AuditResultType.error, String.format("%s is not in org chart", employee.getDisplayName()), employee.getURL()));
+                listBuilder.add(new AuditResult(AuditResultType.error, String.format("%s is not in org chart",
+                                                                                     employee.getDisplayName()),
+                                                employee.getURL()));
             }
         }
 
