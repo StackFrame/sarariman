@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -25,6 +27,8 @@ import javax.sql.DataSource;
 public class LoginCookies {
 
     private final DataSource dataSource;
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     private final Runnable cleanupTask = new Runnable() {
         @Override
@@ -45,8 +49,7 @@ public class LoginCookies {
                     c.close();
                 }
             } catch (SQLException e) {
-                // FIXME: Put this in the error log?
-                throw new RuntimeException(e);
+                logger.log(Level.SEVERE, "exception thrown while trying to delete expired cookies", e);
             }
         }
 
