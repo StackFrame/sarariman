@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -87,8 +88,7 @@ class CronJobs {
                 try {
                     sarariman.getDirectorySynchronizer().synchronize(directory, sarariman.getDataSource());
                 } catch (Exception e) {
-                    // FIXME: log
-                    System.err.println("Trouble synchronizing directory with database: " + e);
+                    logger.log(Level.SEVERE, "Trouble synchronizing directory with database: ", e);
                 }
             }
 
@@ -106,7 +106,7 @@ class CronJobs {
                     PaidTimeOff.creditWeeklyPaidTimeOff(sarariman, convert(DateUtils.weekStart(todayDate)));
                     PaidTimeOff.creditHolidayPTO(sarariman);
                 } catch (SQLException se) {
-                    System.err.println("caught exception in PTO update:" + se);
+                    logger.log(Level.SEVERE, "caught exception in PTO update:", se);
                 }
             }
 
