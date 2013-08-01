@@ -9,7 +9,6 @@ import com.stackframe.sarariman.timesheets.TimesheetImpl;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 import javax.mail.internet.InternetAddress;
 
@@ -17,7 +16,7 @@ import javax.mail.internet.InternetAddress;
  *
  * @author mcculley
  */
-public class WeeknightTask extends TimerTask {
+public class WeeknightTask implements Runnable {
 
     private final Sarariman sarariman;
 

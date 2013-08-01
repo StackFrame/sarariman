@@ -7,8 +7,8 @@ package com.stackframe.sarariman;
 import static com.stackframe.sql.SQLUtilities.convert;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * All of the background jobs that run periodically.
@@ -17,7 +17,7 @@ import java.util.TimerTask;
  */
 class CronJobs {
 
-    private final Timer timer;
+    private final ScheduledThreadPoolExecutor timer;
 
     private final Sarariman sarariman;
 
@@ -25,7 +25,7 @@ class CronJobs {
 
     private final EmailDispatcher emailDispatcher;
 
-    CronJobs(Timer timer, Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
+    CronJobs(ScheduledThreadPoolExecutor timer, Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
         this.timer = timer;
         this.sarariman = sarariman;
         this.directory = directory;
@@ -53,7 +53,9 @@ class CronJobs {
         }
 
         long period = ONE_DAY;
-        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), firstTime.getTime(), period);
+        long initialDelay = firstTime.getTime().getTime() - now.getTimeInMillis();
+        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), initialDelay, period,
+                                  TimeUnit.MILLISECONDS);
     }
 
     private void scheduleMorningTask() {
@@ -68,13 +70,15 @@ class CronJobs {
         }
 
         long period = ONE_DAY;
-        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), firstTime.getTime(), period);
+        long initialDelay = firstTime.getTime().getTime() - now.getTimeInMillis();
+        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), initialDelay, period,
+                                  TimeUnit.MILLISECONDS);
     }
 
     private void scheduleDirectoryReload() {
         // Reload the directory once an hour.  The main use case is to discover new employees that were added after the application
         // started.
-        timer.schedule(new TimerTask() {
+        timer.scheduleWithFixedDelay(new Runnable() {
             public void run() {
                 directory.reload();
                 try {
@@ -85,13 +89,13 @@ class CronJobs {
                 }
             }
 
-        }, ONE_HOUR, ONE_HOUR);
+        }, ONE_HOUR, ONE_HOUR, TimeUnit.MILLISECONDS);
     }
 
     private void schedulePaidTimeOffUpdate() {
         // Update paid time off once an hour. This should only need to happen once per day, but doing it more often ensures we
         // correctly update employees added in the middle of the day.
-        timer.schedule(new TimerTask() {
+        timer.scheduleWithFixedDelay(new Runnable() {
             public void run() {
                 try {
                     Calendar today = Calendar.getInstance();
@@ -103,7 +107,7 @@ class CronJobs {
                 }
             }
 
-        }, 0, ONE_HOUR);
+        }, 0L, ONE_HOUR, TimeUnit.MILLISECONDS);
     }
 
     void start() {

@@ -71,11 +71,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -173,7 +173,7 @@ public class Sarariman implements ServletContextListener {
 
     private LocationLog locationLog;
 
-    private final Timer timer = new Timer("Sarariman");
+    private final ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
 
     private SMSGateway SMS;
 
@@ -386,7 +386,7 @@ public class Sarariman implements ServletContextListener {
         return directorySynchronizer;
     }
 
-    public Timer getTimer() {
+    public ScheduledThreadPoolExecutor getTimer() {
         return timer;
     }
 
@@ -609,7 +609,7 @@ public class Sarariman implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
-        timer.cancel();
+        timer.shutdown();
         stopServices();
         backgroundExecutor.shutdown();
         backgroundDatabaseWriteExecutor.shutdown();

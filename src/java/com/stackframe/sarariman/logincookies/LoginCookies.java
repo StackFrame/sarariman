@@ -11,9 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,7 @@ public class LoginCookies {
 
     private final DataSource dataSource;
 
-    private final TimerTask cleanupTask = new TimerTask() {
+    private final Runnable cleanupTask = new Runnable() {
         @Override
         public void run() {
             // FIXME: Put this on a SQL write background task.
@@ -53,9 +52,9 @@ public class LoginCookies {
 
     };
 
-    public LoginCookies(DataSource dataSource, Timer timer) {
+    public LoginCookies(DataSource dataSource, ScheduledThreadPoolExecutor timer) {
         this.dataSource = dataSource;
-        timer.scheduleAtFixedRate(cleanupTask, TimeUnit.MINUTES.toMillis(1), TimeUnit.HOURS.toMillis(1));
+        timer.scheduleAtFixedRate(cleanupTask, TimeUnit.MINUTES.toMillis(1), TimeUnit.HOURS.toMillis(1), TimeUnit.MILLISECONDS);
     }
 
     private static final int maxAge = (int)TimeUnit.DAYS.toSeconds(7);
