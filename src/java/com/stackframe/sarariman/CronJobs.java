@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * All of the background jobs that run periodically.
@@ -24,6 +25,8 @@ class CronJobs {
     private final Directory directory;
 
     private final EmailDispatcher emailDispatcher;
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     CronJobs(ScheduledThreadPoolExecutor timer, Sarariman sarariman, Directory directory, EmailDispatcher emailDispatcher) {
         this.timer = timer;
@@ -54,8 +57,8 @@ class CronJobs {
 
         long period = ONE_DAY;
         long initialDelay = firstTime.getTime().getTime() - now.getTimeInMillis();
-        timer.scheduleAtFixedRate(new WeeknightTask(sarariman, directory, emailDispatcher), initialDelay, period,
-                                  TimeUnit.MILLISECONDS);
+        timer.scheduleAtFixedRate(new LoggingRunnable(new WeeknightTask(sarariman, directory, emailDispatcher), logger),
+                                  initialDelay, period, TimeUnit.MILLISECONDS);
     }
 
     private void scheduleMorningTask() {
@@ -71,8 +74,8 @@ class CronJobs {
 
         long period = ONE_DAY;
         long initialDelay = firstTime.getTime().getTime() - now.getTimeInMillis();
-        timer.scheduleAtFixedRate(new MorningTask(sarariman, directory, emailDispatcher), initialDelay, period,
-                                  TimeUnit.MILLISECONDS);
+        timer.scheduleAtFixedRate(new LoggingRunnable(new MorningTask(sarariman, directory, emailDispatcher), logger), initialDelay,
+                                  period, TimeUnit.MILLISECONDS);
     }
 
     private void scheduleDirectoryReload() {
