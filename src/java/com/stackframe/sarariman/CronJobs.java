@@ -92,7 +92,7 @@ class CronJobs {
                 }
             }
 
-        }, ONE_HOUR, ONE_HOUR, TimeUnit.MILLISECONDS);
+        }, 1, 1, TimeUnit.HOURS);
     }
 
     private void schedulePaidTimeOffUpdate() {
@@ -110,7 +110,7 @@ class CronJobs {
                 }
             }
 
-        }, 0L, ONE_HOUR, TimeUnit.MILLISECONDS);
+        }, 0, 1, TimeUnit.HOURS);
     }
 
     void start() {
