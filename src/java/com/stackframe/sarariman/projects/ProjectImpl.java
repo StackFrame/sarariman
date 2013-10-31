@@ -1276,7 +1276,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                         "FROM hours AS h " +
                         "JOIN tasks AS t on h.task = t.id " +
                         "JOIN projects AS p on p.id = t.project " +
-                        "JOIN direct_rate AS d ON (d.employee = h.employee AND h.date >= d.start AND h.date <= d.end) " +
+                        "JOIN direct_rate AS d ON (d.employee = h.employee AND h.date >= d.start AND (h.date <= d.end OR d.end IS NULL)) " +
                         "WHERE t.project = ? AND h.date >= ? AND h.date <= ?");
                 try {
                     s.setInt(1, id);
