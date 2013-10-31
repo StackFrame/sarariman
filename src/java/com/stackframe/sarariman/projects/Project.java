@@ -110,6 +110,12 @@ public interface Project extends Linkable {
 
     Collection<EmailLogEntry> getEmailLogEntries(Week week);
 
+    BigDecimal getLaborHoursBilled(PeriodOfPerformance pop);
+
+    BigDecimal getLaborDirectCosts(PeriodOfPerformance pop);
+
+    BigDecimal getOtherDirectCosts(PeriodOfPerformance pop);
+
     void delete();
 
 }

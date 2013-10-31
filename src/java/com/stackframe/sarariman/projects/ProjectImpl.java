@@ -1235,6 +1235,105 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    public BigDecimal getLaborHoursBilled(PeriodOfPerformance pop) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement("SELECT SUM(h.duration) AS total " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "WHERE t.project = ? AND h.date >= ? AND h.date <= ?");
+                try {
+                    s.setInt(1, id);
+                    s.setDate(2, new Date(pop.getStart().getTime()));
+                    s.setDate(3, new Date(pop.getEnd().getTime()));
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.next();
+                        assert hasRow;
+                        return r.getBigDecimal("total");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public BigDecimal getLaborDirectCosts(PeriodOfPerformance pop) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT SUM(TRUNCATE(d.rate * h.duration + 0.009, 2)) AS total " +
+                        "FROM hours AS h " +
+                        "JOIN tasks AS t on h.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "JOIN direct_rate AS d ON (d.employee = h.employee AND h.date >= d.start AND h.date <= d.end) " +
+                        "WHERE t.project = ? AND h.date >= ? AND h.date <= ?");
+                try {
+                    s.setInt(1, id);
+                    s.setDate(2, new Date(pop.getStart().getTime()));
+                    s.setDate(3, new Date(pop.getEnd().getTime()));
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.next();
+                        assert hasRow;
+                        return r.getBigDecimal("total");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
+    public BigDecimal getOtherDirectCosts(PeriodOfPerformance pop) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                PreparedStatement s = connection.prepareStatement(
+                        "SELECT SUM(e.cost) AS total " +
+                        "FROM expenses AS e " +
+                        "JOIN tasks AS t on e.task = t.id " +
+                        "JOIN projects AS p on p.id = t.project " +
+                        "WHERE project=? AND date >= ? AND date <= ?");
+                try {
+                    s.setInt(1, id);
+                    s.setDate(2, new Date(pop.getStart().getTime()));
+                    s.setDate(3, new Date(pop.getEnd().getTime()));
+                    ResultSet r = s.executeQuery();
+                    try {
+                        boolean hasRow = r.next();
+                        assert hasRow;
+                        return r.getBigDecimal("total");
+                    } finally {
+                        r.close();
+                    }
+                } finally {
+                    s.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException se) {
+            throw new RuntimeException(se);
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
