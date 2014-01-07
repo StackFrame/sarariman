@@ -39,9 +39,8 @@
         <ul>
             <c:forEach var="row" items="${result.rows}" varStatus="varStatus">
                 <li>
-                    <c:set var="project" value="${sarariman.projects[row.id]}"/>
-                    <c:set var="customer" value="${sarariman.customers[project.customer]}"/>
-                    <a href="uninvoiced?project=${row.id}">${fn:escapeXml(project.name)} - ${fn:escapeXml(customer.name)}</a>
+                    <c:set var="project" value="${sarariman.projects.map[row.id]}"/>
+                    <a href="uninvoiced?project=${row.id}">${fn:escapeXml(project.name)} - ${fn:escapeXml(project.client.name)}</a>
                 </li>
             </c:forEach>
         </ul>
