@@ -65,6 +65,8 @@
     <body>
         <%@include file="/WEB-INF/jspf/navbar.jspf" %>
 
+        <!-- FIXME: Need total dollars and break it down into ODC versus labor. -->
+
         <div class="container-fluid">
 
             <h1>Task ${task_id}</h1>
