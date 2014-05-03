@@ -93,10 +93,6 @@
         <jsp-file>/projects.jsp</jsp-file>
     </servlet>
     <servlet>
-        <servlet-name>administrators</servlet-name>
-        <jsp-file>/administrators.jsp</jsp-file>
-    </servlet>
-    <servlet>
         <servlet-name>approvers</servlet-name>
         <jsp-file>/approvers.jsp</jsp-file>
     </servlet>
@@ -488,10 +484,6 @@
         <servlet-name>day</servlet-name>
         <url-pattern>/day</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>day</servlet-name>
-        <url-pattern>/day</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>tools</servlet-name>
         <jsp-file>/tools.jsp</jsp-file>
@@ -647,10 +639,6 @@
     <servlet-mapping>
         <servlet-name>projects</servlet-name>
         <url-pattern>/projects</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>administrators</servlet-name>
-        <url-pattern>/administrators</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>approvers</servlet-name>
