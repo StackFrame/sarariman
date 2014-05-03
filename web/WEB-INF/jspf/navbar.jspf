@@ -7,8 +7,8 @@
             <ul class="nav">
                 <!-- FIXME: Consider allowing more top-level links and hiding them on phone. Would we need to remove them from the drop down menu? -->
                 <c:forEach var="link" items="${sarariman.navbarLinks}">
-                    <c:set var="class" value="${pageContext.request.requestURI eq link.URL.path ? 'active' : ''}"/>
-                    <li class="${class}">
+                    <c:set var="clazz" value="${pageContext.request.requestURI eq link.URL.path ? 'active' : ''}"/>
+                    <li class="${clazz}">
                         <a href="${link.URL}">
                             <c:choose>
                                 <c:when test="${not empty link.iconName}">
