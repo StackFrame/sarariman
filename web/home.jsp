@@ -12,6 +12,9 @@
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
 <c:set var="employeeNumber" value="${user.number}"/>
 <!DOCTYPE html>
+<!-- Need a workflow for submitting and approving an expense. -->
+<!-- Need a "why" for expenses/ODC. -->
+
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
