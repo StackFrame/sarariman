@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.Service.State;
+import com.google.common.util.concurrent.ServiceManager;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.stackframe.reflect.ReflectionUtils;
@@ -100,8 +101,9 @@ public class Sarariman implements ServletContextListener {
 
     private final Logger logger = Logger.getLogger(getClass());
 
-    // This ExecutorService is used for background jobs which do not require synchronous completion with regard to an HTTP request.
-    private final ExecutorService backgroundExecutor = Executors.newFixedThreadPool(1);
+    // This ExecutorService is used for background jobs which do not require synchronous completion with regard to an HTTP request
+    // and for periodic background tasks.
+    private final ScheduledThreadPoolExecutor backgroundExecutor = new ScheduledThreadPoolExecutor(1);
 
     // This ExecutorService is used for background jobs which write to the database and do not require synchronous completion with
     // regard to an HTTP request.
@@ -173,13 +175,13 @@ public class Sarariman implements ServletContextListener {
 
     private LocationLog locationLog;
 
-    private final ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
-
     private SMSGateway SMS;
 
     private XMPPServer xmpp;
 
     private final Collection<Service> services = new CopyOnWriteArrayList<Service>();
+
+    private final ServiceManager serviceManager = new ServiceManager(services);
 
     private Conferences conferences;
 
@@ -387,7 +389,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public ScheduledThreadPoolExecutor getTimer() {
-        return timer;
+        return backgroundExecutor;
     }
 
     public TimesheetEntries getTimesheetEntries() {
@@ -551,7 +553,7 @@ public class Sarariman implements ServletContextListener {
             laborProjections = new LaborProjectionsImpl(getDataSource(), directory, tasks, mountPoint);
             taskAssignments = new TaskAssignmentsImpl(directory, getDataSource(), mountPoint);
             defaultTaskAssignments = new DefaultTaskAssignmentsImpl(getDataSource(), tasks);
-            loginCookies = new LoginCookies(getDataSource(), timer);
+            loginCookies = new LoginCookies(getDataSource(), backgroundExecutor);
             locationLog = new LocationLogImpl(getDataSource(), directory, backgroundDatabaseWriteExecutor);
             String keyStorePath = (String)envContext.lookup("keyStorePath");
             String keyStorePassword = (String)envContext.lookup("keyStorePassword");
@@ -560,11 +562,10 @@ public class Sarariman implements ServletContextListener {
                                             backgroundExecutor, getDataSource(), backgroundDatabaseWriteExecutor);
                 conferences = new ConferencesImpl(xmpp);
                 services.add(xmpp);
-                xmpp.start();
                 SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor, getDataSource(),
                                                             backgroundDatabaseWriteExecutor);
                 services.add(gateway);
-                gateway.start();
+                serviceManager.startAsync();
             } catch (Exception e) {
                 logger.error("trouble starting XMPP server", e);
             }
@@ -572,7 +573,7 @@ public class Sarariman implements ServletContextListener {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
 
-        cronJobs = new CronJobs(timer, this, directory, emailDispatcher);
+        cronJobs = new CronJobs(backgroundExecutor, this, directory, emailDispatcher);
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.setAttribute("sarariman", this);
@@ -609,31 +610,11 @@ public class Sarariman implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
-        timer.shutdown();
-        stopServices();
         backgroundExecutor.shutdown();
+        serviceManager.stopAsync().awaitStopped();
         backgroundDatabaseWriteExecutor.shutdown();
         // FIXME: I'm pretty sure Vysper is not shutting down correctly. Maybe we need to see if any threads created from this
         // context are left over at this point.
-    }
-
-    private void stopServices() {
-        // Initiate the shutdown of all services at once and then wait on them to finish.
-        List<ListenableFuture<State>> futureStates = new ArrayList<ListenableFuture<State>>();
-        for (Service service : services) {
-            futureStates.add(service.stop());
-        }
-
-        for (ListenableFuture<State> future : futureStates) {
-            try {
-                State state = future.get();
-                if (state != State.TERMINATED) {
-                    logger.error("unexpected state=" + state);
-                }
-            } catch (Exception e) {
-                logger.error("error when attempting to shutdown a service", e);
-            }
-        }
     }
 
 }
