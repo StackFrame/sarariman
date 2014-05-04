@@ -18,6 +18,7 @@
     <pathelement path="lib/log4j-1.2.14.jar" />
     <pathelement path="lib/xep0045-muc-0.8-SNAPSHOT.jar" />
     <pathelement path="lib/xep0060-pubsub-0.8-SNAPSHOT.jar" />
+    <pathelement path="lib/jul-to-slf4j-1.7.7.jar" />
   </path>
 
   <target name="default" description="Compile and build WAR." >
