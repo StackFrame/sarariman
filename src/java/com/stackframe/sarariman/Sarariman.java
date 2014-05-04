@@ -179,7 +179,7 @@ public class Sarariman implements ServletContextListener {
 
     private final Collection<Service> services = new CopyOnWriteArrayList<Service>();
 
-    private final ServiceManager serviceManager = new ServiceManager(services);
+    private ServiceManager serviceManager;
 
     private Conferences conferences;
 
@@ -555,21 +555,19 @@ public class Sarariman implements ServletContextListener {
             locationLog = new LocationLogImpl(getDataSource(), directory, backgroundDatabaseWriteExecutor);
             String keyStorePath = (String)envContext.lookup("keyStorePath");
             String keyStorePassword = (String)envContext.lookup("keyStorePassword");
-            try {
-                xmpp = new VysperXMPPServer("stackframe.com", directory, new File(keyStorePath), keyStorePassword,
-                                            backgroundExecutor, getDataSource(), backgroundDatabaseWriteExecutor);
-                conferences = new ConferencesImpl(xmpp);
-                services.add(xmpp);
-                SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor, getDataSource(),
-                                                            backgroundDatabaseWriteExecutor);
-                services.add(gateway);
-                serviceManager.startAsync();
-            } catch (Exception e) {
-                logger.error("trouble starting XMPP server", e);
-            }
+            xmpp = new VysperXMPPServer("stackframe.com", directory, new File(keyStorePath), keyStorePassword,
+                                        backgroundExecutor, getDataSource(), backgroundDatabaseWriteExecutor);
+            conferences = new ConferencesImpl(xmpp);
+            services.add(xmpp);
+            SMSXMPPGateway gateway = new SMSXMPPGateway(SMS, xmpp, directory, backgroundExecutor, getDataSource(),
+                                                        backgroundDatabaseWriteExecutor);
+            services.add(gateway);
         } catch (NamingException ne) {
             throw new RuntimeException(ne);  // FIXME: Is this the best thing to throw here?
         }
+
+        serviceManager = new ServiceManager(services);
+        serviceManager.startAsync();
 
         cronJobs = new CronJobs(backgroundExecutor, this, directory, emailDispatcher);
 
