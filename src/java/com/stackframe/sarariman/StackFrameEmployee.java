@@ -150,23 +150,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public boolean isAdministrator() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT administrator FROM employee WHERE id = ?");
-                try {
-                    s.setInt(1, number);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        return rs.first() && rs.getBoolean("administrator");
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement s = connection.prepareStatement("SELECT administrator FROM employee WHERE id = ?");) {
+            s.setInt(1, number);
+            try (ResultSet rs = s.executeQuery()) {
+                return rs.first() && rs.getBoolean("administrator");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
