@@ -89,6 +89,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  *
@@ -454,7 +455,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     private void setupLogger(DeploymentMode deploymentMode) {
-        // FIXME: Do I need to setup the java.util.logging bridge?
+        SLF4JBridgeHandler.install();
         if (deploymentMode == DeploymentMode.production) {
             Logger.getRootLogger().removeAllAppenders();
             final Log log = new LogImpl(getDataSource(), backgroundDatabaseWriteExecutor);
