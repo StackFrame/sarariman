@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 StackFrame, LLC
+ * Copyright (C) 2010-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -29,8 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class EmailBuilder extends HttpServlet {
 
     /**
-     * Handles the HTTP
-     * <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -39,7 +38,7 @@ public class EmailBuilder extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Collection<MimeBodyPart> attachments = new ArrayList<MimeBodyPart>();
+        Collection<MimeBodyPart> attachments = new ArrayList<>();
         String[] documentLinks = request.getParameterValues("documentLink");
         String[] documentNames = request.getParameterValues("documentName");
         for (int i = 0; i < documentLinks.length; i++) {
@@ -58,12 +57,12 @@ public class EmailBuilder extends HttpServlet {
                 } catch (MessagingException me) {
                     throw new IOException(me);
                 }
-            } catch (Exception e) {
+            } catch (IOException | ServletException e) {
                 throw new IOException("trouble rendering " + documentLinks[i], e);
             }
         }
 
-        Collection<InternetAddress> to = new ArrayList<InternetAddress>();
+        Collection<InternetAddress> to = new ArrayList<>();
         for (String toAddress : request.getParameterValues("to")) {
             try {
                 to.add(new InternetAddress(toAddress));
@@ -72,7 +71,7 @@ public class EmailBuilder extends HttpServlet {
             }
         }
 
-        Collection<InternetAddress> cc = new ArrayList<InternetAddress>();
+        Collection<InternetAddress> cc = new ArrayList<>();
         String[] ccAddresses = request.getParameterValues("cc");
         if (ccAddresses != null) {
             for (String ccAddress : ccAddresses) {
@@ -99,36 +98,20 @@ public class EmailBuilder extends HttpServlet {
         }
 
         // FIXME: This class would be very general and not know about invoices specifically if not for this.  Factor it out.
-
         final int employee = ((Employee)request.getAttribute("user")).getNumber();
         final int invoiceNumber = Integer.parseInt(request.getParameter("invoiceNumber"));
         final Sarariman sarariman = (Sarariman)getServletContext().getAttribute("sarariman");
 
-        Runnable postSendAction = new Runnable() {
-            public void run() {
-                try {
-                    Connection connection = sarariman.getDataSource().getConnection();
-                    try {
-                        try {
-                            PreparedStatement ps = connection.prepareStatement("INSERT INTO invoice_email_log (invoice, sender) VALUES(?, ?)");
-                            try {
-                                ps.setInt(1, invoiceNumber);
-                                ps.setInt(2, employee);
-                                ps.executeUpdate();
-                            } finally {
-                                ps.close();
-                            }
-                        } finally {
-                            connection.close();
-                        }
-                    } catch (SQLException se) {
-                        throw new RuntimeException(se);
-                    }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+        Runnable postSendAction = () -> {
+            try (Connection connection = sarariman.getDataSource().getConnection();
+                 PreparedStatement ps = connection.prepareStatement("INSERT INTO invoice_email_log (invoice, sender) " +
+                                                                    "VALUES(?, ?)");) {
+                ps.setInt(1, invoiceNumber);
+                ps.setInt(2, employee);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-
         };
 
         String testAddress = request.getParameter("testaddress");
@@ -146,8 +129,7 @@ public class EmailBuilder extends HttpServlet {
 
         // FIXME: This should redirect to a page that says this stuff.
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
+        try (PrintWriter out = response.getWriter();) {
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Email Sent</title>");
@@ -161,8 +143,6 @@ public class EmailBuilder extends HttpServlet {
             out.println(String.format("<p>body=%s</p>", body));
             out.println("</body>");
             out.println("</html>");
-        } finally {
-            out.close();
         }
     }
 
