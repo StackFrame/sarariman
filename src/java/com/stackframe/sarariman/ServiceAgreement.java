@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 StackFrame, LLC
+ * Copyright (C) 2011-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -18,10 +18,15 @@ import org.joda.time.DateMidnight;
 public class ServiceAgreement {
 
     private final int id;
+
     private final int project;
+
     private final DateMidnight popStart, popEnd;
+
     private final String billingPeriod;
+
     private final BigDecimal periodRate;
+
     private final String description;
 
     public ServiceAgreement(int id, int project, DateMidnight popStart, DateMidnight popEnd, String billingPeriod, BigDecimal periodRate, String description) {
@@ -65,16 +70,14 @@ public class ServiceAgreement {
     @Override
     public String toString() {
         return String.format("{id=%d,project=%d,popStart=%s,popEnd=%s,billingPeriod=%s,periodRate=%s,description='%s'}",
-                id, project, popStart, popEnd, billingPeriod, periodRate, description);
+                             id, project, popStart, popEnd, billingPeriod, periodRate, description);
     }
 
     public static ServiceAgreement lookup(Sarariman sarariman, int id) throws SQLException {
-        Connection connection = sarariman.openConnection();
-        PreparedStatement ps = connection.prepareStatement("SELECT * from service_agreements WHERE id=?");
-        try {
+        try (Connection connection = sarariman.openConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * from service_agreements WHERE id=?");) {
             ps.setInt(1, id);
-            ResultSet resultSet = ps.executeQuery();
-            try {
+            try (ResultSet resultSet = ps.executeQuery();) {
                 if (resultSet.next()) {
                     int project = resultSet.getInt("project");
                     DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
@@ -86,12 +89,7 @@ public class ServiceAgreement {
                 } else {
                     return null;
                 }
-            } finally {
-                resultSet.close();
             }
-        } finally {
-            ps.close();
-            connection.close();
         }
     }
 
