@@ -17,6 +17,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
+import com.stackframe.sarariman.taskassignments.DefaultTaskAssignment;
 import com.stackframe.sarariman.taskassignments.TaskAssignment;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
@@ -41,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.sql.DataSource;
@@ -355,12 +358,9 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Collection<Task> getDefaultTasks() {
-        Collection<Task> tasks = new ArrayList<>();
-        sarariman.getDefaultTaskAssignments().getAll().stream().filter((a) -> (fulltime || !a.isFullTimeOnly())).forEach((a) -> {
-            tasks.add(a.getTask());
-        });
-
-        return tasks;
+        Stream<DefaultTaskAssignment> globalAssignments = sarariman.getDefaultTaskAssignments().getAll().stream();
+        Stream<DefaultTaskAssignment> employeeAssignments = globalAssignments.filter((a) -> (fulltime || !a.isFullTimeOnly()));
+        return employeeAssignments.map((a) -> a.getTask()).collect(Collectors.toList());
     }
 
     @Override
