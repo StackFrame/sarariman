@@ -17,7 +17,6 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.stackframe.collect.RangeUtilities;
 import com.stackframe.sarariman.outofoffice.OutOfOfficeEntry;
 import com.stackframe.sarariman.projects.Project;
-import com.stackframe.sarariman.taskassignments.DefaultTaskAssignment;
 import com.stackframe.sarariman.taskassignments.TaskAssignment;
 import com.stackframe.sarariman.tasks.Task;
 import com.stackframe.sarariman.tickets.Ticket;
@@ -195,7 +194,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                      "p.active = TRUE ")) {
             s.setInt(1, number);
             try (ResultSet rs = s.executeQuery();) {
-                Set<Project> c = new HashSet<Project>();
+                Set<Project> c = new HashSet<>();
                 while (rs.next()) {
                     int project_id = rs.getInt("project");
                     c.add(sarariman.getProjects().get(project_id));
@@ -216,7 +215,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                      "WHERE assistant = ?");) {
             s.setInt(1, number);
             try (ResultSet rs = s.executeQuery();) {
-                Set<Project> c = new HashSet<Project>();
+                Set<Project> c = new HashSet<>();
                 while (rs.next()) {
                     int project_id = rs.getInt("project");
                     c.add(sarariman.getProjects().get(project_id));
@@ -255,7 +254,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                      "SELECT project FROM project_administrative_assistants WHERE assistant = @employee");) {
             s.execute(String.format("SET @employee = %d", number));
             try (ResultSet rs = s.executeQuery();) {
-                Collection<Project> c = new ArrayList<Project>();
+                Collection<Project> c = new ArrayList<>();
                 while (rs.next()) {
                     int project_id = rs.getInt("project");
                     c.add(sarariman.getProjects().get(project_id));
@@ -308,19 +307,9 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public SortedSet<Employee> getReports() {
         Collection<Integer> reportIDs = sarariman.getOrganizationHierarchy().getReports(number);
-        final Function<Integer, Employee> employeeIDToEmployee = new Function<Integer, Employee>() {
-            public Employee apply(Integer f) {
-                return directory.getByNumber().get(f);
-            }
-
-        };
+        final Function<Integer, Employee> employeeIDToEmployee = (Integer f) -> directory.getByNumber().get(f);
         Collection<Employee> reports = Collections2.transform(reportIDs, employeeIDToEmployee);
-        Comparator<Employee> fullNameComparator = new Comparator<Employee>() {
-            public int compare(Employee t, Employee t1) {
-                return t.getFullName().compareTo(t1.getFullName());
-            }
-
-        };
+        Comparator<Employee> fullNameComparator = (Employee t, Employee t1) -> t.getFullName().compareTo(t1.getFullName());
         return ImmutableSortedSet.copyOf(fullNameComparator, reports);
     }
 
@@ -362,12 +351,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Collection<Task> getDefaultTasks() {
-        Collection<Task> tasks = new ArrayList<Task>();
-        for (DefaultTaskAssignment a : sarariman.getDefaultTaskAssignments().getAll()) {
-            if (fulltime || !a.isFullTimeOnly()) {
-                tasks.add(a.getTask());
-            }
-        }
+        Collection<Task> tasks = new ArrayList<>();
+        sarariman.getDefaultTaskAssignments().getAll().stream().filter((a) -> (fulltime || !a.isFullTimeOnly())).forEach((a) -> {
+            tasks.add(a.getTask());
+        });
 
         return tasks;
     }
@@ -385,7 +372,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                      "(c.active = TRUE OR c.active IS NULL) ORDER BY t.billable, t.id");) {
             ps.setInt(1, number);
             try (ResultSet resultSet = ps.executeQuery();) {
-                Collection<Task> list = new ArrayList<Task>();
+                Collection<Task> list = new ArrayList<>();
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
                     list.add(sarariman.getTasks().get(id));
@@ -405,7 +392,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
              PreparedStatement ps = connection.prepareStatement("SELECT task FROM task_assignments WHERE employee = ?");) {
             ps.setInt(1, number);
             try (ResultSet resultSet = ps.executeQuery();) {
-                Collection<Task> list = new ArrayList<Task>();
+                Collection<Task> list = new ArrayList<>();
                 while (resultSet.next()) {
                     int id = resultSet.getInt("task");
                     list.add(sarariman.getTasks().get(id));
@@ -459,6 +446,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Iterable<Employee> getAdministrativeAssistants() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement("SELECT assistant " + "FROM individual_administrative_assistants " + "WHERE employee = ?");) {
@@ -493,23 +481,13 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Map<Week, Timesheet> getTimesheets() {
         ContiguousSet<Week> allWeeks = ContiguousSet.create(Range.<Week>all(), Week.discreteDomain);
-        Function<Week, Timesheet> f = new Function<Week, Timesheet>() {
-            public Timesheet apply(Week f) {
-                return sarariman.getTimesheets().get(StackFrameEmployee.this, f);
-            }
-
-        };
+        Function<Week, Timesheet> f = (Week f1) -> sarariman.getTimesheets().get(StackFrameEmployee.this, f1);
         return Maps.asMap(allWeeks, f);
     }
 
     @Override
     public Map<Task, TaskAssignment> getTaskAssignments() {
-        Function<Task, TaskAssignment> f = new Function<Task, TaskAssignment>() {
-            public TaskAssignment apply(Task f) {
-                return sarariman.getTaskAssignments().get(StackFrameEmployee.this, f);
-            }
-
-        };
+        Function<Task, TaskAssignment> f = (Task f1) -> sarariman.getTaskAssignments().get(StackFrameEmployee.this, f1);
         return Maps.asMap(sarariman.getTasks().getAll(), f);
     }
 
@@ -519,7 +497,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
              PreparedStatement s = c.prepareStatement("SELECT id FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
-                List<VacationEntry> l = new ArrayList<VacationEntry>();
+                List<VacationEntry> l = new ArrayList<>();
                 while (r.next()) {
                     int entryID = r.getInt("id");
                     l.add(sarariman.getVacations().get(entryID));
@@ -537,7 +515,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
              PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND end >= DATE(NOW())");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
-                List<OutOfOfficeEntry> l = new ArrayList<OutOfOfficeEntry>();
+                List<OutOfOfficeEntry> l = new ArrayList<>();
                 while (r.next()) {
                     int entryID = r.getInt("id");
                     l.add(sarariman.getOutOfOfficeEntries().get(entryID));
@@ -563,7 +541,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
                      "WHERE ticket_status.status != 'closed'");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
-                List<Ticket> l = new ArrayList<Ticket>();
+                List<Ticket> l = new ArrayList<>();
                 while (r.next()) {
                     int ticketID = r.getInt("ticket");
                     l.add(sarariman.getTickets().get(ticketID));
@@ -721,10 +699,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
             return false;
         }
         final StackFrameEmployee other = (StackFrameEmployee)obj;
-        if (this.number != other.number) {
-            return false;
-        }
-        return true;
+        return this.number == other.number;
     }
 
     @Override
