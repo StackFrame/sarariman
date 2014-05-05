@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2013 StackFrame, LLC
+ * Copyright (C) 2009-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -32,6 +32,7 @@ public class WeeknightTask implements Runnable {
         this.emailDispatcher = emailDispatcher;
     }
 
+    @Override
     public void run() {
         Calendar today = Calendar.getInstance();
         int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
