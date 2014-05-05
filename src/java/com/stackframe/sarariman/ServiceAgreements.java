@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 StackFrame, LLC
+ * Copyright (C) 2011-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -29,7 +29,7 @@ public class ServiceAgreements {
 
         DateMidnight now = new DateMidnight();
         DateMidnight endOfThisMonth = new DateMidnight(now.getYear(), now.getMonthOfYear(), 1).plusMonths(1).minusDays(1);
-        Set<BilledService> shouldHave = new TreeSet<BilledService>();
+        Set<BilledService> shouldHave = new TreeSet<>();
 
         DateMidnight monthStart = a.getPopStart();
         while (true) {
