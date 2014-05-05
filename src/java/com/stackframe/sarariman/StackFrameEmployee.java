@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2013 StackFrame, LLC
+ * Copyright (C) 2009-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -150,9 +150,8 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public boolean isAdministrator() {
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement s = connection.prepareStatement("SELECT administrator FROM employee WHERE id = ?");) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT administrator FROM employee WHERE id = ?");) {
             s.setInt(1, number);
             try (ResultSet rs = s.executeQuery()) {
                 return rs.first() && rs.getBoolean("administrator");
@@ -163,55 +162,34 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public void setAdministrator(boolean administrator) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE employee SET administrator = ? WHERE id = ?");
-                try {
-                    s.setBoolean(1, administrator);
-                    s.setInt(2, number);
-                    int rowCount = s.executeUpdate();
-                    assert rowCount == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE employee SET administrator = ? WHERE id = ?");) {
+            s.setBoolean(1, administrator);
+            s.setInt(2, number);
+            int rowCount = s.executeUpdate();
+            assert rowCount == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
     public Set<Project> getCurrentlyAssignedProjects() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT DISTINCT(p.id) AS project " +
-                        "FROM projects AS p " +
-                        "JOIN tasks AS t ON t.project = p.id " +
-                        "JOIN task_assignments AS ta ON ta.task = t.id " +
-                        "WHERE ta.employee = ? AND " +
-                        "p.active = TRUE ");
-                try {
-                    s.setInt(1, number);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        Set<Project> c = new HashSet<Project>();
-                        while (rs.next()) {
-                            int project_id = rs.getInt("project");
-                            c.add(sarariman.getProjects().get(project_id));
-                        }
-                        return c;
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT DISTINCT(p.id) AS project " +
+                     "FROM projects AS p " +
+                     "JOIN tasks AS t ON t.project = p.id " +
+                     "JOIN task_assignments AS ta ON ta.task = t.id " +
+                     "WHERE ta.employee = ? AND " +
+                     "p.active = TRUE ")) {
+            s.setInt(1, number);
+            try (ResultSet rs = s.executeQuery();) {
+                Set<Project> c = new HashSet<Project>();
+                while (rs.next()) {
+                    int project_id = rs.getInt("project");
+                    c.add(sarariman.getProjects().get(project_id));
                 }
-            } finally {
-                connection.close();
+                return c;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -219,31 +197,19 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Set<Project> getProjectsAdministrativelyAssisting() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT project " +
-                        "FROM project_administrative_assistants " +
-                        "WHERE assistant = ?");
-                try {
-                    s.setInt(1, number);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        Set<Project> c = new HashSet<Project>();
-                        while (rs.next()) {
-                            int project_id = rs.getInt("project");
-                            c.add(sarariman.getProjects().get(project_id));
-                        }
-                        return c;
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT project " +
+                     "FROM project_administrative_assistants " +
+                     "WHERE assistant = ?");) {
+            s.setInt(1, number);
+            try (ResultSet rs = s.executeQuery();) {
+                Set<Project> c = new HashSet<Project>();
+                while (rs.next()) {
+                    int project_id = rs.getInt("project");
+                    c.add(sarariman.getProjects().get(project_id));
                 }
-            } finally {
-                connection.close();
+                return c;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -251,49 +217,37 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Iterable<Project> getRelatedProjects() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                // FIXME: This triggers the slow query log on MySQL for no good reason that I can figure out.
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT pm.project " +
-                        "FROM project_managers AS pm " +
-                        "JOIN projects AS p ON pm.project = p.id " +
-                        "WHERE pm.employee = @employee AND " +
-                        "p.active = TRUE " +
-                        "UNION " +
-                        "SELECT pm.project " +
-                        "FROM project_cost_managers AS pm " +
-                        "JOIN projects AS p ON pm.project = p.id " +
-                        "WHERE pm.employee = @employee AND " +
-                        "p.active = TRUE " +
-                        "UNION " +
-                        "SELECT DISTINCT(p.id) AS project " +
-                        "FROM projects AS p " +
-                        "JOIN tasks AS t ON t.project = p.id " +
-                        "JOIN task_assignments AS ta ON ta.task=t.id " +
-                        "WHERE ta.employee = @employee AND " +
-                        "p.active = TRUE " +
-                        "UNION " +
-                        "SELECT project FROM project_administrative_assistants WHERE assistant = @employee");
-                try {
-                    s.execute(String.format("SET @employee = %d", number));
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        Collection<Project> c = new ArrayList<Project>();
-                        while (rs.next()) {
-                            int project_id = rs.getInt("project");
-                            c.add(sarariman.getProjects().get(project_id));
-                        }
-                        return c;
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             // FIXME: This triggers the slow query log on MySQL for no good reason that I can figure out.
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT pm.project " +
+                     "FROM project_managers AS pm " +
+                     "JOIN projects AS p ON pm.project = p.id " +
+                     "WHERE pm.employee = @employee AND " +
+                     "p.active = TRUE " +
+                     "UNION " +
+                     "SELECT pm.project " +
+                     "FROM project_cost_managers AS pm " +
+                     "JOIN projects AS p ON pm.project = p.id " +
+                     "WHERE pm.employee = @employee AND " +
+                     "p.active = TRUE " +
+                     "UNION " +
+                     "SELECT DISTINCT(p.id) AS project " +
+                     "FROM projects AS p " +
+                     "JOIN tasks AS t ON t.project = p.id " +
+                     "JOIN task_assignments AS ta ON ta.task=t.id " +
+                     "WHERE ta.employee = @employee AND " +
+                     "p.active = TRUE " +
+                     "UNION " +
+                     "SELECT project FROM project_administrative_assistants WHERE assistant = @employee");) {
+            s.execute(String.format("SET @employee = %d", number));
+            try (ResultSet rs = s.executeQuery();) {
+                Collection<Project> c = new ArrayList<Project>();
+                while (rs.next()) {
+                    int project_id = rs.getInt("project");
+                    c.add(sarariman.getProjects().get(project_id));
                 }
-            } finally {
-                connection.close();
+                return c;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -351,28 +305,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public BigDecimal getDirectRate() {
-        try {
-            Connection connection = sarariman.openConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? ORDER BY effective DESC LIMIT 1");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        if (hasRow) {
-                            return r.getBigDecimal("rate");
-                        } else {
-                            return null;
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = sarariman.openConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? ORDER BY effective DESC LIMIT 1");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                boolean hasRow = r.first();
+                if (hasRow) {
+                    return r.getBigDecimal("rate");
+                } else {
+                    return null;
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -380,29 +322,17 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public BigDecimal getDirectRate(java.sql.Date date) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? AND effective <= ? ORDER BY effective DESC LIMIT 1");
-                try {
-                    s.setInt(1, number);
-                    s.setDate(2, date);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        if (hasRow) {
-                            return r.getBigDecimal("rate");
-                        } else {
-                            return null;
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? AND effective <= ? ORDER BY effective DESC LIMIT 1");) {
+            s.setInt(1, number);
+            s.setDate(2, date);
+            try (ResultSet r = s.executeQuery();) {
+                boolean hasRow = r.first();
+                if (hasRow) {
+                    return r.getBigDecimal("rate");
+                } else {
+                    return null;
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -421,37 +351,25 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Iterable<Task> getTasks() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT t.id FROM tasks AS t " +
-                        "JOIN task_assignments AS a ON a.task = t.id " +
-                        "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
-                        "LEFT OUTER JOIN customers AS c ON c.id = p.customer " +
-                        "WHERE employee = ? AND t.active = TRUE AND " +
-                        "(p.active = TRUE OR p.active IS NULL) AND " +
-                        "(c.active = TRUE OR c.active IS NULL) ORDER BY t.billable, t.id");
-                try {
-                    ps.setInt(1, number);
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        Collection<Task> list = new ArrayList<Task>();
-                        while (resultSet.next()) {
-                            int id = resultSet.getInt("id");
-                            list.add(sarariman.getTasks().get(id));
-                        }
-
-                        list.addAll(getDefaultTasks());
-                        return list;
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT t.id FROM tasks AS t " +
+                     "JOIN task_assignments AS a ON a.task = t.id " +
+                     "LEFT OUTER JOIN projects AS p ON t.project = p.id " +
+                     "LEFT OUTER JOIN customers AS c ON c.id = p.customer " +
+                     "WHERE employee = ? AND t.active = TRUE AND " +
+                     "(p.active = TRUE OR p.active IS NULL) AND " +
+                     "(c.active = TRUE OR c.active IS NULL) ORDER BY t.billable, t.id");) {
+            ps.setInt(1, number);
+            try (ResultSet resultSet = ps.executeQuery();) {
+                Collection<Task> list = new ArrayList<Task>();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    list.add(sarariman.getTasks().get(id));
                 }
-            } finally {
-                connection.close();
+
+                list.addAll(getDefaultTasks());
+                return list;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -459,29 +377,17 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Iterable<Task> getAssignedTasks() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT task FROM task_assignments WHERE employee = ?");
-                try {
-                    ps.setInt(1, number);
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        Collection<Task> list = new ArrayList<Task>();
-                        while (resultSet.next()) {
-                            int id = resultSet.getInt("task");
-                            list.add(sarariman.getTasks().get(id));
-                        }
-
-                        return list;
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT task FROM task_assignments WHERE employee = ?");) {
+            ps.setInt(1, number);
+            try (ResultSet resultSet = ps.executeQuery();) {
+                Collection<Task> list = new ArrayList<Task>();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("task");
+                    list.add(sarariman.getTasks().get(id));
                 }
-            } finally {
-                connection.close();
+
+                return list;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -494,25 +400,13 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public BigDecimal getPaidTimeOff() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT SUM(amount) AS total " + "FROM paid_time_off " + "WHERE employee = ?");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBigDecimal("total");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT SUM(amount) AS total " + "FROM paid_time_off " + "WHERE employee = ?");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getBigDecimal("total");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -521,30 +415,18 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
 
     public BigDecimal getRecentEntryLatency() {
         // FIXME: This needs to be parameterized and/or moved elsewhere
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average " +
-                        "FROM hours " +
-                        "JOIN hours_changelog ON hours.employee = hours_changelog.employee AND " +
-                        "hours.task = hours_changelog.task AND hours.date = hours_changelog.date " +
-                        "WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBigDecimal("average");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT AVG(DATEDIFF(hours_changelog.timestamp, hours.date)) AS average " +
+                     "FROM hours " +
+                     "JOIN hours_changelog ON hours.employee = hours_changelog.employee AND " +
+                     "hours.task = hours_changelog.task AND hours.date = hours_changelog.date " +
+                     "WHERE hours.employee = ? AND hours.date > DATE_SUB(NOW(), INTERVAL 7 DAY)");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getBigDecimal("average");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -552,28 +434,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Iterable<Employee> getAdministrativeAssistants() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT assistant " + "FROM individual_administrative_assistants " + "WHERE employee = ?");
-                ps.setInt(1, number);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
-                        while (resultSet.next()) {
-                            int task_id = resultSet.getInt("assistant");
-                            listBuilder.add(directory.getByNumber().get(task_id));
-                        }
-                        return listBuilder.build();
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT assistant " + "FROM individual_administrative_assistants " + "WHERE employee = ?");) {
+            ps.setInt(1, number);
+            try (ResultSet resultSet = ps.executeQuery();) {
+                ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
+                while (resultSet.next()) {
+                    int task_id = resultSet.getInt("assistant");
+                    listBuilder.add(directory.getByNumber().get(task_id));
                 }
-            } finally {
-                connection.close();
+                return listBuilder.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -614,28 +484,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Iterable<VacationEntry> getUpcomingVacation() {
-        try {
-            Connection c = dataSource.getConnection();
-            try {
-                PreparedStatement s = c.prepareStatement("SELECT id FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        List<VacationEntry> l = new ArrayList<VacationEntry>();
-                        while (r.next()) {
-                            int entryID = r.getInt("id");
-                            l.add(sarariman.getVacations().get(entryID));
-                        }
-                        return l;
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement s = c.prepareStatement("SELECT id FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                List<VacationEntry> l = new ArrayList<VacationEntry>();
+                while (r.next()) {
+                    int entryID = r.getInt("id");
+                    l.add(sarariman.getVacations().get(entryID));
                 }
-            } finally {
-                c.close();
+                return l;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -643,28 +501,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice() {
-        try {
-            Connection c = dataSource.getConnection();
-            try {
-                PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND end >= DATE(NOW())");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        List<OutOfOfficeEntry> l = new ArrayList<OutOfOfficeEntry>();
-                        while (r.next()) {
-                            int entryID = r.getInt("id");
-                            l.add(sarariman.getOutOfOfficeEntries().get(entryID));
-                        }
-                        return l;
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND end >= DATE(NOW())");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                List<OutOfOfficeEntry> l = new ArrayList<OutOfOfficeEntry>();
+                while (r.next()) {
+                    int entryID = r.getInt("id");
+                    l.add(sarariman.getOutOfOfficeEntries().get(entryID));
                 }
-            } finally {
-                c.close();
+                return l;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -672,37 +518,25 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public Collection<Ticket> getUnclosedTickets() {
-        try {
-            Connection c = dataSource.getConnection();
-            try {
-                PreparedStatement s = c.prepareStatement(
-                        "SELECT updated.ticket, updated.latest, ticket_status.status " +
-                        "FROM (SELECT assigned.ticket, MAX(ticket_status.updated) AS latest " +
-                        "FROM (SELECT ticket, SUM(assignment) AS sum " +
-                        "FROM ticket_assignment WHERE assignee = ? GROUP BY ticket) AS assigned " +
-                        "JOIN ticket_status ON ticket_status.ticket = assigned.ticket " +
-                        "WHERE assigned.sum > 0 GROUP BY ticket) AS updated " +
-                        "JOIN ticket_status ON updated.ticket = ticket_status.ticket AND updated.latest = ticket_status.updated " +
-                        "WHERE ticket_status.status != 'closed'");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        List<Ticket> l = new ArrayList<Ticket>();
-                        while (r.next()) {
-                            int ticketID = r.getInt("ticket");
-                            l.add(sarariman.getTickets().get(ticketID));
-                        }
-
-                        return l;
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement s = c.prepareStatement(
+                     "SELECT updated.ticket, updated.latest, ticket_status.status " +
+                     "FROM (SELECT assigned.ticket, MAX(ticket_status.updated) AS latest " +
+                     "FROM (SELECT ticket, SUM(assignment) AS sum " +
+                     "FROM ticket_assignment WHERE assignee = ? GROUP BY ticket) AS assigned " +
+                     "JOIN ticket_status ON ticket_status.ticket = assigned.ticket " +
+                     "WHERE assigned.sum > 0 GROUP BY ticket) AS updated " +
+                     "JOIN ticket_status ON updated.ticket = ticket_status.ticket AND updated.latest = ticket_status.updated " +
+                     "WHERE ticket_status.status != 'closed'");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                List<Ticket> l = new ArrayList<Ticket>();
+                while (r.next()) {
+                    int ticketID = r.getInt("ticket");
+                    l.add(sarariman.getTickets().get(ticketID));
                 }
-            } finally {
-                c.close();
+
+                return l;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -710,28 +544,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public BigDecimal getMonthlyHealthInsurancePremium() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT p.premium AS premium FROM insurance_membership AS m JOIN insurance_premium AS p ON m.plan = p.plan AND m.coverage = p.coverage AND m.begin <= DATE(NOW()) and (m.end IS NULL OR m.end >= DATE(NOW())) AND employee=?");
-                try {
-                    s.setInt(1, number);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        if (!hasRow) {
-                            return BigDecimal.ZERO;
-                        } else {
-                            return r.getBigDecimal("premium");
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT p.premium AS premium FROM insurance_membership AS m JOIN insurance_premium AS p ON m.plan = p.plan AND m.coverage = p.coverage AND m.begin <= DATE(NOW()) and (m.end IS NULL OR m.end >= DATE(NOW())) AND employee=?");) {
+            s.setInt(1, number);
+            try (ResultSet r = s.executeQuery();) {
+                boolean hasRow = r.first();
+                if (!hasRow) {
+                    return BigDecimal.ZERO;
+                } else {
+                    return r.getBigDecimal("premium");
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -739,23 +561,11 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public boolean isPayrollAdministrator() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT payroll_administrator FROM employee WHERE id = ?");
-                try {
-                    s.setInt(1, number);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        return rs.first() && rs.getBoolean("payroll_administrator");
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT payroll_administrator FROM employee WHERE id = ?");) {
+            s.setInt(1, number);
+            try (ResultSet rs = s.executeQuery();) {
+                return rs.first() && rs.getBoolean("payroll_administrator");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -763,44 +573,23 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public void setPayrollAdministrator(boolean payrollAdministrator) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE employee SET payroll_administrator = ? WHERE id = ?");
-                try {
-                    s.setBoolean(1, payrollAdministrator);
-                    s.setInt(2, number);
-                    int rowCount = s.executeUpdate();
-                    assert rowCount == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE employee SET payroll_administrator = ? WHERE id = ?");) {
+            s.setBoolean(1, payrollAdministrator);
+            s.setInt(2, number);
+            int rowCount = s.executeUpdate();
+            assert rowCount == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
     public boolean isBenefitsAdministrator() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT benefits_administrator FROM employee WHERE id = ?");
-                try {
-                    s.setInt(1, number);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        return rs.first() && rs.getBoolean("benefits_administrator");
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT benefits_administrator FROM employee WHERE id = ?");) {
+            s.setInt(1, number);
+            try (ResultSet rs = s.executeQuery();) {
+                return rs.first() && rs.getBoolean("benefits_administrator");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -808,21 +597,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     public void setBenefitsAdministrator(boolean benefitsAdministrator) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE employee SET benefits_administrator = ? WHERE id = ?");
-                try {
-                    s.setBoolean(1, benefitsAdministrator);
-                    s.setInt(2, number);
-                    int rowCount = s.executeUpdate();
-                    assert rowCount == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE employee SET benefits_administrator = ? WHERE id = ?");) {
+            s.setBoolean(1, benefitsAdministrator);
+            s.setInt(2, number);
+            int rowCount = s.executeUpdate();
+            assert rowCount == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
