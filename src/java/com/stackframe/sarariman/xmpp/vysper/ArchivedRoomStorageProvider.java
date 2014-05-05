@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.xmpp.vysper;
@@ -25,7 +25,7 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.storage.RoomStorageP
  */
 public class ArchivedRoomStorageProvider implements RoomStorageProvider {
 
-    private Map<Entity, Room> rooms = new ConcurrentHashMap<Entity, Room>();
+    private final Map<Entity, Room> rooms = new ConcurrentHashMap<>();
 
     private final DataSource dataSource;
 
@@ -36,28 +36,34 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
         this.databaseWriteExecutor = databaseWriteExecutor;
     }
 
+    @Override
     public void initialize() {
     }
 
+    @Override
     public Room createRoom(MUCFeatures features, Entity jid, String name, RoomType... roomTypes) {
         Room room = new ArchivedRoom(dataSource, databaseWriteExecutor, jid, name, roomTypes);
         rooms.put(jid, room);
         return room;
     }
 
+    @Override
     public Collection<Room> getAllRooms() {
         return Collections.unmodifiableCollection(rooms.values());
     }
 
+    @Override
     public Room findRoom(Entity jid) {
         return rooms.get(jid);
     }
 
+    @Override
     public boolean roomExists(Entity jid) {
         System.err.println("ArchivedRoomStorageProvider::roomExists entered. jid=" + jid);
         return rooms.containsKey(jid);
     }
 
+    @Override
     public void deleteRoom(Entity jid) {
         System.err.println("ArchivedRoomStorageProvider::deleteRoom entered. jid=" + jid);
         rooms.remove(jid);

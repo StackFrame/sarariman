@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.xmpp.vysper;
@@ -28,11 +28,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.apache.vysper.mina.TCPEndpoint;
 import org.apache.vysper.storage.OpenStorageProviderRegistry;
 import org.apache.vysper.storage.StorageProviderRegistry;
+import org.apache.vysper.xml.fragment.XMLSemanticError;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.addressing.EntityImpl;
 import org.apache.vysper.xmpp.authentication.AccountCreationException;
@@ -115,14 +118,17 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     }
 
     private final AccountManagement accountManagement = new AccountManagement() {
+        @Override
         public void addUser(Entity entity, String string) throws AccountCreationException {
             throw new AccountCreationException("We do not support adding a user via XMPP/IM/Jabber.");
         }
 
+        @Override
         public void changePassword(Entity entity, String string) throws AccountCreationException {
             throw new AccountCreationException("We do not (yet) support changing a password via XMPP/IM/Jabber.");
         }
 
+        @Override
         public boolean verifyAccountExists(Entity entity) {
             Employee employee = employee(entity);
             return employee != null && employee.isActive();
@@ -131,12 +137,12 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     };
 
     private final UserAuthentication userAuthAdaptor = new UserAuthentication() {
+        @Override
         public boolean verifyCredentials(Entity entity, String passwordCleartext, Object credentials) {
             return verifyCredentials(entity.getNode(), passwordCleartext, credentials);
         }
 
         private boolean verifyCredentials(String username, String passwordCleartext, Object credentials) {
-            System.err.println("in verifyCredentials with username. username=" + username);
             final Authenticator authenticator = new AuthenticatorImpl(directory);
             return authenticator.checkCredentials(username, passwordCleartext);
         }
@@ -160,7 +166,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         private final Set<String> groupsToIgnore = ImmutableSet.of("overhead");
 
         private List<String> commonGroupNames(Employee e1, Employee e2) {
-            List<String> groupNames = new ArrayList<String>();
+            List<String> groupNames = new ArrayList<>();
             groupNames.addAll(defaultGroups);
             groupNames.addAll(Sets.intersection(groups(e1), groups(e2)));
             groupNames.removeAll(groupsToIgnore);
@@ -168,10 +174,10 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         }
 
         private List<RosterGroup> commonGroups(Employee e1, Employee e2) {
-            List<RosterGroup> groups = new ArrayList<RosterGroup>();
-            for (String groupName : commonGroupNames(e1, e2)) {
+            List<RosterGroup> groups = new ArrayList<>();
+            commonGroupNames(e1, e2).stream().forEach((groupName) -> {
                 groups.add(new RosterGroup(groupName));
-            }
+            });
 
             return groups;
         }
@@ -181,19 +187,22 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                                   AskSubscriptionType.ASK_SUBSCRIBED, groups);
         }
 
+        @Override
         public Roster retrieve(final Entity entity) throws RosterException {
             return new Roster() {
+                @Override
                 public Iterator<RosterItem> iterator() {
-                    Collection<RosterItem> items = new ArrayList<RosterItem>();
+                    Collection<RosterItem> items = new ArrayList<>();
                     Employee employee = employee(entity);
                     Collection<Employee> peers = peers(employee);
-                    for (Employee peer : peers) {
+                    peers.stream().forEach((peer) -> {
                         items.add(rosterItem(peer, commonGroups(employee, peer)));
-                    }
+                    });
 
                     return Collections.unmodifiableCollection(items).iterator();
                 }
 
+                @Override
                 public RosterItem getEntry(Entity peerEntity) {
                     Employee employee = employee(entity);
                     Employee peer = employee(peerEntity);
@@ -203,16 +212,19 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
             };
         }
 
+        @Override
         public void addContact(Entity entity, RosterItem ri) throws RosterException {
             throw new RosterException("We don't (yet) support allowing an employee to manipulate the roster.");
         }
 
+        @Override
         public RosterItem getContact(Entity entity, Entity peerEntity) throws RosterException {
             Employee employee = employee(entity);
             Employee peer = employee(peerEntity);
             return rosterItem(peer, commonGroups(employee, peer));
         }
 
+        @Override
         public void removeContact(Entity entity, Entity entity1) throws RosterException {
             throw new RosterException("We don't (yet) support allowing an employee to manipulate the roster.");
         }
@@ -221,15 +233,18 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     // Trying to figure out how this should work.
     private final VcardTempPersistenceManager vtpm = new VcardTempPersistenceManager() {
+        @Override
         public boolean isAvailable() {
             return true;
         }
 
+        @Override
         public String getVcard(Entity entity) {
             System.err.println("in VcardTempPersistenceManager::getVcard entity=" + entity);
             return null;
         }
 
+        @Override
         public boolean setVcard(Entity entity, String xml) {
             System.err.println("in VcardTempPersistenceManager::setVcard entity=" + entity + " xml=" + xml);
             return false;
@@ -239,15 +254,18 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     // Trying to figure out how this should work.
     private final PrivateDataPersistenceManager pdpm = new PrivateDataPersistenceManager() {
+        @Override
         public boolean isAvailable() {
             return true;
         }
 
+        @Override
         public String getPrivateData(Entity entity, String key) {
             System.err.println("in PrivateDataPersistenceManager::getPrivateData entity=" + entity + " key=" + key);
             return null;
         }
 
+        @Override
         public boolean setPrivateData(Entity entity, String key, String xml) {
             System.err.println("in PrivateDataPersistenceManager::setPrivateData entity=" + entity + " key=" + key + " xml=" + xml);
             return false;
@@ -257,6 +275,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     @Override
     protected void startUp() throws Exception {
+        System.err.println("startUp being called");
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
                 add(new ArchivedRoomStorageProvider(dataSource, databaseWriteExecutor));
@@ -292,7 +311,9 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     @Override
     protected void shutDown() throws Exception {
+        System.err.println("shutDown being called");
         xmpp.stop();
+        System.err.println("shutDown done");
         // FIXME: I'm pretty sure Vysper is not shutting down correctly. Maybe we need to see if any threads created from this
         // context are left over at this point.
     }
@@ -307,12 +328,14 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         return executor;
     }
 
+    @Override
     public Collection<Room> getRooms() {
         Collection<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room> rooms = conference.getRoomStorageProvider().getAllRooms();
         ImmutableList.Builder<Room> b = ImmutableList.<Room>builder();
         for (org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room room : rooms) {
             final org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Room roomImpl = room;
             Room r = new Room() {
+                @Override
                 public String getName() {
                     return roomImpl.getName();
                 }
@@ -325,18 +348,20 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                     return new Occupant(convert(concreteOccupant.getJid()));
                 }
 
+                @Override
                 public Collection<Occupant> getOccupants() {
                     Set<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant> occupants = roomImpl.getOccupants();
                     ImmutableList.Builder<Occupant> b = ImmutableList.<Occupant>builder();
-                    for (org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant occupant : occupants) {
+                    occupants.stream().forEach((occupant) -> {
                         b.add(convert(occupant));
-                    }
+                    });
 
                     return b.build();
                 }
 
+                @Override
                 public Collection<Message> getDiscussionHistory() {
-                    Collection<Message> history = new ArrayList<Message>();
+                    Collection<Message> history = new ArrayList<>();
                     // FIXME: Implement me!
                     return history;
                 }
@@ -375,6 +400,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         return directory.getByUserName().get(bareUserName);
     }
 
+    @Override
     public Presence getPresence(String username) {
         Employee employee = employeeFromJID(username);
         LatestPresenceCache presenceCache = xmpp.getServerRuntimeContext().getPresenceCache();
@@ -387,7 +413,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
                 ShowType show = showString == null ? ShowType.away : ShowType.valueOf(showString);
                 Presence p = new Presence(type(presence), show, presence.getStatus(null));
                 return p;
-            } catch (Exception e) {
+            } catch (XMLSemanticError e) {
                 logger.error("exception getting presence status", e);
                 return new Presence(PresenceType.unavailable, ShowType.away, null);
             }
@@ -395,20 +421,9 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
     }
 
     private Collection<Employee> peers(Employee e) {
-        Collection<Employee> result = new ArrayList<Employee>();
-        for (Employee employee : directory.getEmployees()) {
-            if (!employee.isActive()) {
-                continue;
-            }
-
-            if (employee == e) {
-                continue;
-            }
-
-            result.add(employee);
-        }
-
-        return result;
+        Stream<Employee> activeEmployees = directory.getEmployees().stream().filter((employee) -> employee.isActive());
+        Stream<Employee> others = activeEmployees.filter((employee) -> !(employee == e));
+        return others.collect(Collectors.toList());
     }
 
     private void updatePresenceCache(Employee employee, Presence presence) {
@@ -416,6 +431,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         presenceCache.put(entity(employee, "sarariman"), presenceStanza(employee, presence, null));
     }
 
+    @Override
     public void setPresence(String username, Presence presence) {
         Employee from = employeeFromJID(username);
 

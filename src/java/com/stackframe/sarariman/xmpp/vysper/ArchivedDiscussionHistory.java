@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.xmpp.vysper;
@@ -17,7 +17,6 @@ import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.DiscussionHistory;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant;
 import org.apache.vysper.xmpp.stanza.MessageStanza;
-import org.apache.vysper.xmpp.stanza.Stanza;
 
 /**
  * This is just a subclass that overrides appending new elements to the history so that we can archive them. At some point we might
@@ -39,37 +38,24 @@ public class ArchivedDiscussionHistory extends DiscussionHistory {
     }
 
     private void writeToDatabase(String from, String room, String message, long timestamp) {
-        try {
-            Connection c = dataSource.getConnection();
-            try {
-                PreparedStatement s = c.prepareStatement(
-                        "INSERT INTO conference_log (`from`, room, message, `timestamp`) " +
-                        "VALUES(?, ?, ?, ?)");
-                try {
-                    s.setString(1, from);
-                    s.setString(2, room);
-                    s.setString(3, message);
-                    s.setTimestamp(4, new Timestamp(timestamp));
-                    int numRowsInserted = s.executeUpdate();
-                    assert numRowsInserted == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                c.close();
-            }
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement s = c.prepareStatement(
+                     "INSERT INTO conference_log (`from`, room, message, `timestamp`) " +
+                     "VALUES(?, ?, ?, ?)");) {
+            s.setString(1, from);
+            s.setString(2, room);
+            s.setString(3, message);
+            s.setTimestamp(4, new Timestamp(timestamp));
+            int numRowsInserted = s.executeUpdate();
+            assert numRowsInserted == 1;
         } catch (SQLException e) {
             logger.error("exception when inserting message into conference_log", e);
         }
     }
 
     private void archive(final String from, final String room, final String message) {
-        System.err.println("from=" + from + " room=" + room + " message='" + message + "'");
-        databaseWriteExecutor.execute(new Runnable() {
-            public void run() {
-                writeToDatabase(from, room, message, System.currentTimeMillis());
-            }
-
+        databaseWriteExecutor.execute(() -> {
+            writeToDatabase(from, room, message, System.currentTimeMillis());
         });
     }
 
