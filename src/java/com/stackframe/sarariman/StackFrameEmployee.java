@@ -4,8 +4,6 @@
  */
 package com.stackframe.sarariman;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
@@ -308,8 +306,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public SortedSet<Employee> getReports() {
         Collection<Integer> reportIDs = sarariman.getOrganizationHierarchy().getReports(number);
-        final Function<Integer, Employee> employeeIDToEmployee = (Integer f) -> directory.getByNumber().get(f);
-        Collection<Employee> reports = Collections2.transform(reportIDs, employeeIDToEmployee);
+        Collection<Employee> reports = reportIDs.stream().map((n) -> directory.getByNumber().get(n)).collect(Collectors.toList());
         Comparator<Employee> fullNameComparator = (Employee t, Employee t1) -> t.getFullName().compareTo(t1.getFullName());
         return ImmutableSortedSet.copyOf(fullNameComparator, reports);
     }
@@ -489,14 +486,16 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Map<Week, Timesheet> getTimesheets() {
         ContiguousSet<Week> allWeeks = ContiguousSet.create(Range.<Week>all(), Week.discreteDomain);
-        Function<Week, Timesheet> f = (Week f1) -> sarariman.getTimesheets().get(StackFrameEmployee.this, f1);
-        return Maps.asMap(allWeeks, f);
+        return Maps.asMap(allWeeks, (Week w) -> {
+            return sarariman.getTimesheets().get(StackFrameEmployee.this, w);
+        });
     }
 
     @Override
     public Map<Task, TaskAssignment> getTaskAssignments() {
-        Function<Task, TaskAssignment> f = (Task f1) -> sarariman.getTaskAssignments().get(StackFrameEmployee.this, f1);
-        return Maps.asMap(sarariman.getTasks().getAll(), f);
+        return Maps.asMap(sarariman.getTasks().getAll(), (Task t) -> {
+            return sarariman.getTaskAssignments().get(StackFrameEmployee.this, t);
+        });
     }
 
     @Override
