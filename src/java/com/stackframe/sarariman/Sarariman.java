@@ -74,6 +74,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.stream.Collectors;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -117,7 +118,7 @@ public class Sarariman implements ServletContextListener {
 
     private final Collection<LaborCategory> laborCategories = new LaborCategoryTable(this);
 
-    private final Collection<Extension> extensions = new ArrayList<Extension>();
+    private final Collection<Extension> extensions = new ArrayList<>();
 
     private final Holidays holidays = new HolidaysImpl(getDataSource());
 
@@ -177,7 +178,7 @@ public class Sarariman implements ServletContextListener {
 
     private XMPPServer xmpp;
 
-    private final Collection<Service> services = new CopyOnWriteArrayList<Service>();
+    private final Collection<Service> services = new CopyOnWriteArrayList<>();
 
     private ServiceManager serviceManager;
 
@@ -197,7 +198,7 @@ public class Sarariman implements ServletContextListener {
     private static Properties lookupDirectoryProperties(Context envContext) throws NamingException {
         Properties props = new Properties();
         String[] propNames = new String[]{Context.INITIAL_CONTEXT_FACTORY, Context.PROVIDER_URL, Context.SECURITY_AUTHENTICATION,
-            Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
+                                          Context.SECURITY_PRINCIPAL, Context.SECURITY_CREDENTIALS};
 
         for (String s : propNames) {
             props.put(s, envContext.lookup(s));
@@ -279,10 +280,10 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Map<Long, LaborCategory> getLaborCategories() {
-        Map<Long, LaborCategory> result = new LinkedHashMap<Long, LaborCategory>();
-        for (LaborCategory lc : laborCategories) {
+        Map<Long, LaborCategory> result = new LinkedHashMap<>();
+        laborCategories.stream().forEach((lc) -> {
             result.put(lc.getId(), lc);
-        }
+        });
 
         return result;
     }
@@ -304,12 +305,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Collection<Employee> employees(Collection<Integer> ids) {
-        Collection<Employee> result = new ArrayList<Employee>();
-        for (int id : ids) {
-            result.add(directory.getByNumber().get(id));
-        }
-
-        return result;
+        return ids.stream().map(n -> directory.getByNumber().get(n)).collect(Collectors.toList());
     }
 
     public Holidays getHolidays() {
@@ -345,7 +341,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Collection<Audit> getGlobalAudits() {
-        Collection<Audit> c = new ArrayList<Audit>();
+        Collection<Audit> c = new ArrayList<>();
         c.add(new OrgChartGlobalAudit(this));
         c.add(new TimesheetAudit(this, directory));
         c.add(new ContactsGlobalAudit(getDataSource(), contacts));
@@ -496,6 +492,7 @@ public class Sarariman implements ServletContextListener {
         }
     }
 
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
         Logger.getRootLogger().addAppender(new ConsoleAppender());
         final String applicationName = sce.getServletContext().getServletContextName();
@@ -578,20 +575,17 @@ public class Sarariman implements ServletContextListener {
         cronJobs.start();
         final String hostname = getHostname();
 
-        Runnable sendStartupEmailNotification = new Runnable() {
-            public void run() {
-                try {
-                    for (Employee employee : getAdministrators()) {
-                        String message = String.format("%s version %s has been started on %s at %s.", applicationName, getVersion(),
-                                                       hostname, mountPoint);
-                        emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
-                        SMS.send(employee.getMobile(), "Sarariman has been started.");
-                    }
-                } catch (Exception e) {
-                    logger.error("trouble sending startup notification", e);
+        Runnable sendStartupEmailNotification = () -> {
+            try {
+                for (Employee employee : getAdministrators()) {
+                    String message = String.format("%s version %s has been started on %s at %s.", applicationName, getVersion(),
+                                                   hostname, mountPoint);
+                    emailDispatcher.send(employee.getEmail(), null, "sarariman started", message);
+                    SMS.send(employee.getMobile(), "Sarariman has been started.");
                 }
+            } catch (Exception e) {
+                logger.error("trouble sending startup notification", e);
             }
-
         };
         backgroundExecutor.execute(sendStartupEmailNotification);
     }
@@ -604,6 +598,7 @@ public class Sarariman implements ServletContextListener {
         }
     }
 
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
         serviceManager.stopAsync().awaitStopped();
