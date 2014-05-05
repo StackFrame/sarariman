@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -79,29 +80,20 @@ public class AddressBooksServlet extends WebDAVServlet {
 
 //            prop = d.createElementNS("DAV:", "prop");
 //            propstat.appendChild(prop);
-
 //            Element currentUserPrincipal = d.createElementNS("DAV:", "current-user-principal");
 //            prop.appendChild(currentUserPrincipal);
-
 //            href = d.createElementNS("DAV:", "href");
 //            currentUserPrincipal.appendChild(href);
-
 //            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
-
 //            prop = d.createElementNS("DAV:", "prop");
 //            propstat.appendChild(prop);
-
 //            Element principalURL = d.createElementNS("DAV:", "principal-URL");
 //            prop.appendChild(principalURL);
-
 //            href = d.createElementNS("DAV:", "href");
 //            principalURL.appendChild(href);
-
 //            href.appendChild(d.createTextNode(String.format("%s/staff/%s", contextPath, username)));
-
 //            prop = d.createElementNS("DAV:", "prop");
 //            propstat.appendChild(prop);
-
             Element addressBookHomeSet = d.createElementNS("urn:ietf:params:xml:ns:carddav", "addressbook-home-set");
             prop.appendChild(addressBookHomeSet);
 
@@ -195,14 +187,14 @@ public class AddressBooksServlet extends WebDAVServlet {
 
     private static void serialize(Document document, Writer writer) {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformerFactory.setAttribute("indent-number", new Integer(4));
+        transformerFactory.setAttribute("indent-number", 4);
         try {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             StreamResult result = new StreamResult(writer);
             transformer.transform(new DOMSource(document), result);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | TransformerException e) {
             throw new RuntimeException(e);
         }
     }
@@ -214,7 +206,7 @@ public class AddressBooksServlet extends WebDAVServlet {
     }
 
     private Iterable<String> headers(HttpServletRequest request) {
-        Collection<String> headers = new ArrayList<String>();
+        Collection<String> headers = new ArrayList<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
@@ -246,9 +238,10 @@ public class AddressBooksServlet extends WebDAVServlet {
 
         System.err.println("going to send response:");
         System.err.println(serialize(d));
-        PrintWriter writer = response.getWriter();
-        serialize(d, writer);
-        writer.close();
+        try (PrintWriter writer = response.getWriter();) {
+            serialize(d, writer);
+        }
+
         response.setStatus(207);
     }
 
