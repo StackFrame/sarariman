@@ -32,7 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
-import org.apache.vysper.mina.TCPEndpoint;
+import org.apache.vysper.mina.C2SEndpoint;
+import org.apache.vysper.mina.S2SEndpoint;
 import org.apache.vysper.storage.OpenStorageProviderRegistry;
 import org.apache.vysper.storage.StorageProviderRegistry;
 import org.apache.vysper.xml.fragment.XMLSemanticError;
@@ -294,7 +295,8 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
         };
 
-        xmpp.addEndpoint(new TCPEndpoint());
+        xmpp.addEndpoint(new C2SEndpoint());
+        xmpp.addEndpoint(new S2SEndpoint());
         xmpp.setStorageProviderRegistry(providerRegistry);
         xmpp.setTLSCertificateInfo(keyStore, keyStorePassword);
 
@@ -311,9 +313,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     @Override
     protected void shutDown() throws Exception {
-        System.err.println("shutDown being called");
         xmpp.stop();
-        System.err.println("shutDown done");
         // FIXME: I'm pretty sure Vysper is not shutting down correctly. Maybe we need to see if any threads created from this
         // context are left over at this point.
     }
