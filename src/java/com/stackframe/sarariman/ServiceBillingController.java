@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 StackFrame, LLC
+ * Copyright (C) 2011-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -33,21 +33,17 @@ public class ServiceBillingController extends HttpServlet {
     private enum Action {
 
         create
+
     }
 
     private void createBilling(int serviceAgreement, DateMidnight popStart, DateMidnight popEnd) throws ServletException {
-        Connection connection = sarariman.openConnection();
-        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO billed_services (service_agreement, pop_start, pop_end) VALUES(?, ?, ?)");
-            try {
-                ps.setInt(1, serviceAgreement);
-                ps.setDate(2, convert(popStart.toDate()));
-                ps.setDate(3, convert(popEnd.toDate()));
-                ps.executeUpdate();
-            } finally {
-                ps.close();
-                connection.close();
-            }
+        try (
+                Connection connection = sarariman.openConnection();
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO billed_services (service_agreement, pop_start, pop_end) VALUES(?, ?, ?)");) {
+            ps.setInt(1, serviceAgreement);
+            ps.setDate(2, convert(popStart.toDate()));
+            ps.setDate(3, convert(popEnd.toDate()));
+            ps.executeUpdate();
         } catch (SQLException se) {
             throw new ServletException(se);
         }
@@ -84,13 +80,12 @@ public class ServiceBillingController extends HttpServlet {
             }
 
             response.sendRedirect(response.encodeRedirectURL(MessageFormat.format("serviceagreement?id={0}", serviceAgreement)));
-            return;
-        } catch (Exception e) {
+        } catch (IOException | NumberFormatException | ServletException e) {
             throw new IOException(e);
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description
