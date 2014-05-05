@@ -185,13 +185,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Set<Project> getCurrentlyAssignedProjects() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement(
-                     "SELECT DISTINCT(p.id) AS project " +
-                     "FROM projects AS p " +
-                     "JOIN tasks AS t ON t.project = p.id " +
-                     "JOIN task_assignments AS ta ON ta.task = t.id " +
-                     "WHERE ta.employee = ? AND " +
-                     "p.active = TRUE ")) {
+             PreparedStatement s = connection.prepareStatement("SELECT DISTINCT(p.id) AS project " +
+                                                               "FROM projects AS p " +
+                                                               "JOIN tasks AS t ON t.project = p.id " +
+                                                               "JOIN task_assignments AS ta ON ta.task = t.id " +
+                                                               "WHERE ta.employee = ? AND " +
+                                                               "p.active = TRUE ")) {
             s.setInt(1, number);
             try (ResultSet rs = s.executeQuery();) {
                 Set<Project> c = new HashSet<>();
@@ -209,10 +208,9 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Set<Project> getProjectsAdministrativelyAssisting() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement(
-                     "SELECT project " +
-                     "FROM project_administrative_assistants " +
-                     "WHERE assistant = ?");) {
+             PreparedStatement s = connection.prepareStatement("SELECT project " +
+                                                               "FROM project_administrative_assistants " +
+                                                               "WHERE assistant = ?");) {
             s.setInt(1, number);
             try (ResultSet rs = s.executeQuery();) {
                 Set<Project> c = new HashSet<>();
@@ -231,27 +229,27 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     public Iterable<Project> getRelatedProjects() {
         try (Connection connection = dataSource.getConnection();
              // FIXME: This triggers the slow query log on MySQL for no good reason that I can figure out.
-             PreparedStatement s = connection.prepareStatement(
-                     "SELECT pm.project " +
-                     "FROM project_managers AS pm " +
-                     "JOIN projects AS p ON pm.project = p.id " +
-                     "WHERE pm.employee = @employee AND " +
-                     "p.active = TRUE " +
-                     "UNION " +
-                     "SELECT pm.project " +
-                     "FROM project_cost_managers AS pm " +
-                     "JOIN projects AS p ON pm.project = p.id " +
-                     "WHERE pm.employee = @employee AND " +
-                     "p.active = TRUE " +
-                     "UNION " +
-                     "SELECT DISTINCT(p.id) AS project " +
-                     "FROM projects AS p " +
-                     "JOIN tasks AS t ON t.project = p.id " +
-                     "JOIN task_assignments AS ta ON ta.task=t.id " +
-                     "WHERE ta.employee = @employee AND " +
-                     "p.active = TRUE " +
-                     "UNION " +
-                     "SELECT project FROM project_administrative_assistants WHERE assistant = @employee");) {
+             PreparedStatement s = connection.prepareStatement("SELECT pm.project " +
+                                                               "FROM project_managers AS pm " +
+                                                               "JOIN projects AS p ON pm.project = p.id " +
+                                                               "WHERE pm.employee = @employee AND " +
+                                                               "p.active = TRUE " +
+                                                               "UNION " +
+                                                               "SELECT pm.project " +
+                                                               "FROM project_cost_managers AS pm " +
+                                                               "JOIN projects AS p ON pm.project = p.id " +
+                                                               "WHERE pm.employee = @employee AND " +
+                                                               "p.active = TRUE " +
+                                                               "UNION " +
+                                                               "SELECT DISTINCT(p.id) AS project " +
+                                                               "FROM projects AS p " +
+                                                               "JOIN tasks AS t ON t.project = p.id " +
+                                                               "JOIN task_assignments AS ta ON ta.task=t.id " +
+                                                               "WHERE ta.employee = @employee AND " +
+                                                               "p.active = TRUE " +
+                                                               "UNION " +
+                                                               "SELECT project FROM project_administrative_assistants " +
+                                                               "WHERE assistant = @employee");) {
             s.execute(String.format("SET @employee = %d", number));
             try (ResultSet rs = s.executeQuery();) {
                 Collection<Project> c = new ArrayList<>();
@@ -316,11 +314,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getDirectRate() {
         try (Connection connection = sarariman.openConnection();
-             PreparedStatement s = connection.prepareStatement(
-                     "SELECT rate FROM direct_rate " +
-                     "WHERE employee = ? " +
-                     "ORDER BY effective DESC " +
-                     "LIMIT 1");) {
+             PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate " +
+                                                               "WHERE employee = ? " +
+                                                               "ORDER BY effective DESC " +
+                                                               "LIMIT 1");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 boolean hasRow = r.first();
@@ -338,11 +335,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getDirectRate(java.sql.Date date) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement(
-                     "SELECT rate FROM direct_rate " +
-                     "WHERE employee = ? AND effective <= ? " +
-                     "ORDER BY effective DESC " +
-                     "LIMIT 1");) {
+             PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate " +
+                                                               "WHERE employee = ? AND effective <= ? " +
+                                                               "ORDER BY effective DESC " +
+                                                               "LIMIT 1");) {
             s.setInt(1, number);
             s.setDate(2, date);
             try (ResultSet r = s.executeQuery();) {
@@ -421,10 +417,9 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getPaidTimeOff() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement(
-                     "SELECT SUM(amount) AS total " +
-                     "FROM paid_time_off " +
-                     "WHERE employee = ?");) {
+             PreparedStatement s = connection.prepareStatement("SELECT SUM(amount) AS total " +
+                                                               "FROM paid_time_off " +
+                                                               "WHERE employee = ?");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 boolean hasRow = r.first();
@@ -460,10 +455,9 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Iterable<Employee> getAdministrativeAssistants() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     "SELECT assistant " +
-                     "FROM individual_administrative_assistants " +
-                     "WHERE employee = ?");) {
+             PreparedStatement ps = connection.prepareStatement("SELECT assistant " +
+                                                                "FROM individual_administrative_assistants " +
+                                                                "WHERE employee = ?");) {
             ps.setInt(1, number);
             try (ResultSet resultSet = ps.executeQuery();) {
                 ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
@@ -508,9 +502,8 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Iterable<VacationEntry> getUpcomingVacation() {
         try (Connection c = dataSource.getConnection();
-             PreparedStatement s = c.prepareStatement(
-                     "SELECT id FROM vacation " +
-                     "WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
+             PreparedStatement s = c.prepareStatement("SELECT id FROM vacation " +
+                                                      "WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 List<VacationEntry> l = new ArrayList<>();
@@ -546,15 +539,15 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Collection<Ticket> getUnclosedTickets() {
         try (Connection c = dataSource.getConnection();
-             PreparedStatement s = c.prepareStatement(
-                     "SELECT updated.ticket, updated.latest, ticket_status.status " +
-                     "FROM (SELECT assigned.ticket, MAX(ticket_status.updated) AS latest " +
-                     "FROM (SELECT ticket, SUM(assignment) AS sum " +
-                     "FROM ticket_assignment WHERE assignee = ? GROUP BY ticket) AS assigned " +
-                     "JOIN ticket_status ON ticket_status.ticket = assigned.ticket " +
-                     "WHERE assigned.sum > 0 GROUP BY ticket) AS updated " +
-                     "JOIN ticket_status ON updated.ticket = ticket_status.ticket AND updated.latest = ticket_status.updated " +
-                     "WHERE ticket_status.status != 'closed'");) {
+             PreparedStatement s = c.prepareStatement("SELECT updated.ticket, updated.latest, ticket_status.status " +
+                                                      "FROM (SELECT assigned.ticket, MAX(ticket_status.updated) AS latest " +
+                                                      "FROM (SELECT ticket, SUM(assignment) AS sum " +
+                                                      "FROM ticket_assignment WHERE assignee = ? GROUP BY ticket) AS assigned " +
+                                                      "JOIN ticket_status ON ticket_status.ticket = assigned.ticket " +
+                                                      "WHERE assigned.sum > 0 GROUP BY ticket) AS updated " +
+                                                      "JOIN ticket_status ON updated.ticket = ticket_status.ticket AND " +
+                                                      "updated.latest = ticket_status.updated " +
+                                                      "WHERE ticket_status.status != 'closed'");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 List<Ticket> l = new ArrayList<>();
