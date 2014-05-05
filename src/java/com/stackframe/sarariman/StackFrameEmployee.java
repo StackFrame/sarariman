@@ -113,30 +113,37 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         this.titles = titles;
     }
 
+    @Override
     public String getFullName() {
         return fullName;
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    @Override
     public int getNumber() {
         return number;
     }
 
+    @Override
     public boolean isFulltime() {
         return fulltime;
     }
 
+    @Override
     public boolean isActive() {
         return active;
     }
 
+    @Override
     public InternetAddress getEmail() {
         try {
             return new InternetAddress(email, true);
@@ -145,10 +152,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Iterable<Range<java.sql.Date>> getPeriodsOfService() {
         return Collections.singletonList(periodOfService);
     }
 
+    @Override
     public boolean isAdministrator() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("SELECT administrator FROM employee WHERE id = ?");) {
@@ -161,6 +170,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public void setAdministrator(boolean administrator) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("UPDATE employee SET administrator = ? WHERE id = ?");) {
@@ -173,6 +183,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Set<Project> getCurrentlyAssignedProjects() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement(
@@ -196,6 +207,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Set<Project> getProjectsAdministrativelyAssisting() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement(
@@ -216,6 +228,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Iterable<Project> getRelatedProjects() {
         try (Connection connection = dataSource.getConnection();
              // FIXME: This triggers the slow query log on MySQL for no good reason that I can figure out.
@@ -254,22 +267,27 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public boolean isApprover() {
         return sarariman.getApprovers().contains(this);
     }
 
+    @Override
     public boolean isInvoiceManager() {
         return sarariman.getInvoiceManagers().contains(this);
     }
 
+    @Override
     public LocalDate getBirthdate() {
         return birthdate;
     }
 
+    @Override
     public int getAge() {
         return DateUtils.yearsBetween(birthdate.toDateMidnight(), new Date());
     }
 
+    @Override
     public PhoneNumber getMobile() {
         if (mobile == null) {
             return null;
@@ -282,10 +300,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public boolean active(java.sql.Date date) {
         return RangeUtilities.contains(getPeriodsOfService(), date);
     }
 
+    @Override
     public SortedSet<Employee> getReports() {
         Collection<Integer> reportIDs = sarariman.getOrganizationHierarchy().getReports(number);
         final Function<Integer, Employee> employeeIDToEmployee = new Function<Integer, Employee>() {
@@ -304,6 +324,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return ImmutableSortedSet.copyOf(fullNameComparator, reports);
     }
 
+    @Override
     public BigDecimal getDirectRate() {
         try (Connection connection = sarariman.openConnection();
              PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? ORDER BY effective DESC LIMIT 1");) {
@@ -321,6 +342,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public BigDecimal getDirectRate(java.sql.Date date) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? AND effective <= ? ORDER BY effective DESC LIMIT 1");) {
@@ -350,6 +372,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return tasks;
     }
 
+    @Override
     public Iterable<Task> getTasks() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement(
@@ -376,6 +399,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Iterable<Task> getAssignedTasks() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement("SELECT task FROM task_assignments WHERE employee = ?");) {
@@ -399,6 +423,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return "{" + fullName + "," + userName + "," + number + ",fulltime=" + fulltime + ",email=" + email + "}";
     }
 
+    @Override
     public BigDecimal getPaidTimeOff() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("SELECT SUM(amount) AS total " + "FROM paid_time_off " + "WHERE employee = ?");) {
@@ -413,6 +438,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public BigDecimal getRecentEntryLatency() {
         // FIXME: This needs to be parameterized and/or moved elsewhere
         try (Connection connection = dataSource.getConnection();
@@ -450,10 +476,12 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public URI getURI() {
         return URI.create(String.format("%sstaff/%s", sarariman.getMountPoint(), userName));
     }
 
+    @Override
     public URL getPhotoURL() {
         try {
             return new URL(String.format("%sphoto?uid=%s", sarariman.getMountPoint(), userName));
@@ -462,6 +490,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Map<Week, Timesheet> getTimesheets() {
         ContiguousSet<Week> allWeeks = ContiguousSet.create(Range.<Week>all(), Week.discreteDomain);
         Function<Week, Timesheet> f = new Function<Week, Timesheet>() {
@@ -473,6 +502,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return Maps.asMap(allWeeks, f);
     }
 
+    @Override
     public Map<Task, TaskAssignment> getTaskAssignments() {
         Function<Task, TaskAssignment> f = new Function<Task, TaskAssignment>() {
             public TaskAssignment apply(Task f) {
@@ -483,6 +513,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         return Maps.asMap(sarariman.getTasks().getAll(), f);
     }
 
+    @Override
     public Iterable<VacationEntry> getUpcomingVacation() {
         try (Connection c = dataSource.getConnection();
              PreparedStatement s = c.prepareStatement("SELECT id FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
@@ -500,6 +531,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice() {
         try (Connection c = dataSource.getConnection();
              PreparedStatement s = c.prepareStatement("SELECT id FROM out_of_office WHERE employee=? AND end >= DATE(NOW())");) {
@@ -517,6 +549,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public Collection<Ticket> getUnclosedTickets() {
         try (Connection c = dataSource.getConnection();
              PreparedStatement s = c.prepareStatement(
@@ -543,6 +576,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public BigDecimal getMonthlyHealthInsurancePremium() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("SELECT p.premium AS premium FROM insurance_membership AS m JOIN insurance_premium AS p ON m.plan = p.plan AND m.coverage = p.coverage AND m.begin <= DATE(NOW()) and (m.end IS NULL OR m.end >= DATE(NOW())) AND employee=?");) {
@@ -560,6 +594,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public boolean isPayrollAdministrator() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("SELECT payroll_administrator FROM employee WHERE id = ?");) {
@@ -572,6 +607,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public void setPayrollAdministrator(boolean payrollAdministrator) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("UPDATE employee SET payroll_administrator = ? WHERE id = ?");) {
@@ -584,6 +620,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public boolean isBenefitsAdministrator() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("SELECT benefits_administrator FROM employee WHERE id = ?");) {
@@ -596,6 +633,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public void setBenefitsAdministrator(boolean benefitsAdministrator) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement s = connection.prepareStatement("UPDATE employee SET benefits_administrator = ? WHERE id = ?");) {
@@ -608,52 +646,65 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
         }
     }
 
+    @Override
     public byte[] getPhoto() {
         return photo;
     }
 
+    @Override
     public Iterable<URL> getProfileLinks() {
         return profileLinks;
     }
 
+    @Override
     public Iterable<String> getTitles() {
         return titles;
     }
 
+    @Override
     public Object getPresence() {
         return sarariman.getXMPPServer().getPresence(userName + "@stackframe.com");
     }
 
+    @Override
     public String getGivenName() {
         return givenName;
     }
 
+    @Override
     public String getSurname() {
         return surname;
     }
 
+    @Override
     public vCardSource vCardSource() {
         return new vCardSource() {
+            @Override
             public String getFamilyName() {
                 return surname;
             }
 
+            @Override
             public String getGivenName() {
                 return givenName;
             }
 
+            @Override
             public String getFullName() {
                 return StackFrameEmployee.this.getFullName();
             }
 
+            @Override
             public String getEmailAddress() {
                 return email;
             }
 
+            @Override
             public String getOrganization() {
                 return "StackFrame, LLC";
             }
 
+            @Override
             public PhoneNumber getMobile() {
                 return StackFrameEmployee.this.getMobile();
             }
