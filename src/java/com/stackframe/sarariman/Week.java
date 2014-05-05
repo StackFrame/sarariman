@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2013 StackFrame, LLC
+ * Copyright (C) 2009-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -81,6 +81,7 @@ public class Week implements Comparable<Week> {
         return new Week(c);
     }
 
+    @Override
     public int compareTo(Week t) {
         return start.compareTo(t.start);
     }
@@ -101,10 +102,7 @@ public class Week implements Comparable<Week> {
             return false;
         }
         final Week other = (Week)obj;
-        if (this.start != other.start && (this.start == null || !this.start.equals(other.start))) {
-            return false;
-        }
-        return true;
+        return this.start == other.start || (this.start != null && this.start.equals(other.start));
     }
 
     @Override
