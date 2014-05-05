@@ -316,7 +316,11 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getDirectRate() {
         try (Connection connection = sarariman.openConnection();
-             PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? ORDER BY effective DESC LIMIT 1");) {
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT rate FROM direct_rate " +
+                     "WHERE employee = ? " +
+                     "ORDER BY effective DESC " +
+                     "LIMIT 1");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 boolean hasRow = r.first();
@@ -334,7 +338,11 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getDirectRate(java.sql.Date date) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement("SELECT rate FROM direct_rate WHERE employee = ? AND effective <= ? ORDER BY effective DESC LIMIT 1");) {
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT rate FROM direct_rate " +
+                     "WHERE employee = ? AND effective <= ? " +
+                     "ORDER BY effective DESC " +
+                     "LIMIT 1");) {
             s.setInt(1, number);
             s.setDate(2, date);
             try (ResultSet r = s.executeQuery();) {
@@ -413,7 +421,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getPaidTimeOff() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement("SELECT SUM(amount) AS total " + "FROM paid_time_off " + "WHERE employee = ?");) {
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT SUM(amount) AS total " +
+                     "FROM paid_time_off " +
+                     "WHERE employee = ?");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 boolean hasRow = r.first();
@@ -449,7 +460,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Iterable<Employee> getAdministrativeAssistants() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement("SELECT assistant " + "FROM individual_administrative_assistants " + "WHERE employee = ?");) {
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT assistant " +
+                     "FROM individual_administrative_assistants " +
+                     "WHERE employee = ?");) {
             ps.setInt(1, number);
             try (ResultSet resultSet = ps.executeQuery();) {
                 ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
@@ -494,7 +508,9 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public Iterable<VacationEntry> getUpcomingVacation() {
         try (Connection c = dataSource.getConnection();
-             PreparedStatement s = c.prepareStatement("SELECT id FROM vacation WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
+             PreparedStatement s = c.prepareStatement(
+                     "SELECT id FROM vacation " +
+                     "WHERE employee=? AND (begin >= DATE(NOW()) OR end >= DATE(NOW()))");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 List<VacationEntry> l = new ArrayList<>();
@@ -557,7 +573,11 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     @Override
     public BigDecimal getMonthlyHealthInsurancePremium() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement s = connection.prepareStatement("SELECT p.premium AS premium FROM insurance_membership AS m JOIN insurance_premium AS p ON m.plan = p.plan AND m.coverage = p.coverage AND m.begin <= DATE(NOW()) and (m.end IS NULL OR m.end >= DATE(NOW())) AND employee=?");) {
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT p.premium AS premium " +
+                     "FROM insurance_membership AS m " +
+                     "JOIN insurance_premium AS p ON m.plan = p.plan AND m.coverage = p.coverage " +
+                     "AND m.begin <= DATE(NOW()) AND (m.end IS NULL OR m.end >= DATE(NOW())) AND employee=?");) {
             s.setInt(1, number);
             try (ResultSet r = s.executeQuery();) {
                 boolean hasRow = r.first();
