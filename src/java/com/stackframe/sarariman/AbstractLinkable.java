@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -13,6 +13,7 @@ import java.net.URL;
  */
 public abstract class AbstractLinkable implements Linkable, Identifiable {
 
+    @Override
     public URL getURL() {
         try {
             return getURI().toURL();
