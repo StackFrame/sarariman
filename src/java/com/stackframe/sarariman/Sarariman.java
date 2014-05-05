@@ -606,8 +606,8 @@ public class Sarariman implements ServletContextListener {
 
     public void contextDestroyed(ServletContextEvent sce) {
         // FIXME: Should we worry about email that has been queued but not yet sent?
-        backgroundExecutor.shutdown();
         serviceManager.stopAsync().awaitStopped();
+        backgroundExecutor.shutdown();
         backgroundDatabaseWriteExecutor.shutdown();
         // FIXME: I'm pretty sure Vysper is not shutting down correctly. Maybe we need to see if any threads created from this
         // context are left over at this point.
