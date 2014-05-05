@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2104 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -31,6 +31,7 @@ public class UIResourceImpl extends NamedResourceImpl implements UIResource {
         this(URI.create(uri), name);
     }
 
+    @Override
     public String getIconName() {
         return iconName;
     }
