@@ -8,8 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 public class ContactsImpl implements Contacts {
 
     private final DataSource dataSource;
+
     private final String mountPoint;
 
     public ContactsImpl(DataSource dataSource, String mountPoint) {
@@ -26,33 +27,22 @@ public class ContactsImpl implements Contacts {
         this.mountPoint = mountPoint;
     }
 
+    @Override
     public Contact get(int id) {
         return new ContactImpl(id, dataSource, mountPoint + "contact");
     }
 
-    public Collection<Contact> getAll() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement query = connection.prepareStatement("SELECT id FROM contacts");
-                try {
-                    ResultSet resultSet = query.executeQuery();
-                    try {
-                        Collection<Contact> result = new ArrayList<Contact>();
-                        while (resultSet.next()) {
-                            result.add(get(resultSet.getInt("id")));
-                        }
-
-                        return result;
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    query.close();
-                }
-            } finally {
-                connection.close();
+    @Override
+    public Set<Contact> getAll() {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement query = connection.prepareStatement("SELECT id FROM contacts");
+             ResultSet resultSet = query.executeQuery();) {
+            Set<Contact> result = new HashSet<>();
+            while (resultSet.next()) {
+                result.add(get(resultSet.getInt("id")));
             }
+
+            return result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

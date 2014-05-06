@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.stackframe.sarariman.contacts.Contact;
 import com.stackframe.sarariman.contacts.Contacts;
 import java.sql.Connection;
@@ -13,8 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import javax.sql.DataSource;
 
@@ -25,6 +24,7 @@ import javax.sql.DataSource;
 public class ContactsGlobalAudit implements Audit {
 
     private final DataSource dataSource;
+
     private final Contacts contacts;
 
     public ContactsGlobalAudit(DataSource dataSource, Contacts contacts) {
@@ -32,68 +32,52 @@ public class ContactsGlobalAudit implements Audit {
         this.contacts = contacts;
     }
 
+    @Override
     public String getDisplayName() {
         return "Contacts";
     }
 
-    private Set<Integer> projectTimesheetContacts() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_timesheet_contacts");
-            try {
-                ResultSet rs = ps.executeQuery();
-                ImmutableSet.Builder<Integer> setBuilder = ImmutableSet.<Integer>builder();
-                while (rs.next()) {
-                    setBuilder.add(rs.getInt("contact"));
-                }
-
-                return setBuilder.build();
-            } finally {
-                ps.close();
+    private Set<Contact> projectTimesheetContacts() throws SQLException {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_timesheet_contacts");
+             ResultSet rs = ps.executeQuery();) {
+            ImmutableSet.Builder<Contact> setBuilder = ImmutableSet.<Contact>builder();
+            while (rs.next()) {
+                setBuilder.add(contacts.get(rs.getInt("contact")));
             }
-        } finally {
-            connection.close();
+
+            return setBuilder.build();
         }
     }
 
-    private Set<Integer> projectInvoiceContacts() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_invoice_contacts");
-            try {
-                ResultSet rs = ps.executeQuery();
-                ImmutableSet.Builder<Integer> setBuilder = ImmutableSet.<Integer>builder();
-                while (rs.next()) {
-                    setBuilder.add(rs.getInt("contact"));
-                }
-
-                return setBuilder.build();
-            } finally {
-                ps.close();
+    private Set<Contact> projectInvoiceContacts() throws SQLException {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT contact FROM project_invoice_contacts");
+             ResultSet rs = ps.executeQuery();) {
+            ImmutableSet.Builder<Contact> setBuilder = ImmutableSet.<Contact>builder();
+            while (rs.next()) {
+                setBuilder.add(contacts.get(rs.getInt("contact")));
             }
-        } finally {
-            connection.close();
+
+            return setBuilder.build();
         }
     }
 
     private Collection<Contact> orphanedContacts() throws SQLException {
-        Map<Integer, Contact> map = new HashMap<Integer, Contact>();
-        for (Contact contact : contacts.getAll()) {
-            map.put(contact.getId(), contact);
-        }
-
-        Set<Integer> keys = map.keySet();
-        keys.removeAll(projectTimesheetContacts());
-        keys.removeAll(projectInvoiceContacts());
-        return map.values();
+        Set<Contact> orphaned = Sets.difference(Sets.difference(contacts.getAll(),
+                                                                projectTimesheetContacts()),
+                                                projectInvoiceContacts());
+        return orphaned;
     }
 
+    @Override
     public Collection<AuditResult> getResults() {
         try {
             Collection<Contact> orphanedContacts = orphanedContacts();
             ImmutableList.Builder<AuditResult> listBuilder = ImmutableList.<AuditResult>builder();
             for (Contact contact : orphanedContacts) {
-                listBuilder.add(new AuditResult(AuditResultType.warning, String.format("%s is an orphaned contact", contact.getName()), contact.getURL()));
+                listBuilder.add(new AuditResult(AuditResultType.warning, String.format("%s is an orphaned contact",
+                                                                                       contact.getName()), contact.getURL()));
             }
 
             return listBuilder.build();
