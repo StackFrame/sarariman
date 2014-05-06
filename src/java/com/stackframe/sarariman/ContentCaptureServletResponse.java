@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -18,7 +19,9 @@ import javax.servlet.http.HttpServletResponseWrapper;
 public class ContentCaptureServletResponse extends HttpServletResponseWrapper {
 
     private String contentType;
+
     private final ByteArrayOutputStream contentBuffer = new ByteArrayOutputStream();
+
     private final PrintWriter writer = new PrintWriter(contentBuffer);
 
     public ContentCaptureServletResponse(HttpServletResponse resp) {
@@ -33,6 +36,22 @@ public class ContentCaptureServletResponse extends HttpServletResponseWrapper {
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
         return new ServletOutputStream() {
+
+            @Override
+            public boolean isReady() {
+                // We were born ready.
+                return true;
+            }
+
+            @Override
+            public void setWriteListener(WriteListener writeListener) {
+                try {
+                    // It's always possible to write.
+                    writeListener.onWritePossible();
+                } catch (IOException ioe) {
+                    throw new AssertionError();
+                }
+            }
 
             public void write(int i) {
                 contentBuffer.write(i);
