@@ -67,7 +67,7 @@
                     pageContext.setAttribute("labor", project.getLaborDirectCosts(pop));
                     pageContext.setAttribute("ODC", project.getOtherDirectCosts(pop));
                 %>
-                Hours <fmt:formatNumber value="${hours}" minFractionDigits="2"/><br/>
+                Hours: <fmt:formatNumber value="${hours}" minFractionDigits="2"/><br/>
                 Labor: <fmt:formatNumber type="currency" value="${labor}"/><br/>
                 Other Direct Costs: <fmt:formatNumber type="currency" value="${ODC}"/><br/>
                 Total: <fmt:formatNumber type="currency" value="${labor + ODC}"/><br/>
