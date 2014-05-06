@@ -33,7 +33,7 @@ public class Week implements Comparable<Week> {
         start.set(Calendar.MILLISECOND, 0);
     }
 
-    private static DateFormat ISO8601DateFormat() {
+    public static DateFormat ISO8601DateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd");
     }
 
@@ -148,4 +148,5 @@ public class Week implements Comparable<Week> {
         }
 
     };
+
 }
