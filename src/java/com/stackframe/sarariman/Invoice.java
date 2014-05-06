@@ -39,6 +39,7 @@ public class Invoice {
         this.sarariman = sarariman;
     }
 
+// Add a safety check to make sure that no elements are invoiced outside of the PoP
     public static Invoice create(Sarariman sarariman, Client client, Project project, String popStart, String popEnd, Map parameterMap, String[] employees, String[] tasks, String[] dates, String[] billedServices) throws SQLException, ParseException {
         Preconditions.checkNotNull(client);
         if (employees == null) {
