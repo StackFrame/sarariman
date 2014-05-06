@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -12,6 +12,7 @@ import com.stackframe.xml.DOMUtilities;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Base64;
 import java.util.Date;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -28,7 +30,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import sun.misc.BASE64Decoder;
+import org.xml.sax.SAXException;
 
 /**
  * A filter that intercepts requests and checks for authentication. This uses a confile file that is expected to be at
@@ -83,11 +85,12 @@ public class AuthenticationFilter extends HttpFilter {
         try {
             URL configResource = filterConfig.getServletContext().getResource("/WEB-INF/authentication.xml");
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(configResource.toExternalForm());
-        } catch (Exception e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new ServletException(e);
         }
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Sarariman sarariman = (Sarariman)filterConfig.getServletContext().getAttribute("sarariman");
         directory = sarariman.getDirectory();
@@ -118,10 +121,10 @@ public class AuthenticationFilter extends HttpFilter {
 
     private void handleHasAuthorizationHeader(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                               String authorizationHeader) throws IOException, ServletException {
-        BASE64Decoder decoder = new BASE64Decoder();
+        Base64.Decoder decoder = Base64.getDecoder();
         String[] split = authorizationHeader.split(" ");
         String encodedBytes = split[1];
-        byte[] decodedBytes = decoder.decodeBuffer(encodedBytes);
+        byte[] decodedBytes = decoder.decode(encodedBytes);
         String decodedString = new String(decodedBytes);
         int firstColon = decodedString.indexOf(':');
         String username = decodedString.substring(0, firstColon);
@@ -163,7 +166,6 @@ public class AuthenticationFilter extends HttpFilter {
         }
 
         // FIXME: If the method requested was a POST, redirect to home page or something.
-
         String redirectURL = String.format("%s/login", request.getContextPath());
         String defaultDestination = request.getContextPath() + "/";
         if (!destination.equals(defaultDestination)) {
@@ -201,6 +203,7 @@ public class AuthenticationFilter extends HttpFilter {
         }
     }
 
+    @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpSession session = request.getSession();
@@ -212,6 +215,7 @@ public class AuthenticationFilter extends HttpFilter {
         }
     }
 
+    @Override
     public void destroy() {
     }
 
