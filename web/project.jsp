@@ -12,6 +12,8 @@
 
 <!DOCTYPE html>
 <html>
+<!-- Need list of related people. -->
+<!-- On employee page, get list of related projects. -->
     <fmt:parseNumber var="project_id" value="${param.id}"/>
     <c:set var="project" value="${sarariman.projects.map[project_id]}"/>
     <c:set var="isManager" value="${sarariman:isManager(user, project)}"/>
@@ -309,6 +311,7 @@
                         <c:set var="expendedDollarsTotal" value="0.0"/>
                         <c:forEach var="lineItem" items="${lineItems}">
                             <tr>
+<!-- FIXME: Need to include expenses here! -->
                                 <td class="line_item">${lineItem.id}</td>
                                 <td>${fn:escapeXml(lineItem.description)}</td>
                                 <td class="date"><fmt:formatDate value="${lineItem.pop.start}" pattern="yyyy-MM-dd"/></td>
@@ -704,6 +707,9 @@
                     <a href="uninvoiced?project=${project_id}">Uninvoiced hours and services</a>
                 </p>
             </c:if>
+
+            <!-- FIXME: Need a table just for ODC. -->
+            <!-- FIXME: Need a way to show tasks assigned to a give line item. -->
 
             <%@include file="footer.jsp" %>
         </div>
