@@ -6,7 +6,6 @@ package com.stackframe.sarariman;
 
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -39,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.mail.internet.AddressException;
@@ -304,11 +302,10 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     }
 
     @Override
-    public SortedSet<Employee> getReports() {
+    public Set<Employee> getReports() {
         Collection<Integer> reportIDs = sarariman.getOrganizationHierarchy().getReports(number);
-        Collection<Employee> reports = reportIDs.stream().map((n) -> directory.getByNumber().get(n)).collect(Collectors.toList());
         Comparator<Employee> fullNameComparator = (Employee t, Employee t1) -> t.getFullName().compareTo(t1.getFullName());
-        return ImmutableSortedSet.copyOf(fullNameComparator, reports);
+        return reportIDs.stream().map(directory.getByNumber()::get).sorted(fullNameComparator).collect(Collectors.toSet());
     }
 
     @Override
@@ -357,7 +354,7 @@ class StackFrameEmployee extends AbstractLinkable implements Employee {
     public Collection<Task> getDefaultTasks() {
         Stream<DefaultTaskAssignment> globalAssignments = sarariman.getDefaultTaskAssignments().getAll().stream();
         Stream<DefaultTaskAssignment> employeeAssignments = globalAssignments.filter((a) -> (fulltime || !a.isFullTimeOnly()));
-        return employeeAssignments.map((a) -> a.getTask()).collect(Collectors.toList());
+        return employeeAssignments.map(DefaultTaskAssignment::getTask).collect(Collectors.toList());
     }
 
     @Override

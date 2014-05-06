@@ -280,6 +280,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Map<Long, LaborCategory> getLaborCategories() {
+        // FIXME: Can replace with Maps.asMap?
         Map<Long, LaborCategory> result = new LinkedHashMap<>();
         laborCategories.stream().forEach((lc) -> {
             result.put(lc.getId(), lc);
@@ -305,7 +306,7 @@ public class Sarariman implements ServletContextListener {
     }
 
     public Collection<Employee> employees(Collection<Integer> ids) {
-        return ids.stream().map(n -> directory.getByNumber().get(n)).collect(Collectors.toList());
+        return ids.stream().map(directory.getByNumber()::get).collect(Collectors.toList());
     }
 
     public Holidays getHolidays() {

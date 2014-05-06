@@ -23,7 +23,6 @@ import com.stackframe.sarariman.xmpp.XMPPServer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -166,21 +165,12 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         // FIXME: This is a weird special case. Consider adding some special bit to Project abstraction.
         private final Set<String> groupsToIgnore = ImmutableSet.of("overhead");
 
-        private List<String> commonGroupNames(Employee e1, Employee e2) {
-            List<String> groupNames = new ArrayList<>();
-            groupNames.addAll(defaultGroups);
-            groupNames.addAll(Sets.intersection(groups(e1), groups(e2)));
-            groupNames.removeAll(groupsToIgnore);
-            return groupNames;
+        private Collection<String> commonGroupNames(Employee e1, Employee e2) {
+            return Sets.difference(Sets.union(defaultGroups, Sets.intersection(groups(e1), groups(e2))), groupsToIgnore);
         }
 
         private List<RosterGroup> commonGroups(Employee e1, Employee e2) {
-            List<RosterGroup> groups = new ArrayList<>();
-            commonGroupNames(e1, e2).stream().forEach((groupName) -> {
-                groups.add(new RosterGroup(groupName));
-            });
-
-            return groups;
+            return commonGroupNames(e1, e2).stream().map(RosterGroup::new).collect(Collectors.toList());
         }
 
         private RosterItem rosterItem(Employee employee, List<RosterGroup> groups) {
@@ -191,21 +181,16 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
         @Override
         public Roster retrieve(final Entity entity) throws RosterException {
             return new Roster() {
+                private final Employee employee = employee(entity);
+
                 @Override
                 public Iterator<RosterItem> iterator() {
-                    Collection<RosterItem> items = new ArrayList<>();
-                    Employee employee = employee(entity);
                     Collection<Employee> peers = peers(employee);
-                    peers.stream().forEach((peer) -> {
-                        items.add(rosterItem(peer, commonGroups(employee, peer)));
-                    });
-
-                    return Collections.unmodifiableCollection(items).iterator();
+                    return peers.stream().map(peer -> rosterItem(peer, commonGroups(employee, peer))).iterator();
                 }
 
                 @Override
                 public RosterItem getEntry(Entity peerEntity) {
-                    Employee employee = employee(entity);
                     Employee peer = employee(peerEntity);
                     return rosterItem(peer, commonGroups(employee, peer));
                 }
@@ -276,7 +261,6 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
     @Override
     protected void startUp() throws Exception {
-        System.err.println("startUp being called");
         StorageProviderRegistry providerRegistry = new OpenStorageProviderRegistry() {
             {
                 add(new ArchivedRoomStorageProvider(dataSource, databaseWriteExecutor));
@@ -350,13 +334,7 @@ public class VysperXMPPServer extends AbstractIdleService implements XMPPServer 
 
                 @Override
                 public Collection<Occupant> getOccupants() {
-                    Set<org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Occupant> occupants = roomImpl.getOccupants();
-                    ImmutableList.Builder<Occupant> b = ImmutableList.<Occupant>builder();
-                    occupants.stream().forEach((occupant) -> {
-                        b.add(convert(occupant));
-                    });
-
-                    return b.build();
+                    return roomImpl.getOccupants().stream().map(this::convert).collect(Collectors.toList());
                 }
 
                 @Override
