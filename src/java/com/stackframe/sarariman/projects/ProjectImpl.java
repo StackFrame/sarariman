@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.projects;
@@ -1319,7 +1319,8 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                     try {
                         boolean hasRow = r.next();
                         assert hasRow;
-                        return r.getBigDecimal("total");
+                        BigDecimal total = r.getBigDecimal("total");
+                        return total == null ? BigDecimal.ZERO : total;
                     } finally {
                         r.close();
                     }
