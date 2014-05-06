@@ -25,7 +25,7 @@ public class WorkdaysImpl implements Workdays {
         this.holidays = holidays;
     }
 
-    private static final Predicate<Date> isWeekDay = (Date t) -> {
+    public static final Predicate<Date> isWeekDay = (Date t) -> {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(t);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
