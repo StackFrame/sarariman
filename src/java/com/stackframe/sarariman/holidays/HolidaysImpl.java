@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2012-2013 StackFrame, LLC
+ * Copyright (C) 2012-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.holidays;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Range;
@@ -30,114 +31,77 @@ public class HolidaysImpl implements Holidays {
         this.dataSource = dataSource;
     }
 
+    @Override
     public Iterable<Holiday> getUpcoming() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                Statement statement = connection.createStatement();
-                try {
-                    ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays WHERE date >= DATE(NOW()) ORDER BY date");
-                    try {
-                        ImmutableSortedSet.Builder<Holiday> b = ImmutableSortedSet.naturalOrder();
-                        while (rs.next()) {
-                            Date date = rs.getDate("date");
-                            String description = rs.getString("description");
-                            Holiday holiday = new HolidayImpl(date, description);
-                            b.add(holiday);
-                        }
-
-                        return b.build();
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    statement.close();
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement()) {
+            try (ResultSet rs = statement.executeQuery("SELECT date, description " +
+                                                       "FROM holidays WHERE date >= DATE(NOW()) ORDER BY date")) {
+                ImmutableSortedSet.Builder<Holiday> b = ImmutableSortedSet.naturalOrder();
+                while (rs.next()) {
+                    Date date = rs.getDate("date");
+                    String description = rs.getString("description");
+                    Holiday holiday = new HolidayImpl(date, description);
+                    b.add(holiday);
                 }
-            } finally {
-                connection.close();
+
+                return b.build();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public Holiday getNext() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                Statement statement = connection.createStatement();
-                try {
-                    ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays WHERE date >= DATE(NOW()) ORDER BY date LIMIT 1");
-                    try {
-                        boolean hasRow = rs.first();
-                        assert hasRow;
-                        Date date = rs.getDate("date");
-                        String description = rs.getString("description");
-                        Holiday holiday = new HolidayImpl(date, description);
-                        return holiday;
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    statement.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("SELECT date, description FROM holidays " +
+                                                   "WHERE date >= DATE(NOW()) ORDER BY date LIMIT 1")) {
+            boolean hasRow = rs.first();
+            assert hasRow;
+            Date date = rs.getDate("date");
+            String description = rs.getString("description");
+            Holiday holiday = new HolidayImpl(date, description);
+            return holiday;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public boolean isHoliday(Date date) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?");
-                try {
-                    statement.setDate(1, convert(date));
-                    ResultSet rs = statement.executeQuery();
-                    try {
-                        return rs.first();
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    statement.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT date FROM holidays WHERE date = ?")) {
+            statement.setDate(1, convert(date));
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.first();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Collection<Date> get(Range<Date> range) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                String dateRangeExpression = RangeUtilities.toSQL("date", range);
-                PreparedStatement statement = connection.prepareStatement(String.format("SELECT date FROM holidays WHERE %s",
-                                                                                        dateRangeExpression));
-                try {
-                    ResultSet rs = statement.executeQuery();
-                    try {
-                        ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
-                        while (rs.next()) {
-                            listBuilder.add(rs.getDate("date"));
-                        }
+    private final Predicate<Date> isHoliday = this::isHoliday;
 
-                        return listBuilder.build();
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    statement.close();
-                }
-            } finally {
-                connection.close();
+    @Override
+    public Predicate<Date> isHoliday() {
+        return isHoliday;
+    }
+
+    @Override
+    public Collection<Date> get(Range<Date> range) {
+        String dateRangeExpression = RangeUtilities.toSQL("date", range);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(String.format("SELECT date FROM holidays WHERE %s",
+                                                                                     dateRangeExpression));
+             ResultSet rs = statement.executeQuery()) {
+            ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
+            while (rs.next()) {
+                listBuilder.add(rs.getDate("date"));
             }
+
+            return listBuilder.build();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
