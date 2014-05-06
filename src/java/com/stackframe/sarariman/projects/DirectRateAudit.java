@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.projects;
@@ -31,55 +31,48 @@ public class DirectRateAudit implements Audit {
         this.dataSource = dataSource;
     }
 
+    @Override
     public String getDisplayName() {
         return "Direct Rate";
     }
 
     private Collection<AuditResult> results() throws SQLException {
-        Collection<AuditResult> c = new ArrayList<AuditResult>();
-        Connection connection = dataSource.getConnection();
-        try {
-            PreparedStatement s = connection.prepareStatement(
-                    "SELECT h.employee AS employee, h.date AS date " +
-                    "FROM hours AS h " +
-                    "JOIN tasks AS t ON h.task = t.id " +
-                    "JOIN projects AS p ON p.id = t.project " +
-                    "LEFT JOIN direct_rate AS d ON (d.employee = h.employee AND h.date >= d.start AND (h.date <= d.end OR d.end IS NULL)) " +
-                    "WHERE t.project = ? AND h.date >= ? AND h.date <= ? AND d.rate IS NULL");
-            try {
-                s.setInt(1, project.getId());
-                s.setDate(2, convert(project.getPoP().getStart()));
-                s.setDate(3, convert(project.getPoP().getEnd()));
-                ResultSet r = s.executeQuery();
-                try {
-                    while (r.next()) {
-                        c.add(new AuditResult(AuditResultType.error,
-                                              String.format("employee %d is missing a direct rate for %s", r.getInt("employee"),
-                                                            r.getDate("date")),
-                                              project.getURL()));
-                    }
-                } finally {
-                    r.close();
+        Collection<AuditResult> c = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT h.employee AS employee, h.date AS date " +
+                                                               "FROM hours AS h " +
+                                                               "JOIN tasks AS t ON h.task = t.id " +
+                                                               "JOIN projects AS p ON p.id = t.project " +
+                                                               "LEFT JOIN direct_rate AS d ON " +
+                                                               "(d.employee = h.employee AND h.date >= d.start AND " +
+                                                               "(h.date <= d.end OR d.end IS NULL)) " +
+                                                               "WHERE t.project = ? AND h.date >= ? AND h.date <= ? " +
+                                                               "AND d.rate IS NULL")) {
+            s.setInt(1, project.getId());
+            s.setDate(2, convert(project.getPoP().getStart()));
+            s.setDate(3, convert(project.getPoP().getEnd()));
+            try (ResultSet r = s.executeQuery()) {
+                while (r.next()) {
+                    c.add(new AuditResult(AuditResultType.error,
+                                          String.format("employee %d is missing a direct rate for %s", r.getInt("employee"),
+                                                        r.getDate("date")),
+                                          project.getURL()));
                 }
-            } finally {
-                s.close();
             }
-        } finally {
-            connection.close();
         }
 
         return c;
     }
 
+    @Override
     public Collection<AuditResult> getResults() {
-        Collection<AuditResult> c = new ArrayList<AuditResult>();
         try {
+            Collection<AuditResult> c = new ArrayList<>();
             c.addAll(results());
+            return c;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return c;
     }
 
 }
