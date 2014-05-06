@@ -726,6 +726,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         c.add(new ProjectPeriodOfPerformanceAudit(id, projects));
         c.add(new ProjectFundingAudit(id, projects));
         c.add(new ProjectLineItemAudit(id, dataSource, projects));
+        c.add(new DirectRateAudit(this, dataSource));
         return c;
     }
 
