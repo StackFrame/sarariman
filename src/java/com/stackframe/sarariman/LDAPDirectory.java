@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2013 StackFrame, LLC
+ * Copyright (C) 2009-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -13,7 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,7 @@ public class LDAPDirectory implements Directory {
         if (attribute == null) {
             return null;
         } else {
-            NamingEnumeration ne = attribute.getAll();
+            NamingEnumeration<?> ne = attribute.getAll();
             while (ne.hasMoreElements()) {
                 b.add((String)ne.nextElement());
             }
@@ -100,11 +99,12 @@ public class LDAPDirectory implements Directory {
      */
     private void load() {
         try {
-            List<Employee> tmp = new ArrayList<Employee>();
+            List<Employee> tmp = new ArrayList<>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
                                                                     new String[]{"uid", "sn", "givenName", "employeeNumber",
-                        "fulltime", "active", "mail", "birthdate", "displayName", "hiredate", "jpegPhoto", "mobile", "url",
-                        "title"});
+                                                                                 "fulltime", "active", "mail", "birthdate",
+                                                                                 "displayName", "hiredate", "jpegPhoto", "mobile",
+                                                                                 "url", "title"});
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
                 String givenName = attributes.get("givenName").getAll().next().toString();
@@ -129,19 +129,18 @@ public class LDAPDirectory implements Directory {
                                                mobile, profileLinks, titles));
             }
 
-            Collections.sort(tmp, new Comparator<Employee>() {
-                public int compare(Employee e1, Employee e2) {
-                    return e1.getFullName().compareTo(e2.getFullName());
-                }
+            Collections.sort(tmp, (Employee e1, Employee e2) -> e1.getFullName().compareTo(e2.getFullName()));
 
-            });
-
-            ImmutableMap.Builder<String, Employee> byUserNameBuilder = new ImmutableMap.Builder<String, Employee>();
-            ImmutableMap.Builder<Object, Employee> byNumberBuilder = new ImmutableMap.Builder<Object, Employee>();
-            ImmutableSet.Builder<Employee> employeeBuilder = new ImmutableSet.Builder<Employee>();
+            ImmutableMap.Builder<String, Employee> byUserNameBuilder = new ImmutableMap.Builder<>();
+            ImmutableMap.Builder<Object, Employee> byNumberBuilder = new ImmutableMap.Builder<>();
+            ImmutableSet.Builder<Employee> employeeBuilder = new ImmutableSet.Builder<>();
             for (Employee employee : tmp) {
                 byNumberBuilder.put(employee.getNumber(), employee);
-                byNumberBuilder.put(new Long(employee.getNumber()), employee);
+
+                // We index by employee number as long instead of int so as to be compatible with JSP EL.
+                long employeeNumberAsLong = employee.getNumber();
+                byNumberBuilder.put(employeeNumberAsLong, employee);
+
                 byNumberBuilder.put(Integer.toString(employee.getNumber()), employee);
                 byUserNameBuilder.put(employee.getUserName(), employee);
                 employeeBuilder.add(employee);
@@ -155,33 +154,42 @@ public class LDAPDirectory implements Directory {
         }
     }
 
+    @Override
     public synchronized Map<String, Employee> getByUserName() {
         return byUserName;
     }
 
+    @Override
     public synchronized Map<Object, Employee> getByNumber() {
         return byNumber;
     }
 
+    @Override
     public synchronized Set<Employee> getEmployees() {
         return employees;
     }
 
+    @Override
     public synchronized void reload() {
         load();
     }
 
+    @Override
     public boolean checkCredentials(String username, String password) {
         String DN = String.format("uid=%s,ou=People,dc=stackframe,dc=com", username);
         try {
-            Hashtable environment = (Hashtable)context.getEnvironment().clone();
-            environment.put(Context.SECURITY_PRINCIPAL, DN);
-            environment.put(Context.SECURITY_CREDENTIALS, password);
-            DirContext dirContext = new InitialDirContext(environment);
+            DirContext c = new InitialDirContext((Hashtable<?, ?>)context.getEnvironment().clone());
+            c.addToEnvironment(Context.SECURITY_PRINCIPAL, DN);
+            c.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
+
+            // This is the validation check, it will throw NamingException if the password is invalid for the username.
+            DirContext dirContext = new InitialDirContext((Hashtable<?, ?>)c.getEnvironment().clone());
+
             dirContext.close();
+
             Employee employee = getByUserName().get(username);
             return employee.isActive();
-        } catch (Exception e) {
+        } catch (NamingException e) {
             return false;
         }
     }
