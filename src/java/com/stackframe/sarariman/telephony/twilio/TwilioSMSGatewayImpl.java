@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.telephony.twilio;
@@ -41,9 +41,10 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
 
     private final DataSource dataSource;
 
-    private final List<SMSListener> listeners = new CopyOnWriteArrayList<SMSListener>();
+    private final List<SMSListener> listeners = new CopyOnWriteArrayList<>();
 
-    public TwilioSMSGatewayImpl(TwilioRestClient client, PhoneNumber from, boolean inhibit, Executor databaseExecutor, DataSource dataSource) {
+    public TwilioSMSGatewayImpl(TwilioRestClient client, PhoneNumber from, boolean inhibit, Executor databaseExecutor,
+                                DataSource dataSource) {
         this.client = client;
         this.from = from;
         this.inhibit = inhibit;
@@ -55,10 +56,11 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
         return client;
     }
 
+    @Override
     public void send(PhoneNumber to, String body) throws Exception {
         Account account = client.getAccount();
         SmsFactory smsFactory = account.getSmsFactory();
-        Map<String, String> smsParams = new HashMap<String, String>();
+        Map<String, String> smsParams = new HashMap<>();
         smsParams.put("To", format(to));
         smsParams.put("From", format(from));
         smsParams.put("Body", body);
@@ -75,10 +77,12 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
         }
     }
 
+    @Override
     public void addSMSListener(SMSListener l) {
         listeners.add(l);
     }
 
+    @Override
     public void removeSMSListener(SMSListener l) {
         listeners.remove(l);
     }
@@ -88,34 +92,21 @@ public class TwilioSMSGatewayImpl implements SMSGateway {
     }
 
     private void log(final SMSEvent e) {
-        Runnable insertTask = new Runnable() {
-            public void run() {
-                try {
-                    Connection c = dataSource.getConnection();
-                    try {
-                        PreparedStatement s = c.prepareStatement(
-                                "INSERT INTO sms_log (`from`, `to`, body, `timestamp`, status) " +
-                                "VALUES(?, ?, ?, ?, ?)");
-                        try {
-                            s.setString(1, format(e.getFrom()));
-                            s.setString(2, format(e.getTo()));
-                            s.setString(3, e.getBody());
-                            s.setTimestamp(4, new Timestamp(e.getTimestamp()));
-                            s.setString(5, e.getStatus());
-                            int numRowsInserted = s.executeUpdate();
-                            assert numRowsInserted == 1;
-                        } finally {
-                            s.close();
-                        }
-                    } finally {
-                        c.close();
-                    }
-                } catch (SQLException e) {
-                    // FIXME: Should we log this exception? Does it kill the Executor?
-                    throw new RuntimeException(e);
-                }
+        Runnable insertTask = () -> {
+            try (Connection c = dataSource.getConnection();
+                 PreparedStatement s = c.prepareStatement(
+                         "INSERT INTO sms_log (`from`, `to`, body, `timestamp`, status) " +
+                         "VALUES(?, ?, ?, ?, ?)");) {
+                s.setString(1, format(e.getFrom()));
+                s.setString(2, format(e.getTo()));
+                s.setString(3, e.getBody());
+                s.setTimestamp(4, new Timestamp(e.getTimestamp()));
+                s.setString(5, e.getStatus());
+                int numRowsInserted = s.executeUpdate();
+                assert numRowsInserted == 1;
+            } catch (SQLException e1) {
+                throw new RuntimeException(e1);
             }
-
         };
         databaseExecutor.execute(insertTask);
     }
