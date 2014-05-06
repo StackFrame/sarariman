@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman.telephony.twilio;
 
+import com.google.common.collect.Maps;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
@@ -12,14 +13,11 @@ import com.stackframe.sarariman.telephony.SMSEvent;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioUtils;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
 
 /**
  *
@@ -36,25 +34,16 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
         gateway = (TwilioSMSGatewayImpl)sarariman.getSMSGateway();
     }
 
+    private static Map<String, String> flatten(Map<String, String[]> m) {
+        return Maps.asMap(m.keySet(), (k) -> m.get(k)[0]);
+    }
+
     private static Map<String, String> parameters(HttpServletRequest request) {
-        Map<String, String> m = new HashMap<String, String>();
-
-        // FIXME: When stepping up to more modern servlet spec, use getParameterMap().
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String name = parameterNames.nextElement();
-            String[] values = request.getParameterValues(name);
-            for (String value : values) {
-                m.put(name, value);
-            }
-        }
-
-        return m;
+        return flatten(request.getParameterMap());
     }
 
     /**
-     * Handles the HTTP
-     * <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -63,7 +52,7 @@ public class IncomingTwilioSMSHandler extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String url = HttpUtils.getRequestURL(request).toString();
+        String url = request.getRequestURL().toString();
         String accountSid = request.getParameter("AccountSid");
         TwilioRestClient client = gateway.getRestClient();
         String expectedAccountSid = client.getAccountSid();
