@@ -499,6 +499,7 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
+<!-- add cumulative per task -->
                                         </tr>
                                     </c:forEach>
                                 </tbody>
