@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -7,9 +7,6 @@ package com.stackframe.sarariman;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,21 +23,13 @@ public class Utilities {
     /**
      * A Predicate that matches for active employees.
      */
-    public static final Predicate<Employee> active = new Predicate<Employee>() {
-        public boolean apply(Employee e) {
-            return e.isActive();
-        }
+    public static final Predicate<Employee> active = Employee::isActive;
 
-    };
     /**
      * A Predicate that matches for full time employees.
      */
-    public static final Predicate<Employee> fulltime = new Predicate<Employee>() {
-        public boolean apply(Employee e) {
-            return e.isFulltime();
-        }
+    public static final Predicate<Employee> fulltime = Employee::isFulltime;
 
-    };
     /**
      * A Predicate that matches for active full time employees.
      */
