@@ -57,7 +57,7 @@
         <title>Projection for ${fn:escapeXml(project.name)}</title>
 
         <!-- jQuery -->
-        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+        <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />
         <script type="text/javascript" src="jquery/js/jquery-ui-1.8.20.custom.min.js"></script>
         <!-- /jQuery -->
 
@@ -65,12 +65,12 @@
             $(function() {
                 $(".hasDatePicker").datepicker({dateFormat: 'yy-mm-dd'});
             });
-            
+
             $(function() {
                 $("#parameters").change(function() {
                     this.submit();
                 });
-            });            
+            });
 
             $(document).ready(function(){
                 $('.delete').click(function(e) {
@@ -81,7 +81,7 @@
                         success: function() {
                             location.reload();
                         }
-                    });	        
+                    });
                 });
             });
         </script>
@@ -187,6 +187,7 @@
                 </tr>
             </table>
 
+                <!-- FIXME: Deanna was able to create a projection with a bogus range and then it could not be viewed. We need to return an error on INSERT. -->
             <%@include file="footer.jsp" %>
         </div>
     </body>
