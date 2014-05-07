@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.apache.vysper.xmpp.addressing.Entity;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCFeatures;
@@ -30,6 +31,8 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
     private final DataSource dataSource;
 
     private final Executor databaseWriteExecutor;
+
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     public ArchivedRoomStorageProvider(DataSource dataSource, Executor databaseWriteExecutor) {
         this.dataSource = dataSource;
@@ -59,13 +62,13 @@ public class ArchivedRoomStorageProvider implements RoomStorageProvider {
 
     @Override
     public boolean roomExists(Entity jid) {
-        System.err.println("ArchivedRoomStorageProvider::roomExists entered. jid=" + jid);
+        logger.info("ArchivedRoomStorageProvider::roomExists entered. jid=" + jid);
         return rooms.containsKey(jid);
     }
 
     @Override
     public void deleteRoom(Entity jid) {
-        System.err.println("ArchivedRoomStorageProvider::deleteRoom entered. jid=" + jid);
+        logger.info("ArchivedRoomStorageProvider::deleteRoom entered. jid=" + jid);
         rooms.remove(jid);
     }
 
