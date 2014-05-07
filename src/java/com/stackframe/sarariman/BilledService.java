@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 StackFrame, LLC
+ * Copyright (C) 2011-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -18,9 +18,49 @@ import org.joda.time.DateMidnight;
  */
 public class BilledService implements Comparable<BilledService> {
 
+    public static BilledService lookup(Sarariman sarariman, int id) throws SQLException {
+        try (Connection connection = sarariman.getDataSource().getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE id=?")) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    int serviceAgreement = resultSet.getInt("service_agreement");
+                    DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
+                    DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
+                    String invoice = resultSet.getString("invoice");
+                    return new BilledService(id, serviceAgreement, popStart, popEnd, invoice);
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public static List<BilledService> lookupByServiceAgreement(Sarariman sarariman, int serviceAgreement) throws SQLException {
+        try (Connection connection = sarariman.getDataSource().getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE service_agreement=?")) {
+            ps.setInt(1, serviceAgreement);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                List<BilledService> billedServices = new ArrayList<>();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
+                    DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
+                    String invoice = resultSet.getString("invoice");
+                    billedServices.add(new BilledService(id, serviceAgreement, popStart, popEnd, invoice));
+                }
+
+                return billedServices;
+            }
+        }
+    }
+
     private final int id;
+
     private final int serviceAgreement;
+
     private final DateMidnight popStart, popEnd;
+
     private final String invoice;
 
     public BilledService(int id, int serviceAgreement, DateMidnight popStart, DateMidnight popEnd, String invoice) {
@@ -51,6 +91,7 @@ public class BilledService implements Comparable<BilledService> {
         return serviceAgreement;
     }
 
+    @Override
     public int compareTo(BilledService t) {
         return popStart.compareTo(t.popStart);
     }
@@ -74,11 +115,7 @@ public class BilledService implements Comparable<BilledService> {
             return false;
         }
 
-        if (this.popEnd != other.popEnd && (this.popEnd == null || !this.popEnd.equals(other.popEnd))) {
-            return false;
-        }
-
-        return true;
+        return this.popEnd == other.popEnd || (this.popEnd != null && this.popEnd.equals(other.popEnd));
     }
 
     @Override
@@ -93,63 +130,6 @@ public class BilledService implements Comparable<BilledService> {
     @Override
     public String toString() {
         return "{" + "id=" + id + ",serviceAgreement=" + serviceAgreement + ",popStart=" + popStart + ",popEnd=" + popEnd + ",invoice=" + invoice + '}';
-    }
-
-    public static BilledService lookup(Sarariman sarariman, int id) throws SQLException {
-        Connection connection = sarariman.getDataSource().getConnection();
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE id=?");
-            try {
-                ps.setInt(1, id);
-                ResultSet resultSet = ps.executeQuery();
-                try {
-                    if (resultSet.next()) {
-                        int serviceAgreement = resultSet.getInt("service_agreement");
-                        DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
-                        DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
-                        String invoice = resultSet.getString("invoice");
-                        return new BilledService(id, serviceAgreement, popStart, popEnd, invoice);
-                    } else {
-                        return null;
-                    }
-                } finally {
-                    resultSet.close();
-                }
-            } finally {
-                ps.close();
-            }
-        } finally {
-            connection.close();
-        }
-    }
-
-    public static List<BilledService> lookupByServiceAgreement(Sarariman sarariman, int serviceAgreement) throws SQLException {
-        Connection connection = sarariman.getDataSource().getConnection();
-        try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * from billed_services WHERE service_agreement=?");
-            try {
-                ps.setInt(1, serviceAgreement);
-                ResultSet resultSet = ps.executeQuery();
-                try {
-                    List<BilledService> billedServices = new ArrayList<BilledService>();
-                    while (resultSet.next()) {
-                        int id = resultSet.getInt("id");
-                        DateMidnight popStart = new DateMidnight(resultSet.getDate("pop_start"));
-                        DateMidnight popEnd = new DateMidnight(resultSet.getDate("pop_end"));
-                        String invoice = resultSet.getString("invoice");
-                        billedServices.add(new BilledService(id, serviceAgreement, popStart, popEnd, invoice));
-                    }
-
-                    return billedServices;
-                } finally {
-                    resultSet.close();
-                }
-            } finally {
-                ps.close();
-            }
-        } finally {
-            connection.close();
-        }
     }
 
 }
