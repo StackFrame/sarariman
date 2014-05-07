@@ -2,7 +2,7 @@
 
   <property name="bin_dir" location="build/WEB-INF/classes"/>
   <path id="compile.class.path">
-    <pathelement path="/usr/share/java/servlet-api-3.0.jar" />
+    <pathelement path="compilelib/javax.servlet-api-3.1.0.jar" />
     <pathelement path="/usr/share/java/gnumail-1.1.2.jar" />
     <pathelement path="lib/flying-saucer-core-9.0.3-SNAPSHOT.jar" />
     <pathelement path="lib/flying-saucer-pdf-9.0.3-SNAPSHOT.jar" />
