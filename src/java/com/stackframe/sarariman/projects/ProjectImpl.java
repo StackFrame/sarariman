@@ -183,435 +183,262 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    @Override
     public String getPurchaseOrder() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT purchase_order FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getString("purchase_order");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT purchase_order FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getString("purchase_order");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setPurchaseOrder(String purchaseOrder) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET purchase_order = ? WHERE id = ?");
-                try {
-                    s.setString(1, purchaseOrder);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET purchase_order = ? WHERE id = ?")) {
+            s.setString(1, purchaseOrder);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public String getInvoiceText() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT invoice_text FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getString("invoice_text");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT invoice_text FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getString("invoice_text");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setInvoiceText(String text) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET invoice_text = ? WHERE id = ?");
-                try {
-                    s.setString(1, text);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET invoice_text = ? WHERE id = ?")) {
+            s.setString(1, text);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public BigDecimal getFunded() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT funded FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBigDecimal("funded");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT funded FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getBigDecimal("funded");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setFunded(BigDecimal funded) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET funded = ? WHERE id = ?");
-                try {
-                    s.setBigDecimal(1, funded);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET funded = ? WHERE id = ?")) {
+            s.setBigDecimal(1, funded);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public BigDecimal getPreviouslyBilled() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT previously_billed FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBigDecimal("previously_billed");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT previously_billed FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getBigDecimal("previously_billed");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setPreviouslyBilled(BigDecimal previouslyBilled) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET previously_billed = ? WHERE id = ?");
-                try {
-                    s.setBigDecimal(1, previouslyBilled);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET previously_billed = ? WHERE id = ?")) {
+            s.setBigDecimal(1, previouslyBilled);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public BigDecimal getODCFee() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT odc_fee FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBigDecimal("odc_fee");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT odc_fee FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getBigDecimal("odc_fee");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setODCFee(BigDecimal fee) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET odc_fee = ? WHERE id = ?");
-                try {
-                    s.setBigDecimal(1, fee);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET odc_fee = ? WHERE id = ?")) {
+            s.setBigDecimal(1, fee);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public boolean isManager(Employee employee) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_managers WHERE employee=? AND project=?");
-                try {
-                    ps.setInt(1, employee.getNumber());
-                    ps.setLong(2, id);
-                    ResultSet rs = ps.executeQuery();
-                    try {
-                        return rs.first();
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    ps.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_managers WHERE employee=? AND project=?")) {
+            ps.setInt(1, employee.getNumber());
+            ps.setLong(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public boolean isCostManager(Employee employee) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_cost_managers WHERE employee=? AND project=?");
-                try {
-                    ps.setInt(1, employee.getNumber());
-                    ps.setLong(2, id);
-                    ResultSet rs = ps.executeQuery();
-                    try {
-                        return rs.first();
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    ps.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * FROM project_cost_managers " +
+                                                                "WHERE employee=? AND project=?")) {
+            ps.setInt(1, employee.getNumber());
+            ps.setLong(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Client getClient() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT customer FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        int client_id = r.getInt("customer");
-                        if (client_id == 0) {
-                            return null;
-                        } else {
-                            return clients.get(client_id);
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT customer FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                int client_id = r.getInt("customer");
+                if (client_id == 0) {
+                    return null;
+                } else {
+                    return clients.get(client_id);
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setClient(Client client) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET customer = ? WHERE id = ?");
-                try {
-                    s.setInt(1, client.getId());
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET customer = ? WHERE id = ?")) {
+            s.setInt(1, client.getId());
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public PeriodOfPerformance getPoP() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT pop_start, pop_end FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.next();
-                        assert hasRow;
-                        Date pop_start = r.getDate("pop_start");
-                        Date pop_end = r.getDate("pop_end");
-                        return new PeriodOfPerformance(pop_start, pop_end);
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT pop_start, pop_end FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.next();
+                assert hasRow;
+                Date pop_start = r.getDate("pop_start");
+                Date pop_end = r.getDate("pop_end");
+                return new PeriodOfPerformance(pop_start, pop_end);
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setPoP(PeriodOfPerformance pop) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET pop_start = ?, pop_end = ? WHERE id = ?");
-                try {
-                    s.setDate(1, convert(pop.getStart()));
-                    s.setDate(2, convert(pop.getEnd()));
-                    s.setInt(3, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET pop_start = ?, pop_end = ? WHERE id = ?")) {
+            s.setDate(1, convert(pop.getStart()));
+            s.setDate(2, convert(pop.getEnd()));
+            s.setInt(3, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public int getTerms() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT terms FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getInt("terms");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT terms FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getInt("terms");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setTerms(int terms) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET terms = ? WHERE id = ?");
-                try {
-                    s.setInt(1, terms);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET terms = ? WHERE id = ?")) {
+            s.setInt(1, terms);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
@@ -664,8 +491,9 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    @Override
     public Collection<Audit> getAudits() {
-        Collection<Audit> c = new ArrayList<Audit>();
+        Collection<Audit> c = new ArrayList<>();
         c.add(new ProjectOrgChartAudit(this, dataSource, organizationHierarchy, directory));
         c.add(new ProjectPeriodOfPerformanceAudit(id, projects));
         c.add(new ProjectFundingAudit(id, projects));
@@ -674,32 +502,24 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         return c;
     }
 
+    @Override
     public BigDecimal getExpended() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal " +
-                                                                  "FROM hours AS h " +
-                                                                  "JOIN tasks AS t on h.task = t.id " +
-                                                                  "JOIN projects AS p on p.id = t.project " +
-                                                                  "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
-                                                                  "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)" +
-                                                                  "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.next();
-                        assert hasRow;
-                        return r.getBigDecimal("costTotal");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal " +
+                     "FROM hours AS h " +
+                     "JOIN tasks AS t on h.task = t.id " +
+                     "JOIN projects AS p on p.id = t.project " +
+                     "JOIN labor_category_assignments AS a " +
+                     "ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                     "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start " +
+                     "AND h.date <= c.pop_end AND c.project = p.id)" +
+                     "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.next();
+                assert hasRow;
+                return r.getBigDecimal("costTotal");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
