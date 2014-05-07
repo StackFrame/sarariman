@@ -1,14 +1,13 @@
 /*
- * Copyright (C) 2009-2013 StackFrame, LLC
+ * Copyright (C) 2009-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -20,9 +19,6 @@ import org.joda.time.Years;
  */
 public class DateUtils {
 
-    private DateUtils() {
-    }
-
     public static Date now() {
         return new Date();
     }
@@ -31,6 +27,7 @@ public class DateUtils {
         return new Week(weekStart(date));
     }
 
+    // FIXME: Shouldn't this be in Week?
     public static Date weekStart(Date date) {
         Calendar startDate = Calendar.getInstance();
         startDate.setTime(date);
@@ -44,6 +41,7 @@ public class DateUtils {
         return startDate.getTime();
     }
 
+    // FIXME: Shouldn't this be in Week?
     public static Date weekEnd(Date date) {
         Calendar startDate = Calendar.getInstance();
         startDate.setTime(date);
@@ -59,27 +57,11 @@ public class DateUtils {
     }
 
     public static Collection<Date> weekStarts(Collection<Date> dates) {
-        Collection<Date> result = new TreeSet<Date>();
-        for (Date date : dates) {
-            result.add(weekStart(date));
-        }
-
-        return result;
+        return dates.stream().map(DateUtils::weekStart).collect(Collectors.toSet());
     }
 
     public static Collection<Date> weekStarts(Date begin, Date end) {
-        Collection<Date> result = new ArrayList<Date>();
-        Calendar day = Calendar.getInstance();
-        day.setTime(begin);
-        while (!day.getTime().after(end)) {
-            if (day.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-                result.add(day.getTime());
-            }
-
-            day.add(Calendar.DATE, 1);
-        }
-
-        return result;
+        return weekStarts(new PeriodOfPerformance(begin, end).getDays());
     }
 
     public static Date addDays(Date date, int days) {
@@ -98,6 +80,9 @@ public class DateUtils {
     public static int yearsBetween(DateMidnight start, Date end) {
         DateTime y = new DateTime(end);
         return Years.yearsBetween(start, y).getYears();
+    }
+
+    private DateUtils() {
     }
 
 }
