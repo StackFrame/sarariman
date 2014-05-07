@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 StackFrame, LLC
+ * Copyright (C) 2010-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -53,6 +53,7 @@ public class ContentCaptureServletResponse extends HttpServletResponseWrapper {
                 }
             }
 
+            @Override
             public void write(int i) {
                 contentBuffer.write(i);
             }
