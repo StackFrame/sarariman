@@ -444,48 +444,29 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    @Override
     public boolean isActive() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT active FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getBoolean("active");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT active FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getBoolean("active");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setActive(boolean active) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET active = ? WHERE id = ?");
-                try {
-                    s.setBoolean(1, active);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET active = ? WHERE id = ?")) {
+            s.setBoolean(1, active);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
@@ -571,7 +552,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
                                                                 "WHERE t.project = ?");) {
             ps.setInt(1, id);
             try (ResultSet resultSet = ps.executeQuery()) {
-                Collection<Task> list = new ArrayList<Task>();
+                Collection<Task> list = new ArrayList<>();
                 while (resultSet.next()) {
                     int task_id = resultSet.getInt("task_id");
                     list.add(tasks.get(task_id));
