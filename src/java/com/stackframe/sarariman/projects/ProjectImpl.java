@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 /**
@@ -657,14 +658,7 @@ public class ProjectImpl extends AbstractLinkable implements Project {
 
     @Override
     public Iterable<Week> getWorkedWeeks() {
-        Set<Week> weeks = new TreeSet<>();
-        Collection<Date> dates = getWorkedDates();
-        for (Date date : dates) {
-            Week week = DateUtils.week(date);
-            weeks.add(week);
-        }
-
-        return weeks;
+        return getWorkedDates().stream().map(DateUtils::week).collect(Collectors.toSet());
     }
 
     @Override
