@@ -94,146 +94,90 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         this.mountPoint = mountPoint;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public String getName() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT name FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getString("name");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT name FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getString("name");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setName(String name) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET name = ? WHERE id = ?");
-                try {
-                    s.setString(1, name);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET name = ? WHERE id = ?")) {
+            s.setString(1, name);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public String getContract() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT contract_number FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getString("contract_number");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT contract_number FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getString("contract_number");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setContract(String contract) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET contract_number = ? WHERE id = ?");
-                try {
-                    s.setString(1, contract);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET contract_number = ? WHERE id = ?")) {
+            s.setString(1, contract);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public String getSubcontract() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT subcontract_number FROM projects WHERE id = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        assert hasRow;
-                        return r.getString("subcontract_number");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT subcontract_number FROM projects WHERE id = ?")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                assert hasRow;
+                return r.getString("subcontract_number");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public void setSubcontract(String subcontract) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("UPDATE projects SET subcontract_number = ? WHERE id = ?");
-                try {
-                    s.setString(1, subcontract);
-                    s.setInt(2, id);
-                    int numRows = s.executeUpdate();
-                    assert numRows == 1;
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("UPDATE projects SET subcontract_number = ? WHERE id = ?")) {
+            s.setString(1, subcontract);
+            s.setInt(2, id);
+            int numRows = s.executeUpdate();
+            assert numRows == 1;
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
@@ -735,12 +679,12 @@ public class ProjectImpl extends AbstractLinkable implements Project {
             Connection connection = dataSource.getConnection();
             try {
                 PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(c.rate * h.duration + 0.009, 2)) AS costTotal " +
-                        "FROM hours AS h " +
-                        "JOIN tasks AS t on h.task = t.id " +
-                        "JOIN projects AS p on p.id = t.project " +
-                        "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
-                        "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)" +
-                        "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0");
+                                                                  "FROM hours AS h " +
+                                                                  "JOIN tasks AS t on h.task = t.id " +
+                                                                  "JOIN projects AS p on p.id = t.project " +
+                                                                  "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
+                                                                  "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id)" +
+                                                                  "WHERE t.project = ? AND t.billable = TRUE and h.duration > 0");
                 try {
                     s.setInt(1, id);
                     ResultSet r = s.executeQuery();
@@ -762,41 +706,35 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    @Override
     public Iterable<Date> getDaysBilled() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date " +
-                        "FROM hours AS h " +
-                        "JOIN tasks AS t on h.task = t.id " +
-                        "JOIN projects AS p on p.id = t.project " +
-                        "JOIN labor_category_assignments AS a ON (a.employee = h.employee AND h.date >= a.pop_start AND h.date <= a.pop_end) " +
-                        "JOIN labor_categories AS c ON (c.id = a.labor_category AND h.date >= c.pop_start AND h.date <= c.pop_end AND c.project = p.id) " +
-                        "WHERE p.id = ? AND t.billable = TRUE;");
-                try {
-                    ps.setLong(1, id);
-                    ResultSet rs = ps.executeQuery();
-                    try {
-                        Collection<Date> days = new TreeSet<Date>();
-                        while (rs.next()) {
-                            days.add(rs.getDate("date"));
-                        }
-
-                        return days;
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(date) AS date " +
+                                                                "FROM hours AS h " +
+                                                                "JOIN tasks AS t on h.task = t.id " +
+                                                                "JOIN projects AS p on p.id = t.project " +
+                                                                "JOIN labor_category_assignments AS a ON " +
+                                                                "(a.employee = h.employee AND h.date >= a.pop_start " +
+                                                                "AND h.date <= a.pop_end) " +
+                                                                "JOIN labor_categories AS c ON (c.id = a.labor_category " +
+                                                                "AND h.date >= c.pop_start AND h.date <= c.pop_end " +
+                                                                "AND c.project = p.id) " +
+                                                                "WHERE p.id = ? AND t.billable = TRUE;");) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                Collection<Date> days = new TreeSet<>();
+                while (rs.next()) {
+                    days.add(rs.getDate("date"));
                 }
-            } finally {
-                connection.close();
+
+                return days;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Collection<LineItem> getLineItems() {
         try {
             return LineItem.getLineItems(dataSource, id);
@@ -805,178 +743,120 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         }
     }
 
+    @Override
     public Collection<Task> getTasks() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id " +
-                        "FROM tasks AS t " +
-                        "WHERE t.project = ?");
-                ps.setInt(1, id);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        Collection<Task> list = new ArrayList<Task>();
-                        while (resultSet.next()) {
-                            int task_id = resultSet.getInt("task_id");
-                            list.add(tasks.get(task_id));
-                        }
-
-                        return list;
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT t.id AS task_id " +
+                                                                "FROM tasks AS t " +
+                                                                "WHERE t.project = ?");) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                Collection<Task> list = new ArrayList<Task>();
+                while (resultSet.next()) {
+                    int task_id = resultSet.getInt("task_id");
+                    list.add(tasks.get(task_id));
                 }
-            } finally {
-                connection.close();
+
+                return list;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Iterable<Employee> getAdministrativeAssistants() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT assistant " +
-                        "FROM project_administrative_assistants " +
-                        "WHERE project = ?");
-                ps.setInt(1, id);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
-                        while (resultSet.next()) {
-                            int task_id = resultSet.getInt("assistant");
-                            listBuilder.add(directory.getByNumber().get(task_id));
-                        }
-
-                        return listBuilder.build();
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT assistant " +
+                                                                "FROM project_administrative_assistants " +
+                                                                "WHERE project = ?");) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
+                while (resultSet.next()) {
+                    int task_id = resultSet.getInt("assistant");
+                    listBuilder.add(directory.getByNumber().get(task_id));
                 }
-            } finally {
-                connection.close();
+
+                return listBuilder.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Iterable<Employee> getManagers() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT employee " +
-                        "FROM project_managers " +
-                        "WHERE project = ?");
-                ps.setInt(1, id);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
-                        while (resultSet.next()) {
-                            int task_id = resultSet.getInt("employee");
-                            listBuilder.add(directory.getByNumber().get(task_id));
-                        }
-
-                        return listBuilder.build();
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT employee " +
+                                                                "FROM project_managers " +
+                                                                "WHERE project = ?");) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
+                while (resultSet.next()) {
+                    int task_id = resultSet.getInt("employee");
+                    listBuilder.add(directory.getByNumber().get(task_id));
                 }
-            } finally {
-                connection.close();
+
+                return listBuilder.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Iterable<Employee> getCostManagers() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT employee " +
-                        "FROM project_cost_managers " +
-                        "WHERE project = ?");
-                ps.setInt(1, id);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
-                        while (resultSet.next()) {
-                            int task_id = resultSet.getInt("employee");
-                            listBuilder.add(directory.getByNumber().get(task_id));
-                        }
-
-                        return listBuilder.build();
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT employee " +
+                                                                "FROM project_cost_managers " +
+                                                                "WHERE project = ?");) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                ImmutableList.Builder<Employee> listBuilder = ImmutableList.<Employee>builder();
+                while (resultSet.next()) {
+                    int task_id = resultSet.getInt("employee");
+                    listBuilder.add(directory.getByNumber().get(task_id));
                 }
-            } finally {
-                connection.close();
+
+                return listBuilder.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public URI getURI() {
         return URI.create(String.format("%s?id=%d", servletPath, id));
     }
 
     private Collection<Date> getWorkedDates() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT DISTINCT(h.date) " +
-                        "FROM hours AS h " +
-                        "JOIN tasks AS t ON h.task = t.id " +
-                        "JOIN projects AS p ON p.id = t.project " +
-                        "WHERE project = ?");
-                ps.setInt(1, id);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
-                        while (resultSet.next()) {
-                            Date date = resultSet.getDate("date");
-                            listBuilder.add(date);
-                        }
-
-                        return listBuilder.build();
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT DISTINCT(h.date) " +
+                                                                "FROM hours AS h " +
+                                                                "JOIN tasks AS t ON h.task = t.id " +
+                                                                "JOIN projects AS p ON p.id = t.project " +
+                                                                "WHERE project = ?");) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                ImmutableList.Builder<Date> listBuilder = ImmutableList.<Date>builder();
+                while (resultSet.next()) {
+                    Date date = resultSet.getDate("date");
+                    listBuilder.add(date);
                 }
-            } finally {
-                connection.close();
+
+                return listBuilder.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Iterable<Week> getWorkedWeeks() {
-        Set<Week> weeks = new TreeSet<Week>();
+        Set<Week> weeks = new TreeSet<>();
         Collection<Date> dates = getWorkedDates();
         for (Date date : dates) {
             Week week = DateUtils.week(date);
@@ -986,61 +866,40 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         return weeks;
     }
 
+    @Override
     public void delete() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM projects WHERE id=?");
-                try {
-                    ps.setLong(1, id);
-                    ps.executeUpdate();
-                } finally {
-                    ps.close();
-                }
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("DELETE FROM projects WHERE id=?")) {
+            ps.setLong(1, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     private Set<Employee> getDefaultCurrentlyAssigned() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT DISTINCT(ta.full_time_only) AS full_time_only " +
-                        "FROM projects AS p " +
-                        "JOIN tasks AS t ON t.project = p.id " +
-                        "JOIN default_task_assignment AS ta ON ta.task = t.id " +
-                        "WHERE p.id = ? AND " +
-                        "p.active = TRUE");
-                try {
-                    s.setInt(1, id);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        ImmutableSet.Builder<Employee> b = ImmutableSet.builder();
-                        while (rs.next()) {
-                            boolean fullTimeOnly = rs.getBoolean("full_time_only");
-                            for (Employee e : directory.getEmployees()) {
-                                if (e.isActive()) {
-                                    if (!fullTimeOnly || e.isFulltime()) {
-                                        b.add(e);
-                                    }
-                                }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT DISTINCT(ta.full_time_only) AS full_time_only " +
+                                                               "FROM projects AS p " +
+                                                               "JOIN tasks AS t ON t.project = p.id " +
+                                                               "JOIN default_task_assignment AS ta ON ta.task = t.id " +
+                                                               "WHERE p.id = ? AND " +
+                                                               "p.active = TRUE")) {
+            s.setInt(1, id);
+            try (ResultSet rs = s.executeQuery()) {
+                ImmutableSet.Builder<Employee> b = ImmutableSet.builder();
+                while (rs.next()) {
+                    boolean fullTimeOnly = rs.getBoolean("full_time_only");
+                    for (Employee e : directory.getEmployees()) {
+                        if (e.isActive()) {
+                            if (!fullTimeOnly || e.isFulltime()) {
+                                b.add(e);
                             }
                         }
-
-                        return b.build();
-                    } finally {
-                        rs.close();
                     }
-                } finally {
-                    s.close();
                 }
-            } finally {
-                connection.close();
+
+                return b.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -1048,288 +907,196 @@ public class ProjectImpl extends AbstractLinkable implements Project {
     }
 
     private Set<Employee> getExplicitlyCurrentlyAssigned() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT DISTINCT(ta.employee) AS employee " +
-                        "FROM projects AS p " +
-                        "JOIN tasks AS t ON t.project = p.id " +
-                        "JOIN task_assignments AS ta ON ta.task = t.id " +
-                        "WHERE p.id = ? AND " +
-                        "p.active = TRUE");
-                try {
-                    s.setInt(1, id);
-                    ResultSet rs = s.executeQuery();
-                    try {
-                        ImmutableSet.Builder<Employee> b = ImmutableSet.builder();
-                        while (rs.next()) {
-                            int employee = rs.getInt("employee");
-                            b.add(directory.getByNumber().get(employee));
-                        }
-
-                        return b.build();
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT DISTINCT(ta.employee) AS employee " +
+                                                               "FROM projects AS p " +
+                                                               "JOIN tasks AS t ON t.project = p.id " +
+                                                               "JOIN task_assignments AS ta ON ta.task = t.id " +
+                                                               "WHERE p.id = ? AND " +
+                                                               "p.active = TRUE")) {
+            s.setInt(1, id);
+            try (ResultSet rs = s.executeQuery()) {
+                ImmutableSet.Builder<Employee> b = ImmutableSet.builder();
+                while (rs.next()) {
+                    int employee = rs.getInt("employee");
+                    b.add(directory.getByNumber().get(employee));
                 }
-            } finally {
-                connection.close();
+
+                return b.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Set<Employee> getCurrentlyAssigned() {
         return Sets.union(getExplicitlyCurrentlyAssigned(), getDefaultCurrentlyAssigned());
     }
 
+    @Override
     public Collection<NamedResource> getResources() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT URL, description " +
-                        "FROM project_links " +
-                        "WHERE project = ?");
-                try {
-                    s.setInt(1, id);
-                    ResultSet rs = s.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT URL, description " +
+                                                               "FROM project_links " +
+                                                               "WHERE project = ?")) {
+            s.setInt(1, id);
+            try (ResultSet rs = s.executeQuery()) {
+                ImmutableList.Builder<NamedResource> b = ImmutableList.<NamedResource>builder();
+                while (rs.next()) {
+                    URL url = rs.getURL("URL");
+                    String description = rs.getString("description");
                     try {
-                        ImmutableList.Builder<NamedResource> b = ImmutableList.<NamedResource>builder();
-                        while (rs.next()) {
-                            URL url = rs.getURL("URL");
-                            String description = rs.getString("description");
-                            try {
-                                b.add(new NamedResourceImpl(url.toURI(), description));
-                            } catch (URISyntaxException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-
-                        return b.build();
-                    } finally {
-                        rs.close();
+                        b.add(new NamedResourceImpl(url.toURI(), description));
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException(e);
                     }
-                } finally {
-                    s.close();
                 }
-            } finally {
-                connection.close();
+
+                return b.build();
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Collection<LaborProjection> getLaborProjections() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT labor_projection.id FROM labor_projection " +
-                        "JOIN tasks ON labor_projection.task = tasks.id " +
-                        "WHERE tasks.project = ?");
-                ps.setInt(1, id);
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        Collection<LaborProjection> list = new ArrayList<LaborProjection>();
-                        while (resultSet.next()) {
-                            int laborProjectionId = resultSet.getInt("labor_projection.id");
-                            list.add(laborProjections.get(laborProjectionId));
-                        }
-
-                        return list;
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT labor_projection.id FROM labor_projection " +
+                                                                "JOIN tasks ON labor_projection.task = tasks.id " +
+                                                                "WHERE tasks.project = ?");) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                Collection<LaborProjection> list = new ArrayList<>();
+                while (resultSet.next()) {
+                    int laborProjectionId = resultSet.getInt("labor_projection.id");
+                    list.add(laborProjections.get(laborProjectionId));
                 }
-            } finally {
-                connection.close();
+
+                return list;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public Collection<EmailLogEntry> getEmailLogEntries(Week week) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT sender, sent " +
-                        "FROM project_timesheet_email_log " +
-                        "WHERE project = ? AND week = ?");
-                ps.setInt(1, id);
-                ps.setString(2, week.getName());
-                try {
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
-                        Collection<EmailLogEntry> list = new ArrayList<EmailLogEntry>();
-                        while (resultSet.next()) {
-                            int senderNumber = resultSet.getInt("sender");
-                            Employee sender = directory.getByNumber().get(senderNumber);
-                            Date sent = resultSet.getDate("sent");
-                            list.add(new EmailLogEntry(sender, sent));
-                        }
-
-                        return list;
-                    } finally {
-                        resultSet.close();
-                    }
-                } finally {
-                    ps.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT sender, sent " +
+                                                                "FROM project_timesheet_email_log " +
+                                                                "WHERE project = ? AND week = ?");) {
+            ps.setInt(1, id);
+            ps.setString(2, week.getName());
+            try (ResultSet resultSet = ps.executeQuery()) {
+                Collection<EmailLogEntry> list = new ArrayList<>();
+                while (resultSet.next()) {
+                    int senderNumber = resultSet.getInt("sender");
+                    Employee sender = directory.getByNumber().get(senderNumber);
+                    Date sent = resultSet.getDate("sent");
+                    list.add(new EmailLogEntry(sender, sent));
                 }
-            } finally {
-                connection.close();
+
+                return list;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public ProjectedExpenses getProjectedExpenses() {
         return new ProjectedExpensesImpl(this, mountPoint + "projection.jsp", dataSource, workdays, tasks, directory);
     }
 
+    @Override
     public Iterable<OutOfOfficeEntry> getUpcomingOutOfOffice() {
-        try {
-            Connection c = dataSource.getConnection();
-            try {
-                PreparedStatement s = c.prepareStatement(
-                        "SELECT oof.id " +
-                        "FROM out_of_office AS oof " +
-                        "JOIN task_assignments AS ta ON ta.employee = oof.employee " +
-                        "JOIN tasks AS t on t.id = ta.task " +
-                        "JOIN projects AS p ON p.id = t.project " +
-                        "WHERE p.id = ? AND oof.end >= DATE(NOW()) " +
-                        "GROUP BY oof.employee, oof.begin, oof.end, oof.comment " +
-                        "ORDER BY oof.begin");
-                try {
-                    s.setInt(1, id);
-                    ResultSet r = s.executeQuery();
-                    try {
-                        List<OutOfOfficeEntry> l = new ArrayList<OutOfOfficeEntry>();
-                        while (r.next()) {
-                            int entryID = r.getInt("id");
-                            l.add(oofEntries.get(entryID));
-                        }
-
-                        return l;
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement s = c.prepareStatement("SELECT oof.id " +
+                                                      "FROM out_of_office AS oof " +
+                                                      "JOIN task_assignments AS ta ON ta.employee = oof.employee " +
+                                                      "JOIN tasks AS t on t.id = ta.task " +
+                                                      "JOIN projects AS p ON p.id = t.project " +
+                                                      "WHERE p.id = ? AND oof.end >= DATE(NOW()) " +
+                                                      "GROUP BY oof.employee, oof.begin, oof.end, oof.comment " +
+                                                      "ORDER BY oof.begin")) {
+            s.setInt(1, id);
+            try (ResultSet r = s.executeQuery()) {
+                List<OutOfOfficeEntry> l = new ArrayList<>();
+                while (r.next()) {
+                    int entryID = r.getInt("id");
+                    l.add(oofEntries.get(entryID));
                 }
-            } finally {
-                c.close();
+
+                return l;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public BigDecimal getLaborHoursBilled(PeriodOfPerformance pop) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT SUM(h.duration) AS total " +
-                        "FROM hours AS h " +
-                        "JOIN tasks AS t on h.task = t.id " +
-                        "JOIN projects AS p on p.id = t.project " +
-                        "WHERE t.project = ? AND h.date >= ? AND h.date <= ?");
-                try {
-                    s.setInt(1, id);
-                    s.setDate(2, new Date(pop.getStart().getTime()));
-                    s.setDate(3, new Date(pop.getEnd().getTime()));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.next();
-                        assert hasRow;
-                        return r.getBigDecimal("total");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT SUM(h.duration) AS total " +
+                                                               "FROM hours AS h " +
+                                                               "JOIN tasks AS t on h.task = t.id " +
+                                                               "JOIN projects AS p on p.id = t.project " +
+                                                               "WHERE t.project = ? AND h.date >= ? AND h.date <= ?")) {
+            s.setInt(1, id);
+            s.setDate(2, new Date(pop.getStart().getTime()));
+            s.setDate(3, new Date(pop.getEnd().getTime()));
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.next();
+                assert hasRow;
+                return r.getBigDecimal("total");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public BigDecimal getLaborDirectCosts(PeriodOfPerformance pop) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT SUM(TRUNCATE(d.rate * h.duration + 0.009, 2)) AS total " +
-                        "FROM hours AS h " +
-                        "JOIN tasks AS t on h.task = t.id " +
-                        "JOIN projects AS p on p.id = t.project " +
-                        "JOIN direct_rate AS d ON (d.employee = h.employee AND h.date >= d.start AND (h.date <= d.end OR d.end IS NULL)) " +
-                        "WHERE t.project = ? AND h.date >= ? AND h.date <= ?");
-                try {
-                    s.setInt(1, id);
-                    s.setDate(2, new Date(pop.getStart().getTime()));
-                    s.setDate(3, new Date(pop.getEnd().getTime()));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.next();
-                        assert hasRow;
-                        return r.getBigDecimal("total");
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT SUM(TRUNCATE(d.rate * h.duration + 0.009, 2)) AS total " +
+                                                               "FROM hours AS h " +
+                                                               "JOIN tasks AS t on h.task = t.id " +
+                                                               "JOIN projects AS p on p.id = t.project " +
+                                                               "JOIN direct_rate AS d ON (d.employee = h.employee " +
+                                                               "AND h.date >= d.start AND (h.date <= d.end OR d.end IS NULL)) " +
+                                                               "WHERE t.project = ? AND h.date >= ? AND h.date <= ?")) {
+            s.setInt(1, id);
+            s.setDate(2, new Date(pop.getStart().getTime()));
+            s.setDate(3, new Date(pop.getEnd().getTime()));
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.next();
+                assert hasRow;
+                return r.getBigDecimal("total");
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
         }
     }
 
+    @Override
     public BigDecimal getOtherDirectCosts(PeriodOfPerformance pop) {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement(
-                        "SELECT SUM(e.cost) AS total " +
-                        "FROM expenses AS e " +
-                        "JOIN tasks AS t on e.task = t.id " +
-                        "JOIN projects AS p on p.id = t.project " +
-                        "WHERE project=? AND date >= ? AND date <= ?");
-                try {
-                    s.setInt(1, id);
-                    s.setDate(2, new Date(pop.getStart().getTime()));
-                    s.setDate(3, new Date(pop.getEnd().getTime()));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.next();
-                        assert hasRow;
-                        BigDecimal total = r.getBigDecimal("total");
-                        return total == null ? BigDecimal.ZERO : total;
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement(
+                     "SELECT SUM(e.cost) AS total " +
+                     "FROM expenses AS e " +
+                     "JOIN tasks AS t on e.task = t.id " +
+                     "JOIN projects AS p on p.id = t.project " +
+                     "WHERE project=? AND date >= ? AND date <= ?")) {
+            s.setInt(1, id);
+            s.setDate(2, new Date(pop.getStart().getTime()));
+            s.setDate(3, new Date(pop.getEnd().getTime()));
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.next();
+                assert hasRow;
+                BigDecimal total = r.getBigDecimal("total");
+                return total == null ? BigDecimal.ZERO : total;
             }
         } catch (SQLException se) {
             throw new RuntimeException(se);
@@ -1348,14 +1115,13 @@ public class ProjectImpl extends AbstractLinkable implements Project {
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         final ProjectImpl other = (ProjectImpl)obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return this.id == other.id;
     }
 
     @Override
