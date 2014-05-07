@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 StackFrame, LLC
+ * Copyright (C) 2013-2014 StackFrame, LLC
  * This code is licensed under GPLv2.
  */
 package com.stackframe.sarariman;
@@ -24,9 +24,13 @@ import javax.sql.DataSource;
 public class TimesheetEntryImpl extends AbstractLinkable implements TimesheetEntry {
 
     private final Task task;
+
     private final Employee employee;
+
     private final Date date;
+
     private final DataSource dataSource;
+
     private final String servletPath;
 
     public TimesheetEntryImpl(Task task, Employee employee, Date date, DataSource dataSource, String servletPath) {
@@ -37,141 +41,105 @@ public class TimesheetEntryImpl extends AbstractLinkable implements TimesheetEnt
         this.servletPath = servletPath;
     }
 
+    @Override
     public Date getDate() {
-        return date;
+        return (Date)date.clone();
     }
 
+    @Override
     public Task getTask() {
         return task;
     }
 
+    @Override
     public Employee getEmployee() {
         return employee;
     }
 
+    @Override
     public BigDecimal getDuration() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT duration FROM hours WHERE employee=? AND task=? AND date=?");
-                try {
-                    s.setInt(1, employee.getNumber());
-                    s.setInt(2, task.getId());
-                    s.setDate(3, convert(date));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        if (!hasRow) {
-                            return BigDecimal.ZERO;
-                        } else {
-                            return r.getBigDecimal("duration");
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT duration FROM hours " +
+                                                               "WHERE employee=? AND task=? AND date=?")) {
+            s.setInt(1, employee.getNumber());
+            s.setInt(2, task.getId());
+            s.setDate(3, convert(date));
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                if (!hasRow) {
+                    return BigDecimal.ZERO;
+                } else {
+                    return r.getBigDecimal("duration");
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public int getServiceAgreement() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT service_agreement FROM hours WHERE employee=? AND task=? AND date=?");
-                try {
-                    s.setInt(1, employee.getNumber());
-                    s.setInt(2, task.getId());
-                    s.setDate(3, convert(date));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        if (!hasRow) {
-                            return 0;
-                        } else {
-                            return r.getInt("service_agreement");
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT service_agreement FROM hours " +
+                                                               "WHERE employee=? AND task=? AND date=?")) {
+            s.setInt(1, employee.getNumber());
+            s.setInt(2, task.getId());
+            s.setDate(3, convert(date));
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                if (!hasRow) {
+                    return 0;
+                } else {
+                    return r.getInt("service_agreement");
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public String getDescription() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT description FROM hours WHERE employee=? AND task=? AND date=?");
-                try {
-                    s.setInt(1, employee.getNumber());
-                    s.setInt(2, task.getId());
-                    s.setDate(3, convert(date));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        boolean hasRow = r.first();
-                        if (!hasRow) {
-                            return null;
-                        } else {
-                            return r.getString("description");
-                        }
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT description FROM hours " +
+                                                               "WHERE employee=? AND task=? AND date=?")) {
+            s.setInt(1, employee.getNumber());
+            s.setInt(2, task.getId());
+            s.setDate(3, convert(date));
+            try (ResultSet r = s.executeQuery()) {
+                boolean hasRow = r.first();
+                if (!hasRow) {
+                    return null;
+                } else {
+                    return r.getString("description");
                 }
-            } finally {
-                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public boolean exists() {
-        try {
-            Connection connection = dataSource.getConnection();
-            try {
-                PreparedStatement s = connection.prepareStatement("SELECT * FROM hours WHERE employee=? AND task=? AND date=?");
-                try {
-                    s.setInt(1, employee.getNumber());
-                    s.setInt(2, task.getId());
-                    s.setDate(3, convert(date));
-                    ResultSet r = s.executeQuery();
-                    try {
-                        return r.first();
-                    } finally {
-                        r.close();
-                    }
-                } finally {
-                    s.close();
-                }
-            } finally {
-                connection.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement s = connection.prepareStatement("SELECT * FROM hours WHERE employee=? AND task=? AND date=?")) {
+            s.setInt(1, employee.getNumber());
+            s.setInt(2, task.getId());
+            s.setDate(3, convert(date));
+            try (ResultSet r = s.executeQuery()) {
+                return r.first();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public URI getURI() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(date);
-        return URI.create(String.format("%s?task=%d&date=%s&employee=%d", servletPath, task.getId(), formattedDate, employee.getNumber()));
+        return URI.create(String.format("%s?task=%d&date=%s&employee=%d", servletPath, task.getId(), formattedDate,
+                                        employee.getNumber()));
     }
 
     @Override
